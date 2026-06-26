@@ -46,36 +46,37 @@
   <button class="nav__burger" aria-label="Меню" id="burger"><span></span><span></span><span></span></button>
 </header>
 
-<!-- ░░ HERO с ШОУРИЛОМ на первом экране ░░ -->
+<!-- ░░ HERO — полноэкранный фоновый шоурил (вау) ░░ -->
 <section class="hero">
-  <div class="hero__glow"></div>
+  <div class="hero__bg">
+    <iframe
+      src="https://player.vimeo.com/video/1084907216?background=1&autoplay=1&loop=1&muted=1&autopause=0&dnt=1"
+      title="ФАЗА — шоурил" frameborder="0"
+      allow="autoplay; fullscreen; picture-in-picture"></iframe>
+  </div>
+  <div class="hero__scrim"></div>
+  <div class="hero__grain"></div>
+
   <div class="hero__inner">
-    <div class="hero__text">
-      <p class="hero__eyebrow">CG/3D-моушн · живое видео с VFX</p>
-      <h1 class="hero__title">Видео,<br>которое <span>работает</span><br>на бренд</h1>
-      <p class="hero__lead">Студия визуального контента ФАЗА: 3D-графика и&nbsp;живая съёмка с&nbsp;эффектами — для&nbsp;ТВ, кинотеатров и&nbsp;digital. От&nbsp;идеи до&nbsp;финального мастера.</p>
-      <div class="hero__actions">
-        <a class="btn btn--accent" href="#contact">Обсудить проект</a>
-        <a class="btn btn--ghost" href="#works">Смотреть работы</a>
-      </div>
-      <div class="hero__stats">
-        <div><b>15+</b><span>лет в&nbsp;продакшене</span></div>
-        <div><b>250+</b><span>проектов на&nbsp;Vimeo</span></div>
-        <div><b>C4D</b><span>ядро 3D-пайплайна</span></div>
-      </div>
+    <p class="hero__eyebrow rv" style="--d:.05s">CG/3D-моушн · живое видео с&nbsp;VFX</p>
+    <h1 class="hero__title">
+      <span class="rv" style="--d:.15s">Видео,</span>
+      <span class="rv" style="--d:.30s">которое <em>работает</em></span>
+      <span class="rv" style="--d:.45s">на&nbsp;бренд</span>
+    </h1>
+    <p class="hero__lead rv" style="--d:.6s">Студия визуального контента ФАЗА: 3D-графика и&nbsp;живая съёмка с&nbsp;эффектами — для&nbsp;ТВ, кинотеатров и&nbsp;digital.</p>
+    <div class="hero__actions rv" style="--d:.72s">
+      <a class="btn btn--accent" href="#contact">Обсудить проект</a>
+      <a class="btn btn--ghost" href="#works">Смотреть работы</a>
     </div>
-    <div class="hero__reel">
-      <div class="showreel__frame">
-        <iframe
-          src="https://player.vimeo.com/video/1084907216?title=0&byline=0&portrait=0"
-          title="ФАЗА — шоурил 2023–2025"
-          frameborder="0" loading="lazy"
-          allow="autoplay; fullscreen; picture-in-picture"
-          allowfullscreen></iframe>
-      </div>
-      <p class="hero__reel-cap">Шоурил 2023–2025</p>
+    <div class="hero__stats rv" style="--d:.85s">
+      <div><b>15+</b><span>лет в&nbsp;продакшене</span></div>
+      <div><b>250+</b><span>проектов на&nbsp;Vimeo</span></div>
+      <div><b>C4D</b><span>ядро 3D-пайплайна</span></div>
     </div>
   </div>
+
+  <a class="hero__scroll" href="#works"><span>смотреть работы</span><i></i></a>
 </section>
 
 <!-- ░░ РАБОТЫ (кейсы) ░░ -->

@@ -65,7 +65,7 @@ const io = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.1 });
 if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  document.querySelectorAll('.section, .hero__inner').forEach(el => {
+  document.querySelectorAll('.section').forEach(el => {
     el.style.opacity = 0; el.style.transform = 'translateY(24px)';
     el.style.transition = 'opacity .7s ease, transform .7s ease';
     io.observe(el);
