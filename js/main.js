@@ -11,11 +11,16 @@ const esc = t => (t || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':
 const filtered = () => curFilter === 'all' ? SEL : SEL.filter(s => s.cat === curFilter);
 
 function cardHTML(s) {
+  const webp = s.poster.replace(/\.jpg$/, '.webp');
   return `<a class="card" data-cat="${s.cat}" href="${s.vimeo}" target="_blank" rel="noopener" title="${esc(s.title)}">
-    <img class="card__img" loading="lazy" src="${s.poster}" alt="${esc(s.title)}">
+    <picture>
+      <source srcset="${webp}" type="image/webp">
+      <img class="card__img" loading="lazy" src="${s.poster}" alt="${esc(s.title)}" width="480" height="270">
+    </picture>
+    <video class="card__vid" muted loop playsinline preload="none" data-src="assets/previews/${s.id}.mp4"></video>
     <span class="card__cat">${esc(s.cat_ru)}</span>
     <h3 class="card__title">${esc(s.title)}</h3>
-    <span class="card__play">▶&nbsp;смотреть на Vimeo</span>
+    <span class="card__play">▶&nbsp;смотреть</span>
   </a>`;
 }
 
@@ -38,6 +43,22 @@ filters?.addEventListener('click', (e) => {
 });
 moreBtn?.addEventListener('click', () => render(false));
 if (grid) render(true);
+
+// hover-видео на карточках (только устройства с мышью — десктоп)
+if (grid && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+  grid.addEventListener('mouseover', (e) => {
+    const card = e.target.closest('.card'); if (!card) return;
+    const v = card.querySelector('.card__vid'); if (!v) return;
+    if (!v.src && v.dataset.src) v.src = v.dataset.src;  // лениво — только при наведении
+    v.play().catch(() => {});
+  });
+  grid.addEventListener('mouseout', (e) => {
+    const card = e.target.closest('.card'); if (!card) return;
+    if (e.relatedTarget && card.contains(e.relatedTarget)) return;
+    const v = card.querySelector('.card__vid');
+    if (v && v.src) { try { v.pause(); v.currentTime = 0; } catch (_) {} }
+  });
+}
 
 // ===== Hero: ротация шоурила (разный при каждом заходе) + видео только на десктопе =====
 (function () {
@@ -62,7 +83,7 @@ if (grid) render(true);
   if (poster) {
     const img = new Image();
     img.onload = () => { poster.src = img.src; };
-    img.src = 'assets/posters/' + id + '.jpg';
+    img.src = 'assets/posters/' + id + '.webp';
   }
 
   const conn = navigator.connection || {};
