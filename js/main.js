@@ -4,7 +4,7 @@ const grid = document.getElementById('grid');
 const moreBtn = document.getElementById('moreBtn');
 const filters = document.getElementById('filters');
 const countEl = document.getElementById('worksCount');
-const BATCH = 24;
+const BATCH = window.innerWidth < 700 ? 9 : 24;
 let curFilter = 'all', shown = 0;
 
 const esc = t => (t || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -38,6 +38,55 @@ filters?.addEventListener('click', (e) => {
 });
 moreBtn?.addEventListener('click', () => render(false));
 if (grid) render(true);
+
+// ===== Hero: ротация шоурила (разный при каждом заходе) + видео только на десктопе =====
+(function () {
+  const bg = document.getElementById('heroBg');
+  if (!bg) return;
+
+  // пул сильных шоурилов/CG (каждый id имеет постер assets/posters/<id>.jpg)
+  const POOL = ['1084907216','1084907589','1144082517','999169734','1031059410',
+                '922265852','909958568','1146854881','1088667673','1162416540'];
+  // ротация по кругу через localStorage → повторный визит видит ДРУГОЙ
+  let idx = 0;
+  try {
+    const prev = parseInt(localStorage.getItem('faza_hero_i') || '-1', 10);
+    idx = (isNaN(prev) ? -1 : prev) + 1;
+    if (idx >= POOL.length) idx = 0;
+    localStorage.setItem('faza_hero_i', String(idx));
+  } catch (e) { idx = Math.floor((Date.now() / 1000) % POOL.length); }
+  const id = POOL[idx];
+  bg.dataset.reel = id;
+  // подменяем постер на выбранный ролик (с фолбэком, чтобы не было битой картинки)
+  const poster = bg.querySelector('.hero__poster');
+  if (poster) {
+    const img = new Image();
+    img.onload = () => { poster.src = img.src; };
+    img.src = 'assets/posters/' + id + '.jpg';
+  }
+
+  const conn = navigator.connection || {};
+  const heavyOk =
+    window.innerWidth >= 900 &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
+    !conn.saveData &&
+    !/2g|slow-2g|3g/.test(conn.effectiveType || '');
+  if (!heavyOk) return; // мобильные и медленные сети — остаёмся на лёгком постере
+  const load = () => {
+    const id = bg.dataset.reel;
+    const f = document.createElement('iframe');
+    f.src = `https://player.vimeo.com/video/${id}?background=1&autoplay=1&loop=1&muted=1&autopause=0&dnt=1`;
+    f.title = 'ФАЗА — шоурил';
+    f.allow = 'autoplay; fullscreen; picture-in-picture';
+    f.setAttribute('frameborder', '0');
+    f.style.opacity = '0';
+    f.style.transition = 'opacity 1.2s ease';
+    f.addEventListener('load', () => { f.style.opacity = '1'; });
+    bg.appendChild(f);
+  };
+  if ('requestIdleCallback' in window) requestIdleCallback(load, { timeout: 2500 });
+  else window.addEventListener('load', () => setTimeout(load, 800));
+})();
 
 // ===== Бургер-меню (мобильное) =====
 const burger = document.getElementById('burger');

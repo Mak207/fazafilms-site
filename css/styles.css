@@ -72,7 +72,11 @@ img{max-width:100%;display:block}
 /* ===== HERO — полноэкранный фоновый шоурил ===== */
 .hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;padding:90px 0 80px}
 /* фоновое видео на весь экран (cover через 16:9-масштаб) */
-.hero__bg{position:absolute;inset:0;z-index:0;overflow:hidden;background:#000}
+.hero__bg{position:absolute;inset:0;z-index:0;overflow:hidden;background:#0b0b0d}
+.hero__poster{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  animation:heroZoom 24s ease-in-out infinite alternate;
+}
 .hero__bg iframe{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
   width:100vw;height:56.25vw;min-height:100vh;min-width:177.78vh;
@@ -288,7 +292,12 @@ img{max-width:100%;display:block}
   .section{padding:80px 20px}
   .works__grid,.services__grid,.phases__list,.about__nums,.models__grid{grid-template-columns:1fr}
   .card--wide{grid-column:span 1}
-  .hero__stats{gap:30px}
+  .hero{min-height:90vh;padding:90px 0 60px}
+  .hero__title{font-size:clamp(38px,11.5vw,60px)}
+  .hero__actions{flex-direction:column;align-items:stretch}
+  .hero__actions .btn{width:100%}
+  .hero__stats{gap:26px;margin-top:36px}
+  .hero__scroll{display:none}
   .footer__inner{flex-direction:column}
   .lead__box{padding:30px 22px}
 }
