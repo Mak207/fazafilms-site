@@ -60,14 +60,16 @@ if (grid && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
   });
 }
 
-// ===== Hero: ротация шоурила (разный при каждом заходе) + видео только на десктопе =====
+// ===== Hero: ротация шоурила (разный при каждом заходе) — НАТИВНОЕ видео на самом сайте =====
+// Видео хостится у нас (assets/hero-<id>.mp4), а не на Vimeo — играет у всех,
+// не зависит от доменных ограничений Vimeo и блокировок ТСПУ в РФ.
 (function () {
   const bg = document.getElementById('heroBg');
-  if (!bg) return;
+  const vid = document.getElementById('heroVideo');
+  if (!bg || !vid) return;
 
-  // пул сильных шоурилов/CG (каждый id имеет постер assets/posters/<id>.jpg)
-  const POOL = ['1084907216','1084907589','1144082517','999169734','1031059410',
-                '922265852','909958568','1146854881','1088667673','1162416540'];
+  // пул собственных веб-петель (каждый id имеет assets/hero-<id>.mp4 и постер assets/posters/<id>.webp)
+  const POOL = ['1084907216', '1084907589', '1144082517'];
   // ротация по кругу через localStorage → повторный визит видит ДРУГОЙ
   let idx = 0;
   try {
@@ -78,35 +80,26 @@ if (grid && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
   } catch (e) { idx = Math.floor((Date.now() / 1000) % POOL.length); }
   const id = POOL[idx];
   bg.dataset.reel = id;
-  // подменяем постер на выбранный ролик (с фолбэком, чтобы не было битой картинки)
-  const poster = bg.querySelector('.hero__poster');
-  if (poster) {
-    const img = new Image();
-    img.onload = () => { poster.src = img.src; };
-    img.src = 'assets/posters/' + id + '.webp';
-  }
 
+  // постер выбранного ролика (с фолбэком, чтобы не было битой картинки)
+  const poster = bg.querySelector('.hero__poster');
+  const img = new Image();
+  img.onload = () => { if (poster) poster.src = img.src; vid.poster = img.src; };
+  img.src = 'assets/posters/' + id + '.webp';
+
+  // экономия трафика / reduce-motion / очень медленная сеть → остаёмся на лёгком постере
   const conn = navigator.connection || {};
-  const heavyOk =
-    window.innerWidth >= 900 &&
-    !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
-    !conn.saveData &&
-    !/2g|slow-2g|3g/.test(conn.effectiveType || '');
-  if (!heavyOk) return; // мобильные и медленные сети — остаёмся на лёгком постере
-  const load = () => {
-    const id = bg.dataset.reel;
-    const f = document.createElement('iframe');
-    f.src = `https://player.vimeo.com/video/${id}?background=1&autoplay=1&loop=1&muted=1&autopause=0&dnt=1`;
-    f.title = 'ФАЗА — шоурил';
-    f.allow = 'autoplay; fullscreen; picture-in-picture';
-    f.setAttribute('frameborder', '0');
-    f.style.opacity = '0';
-    f.style.transition = 'opacity 1.2s ease';
-    f.addEventListener('load', () => { f.style.opacity = '1'; });
-    bg.appendChild(f);
-  };
-  if ('requestIdleCallback' in window) requestIdleCallback(load, { timeout: 2500 });
-  else window.addEventListener('load', () => setTimeout(load, 800));
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      conn.saveData || /(^|\W)(2g|slow-2g)(\W|$)/.test(conn.effectiveType || '')) return;
+
+  // источник + воспроизведение (muted+playsinline → autoplay разрешён везде, в т.ч. на мобильных)
+  vid.muted = true; vid.defaultMuted = true; vid.setAttribute('muted', '');
+  vid.src = 'assets/hero-' + id + '.mp4';
+  const tryplay = () => { const p = vid.play(); if (p && p.catch) p.catch(() => {}); };
+  vid.addEventListener('canplay', () => { vid.style.opacity = '1'; tryplay(); }, { once: true });
+  vid.addEventListener('loadeddata', tryplay, { once: true });
+  if ('requestIdleCallback' in window) requestIdleCallback(tryplay, { timeout: 1500 });
+  else window.addEventListener('load', () => setTimeout(tryplay, 300));
 })();
 
 // ===== Бургер-меню (мобильное) =====
