@@ -1,5 +1,6 @@
 // ===== ФАЗА — интерактив сайта =====
-const SEL = window.SELECTION || [];
+// порядок портфолио: НОВЫЕ проекты первыми (vimeo-id растёт со временем → сорт по убыванию)
+const SEL = (window.SELECTION || []).slice().sort((a, b) => Number(b.id) - Number(a.id));
 const grid = document.getElementById('grid');
 const moreBtn = document.getElementById('moreBtn');
 const filters = document.getElementById('filters');
@@ -134,3 +135,72 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     io.observe(el);
   });
 }
+
+// ===== Форма «Расскажите о задаче»: текст + голос → бриф, капча, анти-спам =====
+(function () {
+  const form = document.getElementById('briefForm');
+  if (!form) return;
+  const API = 'https://panel.fazafilms.ru';
+  const note = document.getElementById('briefNote');
+  const aState = document.getElementById('audioState');
+  const recBtn = document.getElementById('recBtn');
+  let capToken = '', audioBlob = null, mediaRec = null, chunks = [];
+
+  async function loadCap() {
+    try { const c = await (await fetch(API + '/api/captcha')).json();
+      document.getElementById('capQ').textContent = c.q + ' ='; capToken = c.token;
+    } catch (e) { document.getElementById('capQ').textContent = 'не загрузилось'; capToken = ''; }
+  }
+  loadCap();
+
+  recBtn.addEventListener('click', async () => {
+    if (mediaRec && mediaRec.state === 'recording') { mediaRec.stop(); return; }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      chunks = []; mediaRec = new MediaRecorder(stream);
+      mediaRec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+      mediaRec.onstop = () => {
+        audioBlob = new Blob(chunks, { type: 'audio/webm' });
+        stream.getTracks().forEach(t => t.stop());
+        recBtn.textContent = '🎤 Записать заново'; recBtn.classList.remove('rec');
+        aState.textContent = '🎙 запись прикреплена (' + Math.round(audioBlob.size / 1024) + ' КБ)';
+      };
+      mediaRec.start(); recBtn.textContent = '⏹ Остановить'; recBtn.classList.add('rec');
+      aState.textContent = '● идёт запись…';
+    } catch (e) { aState.textContent = 'Микрофон недоступен — прикрепите файл'; }
+  });
+
+  document.getElementById('audioInput').addEventListener('change', e => {
+    const f = e.target.files[0]; if (f) { audioBlob = f; aState.textContent = '📎 ' + f.name; }
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('briefSubmit');
+    if (!form.contact.value.trim() || (!form.text.value.trim() && !audioBlob)) {
+      note.textContent = 'Укажите контакт и задачу — текстом или голосом.'; return;
+    }
+    const fd = new FormData();
+    fd.append('name', form.name.value || '');
+    fd.append('contact', form.contact.value || '');
+    fd.append('text', form.text.value || '');
+    fd.append('captcha', form.captcha.value || '');
+    fd.append('captcha_token', capToken);
+    fd.append('website', document.getElementById('hpField').value || '');
+    if (audioBlob) fd.append('audio', audioBlob, audioBlob.name || 'voice.webm');
+    btn.disabled = true; note.textContent = 'Отправляем…';
+    try {
+      const r = await fetch(API + '/api/brief', { method: 'POST', body: fd });
+      if (r.ok) {
+        note.textContent = '✅ Спасибо! Заявка получена — свяжемся в течение рабочего дня.';
+        form.reset(); audioBlob = null; aState.textContent = '';
+        recBtn.textContent = '🎤 Записать голосом'; loadCap();
+      } else {
+        note.textContent = r.status === 400 ? '⚠️ Проверьте ответ на пример и заполните контакт.'
+          : (r.status === 429 ? '⚠️ Слишком много заявок — попробуйте позже.' : '⚠️ Не удалось отправить, попробуйте ещё раз.');
+        loadCap();
+      }
+    } catch (e) { note.textContent = '⚠️ Нет связи. Напишите на project@fazafilms.ru'; }
+    btn.disabled = false;
+  });
+})();
