@@ -1,6 +1,10 @@
 // ===== ФАЗА — интерактив сайта =====
-// порядок портфолио: НОВЫЕ проекты первыми (vimeo-id растёт со временем → сорт по убыванию)
-const SEL = (window.SELECTION || []).slice().sort((a, b) => Number(b.id) - Number(a.id));
+// порядок: CG/3D-графика первыми, внутри групп — новые первыми (по vimeo-id убыв.)
+const SEL = (window.SELECTION || []).slice().sort((a, b) => {
+  if (a.cat === 'cg' && b.cat !== 'cg') return -1;
+  if (b.cat === 'cg' && a.cat !== 'cg') return 1;
+  return Number(b.id) - Number(a.id);
+});
 const grid = document.getElementById('grid');
 const moreBtn = document.getElementById('moreBtn');
 const filters = document.getElementById('filters');
