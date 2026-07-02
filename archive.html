@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Все работы — ФАЗА</title>
+  <meta name="description" content="100 свежих работ студии ФАЗА — CG/3D-моушн и живое видео с VFX." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<header class="nav" id="top">
+  <a class="nav__logo" href="/">ФАЗА<span>.</span></a>
+  <nav class="nav__menu" aria-label="Главное меню">
+    <a href="/#works">Работы</a>
+    <a href="/#services">Услуги</a>
+    <a href="/#models">Стоимость</a>
+    <a href="/#about">О студии</a>
+    <a href="/#contact">Контакты</a>
+  </nav>
+  <a class="btn btn--accent nav__cta" href="/#contact">Обсудить проект</a>
+  <button class="nav__burger" aria-label="Меню" id="burger"><span></span><span></span><span></span></button>
+</header>
+
+<section class="section works" style="padding-top:6rem">
+  <div class="section__head">
+    <a href="/" class="section__tag" style="text-decoration:none;opacity:.6">← На главную</a>
+    <h2 class="section__title">Работы студии</h2>
+    <p class="section__sub"><b id="worksCount"></b>&nbsp;работ из&nbsp;видеотеки — CG/3D-моушн и&nbsp;живое видео с&nbsp;VFX.</p>
+  </div>
+
+  <div class="works__filters" id="filters">
+    <button class="chip is-active" data-filter="all">Все</button>
+    <button class="chip" data-filter="cg">3D / графика</button>
+    <button class="chip" data-filter="films">Фильмы · события</button>
+    <button class="chip" data-filter="food">Еда</button>
+    <button class="chip" data-filter="estate">Недвижимость</button>
+  </div>
+
+  <div class="works__grid" id="grid"></div>
+  <div class="works__more"><button class="btn btn--ghost" id="moreBtn" style="display:none">Показать ещё</button></div>
+</section>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">ФАЗА<span>.</span></div>
+    <div class="footer__cols">
+      <div>
+        <h4>Навигация</h4>
+        <a href="/#works">Работы</a><a href="/#services">Услуги</a>
+        <a href="/#models">Стоимость</a><a href="/#contact">Контакты</a>
+      </div>
+      <div>
+        <h4>Соцсети</h4>
+        <a href="https://vimeo.com/faza" target="_blank" rel="noopener">Vimeo</a>
+        <a href="https://www.youtube.com/user/TheFazaProduction" target="_blank" rel="noopener">YouTube</a>
+      </div>
+      <div>
+        <h4>Контакты</h4>
+        <a href="tel:+79247319101">+7 924 731 91 01</a>
+        <a href="mailto:hello@fazafilms.ru">hello@fazafilms.ru</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <span>© 2026 ФАЗА · студия видеопродакшн</span>
+    <span>fazafilms.ru</span>
+  </div>
+</footer>
+
+<script src="js/selection.js"></script>
+<script>
+  const SEL = (window.SELECTION || []).slice().sort((a, b) => {
+    if (a.cat === 'cg' && b.cat !== 'cg') return -1;
+    if (b.cat === 'cg' && a.cat !== 'cg') return 1;
+    return Number(b.id) - Number(a.id);
+  });
+  const grid = document.getElementById('grid');
+  const moreBtn = document.getElementById('moreBtn');
+  const filters = document.getElementById('filters');
+  const countEl = document.getElementById('worksCount');
+  const BATCH = window.innerWidth < 700 ? 9 : 24;
+  let curFilter = 'all', shown = 0;
+
+  const esc = t => (t || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const filtered = () => curFilter === 'all' ? SEL : SEL.filter(s => s.cat === curFilter);
+
+  function cardHTML(s) {
+    const webp = s.poster.replace(/\.jpg$/, '.webp');
+    return `<a class="card" data-cat="${s.cat}" href="${s.vimeo}" target="_blank" rel="noopener" title="${esc(s.title)}">
+      <picture>
+        <source srcset="${webp}" type="image/webp">
+        <img class="card__img" loading="lazy" src="${s.poster}" alt="${esc(s.title)}" width="480" height="270">
+      </picture>
+      <video class="card__vid" muted loop playsinline preload="none" data-src="assets/previews/${s.id}.mp4"></video>
+      <span class="card__cat">${esc(s.cat_ru)}</span>
+      <h3 class="card__title">${esc(s.title)}</h3>
+      <span class="card__play">▶&nbsp;смотреть</span>
+    </a>`;
+  }
+
+  function render(reset) {
+    const list = filtered();
+    if (reset) { grid.innerHTML = ''; shown = 0; }
+    grid.insertAdjacentHTML('beforeend', list.slice(shown, shown + BATCH).map(cardHTML).join(''));
+    shown = Math.min(shown + BATCH, list.length);
+    if (moreBtn) moreBtn.style.display = shown < list.length ? '' : 'none';
+    if (countEl) countEl.textContent = list.length;
+  }
+
+  filters?.addEventListener('click', (e) => {
+    const btn = e.target.closest('.chip');
+    if (!btn) return;
+    filters.querySelectorAll('.chip').forEach(c => c.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    curFilter = btn.dataset.filter;
+    render(true);
+  });
+  moreBtn?.addEventListener('click', () => render(false));
+  if (grid) render(true);
+
+  if (grid && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+    grid.addEventListener('mouseover', (e) => {
+      const card = e.target.closest('.card'); if (!card) return;
+      const v = card.querySelector('.card__vid'); if (!v) return;
+      if (!v.src && v.dataset.src) v.src = v.dataset.src;
+      v.play().catch(() => {});
+    });
+    grid.addEventListener('mouseout', (e) => {
+      const card = e.target.closest('.card'); if (!card) return;
+      if (e.relatedTarget && card.contains(e.relatedTarget)) return;
+      const v = card.querySelector('.card__vid');
+      if (v && v.src) { try { v.pause(); v.currentTime = 0; } catch (_) {} }
+    });
+  }
+
+  const burger = document.getElementById('burger');
+  const menu = document.querySelector('.nav__menu');
+  burger?.addEventListener('click', () => {
+    const open = menu.style.display === 'flex';
+    menu.style.display = open ? '' : 'flex';
+    Object.assign(menu.style, open ? {} : {
+      position: 'absolute', top: '64px', left: '0', right: '0',
+      flexDirection: 'column', background: 'rgba(11,11,13,.97)',
+      padding: '20px 28px', borderBottom: '1px solid #26262d'
+    });
+  });
+  menu?.querySelectorAll('a').forEach(a =>
+    a.addEventListener('click', () => { if (window.innerWidth <= 900) menu.style.display = ''; })
+  );
+</script>
+</body>
+</html>
