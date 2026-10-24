@@ -8,7 +8,11 @@ const countEl = document.getElementById('worksCount');
 const BATCH = window.innerWidth < 700 ? 9 : 24;
 let curFilter = 'all', shown = 0;
 
-const esc = t => (t || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// Vimeo titles in the static selection contain encoded punctuation. Decode
+// that punctuation once, then escape HTML as before (no HTML is rendered).
+const titleEntities = { quot: '"', amp: '&', lt: '<', gt: '>', apos: "'", ndash: '–', mdash: '—', laquo: '«', raquo: '»', ldquo: '“', rdquo: '”' };
+const esc = t => String(t || '').replace(/&(quot|amp|lt|gt|apos|ndash|mdash|laquo|raquo|ldquo|rdquo);/g, (_, name) => titleEntities[name])
+  .replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const filtered = () => curFilter === 'all' ? SEL : SEL.filter(s => s.cat === curFilter);
 
 function cardHTML(s) {
@@ -37,8 +41,9 @@ function render(reset) {
 filters?.addEventListener('click', (e) => {
   const btn = e.target.closest('.chip');
   if (!btn) return;
-  filters.querySelectorAll('.chip').forEach(c => c.classList.remove('is-active'));
+  filters.querySelectorAll('.chip').forEach(c => { c.classList.remove('is-active'); c.setAttribute('aria-pressed', 'false'); });
   btn.classList.add('is-active');
+  btn.setAttribute('aria-pressed', 'true');
   curFilter = btn.dataset.filter;
   render(true);
 });
@@ -106,18 +111,17 @@ if (grid && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
 // ===== Бургер-меню (мобильное) =====
 const burger = document.getElementById('burger');
 const menu = document.querySelector('.nav__menu');
-burger?.addEventListener('click', () => {
-  const open = menu.style.display === 'flex';
-  menu.style.display = open ? '' : 'flex';
-  Object.assign(menu.style, open ? {} : {
-    position: 'absolute', top: '64px', left: '0', right: '0',
-    flexDirection: 'column', background: 'rgba(11,11,13,.97)',
-    padding: '20px 28px', borderBottom: '1px solid #26262d'
-  });
+const mobileMenu = window.matchMedia('(max-width:900px)');
+function setMenuOpen(open) {
+  menu?.classList.toggle('is-open', Boolean(open && mobileMenu.matches));
+  burger?.setAttribute('aria-expanded', String(Boolean(open && mobileMenu.matches)));
+}
+burger?.addEventListener('click', () => setMenuOpen(!menu?.classList.contains('is-open')));
+menu?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenuOpen(false)));
+mobileMenu.addEventListener('change', () => setMenuOpen(false));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && menu?.classList.contains('is-open')) { setMenuOpen(false); burger?.focus(); }
 });
-menu?.querySelectorAll('a').forEach(a =>
-  a.addEventListener('click', () => { if (window.innerWidth <= 900) menu.style.display = ''; })
-);
 
 // ===== Плавное появление секций =====
 const io = new IntersectionObserver((entries) => {
@@ -144,63 +148,145 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const note = document.getElementById('briefNote');
   const aState = document.getElementById('audioState');
   const recBtn = document.getElementById('recBtn');
-  let capToken = '', audioBlob = null, mediaRec = null, chunks = [];
+  const audioInput = document.getElementById('audioInput');
+  const attachBtn = document.getElementById('audioAttach');
+  const clearBtn = document.getElementById('audioClear');
+  const capAns = document.getElementById('capAns');
+  const capRetry = document.getElementById('capRetry');
+  const submitBtn = document.getElementById('briefSubmit');
+  const field = name => form.elements.namedItem(name);
+  const MAX_AUDIO = 40 * 1024 * 1024;
+  let capToken = '', audioBlob = null, audioName = '', audioError = '', mediaRec = null;
+  let capLoading = false, capRequest = 0, acquiring = false, stopping = false, sending = false;
+
+  function syncControls() {
+    const recording = mediaRec?.state === 'recording';
+    recBtn.disabled = acquiring || stopping || sending;
+    audioInput.disabled = attachBtn.disabled = clearBtn.disabled = acquiring || stopping || recording || sending;
+    submitBtn.disabled = acquiring || stopping || recording || sending || capLoading || !capToken || Boolean(audioError);
+    ['name', 'contact', 'text'].forEach(name => { field(name).disabled = sending; });
+    capAns.disabled = sending || capLoading || !capToken;
+    capRetry.disabled = sending || capLoading;
+    clearBtn.hidden = !audioBlob && !audioError;
+  }
+  function audioSizeError(blob) {
+    if (blob.size <= 200) return 'Аудио пустое или слишком короткое. Запишите заново или выберите другой файл.';
+    if (blob.size > MAX_AUDIO) return 'Аудио больше 40 МБ. Выберите файл поменьше или уберите вложение.';
+    return '';
+  }
+  function clearAudio() {
+    audioBlob = null; audioName = ''; audioError = ''; audioInput.value = ''; aState.textContent = '';
+    recBtn.textContent = '🎤 Записать голосом'; syncControls();
+  }
+  function acceptAudio(blob, name, recorded) {
+    audioError = audioSizeError(blob);
+    audioBlob = audioError ? null : blob; audioName = audioError ? '' : name;
+    aState.textContent = audioError || (recorded ? '🎙 запись прикреплена (' + Math.round(blob.size / 1024) + ' КБ)' : '📎 ' + name);
+    syncControls();
+  }
 
   async function loadCap() {
-    try { const c = await (await fetch(API + '/api/captcha')).json();
-      document.getElementById('capQ').textContent = c.q + ' ='; capToken = c.token;
-    } catch (e) { document.getElementById('capQ').textContent = 'не загрузилось'; capToken = ''; }
+    const request = ++capRequest;
+    capToken = ''; capAns.value = ''; capLoading = true; syncControls();
+    document.getElementById('capQ').textContent = 'загрузка…';
+    try {
+      const response = await fetch(API + '/api/captcha');
+      if (!response.ok) throw new Error('captcha_unavailable');
+      const c = await response.json();
+      if (!c || typeof c.q !== 'string' || !c.q.trim() || typeof c.token !== 'string' || !c.token) throw new Error('captcha_invalid');
+      if (request !== capRequest) return;
+      document.getElementById('capQ').textContent = c.q + ' ='; capToken = c.token; capRetry.hidden = true;
+    } catch (e) {
+      if (request !== capRequest) return;
+      document.getElementById('capQ').textContent = 'Проверка не загрузилась'; capToken = ''; capRetry.hidden = false;
+    } finally { if (request === capRequest) { capLoading = false; syncControls(); } }
   }
+  capRetry.addEventListener('click', loadCap);
+  attachBtn.addEventListener('click', () => audioInput.click());
+  clearBtn.addEventListener('click', clearAudio);
   loadCap();
 
   recBtn.addEventListener('click', async () => {
-    if (mediaRec && mediaRec.state === 'recording') { mediaRec.stop(); return; }
+    if (acquiring || stopping || sending) return;
+    if (mediaRec?.state === 'recording') {
+      stopping = true; syncControls(); mediaRec.stop(); return;
+    }
+    acquiring = true; syncControls();
+    let stream = null;
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      chunks = []; mediaRec = new MediaRecorder(stream);
-      mediaRec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
-      mediaRec.onstop = () => {
-        audioBlob = new Blob(chunks, { type: 'audio/webm' });
+      if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') throw new Error('recording_unavailable');
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream), chunks = [];
+      let failed = false;
+      mediaRec = recorder;
+      recorder.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+      recorder.onerror = () => {
+        failed = true; audioError = 'Не удалось записать аудио. Запишите заново или прикрепите файл.';
+        audioBlob = null; audioName = ''; aState.textContent = audioError;
+        if (recorder.state !== 'inactive') { try { recorder.stop(); } catch (_) {} }
         stream.getTracks().forEach(t => t.stop());
-        recBtn.textContent = '🎤 Записать заново'; recBtn.classList.remove('rec');
-        aState.textContent = '🎙 запись прикреплена (' + Math.round(audioBlob.size / 1024) + ' КБ)';
+        mediaRec = null; stopping = false; recBtn.classList.remove('rec'); syncControls();
       };
-      mediaRec.start(); recBtn.textContent = '⏹ Остановить'; recBtn.classList.add('rec');
+      recorder.onstop = () => {
+        stream.getTracks().forEach(t => t.stop());
+        mediaRec = null; stopping = false; recBtn.textContent = '🎤 Записать заново'; recBtn.classList.remove('rec');
+        if (!failed) {
+          const mime = recorder.mimeType || chunks.find(chunk => chunk.type)?.type || 'audio/webm';
+          const extensions = { 'audio/webm': 'webm', 'video/webm': 'webm', 'audio/ogg': 'ogg', 'audio/mp4': 'm4a', 'video/mp4': 'mp4', 'audio/mpeg': 'mp3', 'audio/wav': 'wav', 'audio/x-wav': 'wav', 'audio/aac': 'aac' };
+          const ext = extensions[mime.split(';')[0].trim().toLowerCase()];
+          if (ext) acceptAudio(new Blob(chunks, { type: mime }), 'voice.' + ext, true);
+          else { audioError = 'Формат записи не поддерживается. Прикрепите аудиофайл.'; aState.textContent = audioError; }
+        }
+        syncControls();
+      };
+      recorder.start();
+      audioBlob = null; audioName = ''; audioError = ''; audioInput.value = '';
+      recBtn.textContent = '⏹ Остановить'; recBtn.classList.add('rec');
       aState.textContent = '● идёт запись…';
-    } catch (e) { aState.textContent = 'Микрофон недоступен — прикрепите файл'; }
+    } catch (e) {
+      stream?.getTracks().forEach(t => t.stop()); mediaRec = null; stopping = false;
+      recBtn.classList.remove('rec');
+      aState.textContent = 'Микрофон недоступен — прикрепите файл' + (audioBlob ? '. Прежнее аудио сохранено.' : '');
+    } finally { acquiring = false; syncControls(); }
   });
 
-  document.getElementById('audioInput').addEventListener('change', e => {
-    const f = e.target.files[0]; if (f) { audioBlob = f; aState.textContent = '📎 ' + f.name; }
+  audioInput.addEventListener('change', e => {
+    const f = e.target.files[0]; if (f) acceptAudio(f, f.name, false);
   });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const btn = document.getElementById('briefSubmit');
-    if (!form.contact.value.trim() || (!form.text.value.trim() && !audioBlob)) {
+    if (sending) return;
+    if (acquiring || stopping || mediaRec?.state === 'recording') { note.textContent = 'Сначала остановите запись и дождитесь прикрепления аудио.'; return; }
+    if (audioError) { note.textContent = audioError; return; }
+    if (capLoading || !capToken) { note.textContent = 'Дождитесь загрузки проверки или нажмите «Повторить».'; return; }
+    if (!field('contact').value.trim() || (!field('text').value.trim() && !audioBlob)) {
       note.textContent = 'Укажите контакт и задачу — текстом или голосом.'; return;
     }
     const fd = new FormData();
-    fd.append('name', form.name.value || '');
-    fd.append('contact', form.contact.value || '');
-    fd.append('text', form.text.value || '');
-    fd.append('captcha', form.captcha.value || '');
+    fd.append('name', field('name').value || '');
+    fd.append('contact', field('contact').value || '');
+    fd.append('text', field('text').value || '');
+    fd.append('captcha', capAns.value || '');
     fd.append('captcha_token', capToken);
     fd.append('website', document.getElementById('hpField').value || '');
-    if (audioBlob) fd.append('audio', audioBlob, audioBlob.name || 'voice.webm');
-    btn.disabled = true; note.textContent = 'Отправляем…';
+    if (audioBlob) fd.append('audio', audioBlob, audioName);
+    sending = true; syncControls(); note.textContent = 'Отправляем…';
     try {
       const r = await fetch(API + '/api/brief', { method: 'POST', body: fd });
       if (r.ok) {
         note.textContent = '✅ Спасибо! Заявка получена — свяжемся в течение рабочего дня.';
-        form.reset(); audioBlob = null; aState.textContent = '';
-        recBtn.textContent = '🎤 Записать голосом'; loadCap();
+        form.reset(); clearAudio(); loadCap();
       } else {
-        note.textContent = r.status === 400 ? '⚠️ Проверьте ответ на пример и заполните контакт.'
-          : (r.status === 429 ? '⚠️ Слишком много заявок — попробуйте позже.' : '⚠️ Не удалось отправить, попробуйте ещё раз.');
+        let detail = '';
+        try { detail = (await r.json()).detail; } catch (_) {}
+        note.textContent = r.status === 413 ? '⚠️ Аудио больше 40 МБ. Выберите файл поменьше или уберите вложение.'
+          : r.status === 400 && detail === 'Аудио пустое или слишком короткое' ? '⚠️ Аудио пустое или слишком короткое. Запишите заново или выберите другой файл.'
+          : r.status === 400 ? '⚠️ Проверьте ответ на пример и заполните контакт.'
+          : r.status === 429 ? '⚠️ Слишком много заявок — попробуйте позже.' : '⚠️ Не удалось отправить, попробуйте ещё раз.';
         loadCap();
       }
     } catch (e) { note.textContent = '⚠️ Нет связи. Напишите на project@fazafilms.ru'; }
-    btn.disabled = false;
+    finally { sending = false; syncControls(); }
   });
 })();
