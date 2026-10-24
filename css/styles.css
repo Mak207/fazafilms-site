@@ -332,3 +332,13 @@ img{max-width:100%;display:block}
 .brief-captcha{display:flex;gap:10px;align-items:center;margin-bottom:12px}
 .cap-q{font-weight:700;white-space:nowrap;font-size:15px}
 .brief-captcha input{margin:0 !important;max-width:130px}
+
+/* Рабочий кабинет: постоянный вход справа, включая мобильный экран. */
+.nav{gap:20px}
+.nav__actions{margin-left:auto;display:flex;align-items:center;gap:12px}
+.nav__actions .btn{padding:11px 18px;font-size:14px}
+.nav__workplace{border-color:#7c4c2d}
+.nav__workplace:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+@media(max-width:1180px){.nav__actions .nav__cta{display:none}.nav__menu{gap:20px}}
+@media(max-width:900px){.nav{gap:14px}.nav__burger{margin-left:0}.nav__actions{margin-left:auto}.nav__workplace{display:inline-flex}}
+@media(max-width:420px){.nav{padding:14px 16px;gap:12px}.nav__actions .btn{font-size:13px;padding:10px 13px}.nav__logo{font-size:22px}}
