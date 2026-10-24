@@ -1,11 +1,17 @@
 // ===== ФАЗА — интерактив сайта =====
-// порядок портфолио: НОВЫЕ проекты первыми (vimeo-id растёт со временем → сорт по убыванию)
-const SEL = (window.SELECTION || []).slice().sort((a, b) => Number(b.id) - Number(a.id));
+// порядок: CG/3D-графика первыми, внутри групп — новые первыми (по vimeo-id убыв.)
+const SEL = (window.SELECTION || []).slice().sort((a, b) => {
+  if (a.cat === 'cg' && b.cat !== 'cg') return -1;
+  if (b.cat === 'cg' && a.cat !== 'cg') return 1;
+  return Number(b.id) - Number(a.id);
+});
 const grid = document.getElementById('grid');
 const moreBtn = document.getElementById('moreBtn');
+const archiveLink = document.getElementById('archiveLink');
 const filters = document.getElementById('filters');
 const countEl = document.getElementById('worksCount');
 const BATCH = window.innerWidth < 700 ? 9 : 24;
+const MAIN_LIMIT = 30;
 let curFilter = 'all', shown = 0;
 
 // Vimeo titles in the static selection contain encoded punctuation. Decode
@@ -31,10 +37,13 @@ function cardHTML(s) {
 
 function render(reset) {
   const list = filtered();
+  const isAll = curFilter === 'all';
   if (reset) { grid.innerHTML = ''; shown = 0; }
-  grid.insertAdjacentHTML('beforeend', list.slice(shown, shown + BATCH).map(cardHTML).join(''));
-  shown = Math.min(shown + BATCH, list.length);
-  if (moreBtn) moreBtn.style.display = shown < list.length ? '' : 'none';
+  const end = isAll ? Math.min(MAIN_LIMIT, list.length) : Math.min(shown + BATCH, list.length);
+  grid.insertAdjacentHTML('beforeend', list.slice(shown, end).map(cardHTML).join(''));
+  shown = end;
+  if (moreBtn) moreBtn.style.display = (!isAll && shown < list.length) ? '' : 'none';
+  if (archiveLink) archiveLink.style.display = (isAll && list.length > MAIN_LIMIT) ? '' : 'none';
   if (countEl) countEl.textContent = list.length;
 }
 
