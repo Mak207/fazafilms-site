@@ -295,6 +295,7 @@ img{max-width:100%;display:block}
 }
 @media(max-width:900px){
   .nav__menu{display:none}
+  .nav__menu.is-open{display:flex;position:absolute;top:100%;left:0;right:0;flex-direction:column;margin-left:0;background:rgba(11,11,13,.97);padding:20px 28px;border-bottom:1px solid #26262d}
   .nav__cta{display:none}
   .nav__burger{display:flex}
   .works__grid,.services__grid,.phases__list,.models__grid{grid-template-columns:1fr 1fr}
@@ -329,9 +330,12 @@ img{max-width:100%;display:block}
 .brief-up{display:inline-flex;align-items:center}
 .brief-rec.rec{border-color:#FF5E62;color:#FF5E62}
 .brief-state{font-size:12px;color:#9a9aa3}
-.brief-captcha{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.brief-captcha{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
 .cap-q{font-weight:700;white-space:nowrap;font-size:15px}
 .brief-captcha input{margin:0 !important;max-width:130px}
+.brief-audio [hidden],.brief-captcha [hidden]{display:none!important}
+.lead__form .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.brief-up:focus-visible,.nav__burger:focus-visible,.chip:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 
 /* Рабочий кабинет: постоянный вход справа, включая мобильный экран. */
 .nav{gap:20px}

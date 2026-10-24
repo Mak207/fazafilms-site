@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="preload" as="image" href="assets/hero.webp" fetchpriority="high" />
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css?v=20261024-buttons-1" />
 
   <script type="application/ld+json">
   {
@@ -36,7 +36,7 @@
 <!-- ░░ ШАПКА ░░ -->
 <header class="nav" id="top">
   <a class="nav__logo" href="#top">ФАЗА<span>.</span></a>
-  <nav class="nav__menu" aria-label="Главное меню">
+  <nav class="nav__menu" id="mainMenu" aria-label="Главное меню">
     <a href="#works">Работы</a>
     <a href="#services">Услуги</a>
     <a href="#models">Стоимость</a>
@@ -47,7 +47,7 @@
     <a class="btn btn--accent nav__cta" href="#contact">Обсудить проект</a>
     <a class="btn btn--ghost nav__workplace" href="https://panel.fazafilms.ru/workplace">Войти в кабинет</a>
   </div>
-  <button class="nav__burger" aria-label="Меню" id="burger"><span></span><span></span><span></span></button>
+  <button type="button" class="nav__burger" aria-label="Меню" aria-controls="mainMenu" aria-expanded="false" id="burger"><span></span><span></span><span></span></button>
 </header>
 
 <!-- ░░ HERO — полноэкранный фоновый шоурил (вау) ░░ -->
@@ -90,11 +90,11 @@
   </div>
 
   <div class="works__filters" id="filters">
-    <button class="chip is-active" data-filter="all">Все</button>
-    <button class="chip" data-filter="cg">3D / графика</button>
-    <button class="chip" data-filter="films">Фильмы · события</button>
-    <button class="chip" data-filter="food">Еда</button>
-    <button class="chip" data-filter="estate">Недвижимость</button>
+    <button class="chip is-active" data-filter="all" aria-pressed="true">Все</button>
+    <button class="chip" data-filter="cg" aria-pressed="false">3D / графика</button>
+    <button class="chip" data-filter="films" aria-pressed="false">Фильмы · события</button>
+    <button class="chip" data-filter="food" aria-pressed="false">Еда</button>
+    <button class="chip" data-filter="estate" aria-pressed="false">Недвижимость</button>
   </div>
 
   <div class="works__grid" id="grid"></div>
@@ -208,16 +208,19 @@
       <textarea name="text" placeholder="Коротко о задаче — текстом или запишите голосом ниже" aria-label="Задача" rows="3"></textarea>
       <div class="brief-audio">
         <button type="button" class="btn brief-rec" id="recBtn">🎤 Записать голосом</button>
-        <label class="btn brief-up">📎 Прикрепить аудио<input type="file" id="audioInput" accept="audio/*" hidden /></label>
-        <span id="audioState" class="brief-state"></span>
+        <button type="button" class="btn brief-up" id="audioAttach">📎 Прикрепить аудио</button>
+        <input type="file" id="audioInput" accept="audio/*" hidden />
+        <button type="button" class="btn brief-up" id="audioClear" hidden>Убрать аудио</button>
+        <span id="audioState" class="brief-state" role="status" aria-live="polite"></span>
       </div>
       <div class="brief-captcha">
         <span id="capQ" class="cap-q">загрузка…</span>
-        <input type="text" name="captcha" id="capAns" inputmode="numeric" placeholder="ответ" aria-label="Проверка" autocomplete="off" required />
+        <input type="text" name="captcha" id="capAns" inputmode="numeric" placeholder="ответ" aria-label="Проверка" aria-describedby="capQ" autocomplete="off" required />
+        <button type="button" class="btn brief-up" id="capRetry" hidden>Повторить</button>
       </div>
       <input type="text" name="website" id="hpField" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
       <button class="btn btn--accent btn--lg" type="submit" id="briefSubmit">Отправить заявку</button>
-      <p class="lead__note" id="briefNote">Можно записать голосом — расшифруем и превратим в бриф. Нажимая «Отправить», вы&nbsp;соглашаетесь на&nbsp;обработку данных.</p>
+      <p class="lead__note" id="briefNote" role="status" aria-live="polite">Можно записать голосом — расшифруем и превратим в бриф. Нажимая «Отправить», вы&nbsp;соглашаетесь на&nbsp;обработку данных.</p>
     </form>
   </div>
 </section>
@@ -251,6 +254,6 @@
 </footer>
 
 <script src="js/selection.js"></script>
-<script src="js/main.js"></script>
+<script src="js/main.js?v=20261024-buttons-1"></script>
 </body>
 </html>
