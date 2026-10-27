@@ -275,6 +275,7 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     try {
       const r = await fetch(API + '/api/brief', { method: 'POST', body: fd });
       if (r.ok) {
+        window.dispatchEvent(new CustomEvent('faza:brief-success'));
         note.textContent = '✅ Спасибо! Заявка получена — свяжемся в течение рабочего дня.';
         form.reset(); clearAudio(); loadCap();
       } else {
