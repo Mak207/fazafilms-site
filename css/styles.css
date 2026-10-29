@@ -340,6 +340,11 @@ img{max-width:100%;display:block}
 /* Рабочий кабинет: постоянный вход справа, включая мобильный экран. */
 .nav{gap:20px}
 .nav__actions{margin-left:auto;display:flex;align-items:center;gap:12px}
+.lang-switch{display:flex;gap:6px;align-items:center}
+.lang-switch a{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:7px 9px;font:600 12px/1 Inter,sans-serif}
+.lang-switch a:hover,.lang-switch a[aria-current="page"]{border-color:var(--accent);color:var(--accent)}
+.svc>a{display:inline-block;margin-top:16px;color:var(--accent);font-weight:600;text-decoration:none}
+.svc>a:hover{text-decoration:underline}
 .nav__actions .btn{padding:11px 18px;font-size:14px}
 .nav__workplace{border-color:#7c4c2d}
 .nav__workplace:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
