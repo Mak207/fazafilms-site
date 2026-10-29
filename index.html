@@ -7,6 +7,10 @@
   <meta name="description" content="ФАЗА — студия визуального контента: CG/3D-моушн и живое видео с графикой и VFX. Реклама для ТВ, кинотеатров и digital. Работаем в Cinema 4D." />
 
   <link rel="canonical" href="https://fazafilms.ru/" />
+  <link rel="alternate" hreflang="ru" href="https://fazafilms.ru/" />
+  <link rel="alternate" hreflang="en" href="https://fazafilms.ru/en/" />
+  <link rel="alternate" hreflang="zh-CN" href="https://fazafilms.ru/zh/" />
+  <link rel="alternate" hreflang="x-default" href="https://fazafilms.ru/" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta property="og:url" content="https://fazafilms.ru/" />
@@ -34,6 +38,13 @@
     "url": "https://fazafilms.ru",
     "telephone": "+7-924-731-91-01",
     "email": "hello@fazafilms.ru",
+    "logo": "https://fazafilms.ru/favicon.svg",
+    "areaServed": ["Russia", "Worldwide"],
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Vladivostok",
+      "addressCountry": "RU"
+    },
     "sameAs": ["https://vimeo.com/faza", "https://www.youtube.com/user/TheFazaProduction"]
   }
   </script>
@@ -46,13 +57,16 @@
 <header class="nav" id="top">
   <a class="nav__logo" href="#top">ФАЗА<span>.</span></a>
   <nav class="nav__menu" id="mainMenu" aria-label="Главное меню">
-    <a href="#works">Работы</a>
-    <a href="#services">Услуги</a>
-    <a href="#models">Стоимость</a>
+    <a href="/cases/">Работы</a>
+    <a href="/videoproduction/">Услуги</a>
+    <a href="/prices/">Стоимость</a>
     <a href="#about">О студии</a>
-    <a href="#contact">Контакты</a>
+    <a href="/contacts/">Контакты</a>
   </nav>
   <div class="nav__actions">
+    <div class="lang-switch" aria-label="Язык">
+      <a href="/" aria-current="page">RU</a><a href="/en/">EN</a><a href="/zh/">中文</a>
+    </div>
     <a class="btn btn--accent nav__cta" href="#contact">Обсудить проект</a>
     <a class="btn btn--ghost nav__workplace" href="https://panel.fazafilms.ru/workplace">Войти в кабинет</a>
   </div>
@@ -107,7 +121,7 @@
   </div>
 
   <div class="works__grid" id="grid"></div>
-  <div class="works__more"><button class="btn btn--ghost" id="moreBtn">Показать ещё</button></div>
+  <div class="works__more"><button class="btn btn--ghost" id="moreBtn">Показать ещё</button> <a class="btn btn--accent" href="/cases/">Индексируемые кейсы</a></div>
 </section>
 
 <!-- ░░ УСЛУГИ + ФАЗЫ ░░ -->
@@ -121,14 +135,17 @@
     <article class="svc">
       <h3>3D-моушн и&nbsp;графика</h3>
       <p>CG-ролики, анимация, экранный контент для&nbsp;форумов и&nbsp;медиафасадов. Ядро пайплайна — Cinema 4D.</p>
+      <a href="/3d-motion/">Подробнее о 3D и CGI →</a>
     </article>
     <article class="svc">
       <h3>Живое видео с&nbsp;VFX</h3>
       <p>Игровая и&nbsp;неигровая съёмка с&nbsp;актёрами, декорациями, спецэффектами и&nbsp;композитингом.</p>
+      <a href="/vfx/">Подробнее о VFX →</a>
     </article>
     <article class="svc">
       <h3>Презентационные фильмы</h3>
       <p>Визитная карточка компании: продукт, услуги и&nbsp;преимущества — развёрнуто и&nbsp;кинематографично.</p>
+      <a href="/corporate-film/">Подробнее о фильмах →</a>
     </article>
   </div>
 
@@ -241,8 +258,8 @@
     <div class="footer__cols">
       <div>
         <h4>Навигация</h4>
-        <a href="#works">Работы</a><a href="#services">Услуги</a>
-        <a href="#models">Стоимость</a><a href="#contact">Контакты</a>
+        <a href="/cases/">Работы</a><a href="/videoproduction/">Услуги</a>
+        <a href="/prices/">Стоимость</a><a href="/contacts/">Контакты</a>
       </div>
       <div>
         <h4>Соцсети</h4>
