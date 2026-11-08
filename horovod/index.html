@@ -18,6 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261108-1">
+  <link rel="stylesheet" href="showcase-audio.css?v=20261108-1">
   <script src="page.js?v=20261108-1" defer></script>
 </head>
 <body>
@@ -35,14 +36,17 @@
         <div>
           <div class="player player-featured">
             <video id="showcase-video" controls playsinline preload="metadata" poster="media/showcase-4k-poster.jpg" aria-label="Хоровод — демонстрация цветного светового волчка в 4K">
-              <source src="media/horovod-showcase-4k.mp4?v=1" type="video/mp4">
-              Ваш браузер не поддерживает видео. <a href="media/horovod-showcase-4k.mp4?v=1">Открыть 4K-ролик</a>.
+              <source src="media/horovod-showcase-4k.mp4?v=2" type="video/mp4">
+              Ваш браузер не поддерживает видео. <a href="media/horovod-showcase-4k.mp4?v=2">Открыть 4K-ролик</a>.
             </video>
             <span class="quality-chip">4K · 3840 × 2160</span>
           </div>
           <div class="showcase-actions">
-            <a class="download" href="media/horovod-showcase-4k.mp4?v=1" download="Horovod-90-RGB-4K.mp4">Скачать 4K-мастер <span aria-hidden="true">↘</span></a>
-            <span>24 секунды · звук включён</span>
+            <div class="showcase-downloads">
+              <a class="download" href="media/horovod-showcase-4k.mp4?v=2" download="Horovod-90-RGB-4K.mp4">Скачать 4K-видео <span aria-hidden="true">↘</span></a>
+              <a class="download" href="media/horovod-folk-master-24bit-48khz.wav?v=1" download="Horovod-folk-master-24bit-48kHz.wav">Скачать WAV 24-bit <span aria-hidden="true">↘</span></a>
+            </div>
+            <span>24 секунды · оригинальная народная музыка · мастер PCM 24-bit / 48 kHz</span>
           </div>
         </div>
         <aside class="realtime-card" aria-labelledby="realtime-title">
