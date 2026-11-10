@@ -1,0 +1,18 @@
+.showcase-downloads {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0 24px;
+}
+
+.showcase-downloads .download {
+  margin-top: 19px;
+}
+
+@media (max-width: 700px) {
+  .showcase-downloads {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0;
+  }
+}

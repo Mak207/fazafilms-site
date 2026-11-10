@@ -1,0 +1,19 @@
+.stage-panel,
+.stage,
+.scenario {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.stage {
+  min-height: 0;
+}
+
+#stage {
+  position: absolute;
+  inset: 0;
+}
+
+.scenario {
+  overflow: hidden;
+}

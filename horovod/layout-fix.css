@@ -1,0 +1,43 @@
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.hero,
+.hero-copy,
+.hero-image,
+.showcase,
+.showcase-grid,
+.showcase-grid > *,
+.showcase-actions,
+.showcase-downloads,
+.realtime-card,
+.idea,
+.idea-grid,
+.idea-grid > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.hero-detail,
+.showcase-actions,
+.download,
+.stream-status {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 700px) {
+  .hero-image {
+    width: 100%;
+  }
+
+  .hero-image figcaption {
+    flex-wrap: wrap;
+  }
+
+  .showcase-downloads,
+  .showcase-downloads .download {
+    width: 100%;
+  }
+}

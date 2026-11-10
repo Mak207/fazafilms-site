@@ -15,3 +15,7 @@ compare.addEventListener('click',async()=>{
   if(results.some(r=>r.status==='rejected')){videos.forEach(v=>v.pause());together=false;resetButton();status.textContent='Браузер ограничил одновременный запуск. Используйте кнопку воспроизведения в каждом плеере.';return;}
   compare.textContent='Остановить сравнение ‖';status.textContent='Оба ролика запущены с начала без звука. На телефоне второй плеер находится ниже.';
 });
+
+const showcaseVideo=document.getElementById('showcase-video');
+const streamStatus=document.getElementById('stream-status');
+showcaseVideo.addEventListener('error',()=>{streamStatus.textContent='4K-файл не загрузился. Используйте ссылку «Скачать 4K-мастер» или проверьте соединение.';});
