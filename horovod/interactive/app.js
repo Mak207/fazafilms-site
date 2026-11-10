@@ -1,29 +1,27 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 const ZONES = [
-  { name: "Шпиль", pattern: "Гжель", color: "#2176d2" },
-  { name: "Кольцевой экран", pattern: "Хохлома", color: "#e83a2f" },
-  { name: "Верхний конус", pattern: "Мезень", color: "#d34a32" },
-  { name: "Переход к поясу", pattern: "Городец", color: "#f5b34d" },
-  { name: "Центральный пояс", pattern: "Жостово", color: "#dd5ba1" },
-  { name: "Нижний конус", pattern: "Пермогорье", color: "#db5b3e" },
+  { name: "Нижняя опора", pattern: "Мезень", color: "#c8452d" },
+  { name: "Нижний пояс", pattern: "Хохлома", color: "#e8a32f" },
+  { name: "Широкий экран", pattern: "Гжель", color: "#2c6fc2" },
+  { name: "Переход", pattern: "Городец", color: "#46a0ad" },
+  { name: "Верхний конус", pattern: "Жостово", color: "#cb4e84" },
+  { name: "Шпиль", pattern: "Пермогорье", color: "#d95b37" },
 ];
 
 const SHOW_BEATS = [
-  [0, 2, "Перехват скорости"], [2, 6, "Гжель — штрихи"],
-  [6, 10, "Гжель"], [10, 12, "Переход"],
-  [12, 16, "Хохлома"], [16, 18, "Переход"],
-  [18, 22, "Шесть промыслов"], [22, 24, "Выход к апогею"],
-  [24, 26.5, "Апогей"], [26.5, 33.5, "ХОРОВОД"],
-  [33.5, 39, "Возврат в ожидание"],
+  [0, 4, "Мезень"], [4, 8, "Хохлома"], [8, 12, "Гжель"],
+  [12, 16, "Городец"], [16, 20, "Жостово"], [20, 24, "Пермогорье"],
+  [24, 30, "Финальный хоровод"], [30, 39, "Возврат в ожидание"],
 ];
 
 const MODE_COPY = {
-  auto: ["Автоматический цикл", "Ничего — сценарий идёт автоматически.", "Ожидание → включение шести зон → народное световое шоу → снова ожидание.", "109 секунд, затем повторяется."],
+  auto: ["Автоматический цикл", "Ничего — сценарий идёт автоматически.", "Ожидание → включение шести зон → шесть народных орнаментов по очереди → снова ожидание.", "109 секунд, затем повторяется."],
   wait: ["Режим ожидания", "Ничего. Зелёный свет приглашает подойти к пультам.", "Световые потоки спокойно поднимаются по трубкам; конструкция не вращается.", "30 секунд по кругу."],
   active: ["Участники управляют", "Двигайте шесть ползунков, тяните мышью или нажимайте клавиши 1–6.", "Каждая секция меняет направление и скорость. Когда все шесть активны 7 секунд, запускается шоу.", "До совместного запуска."],
-  show: ["Народное световое шоу", "Наблюдайте или переключайте главы на шкале.", "Шесть промыслов проходят по шести раздельным секциям с разными направлениями и скоростями.", "39 секунд."],
+  show: ["Народное световое шоу", "Наблюдайте или переключайте промыслы на шкале.", "Мезень, Хохлома, Гжель, Городец, Жостово и Пермогорье заполняют все 90 трубок по очереди.", "39 секунд."],
 };
 
 const canvas = document.querySelector("#stage");
@@ -35,86 +33,124 @@ const clockEl = document.querySelector("#clock");
 const progressEl = document.querySelector("#progress");
 const timelineEl = document.querySelector("#timeline");
 const zoneListEl = document.querySelector("#zone-list");
+const referenceImage = document.querySelector("#reference-image");
+const referenceCounter = document.querySelector("#reference-counter");
+const initialStageWidth = Math.max(1, wrap.clientWidth);
+const initialStageHeight = Math.max(1, wrap.clientHeight);
+
+document.querySelectorAll(".reference-thumb").forEach((button) => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".reference-thumb").forEach((item) => item.classList.toggle("active", item === button));
+    referenceImage.style.opacity = "0.25";
+    window.setTimeout(() => {
+      referenceImage.src = button.dataset.src;
+      referenceImage.alt = button.dataset.alt;
+      referenceCounter.textContent = button.dataset.count;
+      referenceImage.style.opacity = "1";
+    }, 120);
+  });
+});
 
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: "high-performance" });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.setSize(wrap.clientWidth, wrap.clientHeight, false);
+renderer.setSize(initialStageWidth, initialStageHeight, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.08;
-renderer.setClearColor(0x07100c, 1);
+renderer.toneMappingExposure = 1.12;
+renderer.setClearColor(0x15130f, 1);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x07100c, 0.035);
-const camera = new THREE.PerspectiveCamera(38, wrap.clientWidth / wrap.clientHeight, 0.05, 100);
-camera.position.set(8.2, 4.2, 10.5);
+scene.fog = new THREE.FogExp2(0x15130f, 0.026);
+const camera = new THREE.PerspectiveCamera(36, initialStageWidth / initialStageHeight, 0.05, 100);
+camera.position.set(7.4, 5.2, 8.8);
 
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 controls.dampingFactor = 0.055;
-controls.target.set(0, 1.25, 0);
-controls.minDistance = 5.5;
-controls.maxDistance = 22;
-controls.maxPolarAngle = Math.PI * 0.54;
+controls.target.set(0, 2.35, 0);
+controls.minDistance = 3.2;
+controls.maxDistance = 18;
+controls.maxPolarAngle = Math.PI * 0.49;
+controls.minPolarAngle = Math.PI * 0.05;
+controls.saveState();
 
-scene.add(new THREE.HemisphereLight(0x8ee6c4, 0x17100c, 1.35));
-const key = new THREE.SpotLight(0xffd4a2, 270, 35, Math.PI / 5, 0.55, 1.3);
-key.position.set(7, 12, 6); key.target.position.set(0, 1.4, 0); key.castShadow = true;
+scene.add(new THREE.HemisphereLight(0xffead2, 0x19140f, 1.48));
+const key = new THREE.SpotLight(0xffdfb7, 330, 34, Math.PI / 5, 0.5, 1.15);
+key.position.set(6.5, 11, 5.5); key.target.position.set(0, 2.2, 0); key.castShadow = true;
 key.shadow.mapSize.set(1024, 1024); scene.add(key, key.target);
-const rim = new THREE.PointLight(0x5dd9ff, 75, 20, 2); rim.position.set(-6, 5, -5); scene.add(rim);
+const rim = new THREE.PointLight(0x80b4d7, 54, 18, 1.7); rim.position.set(-5.5, 4.6, -4.5); scene.add(rim);
+const warmFill = new THREE.PointLight(0xff7b3d, 34, 13, 1.7); warmFill.position.set(4.5, 2.8, 3.8); scene.add(warmFill);
 
 const environment = new THREE.Group();
 scene.add(environment);
-const floor = new THREE.Mesh(new THREE.CircleGeometry(12, 96), new THREE.MeshStandardMaterial({ color: 0x15191a, roughness: 0.72, metalness: 0.1 }));
-floor.rotation.x = -Math.PI / 2; floor.position.y = -3.4; floor.receiveShadow = true; environment.add(floor);
-const halo = new THREE.Mesh(new THREE.RingGeometry(3.1, 4.5, 96), new THREE.MeshBasicMaterial({ color: 0x3a160a, transparent: true, opacity: 0.32, side: THREE.DoubleSide }));
-halo.rotation.x = -Math.PI / 2; halo.position.y = -3.37; environment.add(halo);
-const wallMat = new THREE.MeshStandardMaterial({ color: 0x171b1b, roughness: 0.88 });
-const backWall = new THREE.Mesh(new THREE.PlaneGeometry(24, 13), wallMat); backWall.position.set(0, 2.6, -8); environment.add(backWall);
-const sideWall = new THREE.Mesh(new THREE.PlaneGeometry(17, 13), wallMat); sideWall.rotation.y = Math.PI / 2; sideWall.position.set(-9, 2.6, -0.5); environment.add(sideWall);
-
-for (let i = 0; i < 6; i++) {
-  const a = (i / 6) * Math.PI * 2 + Math.PI / 6;
-  const pult = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.55, 0.9, 24), new THREE.MeshPhysicalMaterial({ color: 0xc54419, roughness: 0.28, clearcoat: 0.45 }));
-  body.castShadow = true; pult.add(body);
-  const top = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.1, 32), new THREE.MeshStandardMaterial({ color: 0xe7d8bd, roughness: 0.38 }));
-  top.position.y = 0.49; top.castShadow = true; pult.add(top);
-  const light = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.04, 20), new THREE.MeshBasicMaterial({ color: ZONES[i].color }));
-  light.position.y = 0.56; pult.add(light);
-  pult.position.set(Math.cos(a) * 4.2, -2.9, Math.sin(a) * 4.2); environment.add(pult);
+const floor = new THREE.Mesh(new THREE.CircleGeometry(12, 128), new THREE.MeshStandardMaterial({ color: 0x24211c, roughness: 0.72, metalness: 0.04 }));
+floor.rotation.x = -Math.PI / 2; floor.position.y = -0.03; floor.receiveShadow = true; environment.add(floor);
+const halo = new THREE.Mesh(new THREE.RingGeometry(2.0, 3.25, 128), new THREE.MeshBasicMaterial({ color: 0x6b2c15, transparent: true, opacity: 0.18, side: THREE.DoubleSide }));
+halo.rotation.x = -Math.PI / 2; halo.position.y = -0.015; environment.add(halo);
+const wallMat = new THREE.MeshStandardMaterial({ color: 0x5d584d, roughness: 0.92 });
+const backWall = new THREE.Mesh(new THREE.PlaneGeometry(22, 10), wallMat); backWall.position.set(0, 4.0, -6.2); environment.add(backWall);
+for (let x = -10; x <= 10; x += 2) {
+  const joint = new THREE.Mesh(new THREE.BoxGeometry(0.014, 8, 0.018), new THREE.MeshStandardMaterial({ color: 0x26231f, roughness: 0.8 }));
+  joint.position.set(x, 4, -6.18); environment.add(joint);
 }
 
 const support = new THREE.Group(); environment.add(support);
-const supportMat = new THREE.MeshStandardMaterial({ color: 0x151515, metalness: 0.65, roughness: 0.35 });
-for (let i = 0; i < 6; i++) {
-  const a = i / 6 * Math.PI * 2;
-  const post = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.065, 5.9, 10), supportMat);
-  post.position.set(Math.cos(a) * 0.65, -0.4, Math.sin(a) * 0.65); post.castShadow = true; support.add(post);
+const supportMat = new THREE.MeshStandardMaterial({ color: 0x101010, metalness: 0.72, roughness: 0.34 });
+const baseHoop = new THREE.Mesh(new THREE.TorusGeometry(1.95, 0.045, 8, 96), supportMat);
+baseHoop.rotation.x = Math.PI / 2; baseHoop.position.y = 0.16; baseHoop.castShadow = true; support.add(baseHoop);
+const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.22, 48), supportMat);
+hub.position.y = 0.18; hub.castShadow = true; support.add(hub);
+for (let i = 0; i < 12; i++) {
+  const a = i / 12 * Math.PI * 2;
+  const spoke = new THREE.Mesh(new THREE.BoxGeometry(1.75, 0.055, 0.08), supportMat);
+  spoke.position.set(Math.cos(a) * 0.93, 0.19, Math.sin(a) * 0.93);
+  spoke.rotation.y = -a; spoke.castShadow = true; support.add(spoke);
 }
+
+const controllerRig = new THREE.Group();
+environment.add(controllerRig);
+new GLTFLoader().load(
+  "assets/horovod-controllers-v13.glb",
+  (gltf) => {
+    controllerRig.add(gltf.scene);
+    gltf.scene.traverse((object) => {
+      if (!object.isMesh) return;
+      object.castShadow = true;
+      object.receiveShadow = true;
+    });
+    statusEl.textContent = "Точный профиль v13 и шесть пультов из мастер‑сцены загружены.";
+  },
+  undefined,
+  () => { statusEl.textContent = "Профиль v13 загружен; модель пультов будет показана после обновления соединения."; },
+);
 
 const spinner = new THREE.Group();
 spinner.position.y = 0;
 scene.add(spinner);
 const rings = [];
 const ringMaterials = [];
+// Measured from the 90 physical tube objects in the approved v13 Blender
+// scene (circumference / 2π), bottom to top.  This replaces the former smooth
+// approximation and preserves the characteristic brim, transitions and spire.
+const RING_RADII = [
+  0.248931,0.250278,0.257146,0.26088,0.267113,0.275353,0.282512,0.295021,0.310365,0.327232,
+  0.349519,0.375119,0.405049,0.438969,0.47934,0.525619,0.588618,0.659952,0.778927,0.929932,
+  1.249501,1.719874,1.719874,1.719874,1.719314,1.719874,1.719314,1.67933,1.448477,1.259497,
+  1.119553,0.999601,0.899641,0.819673,0.749457,0.699493,0.649741,0.619551,0.599565,0.589765,
+  0.569216,0.569773,0.578081,0.589188,0.519285,0.44982,0.409569,0.39971,0.389087,0.379848,
+  0.369732,0.359505,0.34918,0.338875,0.329976,0.319768,0.31367,0.307977,0.299685,0.28979,
+  0.279615,0.26998,0.259896,0.255898,0.247901,0.233754,0.203522,0.20978,0.217842,0.225983,
+  0.209916,0.15189,0.15135,0.151791,0.151989,0.149794,0.147796,0.145942,0.143802,0.14199,
+  0.13999,0.139807,0.139807,0.139043,0.13777,0.13799,0.135946,0.13399,0.131606,0.12999,
+];
 const state = {
   mode: "auto", elapsed: 0, modeStart: performance.now(), last: performance.now(),
   tubeMm: 30, gapMm: 20, shellOpacity: 0.32, diffuseX: 0.18, diffuseY: 0.10,
   zoneSpeeds: [36, -54, 72, -44, 61, -32], zonePhases: [0, 0, 0, 0, 0, 0],
   activeTogether: 0, recording: false, transparent: false,
 };
-
-function radiusProfile(u) {
-  if (u < 0.10) return THREE.MathUtils.lerp(0.38, 0.78, u / 0.10);
-  if (u < 0.25) return THREE.MathUtils.lerp(0.78, 2.65, (u - 0.10) / 0.15);
-  if (u < 0.38) return THREE.MathUtils.lerp(2.65, 2.35, (u - 0.25) / 0.13);
-  if (u < 0.58) return THREE.MathUtils.lerp(2.35, 1.35, (u - 0.38) / 0.20);
-  if (u < 0.79) return THREE.MathUtils.lerp(1.35, 0.58, (u - 0.58) / 0.21);
-  return 0.58;
-}
 
 function disposeRings() {
   for (const ring of rings) {
@@ -127,14 +163,12 @@ function disposeRings() {
 
 function buildRings() {
   disposeRings();
-  const scale = 0.00148;
-  const tube = state.tubeMm * scale;
-  const pitch = (state.tubeMm + state.gapMm) * scale;
-  const fullHeight = pitch * 89;
+  const tube = state.tubeMm / 1000;
+  const pitch = (state.tubeMm + state.gapMm) / 1000;
   for (let i = 0; i < 90; i++) {
     const u = i / 89;
-    const radius = radiusProfile(u);
-    const geometry = new THREE.TorusGeometry(radius, tube * 0.43, 6, 128);
+    const radius = RING_RADII[i];
+    const geometry = new THREE.TorusGeometry(radius, tube * 0.5, 8, 128);
     const shellGeometry = geometry.clone();
     const colors = new Float32Array(geometry.attributes.position.count * 3);
     geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
@@ -144,10 +178,10 @@ function buildRings() {
     const internal = new THREE.Mesh(geometry, internalMat);
     const shell = new THREE.Mesh(shellGeometry, shellMat);
     internal.rotation.x = shell.rotation.x = Math.PI / 2;
-    internal.scale.setScalar(0.84);
+    internal.scale.setScalar(0.78);
     shell.castShadow = true;
     const group = new THREE.Group();
-    group.position.y = i * pitch - fullHeight * 0.5;
+    group.position.y = 0.54 + i * pitch;
     group.add(internal, shell); spinner.add(group);
     rings.push({ group, internal, shell, index: i, zone: Math.min(5, Math.floor(i / 15)), u, radius });
   }
@@ -211,8 +245,9 @@ function effectiveModeTime(now) {
 }
 
 function showPattern(zone, t) {
-  if (t < 2) return 2;
-  return (zone + Math.floor(Math.max(0, t - 2) / 6.2)) % 6;
+  if (t < 24) return Math.min(5, Math.floor(t / 4));
+  if (t < 30) return zone;
+  return 5;
 }
 
 function updateColors(mode, t) {
@@ -299,11 +334,40 @@ function setMode(mode) {
 document.querySelectorAll(".mode").forEach(button => button.addEventListener("click", () => setMode(button.dataset.mode)));
 document.addEventListener("keydown", event => {
   const index = Number(event.key) - 1;
-  if (index < 0 || index > 5 || event.repeat) return;
+  if (!Number.isInteger(index) || index < 0 || index > 5 || event.repeat) return;
   setMode("active");
   state.zoneSpeeds[index] = Math.abs(state.zoneSpeeds[index]) > 8 ? -state.zoneSpeeds[index] : [36, -54, 72, -44, 61, -32][index];
   ZONES[index].input.value = state.zoneSpeeds[index]; updateZoneUI();
 });
+
+const CAMERA_VIEWS = {
+  hero: { position: new THREE.Vector3(7.4, 5.2, 8.8), target: new THREE.Vector3(0, 2.35, 0) },
+  top: { position: new THREE.Vector3(0.2, 10.4, 4.8), target: new THREE.Vector3(0, 2.05, 0) },
+  eye: { position: new THREE.Vector3(8.4, 2.75, 6.4), target: new THREE.Vector3(0, 2.15, 0) },
+  detail: { position: new THREE.Vector3(3.1, 3.0, 3.7), target: new THREE.Vector3(0.35, 2.65, 0) },
+};
+
+function setCameraView(name) {
+  const preset = CAMERA_VIEWS[name];
+  if (!preset) return;
+  document.querySelectorAll(".view").forEach((button) => button.classList.toggle("active", button.dataset.view === name));
+  const fromPosition = camera.position.clone();
+  const fromTarget = controls.target.clone();
+  const started = performance.now();
+  controls.enabled = false;
+  const move = (now) => {
+    const raw = Math.min(1, (now - started) / 680);
+    const eased = 1 - Math.pow(1 - raw, 3);
+    camera.position.lerpVectors(fromPosition, preset.position, eased);
+    controls.target.lerpVectors(fromTarget, preset.target, eased);
+    controls.update();
+    if (raw < 1) requestAnimationFrame(move);
+    else controls.enabled = true;
+  };
+  requestAnimationFrame(move);
+}
+
+document.querySelectorAll(".view").forEach((button) => button.addEventListener("click", () => setCameraView(button.dataset.view)));
 
 function bindRange(id, key, suffix, rebuild = false) {
   const input = document.querySelector(`#${id}`); const out = document.querySelector(`#${id}-out`);
@@ -318,8 +382,8 @@ bindRange("shell", "shellOpacity", "%"); bindRange("diff-x", "diffuseX", "%"); b
 document.querySelector("#reset-view").addEventListener("click", () => {
   const values = { tube: 30, gap: 20, shell: 32, "diff-x": 18, "diff-y": 10 };
   Object.entries(values).forEach(([id, value]) => { const el = document.querySelector(`#${id}`); el.value = value; el.dispatchEvent(new Event("input")); });
-  controls.reset(); camera.position.set(8.2, 4.2, 10.5); controls.target.set(0, 1.25, 0); controls.update();
-  statusEl.textContent = "Возвращены физические параметры проекта: D30, просвет 20 мм, 90 раздельных трубок.";
+  setCameraView("hero");
+  statusEl.textContent = "Возвращены параметры мастер‑сцены: D30, просвет 20 мм, 90 раздельных трубок и профиль v13.";
 });
 
 function downloadBlob(blob, name) {
@@ -343,7 +407,7 @@ async function recordTransparent(seconds, name) {
   const chunks = []; recorder.ondataavailable = event => { if (event.data.size) chunks.push(event.data); };
   recorder.onstop = () => {
     downloadBlob(new Blob(chunks, { type: mime }), name);
-    environment.visible = true; scene.fog = new THREE.FogExp2(0x07100c, 0.035); renderer.setClearColor(0x07100c, 1);
+    environment.visible = true; scene.fog = new THREE.FogExp2(0x15130f, 0.026); renderer.setClearColor(0x15130f, 1);
     state.recording = false; statusEl.textContent = `Видео ${seconds} с сохранено. Прозрачность WebM зависит от браузера.`;
   };
   recorder.start(250); statusEl.textContent = `Запись ${seconds} секунд…`; setTimeout(() => recorder.stop(), seconds * 1000);
@@ -388,7 +452,7 @@ function updateScenario(effective, delta) {
 }
 
 function resize() {
-  const width = wrap.clientWidth, height = wrap.clientHeight;
+  const width = Math.max(1, wrap.clientWidth), height = Math.max(1, wrap.clientHeight);
   const pixelRatio = Math.min(devicePixelRatio, 2);
   if (canvas.width !== Math.floor(width * pixelRatio) || canvas.height !== Math.floor(height * pixelRatio)) {
     renderer.setPixelRatio(pixelRatio); renderer.setSize(width, height, false);

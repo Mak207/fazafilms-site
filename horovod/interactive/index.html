@@ -3,83 +3,154 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Интерактивный Хоровод — ФАЗА</title>
-  <meta name="description" content="Интерактивная WebGL-модель светового волчка Хоровод: 90 отдельных трубок, шесть управляемых зон и сценарии ожидания, участия и шоу.">
+  <title>Интерактивный «Хоровод» — ФАЗА</title>
+  <meta name="description" content="Интерактивная модель светового волчка «Хоровод» по финальной сцене: 90 физических трубок, шесть пультов и шесть народных орнаментов.">
   <meta name="robots" content="noindex,follow">
   <link rel="canonical" href="https://fazafilms.ru/horovod/interactive/">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1">
-  <link rel="stylesheet" href="layout-fix.css?v=1">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=20261110-3">
   <script type="importmap">
     {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}
   </script>
-  <script type="module" src="app.js?v=1"></script>
+  <script type="module" src="app.js?v=20261110-3"></script>
 </head>
 <body>
+  <a class="skip" href="#experience">Перейти к управлению</a>
   <header class="topbar">
-    <a class="logo" href="/">FAZA<span>.</span></a>
-    <div><strong>ВОЛЧОК «ХОРОВОД»</strong><small>Интерактивная модель · 90 трубок · 6 зон</small></div>
-    <a class="back" href="../">Вернуться к ролику <span>↗</span></a>
+    <a class="logo" href="/" aria-label="ФАЗА — главная">FAZA<span>.</span></a>
+    <div class="project-mark">
+      <strong>ХОРОВОД / ИНТЕРАКТИВ</strong>
+      <small>Цифровой прототип по финальной сцене v13</small>
+    </div>
+    <nav aria-label="Навигация проекта">
+      <a href="../#showcase">4K-ролик</a>
+      <a class="back" href="../">Презентация <span aria-hidden="true">↗</span></a>
+    </nav>
   </header>
 
-  <main class="workspace">
-    <noscript>Для интерактивной 3D-модели включите JavaScript. Основной 4K-ролик доступен на <a href="../">странице проекта</a>.</noscript>
-    <aside class="zones" aria-label="Управление шестью зонами">
-      <div class="panel-title"><span>01</span><div><b>Кольца 1–6</b><small>Крутите ползунки или нажимайте 1–6</small></div></div>
-      <div id="zone-list" class="zone-list"></div>
-    </aside>
+  <main>
+    <section class="intro" aria-labelledby="intro-title">
+      <div class="intro-copy">
+        <span class="eyebrow">WEBGL / REAL-TIME / 90 ТРУБОК</span>
+        <h1 id="intro-title">Тот же волчок.<br>Теперь им можно управлять.</h1>
+        <p>Форма волчка и шесть оранжевых пультов перенесены из финальной сцены YouTube‑ролика. В браузере можно менять ход орнаментов и рассматривать конструкцию с любого ракурса.</p>
+        <div class="intro-actions">
+          <a class="button" href="#experience">Запустить модель <span aria-hidden="true">↓</span></a>
+          <a class="text-link" href="../#showcase">Сначала посмотреть ролик <span aria-hidden="true">↗</span></a>
+        </div>
+        <dl class="intro-facts">
+          <div><dt>90</dt><dd>раздельных трубок D30</dd></div>
+          <div><dt>48</dt><dd>LED‑позиций на метр</dd></div>
+          <div><dt>6</dt><dd>пультов и секций</dd></div>
+        </dl>
+      </div>
 
-    <section class="stage-panel" aria-label="Интерактивная сцена">
-      <div class="stage" id="stage-wrap">
-        <canvas id="stage" aria-label="Трёхмерная модель волчка Хоровод"></canvas>
-        <div class="stage-badge" id="stage-badge">ОЖИДАНИЕ</div>
-        <div class="stage-help">Мышь: вращение · Колесо: масштаб · 1–6: зоны</div>
-        <div class="stage-actions">
-          <button type="button" id="snapshot">Снимок PNG</button>
-          <button type="button" id="record">Видео этапа без фона</button>
-          <button type="button" id="test-bundle">Видео + JSON для тестов</button>
+      <figure class="reference" id="film-reference">
+        <div class="reference-frame">
+          <img id="reference-image" src="media/view-overhead.jpg" alt="Верхний ракурс волчка и тумб из финального ролика" width="1600" height="900" fetchpriority="high">
+          <span class="reference-chip">КАДР ИЗ 4K‑РОЛИКА</span>
+          <span class="reference-counter" id="reference-counter">02 / 05</span>
+        </div>
+        <div class="reference-strip" aria-label="Ракурсы из финального ролика">
+          <button type="button" class="reference-thumb" data-src="media/view-arrival.jpg" data-alt="Общий вид волчка и шести тумб" data-count="01 / 05"><img src="media/view-arrival.jpg" alt="Общий вид"></button>
+          <button type="button" class="reference-thumb active" data-src="media/view-overhead.jpg" data-alt="Верхний ракурс волчка и тумб" data-count="02 / 05"><img src="media/view-overhead.jpg" alt="Верхний ракурс"></button>
+          <button type="button" class="reference-thumb" data-src="media/view-pattern.jpg" data-alt="Народный орнамент на физических трубках" data-count="03 / 05"><img src="media/view-pattern.jpg" alt="Орнамент"></button>
+          <button type="button" class="reference-thumb" data-src="media/view-breakdown.jpg" data-alt="Разбор волчка на цельные конструктивные узлы" data-count="04 / 05"><img src="media/view-breakdown.jpg" alt="Разбор конструкции"></button>
+          <button type="button" class="reference-thumb" data-src="media/view-tube.jpg" data-alt="Внутреннее устройство световой трубки" data-count="05 / 05"><img src="media/view-tube.jpg" alt="Устройство трубки"></button>
+        </div>
+        <figcaption>Эти же пропорции, тумбы и характер света используются ниже в интерактивной модели.</figcaption>
+      </figure>
+    </section>
+
+    <section class="experience" id="experience" aria-labelledby="experience-title">
+      <header class="experience-head">
+        <div><span class="eyebrow">ИНТЕРАКТИВНАЯ СЦЕНА</span><h2 id="experience-title">Проверьте движение света сами.</h2></div>
+        <p>Поверните сцену мышью, приблизьте колесом или выберите готовый ракурс. Затем меняйте скорость шести секций.</p>
+      </header>
+
+      <noscript>Для интерактивной 3D-модели включите JavaScript. Основной 4K-ролик доступен на <a href="../">странице проекта</a>.</noscript>
+
+      <div class="stage-shell">
+        <div class="stage" id="stage-wrap">
+          <canvas id="stage" aria-label="Трёхмерная модель волчка Хоровод"></canvas>
+          <div class="stage-topline">
+            <div class="stage-badge" id="stage-badge">АВТО</div>
+            <div class="view-presets" aria-label="Ракурсы камеры">
+              <button type="button" class="view active" data-view="hero">Общий</button>
+              <button type="button" class="view" data-view="top">Сверху</button>
+              <button type="button" class="view" data-view="eye">Уровень глаз</button>
+              <button type="button" class="view" data-view="detail">Трубки</button>
+            </div>
+          </div>
+          <div class="stage-help"><span>Потяните — поворот</span><span>Колесо — масштаб</span><span>1–6 — включить секцию</span></div>
+          <div class="stage-actions">
+            <button type="button" id="snapshot">Снимок PNG</button>
+            <button type="button" id="record">Записать 8 с</button>
+            <button type="button" id="test-bundle">Тестовый пакет</button>
+          </div>
+        </div>
+
+        <div class="scenario">
+          <div class="scenario-head"><strong id="chapter">Автоматический цикл</strong><span id="clock">0,0 / 109 с</span></div>
+          <div class="mode-tabs" role="tablist" aria-label="Режим сцены">
+            <button type="button" class="mode active" data-mode="auto"><b>Авто</b><small>полный сценарий</small></button>
+            <button type="button" class="mode" data-mode="wait"><b>Ожидание</b><small>мягкий зелёный свет</small></button>
+            <button type="button" class="mode" data-mode="active"><b>Шесть пультов</b><small>ручное управление</small></button>
+            <button type="button" class="mode" data-mode="show"><b>Шоу</b><small>6 промыслов по очереди</small></button>
+          </div>
+          <dl class="explanation">
+            <div><dt>Действие</dt><dd id="what-press">Ничего — сценарий идёт автоматически.</dd></div>
+            <div><dt>На сцене</dt><dd id="what-happens">Ожидание → включение шести зон → шесть народных орнаментов → снова ожидание.</dd></div>
+            <div><dt>Длительность</dt><dd id="how-long">109 секунд, затем повторяется.</dd></div>
+          </dl>
+          <div class="timeline" id="timeline"></div>
+          <div class="progress" aria-hidden="true"><span id="progress"></span></div>
         </div>
       </div>
 
-      <div class="scenario">
-        <div class="scenario-head"><strong id="chapter">Режим ожидания</strong><span id="clock">0,0 / 30 с</span></div>
-        <div class="mode-tabs" role="tablist" aria-label="Режим сцены">
-          <button type="button" class="mode active" data-mode="auto"><b>Авто-режим</b><small>109 с по кругу</small></button>
-          <button type="button" class="mode" data-mode="wait"><b>1. Ожидание</b><small>30 с по кругу</small></button>
-          <button type="button" class="mode" data-mode="active"><b>2. Активный</b><small>пока крутят</small></button>
-          <button type="button" class="mode" data-mode="show"><b>3. Шоу</b><small>39 с</small></button>
-        </div>
-        <dl class="explanation">
-          <div><dt>Что нажать</dt><dd id="what-press">Ничего — сценарий идёт автоматически.</dd></div>
-          <div><dt>Что происходит</dt><dd id="what-happens">Ожидание → включение шести зон → народное световое шоу → снова ожидание.</dd></div>
-          <div><dt>Сколько длится</dt><dd id="how-long">109 секунд, затем повторяется.</dd></div>
-        </dl>
-        <div class="timeline" id="timeline"></div>
-        <div class="progress"><span id="progress"></span></div>
+      <div class="control-grid" id="controls">
+        <section class="zones" aria-labelledby="zones-title">
+          <div class="panel-title"><span>01</span><div><h3 id="zones-title">Шесть пультов</h3><p>Каждый пульт ведёт свою группу из 15 трубок. Минус — движение в обратную сторону.</p></div></div>
+          <div id="zone-list" class="zone-list"></div>
+        </section>
+
+        <section class="settings" aria-labelledby="settings-title">
+          <div class="panel-title"><span>02</span><div><h3 id="settings-title">Физика трубки</h3><p>Настройки материала не закрывают реальные воздушные просветы между кольцами.</p></div></div>
+          <div class="settings-toolbar">
+            <button type="button" class="reset" id="reset-view">Вернуть параметры проекта</button>
+            <p class="status" id="status" role="status">Финальный профиль v13 и пульты из мастер‑сцены загружены.</p>
+          </div>
+          <div class="settings-controls">
+            <label>Диаметр <output id="tube-out">30 мм</output><input id="tube" type="range" min="18" max="42" value="30"></label>
+            <label>Воздушный просвет <output id="gap-out">20 мм</output><input id="gap" type="range" min="4" max="36" value="20"></label>
+            <label>Матовый пластик <output id="shell-out">32 %</output><input id="shell" type="range" min="8" max="70" value="32"></label>
+            <label>Рассеивание вдоль <output id="diff-x-out">18 %</output><input id="diff-x" type="range" min="0" max="65" value="18"></label>
+            <label>Соседние пиксели <output id="diff-y-out">10 %</output><input id="diff-y" type="range" min="0" max="45" value="10"></label>
+          </div>
+          <div class="facts">
+            <div><b>30 мм</b><span>наружный диаметр</span></div>
+            <div><b>20 мм</b><span>воздушный просвет</span></div>
+            <div><b>13 712</b><span>адресных пикселей</span></div>
+          </div>
+        </section>
       </div>
     </section>
 
-    <aside class="settings" aria-label="Настройки внешнего вида трубок">
-      <div class="panel-title"><span>02</span><div><b>Вид трубок</b><small>Физическая модель по данным проекта</small></div></div>
-      <button type="button" class="reset" id="reset-view">Как в проекте</button>
-      <p class="settings-note">По умолчанию: трубка D30, шаг 50 мм, реальный воздушный просвет 20 мм. Промежутки не закрываются общей поверхностью.</p>
-      <label>Диаметр трубки <output id="tube-out">30 мм</output><input id="tube" type="range" min="18" max="42" value="30"></label>
-      <label>Просвет между трубками <output id="gap-out">20 мм</output><input id="gap" type="range" min="4" max="36" value="20"></label>
-      <label>Прозрачность пластика <output id="shell-out">32 %</output><input id="shell" type="range" min="8" max="70" value="32"></label>
-      <label>Смешивание вдоль трубки <output id="diff-x-out">18 %</output><input id="diff-x" type="range" min="0" max="65" value="18"></label>
-      <label>Смешивание соседних пикселей <output id="diff-y-out">10 %</output><input id="diff-y" type="range" min="0" max="45" value="10"></label>
-      <div class="facts">
-        <div><b>90</b><span>раздельных колец</span></div>
-        <div><b>48</b><span>LED-позиций/м</span></div>
-        <div><b>13 712</b><span>пикселей в расчёте</span></div>
+    <section class="construction" id="construction" aria-labelledby="construction-title">
+      <div class="construction-copy">
+        <span class="eyebrow">КОНСТРУКЦИЯ / ФИНАЛ РОЛИКА</span>
+        <h2 id="construction-title">Не картинка на сплошной поверхности.</h2>
+        <p>Орнамент существует только внутри 90 отдельных световых трубок. Чёрные несущие кольца, металлические рёбра, открытая силовая рама и трубка D30 показаны отдельными узлами — так же, как в финальном разборе мастер‑ролика.</p>
+        <a class="text-link" href="../#showcase">Посмотреть разбор в 4K <span aria-hidden="true">↗</span></a>
       </div>
-      <p class="status" id="status" role="status">Интерактив готов.</p>
-    </aside>
+      <figure><img src="media/view-breakdown.jpg" alt="Разобранный на цельные узлы волчок Хоровод" width="1600" height="900"><figcaption>Разбор на цельные узлы · кадр 04 / 05</figcaption></figure>
+      <figure><img src="media/view-tube.jpg" alt="Наружная трубка, светодиодный сердечник и проводники" width="1600" height="900"><figcaption>D30 · 48 LED‑позиций/м · кадр 05 / 05</figcaption></figure>
+    </section>
   </main>
 
-  <footer><span>Демонстрационная WebGL-модель. Для производства требуются рабочие чертежи и инженерная проверка.</span><a href="/contacts/">Обсудить проект ↗</a></footer>
+  <footer><span>Интерактивная визуализация. Для изготовления требуются рабочие чертежи и инженерная проверка.</span><a href="/contacts/">Обсудить проект <span aria-hidden="true">↗</span></a></footer>
 </body>
 </html>
