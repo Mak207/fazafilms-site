@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Интерактивный Хоровод — ФАЗА</title>
+  <meta name="description" content="Интерактивная WebGL-модель светового волчка Хоровод: 90 отдельных трубок, шесть управляемых зон и сценарии ожидания, участия и шоу.">
+  <meta name="robots" content="noindex,follow">
+  <link rel="canonical" href="https://fazafilms.ru/horovod/interactive/">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=1">
+  <link rel="stylesheet" href="layout-fix.css?v=1">
+  <script type="importmap">
+    {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}
+  </script>
+  <script type="module" src="app.js?v=1"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="/">FAZA<span>.</span></a>
+    <div><strong>ВОЛЧОК «ХОРОВОД»</strong><small>Интерактивная модель · 90 трубок · 6 зон</small></div>
+    <a class="back" href="../">Вернуться к ролику <span>↗</span></a>
+  </header>
+
+  <main class="workspace">
+    <noscript>Для интерактивной 3D-модели включите JavaScript. Основной 4K-ролик доступен на <a href="../">странице проекта</a>.</noscript>
+    <aside class="zones" aria-label="Управление шестью зонами">
+      <div class="panel-title"><span>01</span><div><b>Кольца 1–6</b><small>Крутите ползунки или нажимайте 1–6</small></div></div>
+      <div id="zone-list" class="zone-list"></div>
+    </aside>
+
+    <section class="stage-panel" aria-label="Интерактивная сцена">
+      <div class="stage" id="stage-wrap">
+        <canvas id="stage" aria-label="Трёхмерная модель волчка Хоровод"></canvas>
+        <div class="stage-badge" id="stage-badge">ОЖИДАНИЕ</div>
+        <div class="stage-help">Мышь: вращение · Колесо: масштаб · 1–6: зоны</div>
+        <div class="stage-actions">
+          <button type="button" id="snapshot">Снимок PNG</button>
+          <button type="button" id="record">Видео этапа без фона</button>
+          <button type="button" id="test-bundle">Видео + JSON для тестов</button>
+        </div>
+      </div>
+
+      <div class="scenario">
+        <div class="scenario-head"><strong id="chapter">Режим ожидания</strong><span id="clock">0,0 / 30 с</span></div>
+        <div class="mode-tabs" role="tablist" aria-label="Режим сцены">
+          <button type="button" class="mode active" data-mode="auto"><b>Авто-режим</b><small>109 с по кругу</small></button>
+          <button type="button" class="mode" data-mode="wait"><b>1. Ожидание</b><small>30 с по кругу</small></button>
+          <button type="button" class="mode" data-mode="active"><b>2. Активный</b><small>пока крутят</small></button>
+          <button type="button" class="mode" data-mode="show"><b>3. Шоу</b><small>39 с</small></button>
+        </div>
+        <dl class="explanation">
+          <div><dt>Что нажать</dt><dd id="what-press">Ничего — сценарий идёт автоматически.</dd></div>
+          <div><dt>Что происходит</dt><dd id="what-happens">Ожидание → включение шести зон → народное световое шоу → снова ожидание.</dd></div>
+          <div><dt>Сколько длится</dt><dd id="how-long">109 секунд, затем повторяется.</dd></div>
+        </dl>
+        <div class="timeline" id="timeline"></div>
+        <div class="progress"><span id="progress"></span></div>
+      </div>
+    </section>
+
+    <aside class="settings" aria-label="Настройки внешнего вида трубок">
+      <div class="panel-title"><span>02</span><div><b>Вид трубок</b><small>Физическая модель по данным проекта</small></div></div>
+      <button type="button" class="reset" id="reset-view">Как в проекте</button>
+      <p class="settings-note">По умолчанию: трубка D30, шаг 50 мм, реальный воздушный просвет 20 мм. Промежутки не закрываются общей поверхностью.</p>
+      <label>Диаметр трубки <output id="tube-out">30 мм</output><input id="tube" type="range" min="18" max="42" value="30"></label>
+      <label>Просвет между трубками <output id="gap-out">20 мм</output><input id="gap" type="range" min="4" max="36" value="20"></label>
+      <label>Прозрачность пластика <output id="shell-out">32 %</output><input id="shell" type="range" min="8" max="70" value="32"></label>
+      <label>Смешивание вдоль трубки <output id="diff-x-out">18 %</output><input id="diff-x" type="range" min="0" max="65" value="18"></label>
+      <label>Смешивание соседних пикселей <output id="diff-y-out">10 %</output><input id="diff-y" type="range" min="0" max="45" value="10"></label>
+      <div class="facts">
+        <div><b>90</b><span>раздельных колец</span></div>
+        <div><b>48</b><span>LED-позиций/м</span></div>
+        <div><b>13 712</b><span>пикселей в расчёте</span></div>
+      </div>
+      <p class="status" id="status" role="status">Интерактив готов.</p>
+    </aside>
+  </main>
+
+  <footer><span>Демонстрационная WebGL-модель. Для производства требуются рабочие чертежи и инженерная проверка.</span><a href="/contacts/">Обсудить проект ↗</a></footer>
+</body>
+</html>

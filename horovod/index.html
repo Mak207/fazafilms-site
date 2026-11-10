@@ -17,9 +17,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261108-1">
-  <link rel="stylesheet" href="showcase-audio.css?v=20261108-1">
-  <script src="page.js?v=20261108-1" defer></script>
+  <link rel="stylesheet" href="style.css?v=20261110-1">
+  <link rel="stylesheet" href="showcase-audio.css?v=20261110-1">
+  <script src="page.js?v=20261110-1" defer></script>
 </head>
 <body>
   <a class="skip" href="#showcase">Перейти к презентации</a>
@@ -30,7 +30,7 @@
       <figure class="hero-image"><img src="media/macro-patterns-poster.jpg?v=4" alt="Световой волчок из 90 отдельных трубок с видимыми воздушными промежутками и многоцветным орнаментом" width="1600" height="900" fetchpriority="high"><figcaption><span>ХОРОВОД</span><span>90 трубок · 48 пикселей/м · 4K</span></figcaption></figure>
       <span class="hero-number" aria-hidden="true">01 / 03</span>
     </section>
-    <section class="showcase" id="showcase" data-stream-url="" aria-labelledby="showcase-title">
+    <section class="showcase" id="showcase" aria-labelledby="showcase-title">
       <div class="section-head showcase-head"><div><span class="eyebrow">ОСНОВНАЯ ПРЕЗЕНТАЦИЯ</span><h2 id="showcase-title">Шесть узоров — по очереди.</h2></div><p>Орнамент светится только внутри 90 физических трубок; между ними остаются реальные воздушные промежутки. <br>В финале конструкция разбирается на цельные узлы, а камера приближает внутреннее устройство трубки.</p></div>
       <div class="showcase-grid">
         <div>
@@ -52,12 +52,12 @@
         </div>
         <aside class="realtime-card" aria-labelledby="realtime-title">
           <span class="realtime-signal" aria-hidden="true"></span>
-          <span class="eyebrow">UNREAL / REAL-TIME</span>
+          <span class="eyebrow">WEBGL / REAL-TIME</span>
           <h3 id="realtime-title">Управлять сценой самому</h3>
-          <p>Интерактивный режим передаёт работающий Unreal Engine с GPU-сервера. Заказчик сможет осмотреть объект и проверить режимы шести пультов прямо в браузере.</p>
+          <p>Браузерная 3D-модель уже готова: заказчик может осмотреть волчок, включить шесть зон и проверить сценарий прямо на странице.</p>
           <ul><li>поворот камеры вокруг объекта;</li><li>смена узора и направления слоёв;</li><li>движение вверх, вниз и по диагонали.</li></ul>
-          <button class="button button-stream" id="launch-stream" type="button" aria-controls="stream-dialog" aria-expanded="false">Интерактивный режим <span aria-hidden="true">↗</span></button>
-          <p class="stream-status" id="stream-status" role="status">GPU-сессия подключается отдельным адресом после развёртывания Pixel Streaming.</p>
+          <a class="button button-stream" href="interactive/">Открыть интерактив <span aria-hidden="true">↗</span></a>
+          <p class="stream-status" id="stream-status" role="status">90 раздельных трубок · шесть пультов · четыре режима · экспорт PNG, WebM и JSON.</p>
         </aside>
       </div>
     </section>
@@ -79,19 +79,6 @@
     </section>
     <section class="idea"><span class="eyebrow">ИНТЕРАКТИВ ДЛЯ ШЕСТИ УЧАСТНИКОВ</span><div class="idea-grid"><h2>Шесть пультов.<br>Один общий рисунок.</h2><div><p>Каждый человек вращает свой пульт и ведёт свою световую дорожку. Задача — почувствовать движения остальных: совпасть по темпу, ускориться вместе или создать два встречных потока.</p><p class="note">В роликах показана 3D-визуализация художественного замысла и взаимодействия шести участников.</p></div></div></section>
   </main>
-  <dialog class="stream-dialog" id="stream-dialog" aria-labelledby="stream-dialog-title">
-    <div class="stream-dialog-head"><div><span class="eyebrow">UNREAL PIXEL STREAMING</span><h2 id="stream-dialog-title">Интерактивная демонстрация</h2></div><button class="stream-close" id="close-stream" type="button" aria-label="Закрыть интерактивную демонстрацию">×</button></div>
-    <div class="stream-stage">
-      <iframe id="stream-frame" title="Интерактивная сцена Хоровод" allow="autoplay; fullscreen; gamepad; clipboard-read; clipboard-write" allowfullscreen hidden></iframe>
-      <div class="stream-placeholder" id="stream-placeholder">
-        <span class="stream-placeholder-mark" aria-hidden="true">◌</span>
-        <h3>Интерактивный сервер ещё не подключён</h3>
-        <p>Ролик уже доступен на странице. Для режима с управлением нужно развернуть Unreal Pixel Streaming на GPU-сервере и указать его HTTPS-адрес в настройке этой страницы.</p>
-        <a class="button" href="#showcase" id="back-to-video">Вернуться к ролику</a>
-      </div>
-    </div>
-    <p class="stream-hint">Для комфортного просмотра рекомендуется компьютер, актуальный Chrome, Edge или Safari и стабильное соединение от 15 Мбит/с.</p>
-  </dialog>
   <footer><a class="logo" href="/">FAZA<span>.</span></a><p>Создаём визуальные истории.</p><a class="contact" href="/contacts/">Обсудить проект <span aria-hidden="true">↗</span></a></footer>
 </body>
 </html>
