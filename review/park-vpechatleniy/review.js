@@ -83,6 +83,12 @@ function makeCard(clip,role){
    const list=await response.json();document.querySelector("#film").append(makeCard(list.lead,"lead"));
    document.querySelector("#animatic").append(makeCard(list.animatic,"animatic"));
    const section=document.querySelector("#scenes"),grid=el("div","grid");section.append(el("h2","section-title","Сцены фильма"),grid);
-   [...list.clips].sort((a,b)=>a.start-b.start).forEach(c=>grid.append(makeCard(c,"clip")));document.querySelector("#notice").textContent="";
+   const additions=list.clips.filter(c=>c.collection==="exhibits");
+   if(additions.length){
+     const section=document.querySelector("#new-shots"),grid=el("div","grid");
+     section.hidden=false;section.append(el("h2","section-title","Новые вагоны и экспозиции"),grid);
+     additions.sort((a,b)=>a.order-b.order).forEach(c=>{const card=makeCard(c,"clip");card.id=c.id;card.querySelector(".inpoint").textContent=cue(c.duration)+" · Со звуком";grid.append(card)});
+   }
+   list.clips.filter(c=>c.collection!=="exhibits").sort((a,b)=>a.start-b.start).forEach(c=>grid.append(makeCard(c,"clip")));document.querySelector("#notice").textContent="";
  }catch(e){document.querySelector("#notice").textContent="Не удалось загрузить видео. Обновите страницу."}
 })();
