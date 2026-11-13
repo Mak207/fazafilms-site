@@ -75,7 +75,9 @@ function makeCard(clip,role){
  const info=el("div","meta"),heading=el(role==="clip"?"h3":"h2","",clip.title);
  info.append(heading); if(role==="clip"){info.append(el("span","inpoint",cue(clip.start)+" – "+cue(clip.start+clip.duration)))}
  else {info.append(el("span","pill",role==="lead"?"Без звука":"Со звуком"),el("span","pill",fmt(clip.duration)))}
- card.append(info);mountForm(card,clip,v);return card;
+ card.append(info);
+ if(clip.design){const link=el("a","inpoint","Рассмотреть вагон на нейтральном фоне");link.href=clip.design;link.target="_blank";link.rel="noopener";info.append(link)}
+ mountForm(card,clip,v);return card;
 }
 (async()=>{
  try{
