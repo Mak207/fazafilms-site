@@ -68,6 +68,29 @@ function mountForm(card,clip,player){
  };
  window.addEventListener("pagehide",()=>{end();stream?.getTracks().forEach(t=>t.stop())},{once:true});
 }
+function mountApproval(info,clip){
+ const button=el("button","approve","Утвердить");
+ const status=el("span","approval-status");status.setAttribute("role","status");
+ button.type="button";button.setAttribute("aria-label","Утвердить — "+clip.title);
+ info.append(button,status);
+ function accepted(stamp){
+   button.disabled=true;button.textContent="Утверждено";
+   button.setAttribute("aria-label","Утверждено — "+clip.title);
+   const date=new Date(stamp*1000);
+   status.textContent=date.toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+ }
+ if(clip.approved_at)accepted(clip.approved_at);
+ button.onclick=async()=>{
+   button.disabled=true;status.textContent="Сохраняем…";
+   try{
+     const response=await fetch(api+"approval",{method:"POST",headers:{"Content-Type":"application/json"},
+       body:JSON.stringify({id:clip.id,version:clip.version})});
+     const result=await response.json();
+     if(!response.ok||!result.approved_at)throw new Error(result.error||"Не удалось сохранить утверждение.");
+     accepted(result.approved_at);
+   }catch(error){button.disabled=false;status.textContent=error.message==="Failed to fetch"?"Проверьте соединение и повторите.":error.message}
+ };
+}
 function makeCard(clip,role){
  const card=el("article","card");const v=el("video","player");v.controls=true;v.playsInline=true;v.preload=role==="lead"?"metadata":"none";v.setAttribute("aria-label",clip.title);
  if(role==="lead"){v.defaultMuted=true;v.muted=true}if(clip.poster)v.poster=clip.poster;v.src=clip.src;card.append(v);
@@ -81,6 +104,7 @@ function makeCard(clip,role){
  const download=el("a","download-link","Скачать MP4");
  download.href=fileUrl.href;download.download=fileUrl.pathname.split("/").pop();
  download.setAttribute("aria-label","Скачать MP4 — "+clip.title);info.append(download);
+ if(role==="clip")mountApproval(info,clip);
  if(clip.design){const link=el("a","inpoint","Рассмотреть вагон на нейтральном фоне");link.href=clip.design;link.target="_blank";link.rel="noopener";info.append(link)}
  mountForm(card,clip,v);return card;
 }
