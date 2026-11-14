@@ -68,16 +68,16 @@ function mountForm(card,clip,player){
  };
  window.addEventListener("pagehide",()=>{end();stream?.getTracks().forEach(t=>t.stop())},{once:true});
 }
-function mountApproval(info,clip){
+function mountApproval(info,clip,photo=false){
  const button=el("button","approve","Утвердить");
  const status=el("span","approval-status");status.setAttribute("role","status");
  button.type="button";button.setAttribute("aria-label","Утвердить — "+clip.title);
  info.append(button,status);
  function render(stamp){
    clip.approved_at=stamp;
-   button.textContent=stamp?"Утверждено · снять":"Утвердить";
+   button.textContent=photo?(stamp?"Одобрено · снять":"Одобрить"):(stamp?"Утверждено · снять":"Утвердить");
    button.setAttribute("aria-pressed",String(Boolean(stamp)));
-   button.setAttribute("aria-label",(stamp?"Снять утверждение — ":"Утвердить — ")+clip.title);
+   button.setAttribute("aria-label",(photo?(stamp?"Снять одобрение — ":"Одобрить — "):(stamp?"Снять утверждение — ":"Утвердить — "))+clip.title);
    status.textContent=stamp?new Date(stamp*1000).toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
  }
  render(clip.approved_at);
@@ -95,11 +95,11 @@ function mountApproval(info,clip){
 }
 function makeCard(clip,role){
  const card=el("article","card");const v=el("video","player");v.controls=true;v.playsInline=true;v.preload=role==="lead"?"metadata":"none";v.setAttribute("aria-label",clip.title);
- if(role==="lead"){v.defaultMuted=true;v.muted=true}if(clip.poster)v.poster=clip.poster;v.src=clip.src;card.append(v);
+ if(role==="lead"&&!clip.hasAudio){v.defaultMuted=true;v.muted=true}if(clip.poster)v.poster=clip.poster;v.src=clip.src;card.append(v);
  mediaList.push(v);v.addEventListener("play",()=>mediaList.forEach(o=>{if(o!==v)o.pause()}));
  const info=el("div","meta"),heading=el(role==="clip"?"h3":"h2","",clip.title);
  info.append(heading); if(role==="clip"){info.append(el("span","inpoint",cue(clip.start)+" – "+cue(clip.start+clip.duration)))}
- else {info.append(el("span","pill",role==="lead"?"Без звука":"Со звуком"),el("span","pill",fmt(clip.duration)))}
+ else {info.append(el("span","pill",role==="lead"&&!clip.hasAudio?"Без звука":"Со звуком"),el("span","pill",fmt(clip.duration)))}
  card.append(info);
  const fileUrl=new URL(clip.src,location.href);
  fileUrl.searchParams.set("download","1");
@@ -110,10 +110,29 @@ function makeCard(clip,role){
  if(clip.design){const link=el("a","inpoint","Рассмотреть вагон на нейтральном фоне");link.href=clip.design;link.target="_blank";link.rel="noopener";info.append(link)}
  mountForm(card,clip,v);return card;
 }
+function selectFolder(){
+ const photos=location.hash==="#photos";
+ document.querySelector("#photos").hidden=!photos;
+ for(const id of ["film","scenes"])document.getElementById(id).hidden=photos;
+ for(const [id,selected] of [["movies-tab",!photos],["photos-tab",photos]]){
+   const tab=document.getElementById(id);
+   if(selected)tab.setAttribute("aria-current","page");else tab.removeAttribute("aria-current");
+ }
+ if(photos)mediaList.forEach(player=>player.pause());
+}
+window.addEventListener("hashchange",selectFolder);
+selectFolder();
 (async()=>{
  try{
    const response=await fetch(api+"manifest",{cache:"no-store"});if(!response.ok)throw new Error();
    const list=await response.json();document.querySelector("#film").append(makeCard(list.lead,"lead"));
+   for(const photo of list.photos||[]){
+     const card=el("article","card photo-card"),link=el("a","photo-link"),img=el("img");
+     link.href=photo.src;link.target="_blank";link.rel="noopener";img.alt=photo.title;img.src=photo.src;img.loading="lazy";
+     link.append(img);card.append(link);
+     const info=el("div","meta");info.append(el("h2","",photo.title));mountApproval(info,photo,true);
+     card.append(info);document.querySelector(".photo-grid").append(card);
+   }
    const section=document.querySelector("#scenes"), clips=new Map(list.clips.map(clip=>[clip.id,clip]));
    section.append(el("h2","section-title","Эпизоды по сценарию"));
    const columns=el("div","take-columns");
