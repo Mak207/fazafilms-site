@@ -2,3 +2,4 @@
 .download-link{display:inline-flex;align-items:center;min-height:36px;padding:3px 12px;border:1px solid var(--line);border-radius:6px;font-size:15px;color:var(--text)}.download-link:hover,.download-link:focus-visible{border-color:var(--accent);color:var(--accent)}
 .approve{border-color:var(--accent);color:var(--accent)}.approve[aria-pressed=true]{color:#b1d6b8;border-color:#637a66}.approve:disabled{cursor:wait}.approval-status{font-size:13px;color:var(--muted)}
 @media(min-width:801px){#park-vehicle-cabin{grid-column:1}#park-vehicle-cabin-cinema{grid-column:2}}
+.script-block{margin:0 0 32px}.script-heading{margin:0;font-size:clamp(19px,2.4vw,29px)}.script-time,.script-empty{color:var(--muted);font-size:14px;margin:4px 0 15px}

@@ -115,13 +115,26 @@ function makeCard(clip,role){
    const response=await fetch(api+"manifest",{cache:"no-store"});if(!response.ok)throw new Error();
    const list=await response.json();document.querySelector("#film").append(makeCard(list.lead,"lead"));
    document.querySelector("#animatic").append(makeCard(list.animatic,"animatic"));
-   const section=document.querySelector("#scenes"),grid=el("div","grid");section.append(el("h2","section-title","Сцены фильма"),grid);
-   const additions=list.clips.filter(c=>c.collection==="exhibits");
-   if(additions.length){
-     const section=document.querySelector("#new-shots"),grid=el("div","grid");
-     section.hidden=false;section.append(el("h2","section-title","Новые вагоны и экспозиции"),grid);
-     additions.sort((a,b)=>a.order-b.order).forEach(c=>{const card=makeCard(c,"clip");card.id=c.id;card.querySelector(".inpoint").textContent=cue(c.duration)+" · Со звуком";grid.append(card)});
+   const section=document.querySelector("#scenes"), clips=new Map(list.clips.map(clip=>[clip.id,clip]));
+   section.append(el("h2","section-title","Эпизоды по сценарию"));
+   const groups=list.scriptSections||[];
+   function place(ids,parent){
+     const grid=el("div","grid");parent.append(grid);
+     for(const id of ids){
+       const clip=clips.get(id);if(!clip)continue;
+       const card=makeCard(clip,"clip");card.id=id;
+       card.querySelector(".inpoint").textContent=cue(clip.duration)+" · Со звуком";
+       grid.append(card);clips.delete(id);
+     }
    }
-   list.clips.filter(c=>c.collection!=="exhibits").sort((a,b)=>a.start-b.start).forEach(c=>grid.append(makeCard(c,"clip")));document.querySelector("#notice").textContent="";
+   for(const group of groups){
+     const block=el("section","script-block");
+     block.append(el("h3","script-heading",group.title),el("p","script-time",group.time+" по сценарию"));
+     if(group.clips.length)place(group.clips,block);
+     else block.append(el("p","script-empty","Отдельный эпизод пока не опубликован."));
+     section.append(block);
+   }
+   if(clips.size)place([...clips.keys()],section);
+   document.querySelector("#notice").textContent="";
  }catch(e){document.querySelector("#notice").textContent="Не удалось загрузить видео. Обновите страницу."}
 })();
