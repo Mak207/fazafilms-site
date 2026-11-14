@@ -114,17 +114,41 @@ function makeCard(clip,role){
  try{
    const response=await fetch(api+"manifest",{cache:"no-store"});if(!response.ok)throw new Error();
    const list=await response.json();document.querySelector("#film").append(makeCard(list.lead,"lead"));
-   document.querySelector("#animatic").append(makeCard(list.animatic,"animatic"));
    const section=document.querySelector("#scenes"), clips=new Map(list.clips.map(clip=>[clip.id,clip]));
    section.append(el("h2","section-title","Эпизоды по сценарию"));
+   const columns=el("div","take-columns");
+   columns.append(el("span","","Драфты и варианты"),el("span","","Чистовые дубли"));
+   section.append(columns);
    const groups=list.scriptSections||[];
+   const versions={
+     "park-vehicle-exterior":{right:"park-vehicle-exterior-hd"},
+     "park-vehicle-cabin":{right:"park-vehicle-cabin-hd"},
+     "park-chersonesus":{additional:"park-chersonesus-fullhd"}
+   };
+   const secondary=new Set(Object.values(versions).flatMap(Object.values));
+   function appendClip(parent,id,draft=false){
+     const clip=clips.get(id);
+     if(!clip)return;
+     const title=draft&&!clip.title.endsWith(" · Драфт")?clip.title+" · Драфт":clip.title;
+     const card=makeCard({...clip,title},"clip");card.id=id;
+     card.querySelector(".inpoint").textContent=cue(clip.duration)+" · Со звуком";
+     parent.append(card);clips.delete(id);
+   }
    function place(ids,parent){
-     const grid=el("div","grid");parent.append(grid);
      for(const id of ids){
-       const clip=clips.get(id);if(!clip)continue;
-       const card=makeCard(clip,"clip");card.id=id;
-       card.querySelector(".inpoint").textContent=cue(clip.duration)+" · Со звуком";
-       grid.append(card);clips.delete(id);
+       if(!clips.has(id)||secondary.has(id))continue;
+       const row=el("div","take-row"),left=el("div","take-left");
+       row.append(left);parent.append(row);
+       appendClip(left,id,true);
+       const variant=versions[id]||{};
+       appendClip(left,variant.additional);
+       if(clips.has(variant.right))appendClip(row,variant.right);
+       else{
+         const empty=el("div","take-empty");
+         empty.setAttribute("role","img");
+         empty.setAttribute("aria-label","Второй вариант пока не опубликован");
+         row.append(empty);
+       }
      }
    }
    for(const group of groups){
