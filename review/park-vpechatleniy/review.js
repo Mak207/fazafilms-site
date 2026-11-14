@@ -117,15 +117,15 @@ function makeCard(clip,role){
    const section=document.querySelector("#scenes"), clips=new Map(list.clips.map(clip=>[clip.id,clip]));
    section.append(el("h2","section-title","Эпизоды по сценарию"));
    const columns=el("div","take-columns");
-   columns.append(el("span","","Драфты и варианты"),el("span","","Чистовые дубли"));
+   columns.append(el("span","","Драфты"),el("span","","Чистовые дубли"));
    section.append(columns);
    const groups=list.scriptSections||[];
    const versions={
-     "park-vehicle-exterior":{right:"park-vehicle-exterior-hd"},
-     "park-vehicle-cabin":{right:"park-vehicle-cabin-hd"},
-     "park-chersonesus":{additional:"park-chersonesus-fullhd"}
+     "park-vehicle-exterior":"park-vehicle-exterior-hd",
+     "park-vehicle-cabin":"park-vehicle-cabin-hd",
+     "park-chersonesus":"park-chersonesus-fullhd"
    };
-   const secondary=new Set(Object.values(versions).flatMap(Object.values));
+   const secondary=new Set(Object.values(versions));
    function appendClip(parent,id,draft=false){
      const clip=clips.get(id);
      if(!clip)return;
@@ -140,9 +140,8 @@ function makeCard(clip,role){
        const row=el("div","take-row"),left=el("div","take-left");
        row.append(left);parent.append(row);
        appendClip(left,id,true);
-       const variant=versions[id]||{};
-       appendClip(left,variant.additional);
-       if(clips.has(variant.right))appendClip(row,variant.right);
+       const right=versions[id];
+       if(clips.has(right))appendClip(row,right);
        else{
          const empty=el("div","take-empty");
          empty.setAttribute("role","img");
