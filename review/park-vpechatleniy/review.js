@@ -76,6 +76,11 @@ function makeCard(clip,role){
  info.append(heading); if(role==="clip"){info.append(el("span","inpoint",cue(clip.start)+" – "+cue(clip.start+clip.duration)))}
  else {info.append(el("span","pill",role==="lead"?"Без звука":"Со звуком"),el("span","pill",fmt(clip.duration)))}
  card.append(info);
+ const fileUrl=new URL(clip.src,location.href);
+ fileUrl.searchParams.set("download","1");
+ const download=el("a","download-link","Скачать MP4");
+ download.href=fileUrl.href;download.download=fileUrl.pathname.split("/").pop();
+ download.setAttribute("aria-label","Скачать MP4 — "+clip.title);info.append(download);
  if(clip.design){const link=el("a","inpoint","Рассмотреть вагон на нейтральном фоне");link.href=clip.design;link.target="_blank";link.rel="noopener";info.append(link)}
  mountForm(card,clip,v);return card;
 }
