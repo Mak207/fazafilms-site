@@ -73,22 +73,24 @@ function mountApproval(info,clip){
  const status=el("span","approval-status");status.setAttribute("role","status");
  button.type="button";button.setAttribute("aria-label","Утвердить — "+clip.title);
  info.append(button,status);
- function accepted(stamp){
-   button.disabled=true;button.textContent="Утверждено";
-   button.setAttribute("aria-label","Утверждено — "+clip.title);
-   const date=new Date(stamp*1000);
-   status.textContent=date.toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+ function render(stamp){
+   clip.approved_at=stamp;
+   button.textContent=stamp?"Утверждено · снять":"Утвердить";
+   button.setAttribute("aria-pressed",String(Boolean(stamp)));
+   button.setAttribute("aria-label",(stamp?"Снять утверждение — ":"Утвердить — ")+clip.title);
+   status.textContent=stamp?new Date(stamp*1000).toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"";
  }
- if(clip.approved_at)accepted(clip.approved_at);
+ render(clip.approved_at);
  button.onclick=async()=>{
    button.disabled=true;status.textContent="Сохраняем…";
    try{
      const response=await fetch(api+"approval",{method:"POST",headers:{"Content-Type":"application/json"},
-       body:JSON.stringify({id:clip.id,version:clip.version})});
+         body:JSON.stringify({id:clip.id,version:clip.version,approved:!clip.approved_at})});
      const result=await response.json();
-     if(!response.ok||!result.approved_at)throw new Error(result.error||"Не удалось сохранить утверждение.");
-     accepted(result.approved_at);
-   }catch(error){button.disabled=false;status.textContent=error.message==="Failed to fetch"?"Проверьте соединение и повторите.":error.message}
+     if(!response.ok||!("approved_at" in result))throw new Error(result.error||"Не удалось сохранить решение.");
+     render(result.approved_at);
+   }catch(error){status.textContent=error.message==="Failed to fetch"?"Проверьте соединение и повторите.":error.message}
+   finally{button.disabled=false}
  };
 }
 function makeCard(clip,role){
