@@ -81,6 +81,28 @@ function mountForm(card,clip,player){
  const q=c=>box.querySelector("."+c),form=box.querySelector("form");
  let current=0,blob=null,url=null,recording=null,stream=null,timer=null,started=0,requestId=null,pictureKey=null,busy=false;const parts=[];
  const show=(msg,kind="")=>{q("status").textContent=msg;q("status").className="status "+kind};
+ const pictureInput=q("picture"),preview=q("picture-preview"),previewImage=preview.querySelector("img");
+ let previewUrl=null;
+ function clearPreview(){
+   preview.hidden=true;previewImage.removeAttribute("src");
+   if(previewUrl)URL.revokeObjectURL(previewUrl);
+   previewUrl=null;
+ }
+ pictureInput.onchange=()=>{
+   clearPreview();requestId=null;
+   const file=pictureInput.files[0];
+   if(!file)return;
+   if(!file.size||file.size>maxBytes){pictureInput.value="";show("Выберите картинку до 8 МБ.","bad");return}
+   previewUrl=URL.createObjectURL(file);previewImage.alt=file.name;previewImage.src=previewUrl;
+   preview.hidden=false;show("");
+ };
+ previewImage.onerror=()=>{
+   if(!previewUrl||previewImage.naturalWidth||!previewImage.complete)return;
+   clearPreview();pictureInput.value="";requestId=null;show("Не удалось открыть картинку. Выберите JPEG, PNG или WebP.","bad");
+ };
+ q("discard-picture").onclick=()=>{
+   clearPreview();pictureInput.value="";requestId=null;pictureInput.focus();show("");
+ };
  if(!player)q("form-head").hidden=true;
  const capture=()=>{current=Math.round(Math.min(Number(clip.duration||0),Math.max(0,player?.currentTime||0))*1000)/1000;q("clock").textContent=cue(filmTime(clip,current));requestId=null};
  const audio=b=>{if(url)URL.revokeObjectURL(url);url=null;blob=b;requestId=null;q("voice").removeAttribute("src");
@@ -89,7 +111,7 @@ function mountForm(card,clip,player){
  function cleanup(){clearInterval(timer);stream?.getTracks().forEach(t=>t.stop());stream=null;recording=null;active=null;
    q("record").classList.remove("active");q("record").textContent="Записать голос";q("timer").textContent="";area()}
  function end(){if(recording&&recording.state==="recording")recording.stop()}
- box.addEventListener("toggle",()=>{if(box.open&&!q("note").value&&!blob&&!busy){capture();player?.pause()}});
+ box.addEventListener("toggle",()=>{if(box.open&&!q("note").value&&!blob&&!pictureInput.files.length&&!busy){capture();player?.pause()}});
  q("capture").onclick=()=>{player?.pause();capture()};
  form.addEventListener("input",()=>requestId=null);
  q("discard").onclick=()=>{audio(null);q("file").value="";show("")};
@@ -132,7 +154,7 @@ function mountForm(card,clip,player){
      }
      if(!receipt)throw new Error("Не все части записи сохранены.");
      if(pic)addThumb(strip,requestId,pictureKey);
-     form.reset();audio(null);show(player?"Замечание сохранено · "+cue(filmTime(clip,current)):"Замечание сохранено","ok");
+     form.reset();clearPreview();audio(null);show(player?"Замечание сохранено · "+cue(filmTime(clip,current)):"Замечание сохранено","ok");
    }catch(err){show((err.message==="Failed to fetch"?"Проверьте подключение.":err.message)+" Текст и запись сохранены в форме.","bad")}
    finally{busy=false;area()}
  };
