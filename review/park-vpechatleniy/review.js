@@ -28,11 +28,11 @@ function addThumb(strip, receipt){
 }
 function mountEditor(card,clip){
  if(!editorKey)return;
- const bar=el("div","media-tools"),label=el("label","file-label",clip.src?"Заменить файл":"Добавить файл");
+ const bar=el("div","media-tools"),label=el("label","file-label","Добавить файл");
  const input=el("input","file");input.type="file";input.accept="video/mp4,image/jpeg,image/png,image/webp";label.append(input);
  const status=el("span","status");status.setAttribute("role","status");
  const remove=el("button","","Удалить файл");remove.type="button";
- bar.append(label);if(clip.src)bar.append(remove);bar.append(status);card.append(bar);
+ bar.append(clip.src?remove:label,status);card.append(bar);
  async function save(file){
    if(input.disabled)return;
    const kind=file?(/\.mp4$/i.test(file.name)||file.type==="video/mp4"?"video":"image"):"empty";
