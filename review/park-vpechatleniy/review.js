@@ -20,11 +20,31 @@ function envelope(fields, payload){
  new DataView(length).setUint32(0,meta.length);
  return new Blob([length,meta,payload]);
 }
-function addThumb(strip, receipt){
+function addThumb(strip, receipt, uploadedKey){
+ const storageKey="park-picture:"+receipt;
+ let ownKey=uploadedKey;
+ try{
+   if(ownKey)localStorage.setItem(storageKey,ownKey);
+   else ownKey=localStorage.getItem(storageKey);
+ }catch{}
+ const wrap=el("div","feedback-thumb");
  const a=el("a"),img=el("img");
  a.href=api+"pictures/"+receipt+"/image";a.target="_blank";a.rel="noopener";
  img.src=api+"pictures/"+receipt+"/thumb";img.alt="Открыть картинку из замечания";img.loading="lazy";
- a.append(img);strip.append(a);
+ a.append(img);wrap.append(a);strip.append(wrap);
+ if(!ownKey&&!editorKey)return;
+ const button=el("button","remove-picture","×"),status=el("span","status");
+ button.type="button";button.title="Удалить картинку из замечания";button.setAttribute("aria-label",button.title);
+ status.setAttribute("role","status");wrap.append(button,status);
+ button.onclick=async()=>{
+   button.disabled=true;status.textContent="";
+   try{
+     const response=await fetch(api+"pictures/"+receipt+"/remove",{method:"POST",headers:{Authorization:"Bearer "+(ownKey||editorKey)}});
+     if(!response.ok)throw Error((await response.json()).error||"Не удалось удалить картинку.");
+     wrap.remove();
+     try{localStorage.removeItem(storageKey)}catch{}
+   }catch(error){button.disabled=false;status.textContent=error.message==="Failed to fetch"?"Проверьте соединение и повторите.":error.message}
+ };
 }
 function mountEditor(card,clip){
  if(!editorKey)return;
@@ -59,7 +79,7 @@ function mountForm(card,clip,player){
  const box=document.querySelector("#feedback").content.firstElementChild.cloneNode(true);
  card.append(box);
  const q=c=>box.querySelector("."+c),form=box.querySelector("form");
- let current=0,blob=null,url=null,recording=null,stream=null,timer=null,started=0,requestId=null,busy=false;const parts=[];
+ let current=0,blob=null,url=null,recording=null,stream=null,timer=null,started=0,requestId=null,pictureKey=null,busy=false;const parts=[];
  const show=(msg,kind="")=>{q("status").textContent=msg;q("status").className="status "+kind};
  if(!player)q("form-head").hidden=true;
  const capture=()=>{current=Math.round(Math.min(Number(clip.duration||0),Math.max(0,player?.currentTime||0))*1000)/1000;q("clock").textContent=cue(filmTime(clip,current));requestId=null};
@@ -101,8 +121,8 @@ function mountForm(card,clip,player){
    if(pic&&(pic.size>maxBytes||!pic.size)){show("Выберите картинку до 8 МБ.","bad");return}
    if(!note&&!blob&&!pic){show("Добавьте комментарий, запись или картинку.","bad");return}
    busy=true;area();show("Отправляем…");
-   if(!requestId)requestId=crypto.randomUUID();
-   const meta={id:clip.id,version:clip.version,seconds:current,author,text:note,request_id:requestId,imageBytes:pic?.size||0};
+   if(!requestId){requestId=crypto.randomUUID();pictureKey=pic?crypto.randomUUID():null}
+   const meta={id:clip.id,version:clip.version,seconds:current,author,text:note,request_id:requestId,imageBytes:pic?.size||0,pictureKey};
    try{
      const raw=new Blob([blob,pic].filter(Boolean)),step=640*1024,total=Math.max(1,Math.ceil(raw.size/step));let receipt=false;
      for(let part=0;part<total;part++){
@@ -111,7 +131,7 @@ function mountForm(card,clip,player){
        if(result.receipt){receipt=true;break}
      }
      if(!receipt)throw new Error("Не все части записи сохранены.");
-     if(pic)addThumb(strip,requestId);
+     if(pic)addThumb(strip,requestId,pictureKey);
      form.reset();audio(null);show(player?"Замечание сохранено · "+cue(filmTime(clip,current)):"Замечание сохранено","ok");
    }catch(err){show((err.message==="Failed to fetch"?"Проверьте подключение.":err.message)+" Текст и запись сохранены в форме.","bad")}
    finally{busy=false;area()}
