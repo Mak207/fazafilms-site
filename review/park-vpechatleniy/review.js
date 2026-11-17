@@ -79,29 +79,29 @@ function mountForm(card,clip,player){
  const box=document.querySelector("#feedback").content.firstElementChild.cloneNode(true);
  card.append(box);
  const q=c=>box.querySelector("."+c),form=box.querySelector("form");
- let current=0,blob=null,url=null,recording=null,stream=null,timer=null,started=0,requestId=null,pictureKey=null,busy=false;const parts=[];
+ let current=0,blob=null,url=null,recording=null,stream=null,timer=null,started=0,requestId=null,busy=false;const parts=[];
  const show=(msg,kind="")=>{q("status").textContent=msg;q("status").className="status "+kind};
- const pictureInput=q("picture"),preview=q("picture-preview"),previewImage=preview.querySelector("img");
- let previewUrl=null;
- function clearPreview(){
-   preview.hidden=true;previewImage.removeAttribute("src");
-   if(previewUrl)URL.revokeObjectURL(previewUrl);
-   previewUrl=null;
+ const pictureInput=q("picture"),preview=q("picture-preview"),pictures=new Set();
+ function discardPicture(item){
+   if(!pictures.delete(item))return;
+   item.wrap.remove();URL.revokeObjectURL(item.url);
+   preview.hidden=!pictures.size;requestId=null;
  }
  pictureInput.onchange=()=>{
-   clearPreview();requestId=null;
-   const file=pictureInput.files[0];
-   if(!file)return;
-   if(!file.size||file.size>maxBytes){pictureInput.value="";show("Выберите картинку до 8 МБ.","bad");return}
-   previewUrl=URL.createObjectURL(file);previewImage.alt=file.name;previewImage.src=previewUrl;
-   preview.hidden=false;show("");
- };
- previewImage.onerror=()=>{
-   if(!previewUrl||previewImage.naturalWidth||!previewImage.complete)return;
-   clearPreview();pictureInput.value="";requestId=null;show("Не удалось открыть картинку. Выберите JPEG, PNG или WebP.","bad");
- };
- q("discard-picture").onclick=()=>{
-   clearPreview();pictureInput.value="";requestId=null;pictureInput.focus();show("");
+   const files=Array.from(pictureInput.files);pictureInput.value="";
+   let message="";
+   for(const file of files){
+     if(pictures.size>=6){message="К замечанию можно прикрепить до 6 картинок.";break}
+     if(!file.size||file.size>maxBytes){message="Каждая картинка должна быть до 8 МБ.";continue}
+     const wrap=el("div","feedback-thumb"),img=el("img"),button=el("button","remove-picture discard-picture","×");
+     const item={file,wrap,key:crypto.randomUUID(),url:URL.createObjectURL(file)};
+     pictures.add(item);requestId=null;
+     button.type="button";button.title="Убрать "+file.name;button.setAttribute("aria-label",button.title);
+     button.onclick=()=>{discardPicture(item);pictureInput.focus();show("")};
+     img.onerror=()=>{if(pictures.has(item)){discardPicture(item);show("Не удалось открыть "+file.name+". Выберите JPEG, PNG или WebP.","bad")}};
+     img.alt=file.name;img.src=item.url;wrap.append(img,button);preview.append(wrap);preview.hidden=false;
+   }
+   show(message,message?"bad":"");
  };
  if(!player)q("form-head").hidden=true;
  const capture=()=>{current=Math.round(Math.min(Number(clip.duration||0),Math.max(0,player?.currentTime||0))*1000)/1000;q("clock").textContent=cue(filmTime(clip,current));requestId=null};
@@ -111,7 +111,7 @@ function mountForm(card,clip,player){
  function cleanup(){clearInterval(timer);stream?.getTracks().forEach(t=>t.stop());stream=null;recording=null;active=null;
    q("record").classList.remove("active");q("record").textContent="Записать голос";q("timer").textContent="";area()}
  function end(){if(recording&&recording.state==="recording")recording.stop()}
- box.addEventListener("toggle",()=>{if(box.open&&!q("note").value&&!blob&&!pictureInput.files.length&&!busy){capture();player?.pause()}});
+ box.addEventListener("toggle",()=>{if(box.open&&!q("note").value&&!blob&&!pictures.size&&!busy){capture();player?.pause()}});
  q("capture").onclick=()=>{player?.pause();capture()};
  form.addEventListener("input",()=>requestId=null);
  q("discard").onclick=()=>{audio(null);q("file").value="";show("")};
@@ -139,22 +139,21 @@ function mountForm(card,clip,player){
    }catch(e){cleanup();show("Микрофон недоступен. Разрешите запись в браузере или выберите аудиофайл.","bad")}
  };
  form.onsubmit=async e=>{e.preventDefault();if(busy||recording?.state==="recording")return;
-   const note=q("note").value.trim(),author=q("author").value.trim(),pic=q("picture").files[0];
-   if(pic&&(pic.size>maxBytes||!pic.size)){show("Выберите картинку до 8 МБ.","bad");return}
-   if(!note&&!blob&&!pic){show("Добавьте комментарий, запись или картинку.","bad");return}
+   const note=q("note").value.trim(),author=q("author").value.trim(),selected=Array.from(pictures);
+   if(!note&&!blob&&!selected.length){show("Добавьте комментарий, запись или картинку.","bad");return}
    busy=true;area();show("Отправляем…");
-   if(!requestId){requestId=crypto.randomUUID();pictureKey=pic?crypto.randomUUID():null}
-   const meta={id:clip.id,version:clip.version,seconds:current,author,text:note,request_id:requestId,imageBytes:pic?.size||0,pictureKey};
+   if(!requestId)requestId=crypto.randomUUID();
+   const meta={id:clip.id,version:clip.version,seconds:current,author,text:note,request_id:requestId,images:selected.map(p=>({size:p.file.size,key:p.key}))};
    try{
-     const raw=new Blob([blob,pic].filter(Boolean)),step=640*1024,total=Math.max(1,Math.ceil(raw.size/step));let receipt=false;
+     const raw=new Blob([...(blob?[blob]:[]),...selected.map(p=>p.file)]),step=640*1024,total=Math.max(1,Math.ceil(raw.size/step));let saved=null;
      for(let part=0;part<total;part++){
        const response=await fetch(api+"feedback",{method:"POST",headers:{"Content-Type":"application/octet-stream"},body:envelope({...meta,part,total},raw.slice(part*step,(part+1)*step))});
        const result=await response.json();if(!response.ok)throw new Error(result.error||"Не удалось отправить.");
-       if(result.receipt){receipt=true;break}
+       if(result.receipt){saved=result;break}
      }
-     if(!receipt)throw new Error("Не все части записи сохранены.");
-     if(pic)addThumb(strip,requestId,pictureKey);
-     form.reset();clearPreview();audio(null);show(player?"Замечание сохранено · "+cue(filmTime(clip,current)):"Замечание сохранено","ok");
+     if(!saved||saved.pictures?.length!==selected.length)throw new Error("Не все вложения подтверждены сервером.");
+     selected.forEach((item,i)=>{if(saved.pictures[i])addThumb(strip,saved.pictures[i],item.key);discardPicture(item)});
+     form.reset();audio(null);show(player?"Замечание сохранено · "+cue(filmTime(clip,current)):"Замечание сохранено","ok");
    }catch(err){show((err.message==="Failed to fetch"?"Проверьте подключение.":err.message)+" Текст и запись сохранены в форме.","bad")}
    finally{busy=false;area()}
  };
