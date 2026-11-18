@@ -123,3 +123,38 @@ viewer.addEventListener('keydown', event => {
     displayImage(activeIndex + (event.key === 'ArrowLeft' ? -1 : 1));
   }
 });
+
+const demoPlayer = document.querySelector('#demo-player');
+const demoWindow = document.querySelector('#demo-window');
+const closeDemo = document.querySelector('#close-demo');
+let demoTrigger;
+
+function openDemo(event) {
+  if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || !demoPlayer.showModal) return;
+  event.preventDefault();
+  demoTrigger = event.currentTarget;
+  const name = demoTrigger.dataset.title;
+  document.querySelector('#demo-title').textContent = name;
+  document.querySelector('#solo-demo').href = demoTrigger.href;
+  demoWindow.title = name;
+  demoWindow.src = demoTrigger.href;
+  demoPlayer.showModal();
+  closeDemo.focus();
+}
+
+document.querySelectorAll('[data-demo]').forEach(link => link.addEventListener('click', openDemo));
+closeDemo.addEventListener('click', () => demoPlayer.close());
+demoWindow.addEventListener('load', () => {
+  if (!demoPlayer.open) return;
+  demoWindow.contentDocument?.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !event.defaultPrevented && !demoWindow.contentDocument.fullscreenElement) {
+      event.preventDefault();
+      demoPlayer.close();
+    }
+  });
+});
+demoPlayer.addEventListener('close', () => {
+  if (demoPlayer.open) return;
+  demoWindow.removeAttribute('src');
+  demoTrigger?.focus({preventScroll: true});
+});
