@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#102e3a">
+<title>Бурлацкая лямка · Золотое кольцо</title>
+<style>
+*{box-sizing:border-box}html{color-scheme:dark;background:#102e3a;color:#fbf2df;font:16px/1.45 system-ui,sans-serif}body{margin:0}main{max-width:1200px;margin:auto}.river{position:relative;overflow:hidden;isolation:isolate;background:#476a70}.river svg{display:block;width:100%;height:clamp(290px,38vw,435px)}.scene-title{position:absolute;left:clamp(16px,3.5vw,48px);top:clamp(14px,2.4vw,28px);color:#203643;pointer-events:none}.scene-title p{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;margin:0;color:#3d5154;font-weight:750}.scene-title h1{font:clamp(29px,4vw,52px)/1.08 Georgia,serif;margin:5px 0}.watermark{position:absolute;left:14px;bottom:10px;font-size:12px;color:#f3e5cc;text-shadow:0 1px 3px #07232a}.distance{position:absolute;right:14px;bottom:12px;background:#102e3add;padding:4px 10px;border-radius:14px;font-size:12px}.control{padding:18px clamp(14px,3.5vw,44px) 16px;background:linear-gradient(120deg,#183a47,#102c37)}.toolbar,.play,.feedback,.meter-label{display:flex;align-items:center;gap:12px;justify-content:space-between}.toolbar{margin-bottom:12px}.mode{display:flex;flex-wrap:wrap;gap:3px;background:#0c2530;padding:3px;border-radius:14px}.mode button,.restart{color:#e4eee8;background:none;border:0;min-height:40px;padding:6px 13px;border-radius:10px;font:600 .85rem system-ui;cursor:pointer}.mode [aria-pressed=true]{background:#f1d59a;color:#21373a}.mode button:hover,.restart:hover{box-shadow:inset 0 0 0 1px #e3c88e}.restart{text-decoration:underline;text-underline-offset:3px}.intro{margin:0 0 14px;font-size:clamp(15px,1.7vw,17px);color:#f8eed9}.play{align-items:end;gap:24px}.beat{flex:1;min-width:0}.meter-label{font-size:12px;color:#dce4df;margin-bottom:8px}.meter-label strong{font-size:.86rem;color:#fff7de}.track{height:20px;border-radius:10px;background:#627b7b;position:relative;overflow:visible;box-shadow:inset 0 2px 4px #08252b}.window{position:absolute;inset:1px 28%;background:repeating-linear-gradient(-55deg,#e4ba6a 0 6px,#f1ce89 6px 10px);border-radius:8px}.needle{position:absolute;background:#fffcf0;height:30px;width:5px;left:50%;top:-5px;transform:translateX(-50%);border:1px solid #254550;border-radius:4px;box-shadow:0 0 3px #123}.actions{display:flex;gap:9px}.action{border:0;background:#f8d28b;color:#1f343a;border-radius:8px;padding:11px 18px;min-height:47px;font:700 1rem system-ui;cursor:pointer}.action:active{transform:translateY(1px);background:#f5e3c4}.action:disabled{background:#425e64;color:#d3dedb;cursor:default}.feedback{align-items:baseline;margin-top:16px;font-size:.85rem}.feedback strong{color:#ffe0a2;font-size:.95rem}.feedback span{white-space:nowrap}.progress{height:4px;margin-top:8px;border-radius:3px;background:#395763}.progress i{display:block;background:#e9c67e;height:100%;width:0;transition:width .3s}footer{font-size:.77rem;color:#bdcccb;margin-top:13px}button:focus-visible{outline:3px solid #f9e1a4;outline-offset:3px}[hidden]{display:none!important}@media(max-width:570px){.river svg{height:260px}.scene-title p{font-size:.57rem}.control{padding:14px}.play{flex-direction:column;align-items:stretch;gap:15px}.actions{width:100%}.actions button{flex:1}.toolbar{gap:5px}.mode button,.restart{padding:6px 10px}.feedback{margin-top:10px}.intro{margin-bottom:10px}.watermark{font-size:10px}.distance{font-size:11px}.feedback strong{font-size:.84rem}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main>
+<div class="river">
+ <div class="scene-title"><p>Ярославская область · Волга</p><h1>Бурлацкая лямка</h1></div>
+ <svg id="panorama" viewBox="0 0 1000 390" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Волжская панорама с грузовым судном и пристанью на закате">
+ <defs>
+  <linearGradient id="sky" x2=".1" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#b5d4cf"/><stop offset=".52" stop-color="#f5d5a2"/><stop offset="1" stop-color="#f4b581"/></linearGradient>
+  <linearGradient id="water" x2="0" y2="1"><stop stop-color="#8ba8a0"/><stop offset=".4" stop-color="#557e82"/><stop offset="1" stop-color="#214958"/></linearGradient>
+  <radialGradient id="sunlight"><stop stop-color="#fff4b7" stop-opacity=".86"/><stop offset="1" stop-color="#ffdc8a" stop-opacity="0"/></radialGradient>
+  <linearGradient id="hull" x2=".1" y2="1"><stop stop-color="#95643b"/><stop offset=".42" stop-color="#6a452f"/><stop offset="1" stop-color="#352c2a"/></linearGradient>
+  <pattern id="planks" width="80" height="6" patternUnits="userSpaceOnUse"><path d="M0 5h80" stroke="#261f1d" opacity=".4"/><path d="M6 1h44m9 0h12" stroke="#c1884e" opacity=".55"/></pattern>
+  <pattern id="tile" width="7" height="6" patternUnits="userSpaceOnUse"><path d="m0 3 3 2 4-3" fill="none" stroke="#d0c4a0" stroke-width="1"/></pattern>
+  <g id="fir"><path d="m0 0-5 12 3-1-6 10 4-1-6 9h20L4 20l4 1L2 11l3 1Z"/><path d="M-1 22h2v11h-2z"/></g>
+  <g id="house"><path d="M0 0h24v18H0z" fill="#b6946b"/><path d="m-3 1 9-9h13l8 9z" fill="#755e4c"/><path d="M3 5h4v6H3zm9 0h4v6h-4z" fill="#635e50"/><path d="M20 8h3v10h-3z" fill="#836d50"/></g>
+  <g id="dome"><path d="M-7 0Q-10-6-1-12L0-15 1-12Q10-6 7 0z" fill="#566e66"/><path d="M0-14v-8m-3 3h6" fill="none" stroke="#736746" stroke-width="1.3"/></g>
+  <g id="gull"><path d="M0 2q5-5 11 0 6-6 12-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></g>
+ </defs>
+ <rect width="1000" height="235" fill="url(#sky)"/><ellipse cx="695" cy="133" rx="100" ry="68" fill="url(#sunlight)"/><circle cx="695" cy="133" r="27" fill="#fff2c4"/>
+ <g opacity=".33" fill="#fff3dc"><path d="M0 99q36-11 81-6 48-12 86 3 54-4 70 5H0zm323-54q30-6 50-2 43-11 66 1 24-2 42 4H323zm370 33q21-9 61-6 31-8 64 3 39-3 68 4H693z"/></g>
+ <g id="distant"><path d="M-150 198Q-30 171 65 185T238 183Q319 162 390 178T565 181Q650 164 728 178T922 174L1150 174V227H-150" fill="#99a897"/><path d="M-150 203q90-11 172-6t132-7q64-10 135 3 98 5 174-7 73-12 141 2 75 6 179-12 77-10 144-1l180-9v70H-150" fill="#789285"/></g>
+ <g id="shore"><g id="trees"></g><path d="M-200 213q140-10 300-2t271-8q100-14 231-3t240-8q140-16 324-8v42H-200" fill="#687c66"/><g id="village"></g><path d="M505 209v-32h32v32m10-2v-23h30v22" fill="#d6c7a1"/><path d="m499 178 9-8h25l9 8zm42 7 10-8h20l11 8z" fill="#748372"/><use href="#dome" transform="translate(521 170)"/><use href="#dome" transform="translate(561 177) scale(.64)"/><path d="M587 206v-42h12v42z" fill="#d0c4a2"/><path d="m585 164 8-22 8 22z" fill="#748372"/><path d="M593 144v-9" stroke="#6e6a55"/><path d="M591 168q2-4 4 0v5h-4z" fill="#75806d"/><path d="M-160 216q180-3 331-1 169-2 291-7 111-9 205-4 119 4 234-8 127-14 255-8v49H-160z" fill="#b09c78"/></g>
+ <path d="M0 214q219 6 430-4t338-7q98 1 232-10v197H0z" fill="url(#water)"/>
+ <g id="glints"></g>
+ <g id="landing"><path d="m822 249 140-25 84 8-158 32z" fill="#bc9864"/><path d="m822 249 66 15v6l-66-13z" fill="#684a37"/><path d="m888 264 158-32v7l-158 31z" fill="#7c6246"/><g fill="#5b503d"><path d="M838 253h5v24l-5-2zm41 9h6v22l-6-2zm53-9h5v24l-5 2zm62-12h5v22l-5 2z"/></g><g id="lanterns"></g></g>
+ <g id="greeting" aria-hidden="true" opacity="0"></g>
+ <g id="boat">
+  <ellipse id="boatshadow" cx="0" cy="1" rx="96" ry="8" fill="#153944" opacity=".38"/>
+  <g id="wake" opacity=".6" fill="none" stroke="#ecddaf" stroke-linecap="round"><path d="M-83-1q-22 3-56 1t-48 2M-80 2q-34 6-69 4m218-10q-5 5-17 6"/><path d="M-107 9q-22 4-54 2" opacity=".6"/></g>
+  <path d="M-94-20q20 2 31 5l109 1 45-13q-11 23-34 28H-47q-34-2-47-21z" fill="url(#hull)" stroke="#453932" stroke-width="1.5"/>
+  <path d="M-93-20q20 2 31 5l108 1 45-13q-11 23-34 28H-47q-34-2-46-21z" fill="url(#planks)"/>
+  <path d="M-94-21q25 7 42 7l98 1q34-9 44-15" stroke="#e0bb7c" stroke-width="3" fill="none"/>
+  <path d="M-69-16v-13l5-6h25l12 11v9z" fill="#a78152"/><path d="m-73-28 8-9h29l10 9z" fill="#746047"/><path d="M-61-27h6v5h-6zm13 0h6v5h-6z" fill="#394b4c"/>
+  <path d="m-23-16 6-9h48l10 11z" fill="#b4a27d"/><path d="m-14-25 2 10m14-10 3 11m13-11 4 11" stroke="#766950" stroke-width="2"/>
+  <path d="M13-17 11-80" stroke="#5d4e38" stroke-width="3"/><path d="m11-77-54 60m54-60 57 56" stroke="#5b5949" stroke-width="1" fill="none"/><path d="m-12-57 48-4" stroke="#5e4e38" stroke-width="2"/><path d="m-11-55 46-5-5 6-16 1-9 2-12-1z" fill="#d4c49a"/><path d="m11-79 15 3-15 4z" fill="#9c5a3e"/>
+  <g fill="#384c49"><circle cx="64" cy="-31" r="2.4"/><path d="m61-27 4-1 2 7-2 2-3-1z"/></g>
+ </g>
+ <path id="towline" stroke="#c4a87b" stroke-width="1.4" fill="none"/>
+ <g id="birds" style="color:#425e62"><use href="#gull" x="635" y="99"/><use href="#gull" transform="translate(670 84) scale(.7)"/><use href="#gull" transform="translate(691 91) scale(.55)"/></g>
+ <g id="celebrate" aria-hidden="true"></g>
+ </svg>
+ <span class="watermark" id="journey">На рейде</span><span class="distance" id="remaining">До пристани 100 м</span>
+</div>
+<section class="control" aria-label="Управление судном">
+ <div class="toolbar"><div class="mode" aria-label="Число участников"><button type="button" id="solo" aria-pressed="true">Один участник</button><button type="button" id="crew" aria-pressed="false">Вдвоём</button></div><button class="restart" id="restart" type="button">Сначала</button></div>
+ <p class="intro" id="instruction">Нажмите «Потянуть», чтобы двинуть судно. Следующий рывок сделайте, когда метка войдёт в золотую полосу.</p>
+ <div class="play"><div class="beat"><div class="meter-label"><strong>Ритм тяги</strong><span id="cue">Первый рывок свободный</span></div><div class="track" aria-hidden="true"><i class="window"></i><i class="needle" id="needle"></i></div></div>
+ <div class="actions"><button class="action" id="pull1" type="button">Потянуть</button><button class="action" id="pull2" type="button" hidden>Второй рывок</button></div></div>
+ <div class="feedback"><strong role="status" id="message">Судно ждёт у дальнего берега.</strong><span id="meters">0 из 100 м</span></div><div class="progress" id="progress" role="progressbar" aria-label="Путь до пристани" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="fill"></i></div>
+ <footer>Эскиз игровой механики. На выставке тягу передаёт канат, здесь ей соответствует нажатие. Можно играть клавишами: пробел одному, 1 и 2 вдвоём.</footer>
+</section>
+</main>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const ns = 'http://www.w3.org/2000/svg';
+const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+const narrow = matchMedia('(max-width: 570px)');
+function element(tag, attrs, parent) {
+  const node = document.createElementNS(ns, tag);
+  for (const [name,value] of Object.entries(attrs)) node.setAttribute(name,value);
+  parent.appendChild(node);
+  return node;
+}
+let seed = 422;
+function random(){seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296}
+for(let i=0;i<115;i++){
+  const x=-150+i*12, y=205-12*Math.sin(x*.002);
+  const scale=.27+random()*.44;
+  element('use',{href:'#fir',transform:`translate(${x} ${y-31*scale}) scale(${scale})`, fill:['#778a74','#83927c','#6b8273'][i%3]},$('trees'));
+}
+for(let i=0;i<23;i++){
+  const x=270+i*21;
+  if(x>475&&x<611)continue;
+  element('use',{href:'#house',transform:`translate(${x} ${203-15*Math.sin(x*.002)-random()*3}) scale(${.46+random()*.28})`},$('village'));
+}
+const ripples=[];
+for(let i=0;i<170;i++){
+  const x=random()*1080-40,y=218+random()*174,len=(5+random()*35)*(y/340),warm=Math.abs(x-695)<(y-172)*.52&&random()>.24;
+  const node=element('path',{d:`M${x} ${y}q${len*.5} 1 ${len} 0`,fill:'none',stroke:warm?'#edd397':(i%4?'#a7bbb0':'#183e4b'),'stroke-width':warm?1.6:1.3,opacity:warm?.74:.39},$('glints'));
+  ripples.push(node);
+}
+const lamps=[];
+for(let i=0;i<5;i++){
+  const x=842+i*38,y=i===0?247:258-i*7;
+  element('path',{d:`M${x} ${y}v-32`,stroke:'#65523e','stroke-width':2.2},$('lanterns'));
+  lamps.push(element('circle',{cx:x,cy:y-34,r:10,fill:'url(#sunlight)',opacity:0},$('lanterns')));
+  element('path',{d:`M${x-2.5} ${y-37}h5l-1 7h-3z`,fill:'#f6d599',stroke:'#746348','stroke-width':1},$('lanterns'));
+}
+const greeting=$('greeting');
+// A string of harbour pennants rises at the landing when the boat arrives.
+const flagLine=element('path',{d:'M843 213q75 22 153-10',fill:'none',stroke:'#584839','stroke-width':1.1},greeting);
+for(let i=0;i<14;i++){
+  const f=(i+.4)/14,x=843+153*f,y=213+44*f*(1-f)-10*f;
+  element('path',{d:'M'+x+' '+y+'l8 -.5-2 12z',fill:['#bb6744','#edce85','#799995','#e8d9b5'][i%4]},greeting);
+}
+const reflections=[];
+for(let i=0;i<5;i++){
+  for(let j=0;j<4;j++){
+    const x=843+i*38,y=279+7*j-i*4;
+    reflections.push(element('path',{d:'M'+(x-3-j*1.3)+' '+y+'q'+(3+j*1.3)+' 1 '+(6+j*2.6)+' 0',fill:'none',stroke:'#ffd68c','stroke-width':1.4,opacity:0},$('glints')));
+  }
+}
+const sparks=[];
+for(let i=0;i<40;i++) sparks.push({x:480+random()*500,y:191+random()*52,p:random()*6,r:1+random()*1.4,node:element('circle',{r:1.3,fill:'#fff1af',opacity:0},$('celebrate'))});
+let group=false,turn=1,meters=0,shown=0,elapsed=0,started=false,finished=false,arrival=0,phase=.5,pulse=0,lastTime=0,raf=0,lastInput=-1000;
+function reset(){
+  meters=0;shown=0;elapsed=0;started=false;finished=false;turn=1;arrival=0;pulse=0;phase=.5;lastInput=-1000;
+  $('message').textContent='Судно ждёт у дальнего берега.';
+  $('journey').textContent='На рейде';$('cue').textContent='Первый рывок свободный';$('needle').style.left='50%';
+  $('restart').textContent='Сначала';
+  $('instruction').textContent=group?'Тяните по очереди. Один нажимает «Участник 1», второй — «Участник 2». Попадание в золотую полосу усиливает ход.':'Нажмите «Потянуть», чтобы двинуть судно. Следующий рывок сделайте, когда метка войдёт в золотую полосу.';
+  update();draw(0);schedule();
+}
+function update(){
+  $('solo').setAttribute('aria-pressed',String(!group));$('crew').setAttribute('aria-pressed',String(group));
+  $('pull2').hidden=!group;
+  $('pull1').textContent=group?'Участник 1':'Потянуть';$('pull2').textContent='Участник 2';
+  $('pull1').disabled=finished||(group&&turn!==1);$('pull2').disabled=finished||turn!==2;
+  $('fill').style.width=meters+'%';$('progress').setAttribute('aria-valuenow',meters);
+  $('meters').textContent=meters+' из 100 м';$('remaining').textContent=meters===100?'У пристани':'До пристани '+(100-meters)+' м';
+}
+function pull(player){
+  const now=performance.now();
+  if(finished||(group&&player!==turn)||now-lastInput<340) return;
+  lastInput=now;
+  const timeHit=phase>=.28&&phase<=.72,first=!started;
+  started=true;pulse=1;
+  const gain=first?12:timeHit?15:6;
+  meters=Math.min(100,meters+gain);
+  if(group)turn=3-turn;
+  if(meters===100){
+    finished=true;arrival=0;$('journey').textContent='Пристань встречает артель';$('cue').textContent='Переход завершён';
+    $('message').textContent='У причала! Пристань встречает судно огнями и флагами.';$('restart').textContent='Ещё раз';
+  }else{
+    $('journey').textContent=meters<45?'Судно вышло на ход':meters<77?'Против течения':'Заходим к пристани';
+    $('message').textContent=(first?'Канат натянулся':timeHit?'В такт! Судно набрало ход':'Судно продвинулось. Следите за меткой')+' · +'+gain+' м'+(group?' · Ход '+turn:'');
+  }
+  if(reduce.matches)shown=meters;
+  update();draw(0);schedule();
+}
+function draw(dt){
+  const mobile=narrow.matches;
+  // Wider scene during the journey, with the moving boat always inside the mobile view.
+  shown=reduce.matches?meters:shown+(meters-shown)*(1-Math.exp(-dt*.0055));
+  const frac=shown/100, scale=.43+frac*.59,x=258+frac*472,y=236+frac*65;
+  if(mobile){
+    const width=Math.min(760,352*sceneAspect);
+    const centre=Math.max(width/2,Math.min(1000-width/2,x+width*.14));
+    $('panorama').setAttribute('viewBox',(centre-width/2)+' 16 '+width+' 352');
+  }else $('panorama').setAttribute('viewBox','0 0 1000 390');
+  const bob=started&&!finished&&!reduce.matches?Math.sin(elapsed*.004)*.7:0;
+  $('boat').setAttribute('transform',`translate(${x} ${y+bob}) scale(${scale})`);
+  $('towline').setAttribute('d',`M${x+84*scale} ${y-24*scale}Q${(x+1000)*.5} ${y+10-pulse*15} 1020 276`);
+  $('shore').setAttribute('transform',`translate(${-45*frac} 0)`);$('distant').setAttribute('transform',`translate(${-15*frac} 0)`);
+  $('wake').setAttribute('opacity',started&&!finished?.4+pulse*.6:.12);
+  if(!reduce.matches){
+    $('birds').setAttribute('transform',`translate(${-65*frac} ${-13*frac})`);
+    $('glints').setAttribute('transform',`translate(${started?Math.sin(elapsed*.0014)*2:0} 0)`);
+  }
+  greeting.setAttribute('opacity',finished?Math.min(1,reduce.matches?1:arrival/650):0);
+  greeting.setAttribute('transform','translate(0 '+(reduce.matches?0:Math.max(0,11-arrival/65))+')');
+  const glow=finished?1:Math.max(0,(frac-.75)*2.4);
+  for(const reflection of reflections)reflection.setAttribute('opacity',glow*.79);
+  for(const lamp of lamps){lamp.setAttribute('opacity',glow);lamp.setAttribute('r',finished?22:13)}
+  for(const s of sparks){s.node.setAttribute('cx',s.x+(reduce.matches?0:Math.sin(arrival*.001+s.p)*3));s.node.setAttribute('cy',s.y-(reduce.matches?8:Math.min(35,arrival*.006*(1+s.r*.4))));s.node.setAttribute('opacity',finished?(reduce.matches?.7:.42+.43*(.5+.5*Math.sin(arrival*.003+s.p))):0)}
+}
+function frame(now){
+  raf=0;const dt=lastTime?Math.min(now-lastTime,70):16;lastTime=now;
+  elapsed+=dt; if(finished)arrival+=dt;
+  pulse=Math.max(0,pulse-dt*.0013);
+  if(started&&!finished){
+    // Reduced motion replaces the travelling pointer with a two-state visual cue.
+    phase=.5-.5*Math.cos(2*Math.PI*elapsed/2200);
+    const hit=phase>=.28&&phase<=.72;
+    $('needle').style.left=(reduce.matches?(hit?50:13):phase*96+2)+'%';
+    $('cue').textContent=hit?'Сейчас — тянуть':'Ловите золотую полосу';
+  }
+  draw(dt);
+  if(started&&(!finished||arrival<6500))schedule();
+}
+function schedule(){if(!raf&&!document.hidden)raf=requestAnimationFrame(frame)}
+$('pull1').addEventListener('click',()=>pull(1));$('pull2').addEventListener('click',()=>pull(2));
+$('solo').addEventListener('click',()=>{if(group){group=false;reset()}});$('crew').addEventListener('click',()=>{if(!group){group=true;reset()}});$('restart').addEventListener('click',reset);
+document.addEventListener('keydown',event=>{
+  if(event.repeat||event.altKey||event.ctrlKey||event.metaKey)return;
+  if(group&&['1','2'].includes(event.key)){event.preventDefault();pull(Number(event.key))}
+  else if(!group&&event.code==='Space'&&(!event.target.closest('button')||event.target===$('pull1'))){event.preventDefault();pull(1)}
+});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(raf);raf=0;lastTime=0}else schedule()});
+let sceneAspect=1.5;
+function resizeScene(){const box=$('panorama').getBoundingClientRect();if(box.height>0)sceneAspect=box.width/box.height;draw(0)}
+new ResizeObserver(resizeScene).observe($('panorama'));
+narrow.addEventListener('change',resizeScene);
+reset();
+</script>
+</body>
+</html>

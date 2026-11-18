@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,follow"><title>Голоса колоколов · Золотое кольцо</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#141c20;color:#fbefd8;font:16px/1.5 Arial,sans-serif}
+    main{width:min(1080px,100%);margin:auto;padding:clamp(15px,3vw,34px)}
+    .head,.actions{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+    h1{font:400 clamp(32px,4vw,58px)/1.05 Georgia,serif;margin:0}
+    p{margin:8px 0 15px;color:#c8cdca}button,a{font:inherit;color:inherit}
+    button{border:1px solid #7e837c;padding:10px 15px;min-height:44px;cursor:pointer;background:#253035;border-radius:5px}
+    button:hover,button[aria-pressed=true]{background:#43504e}
+    button:focus-visible,a:focus-visible{outline:3px solid #ffe2a4;outline-offset:3px}
+    .sound{font-size:14px}.stage{position:relative;border-radius:8px;background:#182b34;overflow:hidden;isolation:isolate;box-shadow:0 0 0 1px #53636a}
+    canvas{display:block;width:100%;height:clamp(230px,43vh,400px)}
+    .keys{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:12px 0}
+    .keys button{font-size:clamp(14px,1.8vw,19px);font-family:Georgia,serif;border-color:#5a6869}
+    .keys button[aria-pressed=true]{color:#ffe3ae;border-color:#d5ac65;background:#343938}
+    .feedback{min-height:1.7em;font-weight:bold;color:#f6d294;margin:10px 0}
+    .actions{border-top:1px solid #424b4b;margin-top:13px;padding-top:12px}.actions a{color:#dfd3af;text-underline-offset:4px}
+    .audience main{max-width:none;padding:0}.audience .head,.audience .actions,.audience .instruction,.audience .keys{display:none}
+    .audience .stage{border:0;border-radius:0}.audience canvas{height:100dvh}.audience .feedback{position:fixed;bottom:3vh;text-align:center;width:100%;text-shadow:0 2px 9px #000}
+    @media(max-width:520px){.keys button{padding:8px 4px}.keys{gap:5px}.head{gap:8px}.sound{padding:6px 10px}.actions{font-size:14px}.feedback{font-size:14px}}
+  </style>
+</head>
+<body><main>
+  <div class="head"><h1>Голоса колоколов</h1><button class="sound" id="sound" aria-pressed="false">Включить звук</button></div>
+  <p class="instruction">Нажмите на три колокола по очереди или вместе. Когда под каждым появится слушатель, прозвучит общая звонница.</p>
+  <div class="stage"><canvas aria-label="Три бронзовых колокола над вечерним городом"></canvas></div>
+  <div class="keys" aria-label="Колокола"><button data-bell="0" aria-pressed="false">1 · Большой</button><button data-bell="1" aria-pressed="false">2 · Средний</button><button data-bell="2" aria-pressed="false">3 · Малый</button></div>
+  <p id="feedback" class="feedback" role="status">Выберите первый колокол.</p>
+  <div class="actions"><button id="reset">Начать заново</button><a id="audience" target="_blank" rel="noopener">Открыть экран зрителей ↗</a></div>
+</main>
+<script>
+  'use strict';
+  const canvas=document.querySelector('canvas'), ctx=canvas.getContext('2d');
+  const motion=matchMedia('(prefers-reduced-motion: reduce)');
+  const names=['Большой','Средний','Малый'], pitches=[146.83,220,293.66];
+  const params=new URLSearchParams(location.search);
+  const spectator=params.has('screen'), session=params.get('screen')||Math.random().toString(36).slice(2);
+  const channel='BroadcastChannel' in window ? new BroadcastChannel('ring-bells-'+session) : null;
+  document.body.classList.toggle('audience',spectator);
+  const link=document.querySelector('#audience');
+  link.href=location.pathname+'?screen='+encodeURIComponent(session);
+  if(!channel)link.hidden=true;
+  let selected=[false,false,false], hits=[-1e5,-1e5,-1e5], finalAt=-1e5, last=-1;
+  let width,height,soundEnabled=false,audio,frame,timers=[];
+  const status=document.querySelector('#feedback');
+  function count(){return selected.filter(Boolean).length}
+  function announce(){
+    const n=count();
+    status.textContent=n===3?'Общая звонница · три голоса разбудили город':n?names[last]+' колокол · слушателей '+n+' из 3':spectator?'Звонница ждёт участников':'Выберите первый колокол.';
+    document.querySelectorAll('[data-bell]').forEach((b,i)=>b.setAttribute('aria-pressed',String(selected[i])));
+  }
+  function ring(note,delay=0){
+    if(!audio||!soundEnabled)return;
+    const now=audio.currentTime+delay;
+    for(const [factor,level,decay] of [[1,.12,1.9],[2.40,.035,1.1],[3.01,.032,1.5],[4.18,.02,.65]]){
+      const osc=audio.createOscillator(),gain=audio.createGain();
+      osc.frequency.value=pitches[note]*factor;gain.gain.setValueAtTime(.0001,now);
+      gain.gain.exponentialRampToValueAtTime(level,now+.012);gain.gain.exponentialRampToValueAtTime(.0001,now+decay);
+      osc.connect(gain);gain.connect(audio.destination);osc.start(now);osc.stop(now+decay+.02);
+    }
+  }
+  function strike(note){
+    if(spectator)return;
+    const before=count(),now=performance.now();
+    hits[note]=now;last=note;selected[note]=true;ring(note);
+    if(before<3 && count()===3){
+      finalAt=now;
+      [0,2,1,2,0,1,2].forEach((n,i)=>{timers.push(setTimeout(()=>{hits[n]=performance.now();ring(n);drawLoop();send();},(i+1)*290))});
+    }
+    announce();send();drawLoop();
+  }
+  function send(){
+    if(!channel||spectator)return;
+    const now=performance.now();
+    channel.postMessage({type:'state',selected,last,ages:hits.map(t=>now-t),endAge:now-finalAt});
+  }
+  if(channel){
+    channel.onmessage=({data})=>{
+      if(data.type==='hello'){send();return}
+      if(!spectator||data.type!=='state')return;
+      const now=performance.now();selected=data.selected;last=data.last;hits=data.ages.map(t=>now-t);finalAt=now-data.endAge;
+      announce();drawLoop();
+    };
+    if(spectator)channel.postMessage({type:'hello'});
+  }
+  function reset(){
+    timers.forEach(clearTimeout);timers=[];selected=[false,false,false];hits=[-1e5,-1e5,-1e5];finalAt=-1e5;last=-1;
+    announce();send();drawLoop();
+  }
+  document.querySelector('#sound').onclick=async e=>{
+    try{
+      audio=audio||new AudioContext();await audio.resume();soundEnabled=!soundEnabled;
+      e.target.textContent=soundEnabled?'Выключить звук':'Включить звук';
+      e.target.setAttribute('aria-pressed',String(soundEnabled));if(soundEnabled)ring(last<0?1:last);
+    }catch{status.textContent='Звук недоступен в этом браузере. Выберите колокол, чтобы увидеть его голос.'}
+  };
+  document.querySelector('#reset').onclick=reset;
+  document.querySelectorAll('[data-bell]').forEach(b=>b.onclick=()=>strike(Number(b.dataset.bell)));
+  document.addEventListener('keydown',e=>{if(!e.repeat&&['1','2','3'].includes(e.key))strike(Number(e.key)-1)});
+  canvas.addEventListener('pointerdown',e=>{
+    const box=canvas.getBoundingClientRect();const y=(e.clientY-box.top)/box.height;
+    if(y>.8)return;strike(Math.max(0,Math.min(2,Math.floor(3*(e.clientX-box.left)/box.width))));
+  });
+  function circle(x,y,r,color){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=color;ctx.fill()}
+  function curvedBell(x,y,s,hit,active,time){
+    ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.rotate(motion.matches?0:Math.sin(hit*.013)*Math.exp(-hit/620)*.095);
+    ctx.strokeStyle='#596567';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,-120);ctx.lineTo(0,-43);ctx.stroke();
+    const copper=ctx.createLinearGradient(-55,0,57,0);
+    for(const [stop,color] of [[0,'#584836'],[.12,'#937650'],[.29,'#e0c791'],[.43,'#ac9165'],[.68,'#786246'],[.87,'#a08c62'],[1,'#594631']])copper.addColorStop(stop,color);
+    ctx.fillStyle=copper;ctx.beginPath();ctx.moveTo(-49,39);ctx.bezierCurveTo(-34,27,-31,4,-27,-14);ctx.bezierCurveTo(-23,-34,-13,-37,-8,-38);
+    ctx.lineTo(-7,-46);ctx.lineTo(7,-46);ctx.lineTo(9,-38);ctx.bezierCurveTo(24,-35,27,-23,30,-10);ctx.bezierCurveTo(34,14,34,25,50,39);
+    ctx.lineTo(55,44);ctx.quadraticCurveTo(0,62,-55,44);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='#574a37';ctx.lineWidth=1.4;
+    for(const [dy,dx] of [[-20,23],[-16,25],[20,37],[24,39],[36,46]]){
+      ctx.beginPath();ctx.moveTo(-dx,dy);ctx.quadraticCurveTo(0,dy+8,dx,dy);ctx.stroke();
+      ctx.strokeStyle='#dfca9c';ctx.translate(0,1);ctx.stroke();ctx.translate(0,-1);ctx.strokeStyle='#6c573e';
+    }
+    for(let col=-2;col<=2;col++){ctx.save();ctx.translate(col*11,1+3*Math.cos(col));ctx.strokeStyle='#8a704c';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(0,-6);ctx.quadraticCurveTo(12,1,0,8);ctx.quadraticCurveTo(-8,0,0,-6);ctx.stroke();ctx.restore()}
+    ctx.beginPath();ctx.ellipse(0,44,54,7,0,0,Math.PI*2);ctx.fillStyle='#392d22';ctx.fill();ctx.strokeStyle='#d3b88b';ctx.stroke();
+    ctx.fillStyle='#8d7958';ctx.fillRect(-2,42,4,11);circle(0,54,5,'#b29a6b');
+    ctx.restore();
+    if(active){
+      ctx.save();ctx.strokeStyle='rgba(255,212,131,.45)';ctx.lineWidth=1.5;
+      for(let n=0;n<3;n++){let phase=motion.matches?n/3:((Math.min(hit,2100)/920+n/3)%1);ctx.globalAlpha=1-phase;ctx.beginPath();ctx.ellipse(x,y+59*s,(53+36*phase)*s,(8+14*phase)*s,0,0,Math.PI*2);ctx.stroke()}ctx.restore();
+    }
+  }
+  function draw(time){
+    const w=width,h=height,done=count()===3;
+    const dawn=done?(motion.matches?1:Math.min(1,(time-finalAt)/1800)):0;
+    const sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,'#13242e');sky.addColorStop(.55,'#384950');sky.addColorStop(1,'#bf9270');ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
+    const sun=ctx.createRadialGradient(w*.53,h*.82,0,w*.53,h*.82,w*.52);sun.addColorStop(0,'rgba(246,175,99,'+(.18+.64*dawn)+')');sun.addColorStop(1,'rgba(213,150,97,0)');ctx.fillStyle=sun;ctx.fillRect(0,0,w,h);
+    for(let i=0;i<43;i++)circle(((i*773)%997)/997*w,((i*397)%577)/577*h*.62,.5+(i%4)*.24,'#c6bb9f');
+    const level=h*.79;
+    for(let i=0;i<30;i++){
+      const x=i*w/29,wide=w*(.025+i%4*.005),bh=h*(.036+((i*7)%13)*.005);
+      ctx.fillStyle=i%2?'#354248':'#455154';ctx.fillRect(x,level-bh,wide,bh+12);
+      ctx.beginPath();ctx.moveTo(x-2,level-bh);ctx.lineTo(x+wide/2,level-bh-7-i%3*2);ctx.lineTo(x+wide+2,level-bh);ctx.fill();
+      if(i%5===1){ctx.fillRect(x+wide*.45,level-bh-24,wide*.14,21);circle(x+wide*.52,level-bh-24,wide*.12,'#39474a');}
+      ctx.fillStyle=done?'#f6cd82':'#81908b';ctx.fillRect(x+wide*.3,level-bh*.6,2,4);
+    }
+    const water=ctx.createLinearGradient(0,level,0,h);water.addColorStop(0,'#435552');water.addColorStop(1,'#182c34');ctx.fillStyle=water;ctx.fillRect(0,level,w,h-level);
+    for(let i=0;i<95;i++){const x=(i*773%997)/997*w,y=level+2+(i*257%499)/499*(h-level);ctx.fillStyle='rgba(221,195,150,'+(i%3*.05+.09+dawn*.13)+')';ctx.fillRect(x,y,2+(i%8)*1.7,1)}
+    [1,.86,.71].forEach((scale,i)=>{
+      const x=w*(i+.5)/3,y=h*.35,s=Math.min(w/470,h/230)*scale;
+      if(selected[i]){
+        const beam=ctx.createLinearGradient(x,y,x,h*.85);beam.addColorStop(0,'rgba(255,221,143,.02)');beam.addColorStop(1,'rgba(255,214,139,.24)');
+        ctx.fillStyle=beam;ctx.beginPath();ctx.moveTo(x-16*s,y+40*s);ctx.lineTo(x+16*s,y+40*s);ctx.lineTo(x+69*s,h*.84);ctx.lineTo(x-69*s,h*.84);ctx.fill();
+      }
+      curvedBell(x,y,s,Math.max(0,time-hits[i]),selected[i],time);
+      if(selected[i]){const py=h*.86;circle(x,py-17,4,'#202f32');ctx.fillStyle='#202f32';ctx.fillRect(x-3,py-13,6,14);}
+    });
+  }
+  function drawLoop(){
+    cancelAnimationFrame(frame);
+    function tick(now){draw(now);if(!motion.matches&&now-Math.max(...hits,finalAt)<2300)frame=requestAnimationFrame(tick)}
+    frame=requestAnimationFrame(tick);
+  }
+  new ResizeObserver(()=>{
+    const rect=canvas.getBoundingClientRect(),dpr=Math.min(devicePixelRatio,2);
+    width=rect.width;height=rect.height;canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);drawLoop();
+  }).observe(canvas);
+  announce();
+</script></body></html>
