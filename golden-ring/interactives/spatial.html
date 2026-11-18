@@ -2,7 +2,10 @@
 <html lang="ru"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,follow"><title>Интерактивы в пространстве · Золотое кольцо</title>
-<link rel="stylesheet" href="spatial.css"><script defer src="spatial-data.js"></script><script defer src="spatial-engine.js"></script><script defer src="spatial-ui.js"></script>
+<link rel="icon" href="/favicon.svg">
+<link rel="stylesheet" href="spatial.css?v=3"><script defer src="spatial-data.js?v=3"></script>
+<script defer src="spatial-detail-river.js?v=3"></script><script defer src="spatial-detail-studio.js?v=3"></script><script defer src="spatial-detail-workshop.js?v=3"></script>
+<script type="module" src="spatial-light.js?v=3"></script><script defer src="spatial-engine.js?v=3"></script><script defer src="spatial-ui.js?v=3"></script>
 </head><body>
 <header class="mast"><a href="../#interactives">← Золотое кольцо</a><a href="research.html">Мировой опыт и решения</a></header>
 <main>
@@ -12,15 +15,20 @@
   <div class="workspace">
     <section class="viewer" aria-label="Трёхмерный макет">
       <div class="views" role="group" aria-label="Точка обзора">
-        <button data-view="overview" aria-pressed="true">Общий вид</button><button data-view="participant" aria-pressed="false">От участника</button><button data-view="spectator" aria-pressed="false">От зрителя</button><button data-view="technical" aria-pressed="false">Сверху</button>
+        <button data-view="overview" aria-pressed="true">Общий вид</button><button data-view="participant" aria-pressed="false">От участника</button><button data-view="spectator" aria-pressed="false">От зрителя</button><button data-view="technical" aria-pressed="false">Сверху</button><button data-view="detail" class="detail-view" aria-pressed="false">Механизм крупно</button>
       </div>
       <canvas id="space" aria-label="Вращаемый трёхмерный макет выставочной сцены" aria-describedby="composition"></canvas>
       <p id="render-note" hidden>Трёхмерный вид недоступен. Ниже описаны расстановка людей и работа оборудования.</p>
       <div class="legend"><span><i class="actor"></i>Участник</span><span><i class="guest"></i>Зритель</span><span class="rotate-hint">Потяните, чтобы повернуть зал</span></div>
+      <div id="compact-controls"></div>
       <div class="viewer-tools"><div role="group" aria-label="Поворот и масштаб"><button data-camera="left" aria-label="Повернуть влево">↶</button><button data-camera="right" aria-label="Повернуть вправо">↷</button><button data-camera="out" aria-label="Отдалить">−</button><button data-camera="in" aria-label="Приблизить">+</button></div>
         <label class="hardware"><input type="checkbox" id="hardware">Показать механизмы</label></div>
+      <div id="part-panel" hidden>
+        <div id="part-buttons" role="group" aria-label="Выбрать узел механизма"></div>
+        <p id="part-description"></p><p id="part-response"></p><p class="part-state">Состояние в модели <strong id="part-state"></strong></p>
+      </div>
     </section>
-    <section class="console"><h2>Попробовать действие</h2>
+    <section class="console" id="console"><h2>Попробовать действие</h2>
       <p id="prompt"></p><div id="actions"></div>
       <p id="feedback" role="status" aria-live="polite"></p>
       <div class="progress" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -28,7 +36,7 @@
     </section>
   </div>
   <section class="notes"><div><h2>Участники и зрители</h2><p id="composition"></p></div><div><h2>Механизм в зале</h2><p id="apparatus"></p></div><div><h2>Что обсудить</h2><p id="decision"></p></div></section>
-  <p class="fine">Сценографические макеты для обсуждения. Расстояния и положение оборудования условны. Привязку к залу определит обмерный план.</p>
+  <p class="fine">В моделях показаны предложенные варианты механизмов. Размеры и привязку к площадке уточняют после обмеров и натурной пробы. <a href="../files/golden-ring-mechanisms.docx" download>Листы девяти механизмов в Word</a></p>
   <nav class="next"><a href="../#interactives">← Все интерактивы</a><button id="next">Следующая сцена →</button></nav>
   <noscript>Для управления трёхмерными сценами включите JavaScript. <a href="research.html">Читать исследование</a></noscript>
 </main></body></html>
