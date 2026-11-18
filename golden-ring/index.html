@@ -1,17 +1,297 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow"><title>Золотое кольцо — рабочая страница проекта · ФАЗА</title><meta name="description" content="Что согласовано, какие референсы можно делать, какие решения нужны и где лежат материалы проекта."><link rel="icon" href="/favicon.svg"><link rel="canonical" href="https://fazafilms.ru/golden-ring/"><meta property="og:title" content="Золотое кольцо — рабочая страница проекта"><meta property="og:image" content="https://fazafilms.ru/golden-ring/media/hero.jpg"><link rel="stylesheet" href="style.css?v=2"><script src="page.js?v=2" defer></script></head>
-<body><a class="skip" href="#overview">К содержанию</a><header><a class="brand" href="/">ФАЗА <span>/ проекты</span></a><span class="header-note">Рабочие материалы · 19.11.2026</span></header><div class="shell"><aside><p class="project-label">Золотое кольцо</p><nav aria-label="Разделы проекта"><a href="#overview" data-nav="overview">Обзор</a><a href="#approved" data-nav="approved">Можно в работу</a><a href="#decisions" data-nav="decisions">Нужны решения</a><a href="#materials" data-nav="materials">Материалы</a><a href="#sources" data-nav="sources">Источники</a></nav><p class="nav-note">По переписке<br>до 17 ноября 2026</p></aside><main id="main">
-<section id="overview" class="panel" aria-labelledby="overview-title"><div class="intro"><p class="eyebrow">НЦ «РОССИЯ» / ВЫСТАВКА 2027</p><h1 id="overview-title" tabindex="-1">Золотое кольцо</h1><p class="lead">Что можно делать сейчас<br>и какие решения нужны дальше.</p><p>Начните с задачи. Согласования проверены по переписке; новые результаты встречи ещё не внесены.</p></div><div class="routes"><a class="route primary" href="#approved"><span class="route-num">01 / ДИЗАЙН И ПОДГОТОВКА</span><h2>Начать референсы</h2><p>Три решения дают основу. Посмотрите ограничения и задание на каждый объект.</p><b>Что можно в работу →</b></a><a class="route" href="#decisions"><span class="route-num">02 / СОГЛАСОВАНИЕ</span><h2>Получить решения</h2><p>Вопросы для Вячеслава, Дорошенко и команды. У каждого — ожидаемый результат.</p><b>Выбрать вопросы →</b></a><a class="route" href="#materials"><span class="route-num">03 / ВСТРЕЧА</span><h2>Открыть материалы</h2><p>Презентация на 12 слайдов и реестр для записи итогов и сроков.</p><b>Подготовиться к встрече →</b></a></div>
-<div class="overview-grid"><div><h2>Ближайший порядок работы</h2><ol class="steps"><li><b>Елена / дизайнеры</b><span>Подготовить три листа референсов по согласованной основе.</span></li><li><b>Роман + Елена</b><span>Собрать развилки: пролог, пол, Владимир, региональные экраны.</span></li><li><b>Вячеслав + Дорошенко</b><span>Зафиксировать выбор, владельцев задач и сроки в реестре.</span></li></ol><p class="small">Это предлагаемая последовательность. Договорные роли и сроки требуется подтвердить.</p></div><div class="note"><h2>Как вести проект здесь</h2><p>После встречи заполните <a href="files/golden-ring-decisions.csv" download>реестр CSV</a>: решение, ответственный, срок и версия документа. Передайте заполненный файл координатору для обновления страницы.</p><p>Новый референс получает статус «На обсуждении». Статус «Согласовано» — только после записи, кто и когда принял конкретную версию.</p><p class="small">Страница показывает опубликованную версию. Ввод и совместное сохранение решений на сайте пока не подключены.</p></div></div></section>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,follow">
+  <title>Золотое кольцо — референсы и решения · ФАЗА</title>
+  <meta name="description" content="Три листа по исходникам выставки «Золотое кольцо», варианты для обсуждения и решения к встрече.">
+  <link rel="canonical" href="https://fazafilms.ru/golden-ring/">
+  <link rel="icon" href="/favicon.svg">
+  <meta property="og:title" content="Золотое кольцо — референсы и решения">
+  <meta property="og:image" content="https://fazafilms.ru/golden-ring/media/hero.jpg">
+  <link rel="stylesheet" href="style.css?v=3">
+  <script defer src="page.js?v=3"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Перейти к содержанию</a>
+  <header class="masthead">
+    <div class="masthead-inner">
+      <a class="brand" href="/" aria-label="ФазаФилмс, главная">ФАЗА</a>
+      <span class="masthead-title">Золотое кольцо</span>
+      <nav aria-label="Разделы проекта">
+        <a href="#approved" data-nav="approved">Референсы</a>
+        <a href="#decisions" data-nav="decisions">Вопросы к встрече</a>
+        <a href="#materials" data-nav="materials">Материалы</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main" tabindex="-1">
+    <section class="panel" id="approved" aria-labelledby="approved-title">
+      <div class="heading-row">
+        <div>
+          <p class="eyebrow">Выставка в Национальном центре «Россия»</p>
+          <h1 id="approved-title" tabindex="-1">Золотое кольцо</h1>
+          <h2 class="intro-title">Референсы для обсуждения</h2>
+          <p class="intro">На каждом листе — исходный вид, согласованная часть проекта и два варианта оформления на выбор.</p>
+        </div>
+        <a class="button" href="files/golden-ring-references.docx" download>Скачать три листа · Word <span aria-hidden="true">↓</span></a>
+      </div>
+      <div class="boards">
+          <article class="board" id="REF-01">
+            <a class="board-image" data-gallery="boards" data-title="Финальная зона" href="media/reference-final.png" aria-label="Открыть лист «Финальная зона»">
+              <img width="2400" height="1500" src="media/reference-final.png" alt="Исходник проекта и две схемы для сравнения" fetchpriority="high" decoding="async">
+              <span>Рассмотреть лист <span aria-hidden="true">↗</span></span>
+            </a>
+            <div class="board-copy">
+              <h3>Финальная зона</h3>
+              <p class="accepted"><strong>Согласовано 9 ноября</strong>Экран 21 × 1,5 м, нижний край в метре от пола. Высота колосьев — 1 м.</p>
+              <h4>Как расположить колосья перед экраном?</h4>
+              <p class="variant"><b>А</b>Сплошная полоса колосьев</p>
+              <p class="variant"><b>Б</b>Колосья группами</p>
+            </div>
+          </article>
+          <article class="board" id="REF-02">
+            <a class="board-image" data-gallery="boards" data-title="Стол во Владимире" href="media/reference-table.png" aria-label="Открыть лист «Стол во Владимире»">
+              <img width="2400" height="1500" src="media/reference-table.png" alt="Исходник проекта и две схемы для сравнения" loading="lazy" decoding="async">
+              <span>Рассмотреть лист <span aria-hidden="true">↗</span></span>
+            </a>
+            <div class="board-copy">
+              <h3>Стол во Владимире</h3>
+              <p class="accepted"><strong>Согласовано 9 ноября</strong>Вячеслав принял предложенную замену на стол. Его масштаб обсуждали по общему виду зоны и крупному плану стола.</p>
+              <h4>Какую отделку выбрать для стола с картой?</h4>
+              <p class="variant"><b>А</b>Тёмный дуб</p>
+              <p class="variant"><b>Б</b>Светлый ясень</p>
+            </div>
+          </article>
+          <article class="board" id="REF-03">
+            <a class="board-image" data-gallery="boards" data-title="Лайтбокс с экранами" href="media/reference-lightbox.png" aria-label="Открыть лист «Лайтбокс с экранами»">
+              <img width="2400" height="1500" src="media/reference-lightbox.png" alt="Исходник проекта и две схемы для сравнения" loading="lazy" decoding="async">
+              <span>Рассмотреть лист <span aria-hidden="true">↗</span></span>
+            </a>
+            <div class="board-copy">
+              <h3>Лайтбокс с экранами</h3>
+              <p class="accepted"><strong>Согласовано 25 октября</strong>За стойкой разместить лайтбокс. Отдельные экраны встроить в стены консультационной зоны.</p>
+              <h4>Где разместить экраны относительно стойки?</h4>
+              <p class="variant"><b>А</b>Экраны по сторонам</p>
+              <p class="variant"><b>Б</b>Экраны рядом на одной стене</p>
+            </div>
+          </article>
+      </div>
+      <p class="meeting-link">После обсуждения выбранный вариант и комментарии можно записать в <a href="files/golden-ring-decisions.xlsx" download>реестр решений Excel</a>.</p>
+    </section>
+    <section class="panel" id="decisions" aria-labelledby="decisions-title">
+      <div class="heading-row">
+        <div><p class="eyebrow">Золотое кольцо</p><h1 id="decisions-title" tabindex="-1">Вопросы к встрече</h1>
+          <p class="intro">Повестка для Вячеслава Куделина, Павла Дорошенко и проектной команды по переписке до 17 ноября.</p></div>
+        <a class="button" href="files/golden-ring-decisions.xlsx" download>Скачать реестр · Excel <span aria-hidden="true">↓</span></a>
+      </div>
+      <div class="filter">
+        <label for="owner-filter">С кем обсуждать</label>
+        <select id="owner-filter">
+          <option value="">Все участники</option>
+          <option>Вячеслав</option>
+          <option>Дорошенко</option>
+          <option>Команда</option>
+        </select>
+        <span id="result-count" role="status" aria-live="polite"></span>
+      </div>
+      <div class="questions">
+          <details class="decision" id="R03" data-owner="Вячеслав">
+            <summary><span>Какие шесть зон останутся в мастерской?</span><small>Вячеслав</small></summary>
+            <div><p>3 ноября зафиксировали количество. Андрей подготовил рабочий список 7 ноября.</p><p><strong>К встрече.</strong> Подтвердить список или назвать замены, чтобы Андрей составил задания для каждой зоны.</p></div>
+          </details>
+          <details class="decision" id="R04" data-owner="Вячеслав">
+            <summary><span>Как начинается маршрут посетителя?</span><small>Вячеслав</small></summary>
+            <div><p>С 5 ноября на выборе два пролога. Первый открывает проход кинетическими пилонами с мэппингом, второй начинает путешествие со станционного смотрителя.</p><p><strong>К встрече.</strong> Выбрать один сценарий. Роман и Елена уточнят выдачу билетов и движение посетителей.</p></div>
+          </details>
+          <details class="decision" id="R05" data-owner="Вячеслав">
+            <summary><span>Какой пол закладываем в визуализацию?</span><small>Вячеслав</small></summary>
+            <div><p>Елена запросила согласование образцов 9 ноября. Предложены три объёма работ — сохранить покрытие, заменить часть или весь участок.</p><p><strong>К встрече.</strong> Выбрать образец и границы замены для визуализации и расчёта.</p></div>
+          </details>
+          <details class="decision" id="R06" data-owner="Команда">
+            <summary><span>Как человек взаимодействует с бурлацкой лямкой?</span><small>Команда</small></summary>
+            <div><p>10 ноября команда обсуждала сопротивление лямки и реакцию экрана.</p><p><strong>К встрече.</strong> Андрею, Сергею и Сане предлагается проверить действие на простом стенде и определить ответственного за прототип.</p></div>
+          </details>
+          <details class="decision" id="R07" data-owner="Оба">
+            <summary><span>Как показать современную инфраструктуру регионов?</span><small>Вячеслав и Дорошенко</small></summary>
+            <div><p>12 ноября Вячеслав потребовал включить экран в каждое региональное задание. Для обсуждения предложены видео и интерактивный каталог.</p><p><strong>К встрече.</strong> С Дорошенко определить содержание и его источники. С Вячеславом решить, кто предоставляет экран, медиасервер и оплату.</p></div>
+          </details>
+          <details class="decision" id="R08" data-owner="Дорошенко">
+            <summary><span>Что исправить в архитектуре Владимирской зоны?</span><small>Дорошенко</small></summary>
+            <div><p>К аркам, центральной конструкции и оформлению столбов были замечания 26 октября. Пакет участия области передан 17 ноября.</p><p><strong>К встрече.</strong> Роману и Елене получить от Дорошенко замечания к конкретным видам или подтверждение выбранного решения.</p></div>
+          </details>
+          <details class="decision" id="R09" data-owner="Дорошенко">
+            <summary><span>Как распределить работы с регионом?</span><small>Дорошенко</small></summary>
+            <div><p>В пакете от 16 ноября предложено, чтобы Национальный центр отвечал за основную застройку, а область передавала экспонаты и художественные изделия.</p><p><strong>К встрече.</strong> Согласовать перечень изделий, права на материалы, контакт от области и сроки передачи.</p></div>
+          </details>
+          <details class="decision" id="R10" data-owner="Вячеслав">
+            <summary><span>Кто соберёт общую смету?</span><small>Вячеслав</small></summary>
+            <div><p>Основа расчёта от 15 октября — 711,5 м² для VARS и 1 073 м² для EURO. Общие работы отнесены к ЕЭС.</p><p><strong>К встрече.</strong> Получить расчёт VARS, сверить состав у подрядчиков, учесть замены и назначить ответственного за общую смету.</p></div>
+          </details>
+          <details class="decision" id="R11" data-owner="Вячеслав">
+            <summary><span>Какой бюджет и какие сокращения допустимы?</span><small>Вячеслав</small></summary>
+            <div><p>Подрядчики пересчитывают состав после изменений. Для выбора нужен сопоставимый расчёт по зонам.</p><p><strong>К встрече.</strong> Зафиксировать лимит, обязательные объекты и допустимые сокращения.</p></div>
+          </details>
+          <details class="decision" id="R12" data-owner="Оба">
+            <summary><span>Когда закрывается выставка?</span><small>Вячеслав и Дорошенко</small></summary>
+            <div><p>Открытие в обоих документах — 21 мая 2027 года. В октябрьской переписке закрытие указано 3 октября, в ноябрьском пакете — 21 октября.</p><p><strong>К встрече.</strong> Подтвердить дату закрытия перед рассылкой документов регионам.</p></div>
+          </details>
+      </div>
+    </section>
+    <section class="panel" id="materials" aria-labelledby="materials-title">
+      <div class="heading-row">
+        <div><p class="eyebrow">Золотое кольцо</p><h1 id="materials-title" tabindex="-1">Материалы встречи</h1>
+        <p class="intro">Откройте презентацию для общего обсуждения или скачайте материалы для работы с вариантами.</p></div>
+      </div>
+      <div class="file-grid">
+        <article class="file-card"><h2>Листы референсов</h2><p>Финальная зона, стол во Владимире и лайтбокс с экранами. По два варианта на каждом листе.</p>
+          <a href="files/golden-ring-references.docx" download>Скачать Word ↓</a></article>
+        <article class="file-card"><h2>Реестр решений</h2><p>Согласования и открытые вопросы. Впишите выбор, ответственного и срок по итогам встречи.</p>
+          <a href="files/golden-ring-decisions.xlsx" download>Скачать Excel ↓</a></article>
+      </div>
+      <section class="presentation" aria-labelledby="deck-title">
+        <img class="deck-cover" src="media/slide-1.webp" loading="lazy" alt="Обложка презентации «Золотое кольцо»" width="1280" height="720">
+        <div>
+          <h2 id="deck-title">Презентация проекта</h2>
+          <p>12 слайдов о маршруте посетителя, региональных зонах и решениях для следующего этапа.</p>
+          <a class="button" id="start-show" href="media/slide-1.webp">Начать показ слайдов <span aria-hidden="true">→</span></a>
+        </div>
+      </section>
+      <details class="slide-list"><summary>Содержание и текст 12 слайдов</summary>
+        <ol>
+              <li>
+                <a href="media/slide-1.webp" data-gallery="slides" data-title="Золотое кольцо"><span>01</span>Золотое кольцо</a>
+                <details class="slide-text"><summary>Текст слайда 1</summary>
+                  <p>От впечатления — к путешествию.
+От концепции — к согласованному производству.</p>
 
-<section id="approved" class="panel" aria-labelledby="approved-title"><p class="eyebrow">СОГЛАСОВАННАЯ ОСНОВА → РЕФЕРЕНСЫ</p><h1 id="approved-title" tabindex="-1">Что можно брать в работу</h1><p class="lead">Три локальных решения подтверждены.</p><p>Можно готовить визуальные варианты в указанных границах. Новые референсы и проект целиком ещё не утверждены.</p><a class="button" href="files/golden-ring-reference-briefs.md" download>Скачать 3 задания на референсы · MD ↓</a><div class="ref-grid"><article class="card ref-card" id="REF-01"><p class="tag ok">Можно начать референсы · R01</p><h3>Финальная зона</h3><p>Экран 21 × 1,5 м. Нижний край экрана — 1 м от пола. Высота колосьев — 1 м.</p><div class="next"><b>Подготовить</b><p>Размеренная фронтальная схема + общий вид с человеком для масштаба + подборка колосьев, света и фактур.</p></div><details><summary>Основание, ограничения и участники</summary><p><b>Подтверждение.</b> 09.11.2026, 13:27–13:28. Елена перечисляет размеры и спрашивает о запуске визуализации и АР. Вячеслав: «Ок».</p><p class="source-path">messages.html: message1310858–1310859; photo_118@09-11-2026_13-27-12.jpg</p><p><b>Ещё не утверждено.</b> Образцы пола ещё не согласованы. Материалы, крепления и содержание экрана требуют отдельной фиксации.</p><p><b>Кто готовит.</b> Елена / дизайнеры — визуализация и АР; техническая команда — реализуемость.</p><p><b>Кому показать (предлагается).</b> Вячеслав — принять предложенный облик и образцы; авторы — проверить сохранение размеров.</p><a href="https://disk.yandex.ru/d/dhpQs8qRpZ16ww">Найти исходник в архиве ↗</a></details><p class="small">REF-01 · Новые референсы ещё не созданы</p></article><article class="card ref-card" id="REF-02"><p class="tag ok">Можно начать референсы · R02</p><h3>Стол во Владимире</h3><p>Согласована замена центрального решения на стол по изображениям от 9 ноября.</p><div class="next"><b>Подготовить</b><p>Лист сравнения с исходным видом + 2–3 варианта материала и деталей стола + схема размещения.</p></div><details><summary>Основание, ограничения и участники</summary><p><b>Подтверждение.</b> 09.11.2026, 13:46–13:47. Елена спрашивает, устраивает ли замена и масштаб. Вячеслав: «Мне ок».</p><p class="source-path">messages.html: message1310861–1310863; photo_119@09-11-2026_13-46-40.jpg и photo_120@09-11-2026_13-46-51.jpg</p><p><b>Ещё не утверждено.</b> Не переносить согласование стола на арки, столбы и весь Владимир. Числовые размеры стола этим сообщением не закреплены.</p><p><b>Кто готовит.</b> Елена — дизайн; Роман — увязка с региональным пакетом.</p><p><b>Кому показать (предлагается).</b> Вячеслав — изменения стола; Дорошенко — региональный контекст, арки и столбы отдельно.</p><a href="https://disk.yandex.ru/d/dhpQs8qRpZ16ww">Найти исходник в архиве ↗</a></details><p class="small">REF-02 · Новые референсы ещё не созданы</p></article><article class="card ref-card" id="REF-03"><p class="tag ok">Можно начать референсы · R02</p><h3>Лайтбокс и отдельные экраны</h3><p>Согласована замена диодного экрана на лайтбокс с экранами, встроенными в стены консультационной зоны.</p><div class="next"><b>Подготовить</b><p>Фасад зоны + 2–3 референса интеграции лайтбокса и экранов + схема расположения и доступа для обслуживания.</p></div><details><summary>Основание, ограничения и участники</summary><p><b>Подтверждение.</b> 25.10.2026, 10:42–13:10. Елена предлагает замену. Вячеслав: «Ок».</p><p class="source-path">messages.html: message1306924–1306944; photo_111@25-10-2026_10-42-11.jpg</p><p><b>Ещё не утверждено.</b> Размеры, модели экранов, яркость, графика, конструкция и стоимость ещё требуют разработки.</p><p><b>Кто готовит.</b> Елена — компоновка; техническая команда — оборудование и обслуживание.</p><p><b>Кому показать (предлагается).</b> Вячеслав — визуальный вариант и стоимость; техническая команда — габариты и доступ.</p><a href="https://disk.yandex.ru/d/dhpQs8qRpZ16ww">Найти исходник в архиве ↗</a></details><p class="small">REF-03 · Новые референсы ещё не созданы</p></article></div>
-<details class="card"><summary>Что согласовано только частично</summary><div class="decision-body"><h3>Шесть мастерских · R03</h3><p>03.11 Роман сообщает о принятом сокращении до шести. Состав запрашивает отдельно. Список от 07.11 — рабочая основа; готовить сравнительную подборку можно, фиксировать шесть окончательных эталонов пока рано.</p><h3>Региональные экраны · R07</h3><p>12.11 Вячеслав требует экран современной инфраструктуры в каждом региональном ТЗ. Формат, техника, поставка и содержание не определены. Сейчас уместно сравнение вариантов.</p><h3>Что не утверждено целиком</h3><p>Брендбук, концепция 21.10, пакет Владимира 16.11 и опубликованная презентация — исходники и материалы обсуждения. Подтверждение их полного утверждения в рассмотренной переписке не найдено.</p><a href="#decisions">Перейти к вопросам согласования →</a></div></details>
-<div class="note"><h2>Что должно быть на листе референсов</h2><p>Исходник → фиксированные параметры → 2–3 варианта → различия → один вопрос для выбора. Для каждого изображения указать источник и то, что именно предлагается взять: форму, материал, свет или способ размещения.</p><p class="small">Названия: REF-01 / REF-02 / REF-03 + версия + дата. Сначала функция и масштаб, затем облик; конструкция и выпуск в изготовление имеют отдельные согласования.</p></div></section>
-
-<section id="decisions" class="panel" aria-labelledby="decisions-title"><p class="eyebrow">ПОВЕСТКА СЛЕДУЮЩЕЙ ВСТРЕЧИ</p><h1 id="decisions-title" tabindex="-1">Какие решения нужны</h1><p>Выберите участника и откройте нужный вопрос. После обсуждения перенесите результат в реестр.</p><p class="small">Группировка по участникам — предлагаемая повестка, а не назначение полномочий. Совместные вопросы показаны в обеих подборках.</p><div class="filter"><label for="owner-filter">С кем обсуждать</label><select id="owner-filter"><option value="">Все участники</option><option>Вячеслав</option><option>Дорошенко</option><option>Команда</option></select><span id="result-count" aria-live="polite"></span><a href="files/golden-ring-decisions.csv" download>Скачать реестр для итогов ↓</a></div><div class="decisions"><details class="decision card" id="R03" data-owner="Вячеслав"><summary><span class="tag">R03 · Частично</span><strong>Состав мастерской</strong><span class="decision-owner">Вячеслав</span></summary><div class="decision-body"><p><b>Что выбираем.</b> Оставить шесть позиций из списка 07.11 / заменить отдельные позиции. Количество уже зафиксировано.</p><p><b>Результат решения.</b> Выбрать состав из шести; записать изменения.</p><p><b>Подготовка.</b> Андрей готовит список; Роман собирает выпуск.</p><p class="small">Основание: 03.11 / список 07.11. Варианты и распределение встречи — рабочие предложения, если не указано иное.</p></div></details><details class="decision card" id="R04" data-owner="Вячеслав"><summary><span class="tag">R04 · Открыто</span><strong>Выбрать пролог</strong><span class="decision-owner">Вячеслав</span></summary><div class="decision-body"><p><b>Что выбираем.</b> Кинетические пилоны с мэппингом / станционный смотритель.</p><p><b>Результат решения.</b> Один вариант с условиями по потоку и выдаче билетов.</p><p><b>Подготовка.</b> Роман + Елена готовят сравнение; техника проверяет реализуемость.</p><p class="small">Основание: Запрос выбора 05.11. Варианты и распределение встречи — рабочие предложения, если не указано иное.</p></div></details><details class="decision card" id="R05" data-owner="Вячеслав"><summary><span class="tag">R05 · Открыто</span><strong>Выбрать покрытие пола</strong><span class="decision-owner">Вячеслав</span></summary><div class="decision-body"><p><b>Что выбираем.</b> Сохранить / заменить локально / заменить участок целиком — варианты для обсуждения.</p><p><b>Результат решения.</b> Образец, зона замены и допустимая стоимость.</p><p><b>Подготовка.</b> Елена готовит образцы; подрядчик считает стоимость.</p><p class="small">Основание: 28.10; задержка 09.11. Варианты и распределение встречи — рабочие предложения, если не указано иное.</p></div></details><details class="decision card" id="R06" data-owner="Команда"><summary><span class="tag">R06 · Открыто</span><strong>Уточнить механику лямки</strong><span class="decision-owner">Команда</span></summary><div class="decision-body"><p><b>Что выбираем.</b> Сначала схема действия и простой прототип — предложение.</p><p><b>Результат решения.</b> Назначить владельца прототипа; проверить тягу, реакцию и ограничения.</p><p><b>Подготовка.</b> Андрей, Сергей Гурьев, Саня Аладьин, @vusalcor обсуждают механику; единый владелец не назначен.</p><p class="small">Основание: Запрос брейншторма 10.11. Варианты и распределение встречи — рабочие предложения, если не указано иное.</p></div></details><details class="decision card" id="R07" data-owner="Оба"><summary><span class="tag">R07 · Частично</span><strong>Экраны инфраструктуры</strong><span class="decision-owner">Оба</span></summary><div class="decision-body"><p><b>Что выбираем.</b> Видеоподборка / интерактивный каталог — варианты для обсуждения.</p><p><b>Результат решения.</b> Формат, контент, оборудование, поставщик и оплата.</p><p><b>Подготовка.</b> Дорошенко — содержание регионов; Вячеслав — исполнение. Разделение на встрече предлагается.</p><p class="small">Основание: 12.11; схема 17.11. Варианты и распределение встречи — рабочие предложения, если не указано иное.</p></div></details><details class="decision card" id="R08" data-owner="Дорошенко"><summary><span class="tag">R08 · Открыто</span><strong>Доработки Владимира</strong><span class="decision-owner">Дорошенко</span></summary><div class="decision-body"><p><b>Что выбираем.</b> Доработать арки, центральную конструкцию и столбы; сопоставить с пакетом 16.11.</p><p><b>Результат решения.</b> Письменные замечания или принятие конкретной версии.</p><p><b>Подготовка.</b> Елена + Роман собирают региональный пакет; согласование стола действует отдельно.</p><p class="small">Основание: 26.10; пакет 17.11. Варианты и распределение встречи — рабочие предложения, если не указано иное.</p></div></details><details class="decision card" id="R09" data-owner="Дорошенко"><summary><span class="tag">R09 · Предложено</span><strong>Вклад регионов</strong><span class="decision-owner">Дорошенко</span></summary><div class="decision-body"><p><b>Что выбираем.</b> НЦ — основа, область — экспонаты и изделия / перераспределение отдельных работ.</p><p><b>Результат решения.</b> Перечень вклада, права, региональный контакт и сроки.</p><p><b>Подготовка.</b> Роман + Елена готовят перечень. Модель участия из ноябрьского пакета предварительная.</p><p class="small">Основание: Предварительный пакет 16.11 / отправка 17.11. Варианты и распределение встречи — рабочие предложения, если не указано иное.</p></div></details><details class="decision card" id="R10" data-owner="Вячеслав"><summary><span class="tag">R10 · Частично</span><strong>Свести расчёты</strong><span class="decision-owner">Вячеслав</span></summary><div class="decision-body"><p><b>Что выбираем.</b> Одна ведомость состава для всех подрядчиков — предложение.</p><p><b>Результат решения.</b> Получить расчёт VARS и пересчитать изменения; назначить владельца общей сметы.</p><p><b>Подготовка.</b> Подрядчики рассчитывают; Роман сверяет состав.</p><p class="small">Основание: 15.10 принято; 28.10 сметы задержаны. Варианты и распределение встречи — рабочие предложения, если не указано иное.</p></div></details><details class="decision card" id="R11" data-owner="Вячеслав"><summary><span class="tag">R11 · Открыто</span><strong>Лимит бюджета</strong><span class="decision-owner">Вячеслав</span></summary><div class="decision-body"><p><b>Что выбираем.</b> Сохранить обязательный состав / согласовать перечень сокращений.</p><p><b>Результат решения.</b> Утверждённый лимит и допустимые сокращения.</p><p><b>Подготовка.</b> Подрядчики готовят сопоставимый расчёт. Общая стоимость в переписке не утверждена.</p><p class="small">Основание: Оптимизация 25.10–03.11. Варианты и распределение встречи — рабочие предложения, если не указано иное.</p></div></details><details class="decision card" id="R12" data-owner="Оба"><summary><span class="tag">R12 · Расхождение</span><strong>Дата закрытия</strong><span class="decision-owner">Оба</span></summary><div class="decision-body"><p><b>Что выбираем.</b> 03.10.2027 в закреплённом сообщении / 21.10.2027 в ноябрьском пакете.</p><p><b>Результат решения.</b> Одна дата для документов и внешней рассылки.</p><p><b>Подготовка.</b> Вячеслав + Дорошенко подтверждают календарь; открытие в обоих источниках 21.05.2027.</p><p class="small">Основание: Закреплено 15.10 / пакет 16.11. Варианты и распределение встречи — рабочие предложения, если не указано иное.</p></div></details></div><p class="small">Ранее принятые R01–R02 раскрыты в разделе <a href="#approved">«Можно в работу»</a>. «Открыто» означает отсутствие найденного подтверждения в доступной переписке.</p></section>
-
-<section id="materials" class="panel" aria-labelledby="materials-title"><p class="eyebrow">ФАЙЛЫ И ПОКАЗ НА ВСТРЕЧЕ</p><h1 id="materials-title" tabindex="-1">Материалы проекта</h1><p>Пакет от 19.11.2026 для обсуждения. Основан на переписке по 17.11; не является протоколом утверждения.</p><div class="material-grid"><article class="card"><span class="tag">12 СЛАЙДОВ</span><h2>Презентация</h2><p>Для общего прохода по согласованному, развилкам и следующим работам.</p><button class="button" id="start-show">Начать показ слайдов</button><p class="file-links"><a href="files/golden-ring-discussion.pdf">Открыть PDF</a><a href="files/golden-ring-discussion.pptx" download>Скачать PowerPoint</a></p></article><article class="card"><span class="tag">2 СТРАНИЦЫ / 12 ЗАПИСЕЙ</span><h2>Реестр решений</h2><p>PDF — прочитать перед встречей. CSV — заполнить решения, владельцев и сроки после обсуждения.</p><a class="button secondary" href="files/golden-ring-decisions.csv" download>Скачать CSV для заполнения</a><p><a href="files/golden-ring-decisions.pdf">Открыть реестр PDF</a></p></article></div><details class="deck-list"><summary>Посмотреть все 12 слайдов и их текст</summary><div class="slides"><article class="slide-copy"><button class="slide-open" data-slide="0" aria-label="Открыть слайд 1: Золотое кольцо"><img src="media/slide-1.webp" loading="lazy" width="1280" height="720" alt="Слайд 1: Золотое кольцо"></button><div class="slide-caption"><span>01</span><h3>Золотое кольцо</h3></div><details><summary>Текст слайда</summary><p>От впечатления — к путешествию.
-От концепции — к согласованному производству.</p><small>Пакет к обсуждению • 19 ноября 2026 • переписка по 17 ноября</small></details></article><article class="slide-copy"><button class="slide-open" data-slide="1" aria-label="Открыть слайд 2: Сохранить главное"><img src="media/slide-2.webp" loading="lazy" width="1280" height="720" alt="Слайд 2: Сохранить главное"></button><div class="slide-caption"><span>02</span><h3>Сохранить главное</h3></div><details><summary>Текст слайда</summary><p>Выставка должна завершаться личным маршрутом по реальным городам.</p><p><b>Впечатление</b><br>Пролог, карта, семь регионов и мастерская.</p><p><b>Выбор</b><br>Штампы интересов превращаются в рекомендацию поездки.</p><p><b>Задача встречи</b><br>Зафиксировать состав, ответственность и основания для расчёта.</p><small>Концепция 21.10; мультимедийный список 07.11</small></details></article><article class="slide-copy"><button class="slide-open" data-slide="2" aria-label="Открыть слайд 3: Принято. Берём в работу"><img src="media/slide-3.webp" loading="lazy" width="1280" height="720" alt="Слайд 3: Принято. Берём в работу"></button><div class="slide-caption"><span>03</span><h3>Принято. Берём в работу</h3></div><details><summary>Текст слайда</summary><p>Локальные согласования уже дают основу для следующего выпуска.</p><p><b>09.11 · финальная зона</b><br>Экран 21 × 1,5 м; нижний край 1 м; колосья 1 м. Вячеслав: «Ок».</p><p><b>09.11 и 25.10 · замены</b><br>Стол во Владимире; лайтбокс и отдельные экраны у консультационной стойки.</p><p><b>03.11 и 12.11 · состав</b><br>Шесть мастерских. Современная инфраструктура — в каждом региональном ТЗ.</p><small>Это согласования отдельных решений, не всей концепции или бюджета.</small></details></article><article class="slide-copy"><button class="slide-open" data-slide="3" aria-label="Открыть слайд 4: Пролог: выбрать одну дверь"><img src="media/slide-4.webp" loading="lazy" width="1280" height="720" alt="Слайд 4: Пролог: выбрать одну дверь"></button><div class="slide-caption"><span>04</span><h3>Пролог: выбрать одну дверь</h3></div><details><summary>Текст слайда</summary><p>Развилка остаётся открытой с 5 ноября.</p><p><b>А · кинетические пилоны</b><br>Барельефы, мэппинг и раскрывающийся проход. Проверить движение и безопасность.</p><p><b>Б · станционный смотритель</b><br>Персонаж, свет и отправление в путь. Уточнить участие ведущего и режим работы.</p><p><b>Решение Вячеслава</b><br>Выбрать один вариант. Роман + Елена фиксируют сценарий и выдачу билетов.</p><small>Два варианта в концепции 21.10; просьба выбрать — 05.11. Рекомендация: сравнить стоимость и поток.</small></details></article><article class="slide-copy"><button class="slide-open" data-slide="4" aria-label="Открыть слайд 5: Пол и финал: снять задержку"><img src="media/slide-5.webp" loading="lazy" width="1280" height="720" alt="Слайд 5: Пол и финал: снять задержку"></button><div class="slide-caption"><span>05</span><h3>Пол и финал: снять задержку</h3></div><details><summary>Текст слайда</summary><p>Размеры финальной зоны приняты. Материал пола ещё требует выбора.</p><p><b>Зафиксировано</b><br>21 × 1,5 м; подъём 1 м; колосья 1 м. Запуск визуализации и АР разрешён 09.11.</p><p><b>На выбор · предложение</b><br>Сохранить покрытие / заменить локально / заменить весь согласованный участок.</p><p><b>Кто закрывает</b><br>Вячеслав выбирает образец и объём. Елена обновляет визуализации; подрядчик — стоимость.</p><small>28.10 — вопросы о покрытии; 09.11 — задержка и прямое согласование размеров.</small></details></article><article class="slide-copy"><button class="slide-open" data-slide="5" aria-label="Открыть слайд 6: Шесть действий посетителя"><img src="media/slide-6.webp" loading="lazy" width="1280" height="720" alt="Слайд 6: Шесть действий посетителя"></button><div class="slide-caption"><span>06</span><h3>Шесть действий посетителя</h3></div><details><summary>Текст слайда</summary><p>Количество принято. Подтвердить состав и довести механику до проверки.</p><p><b>Состав из списка 07.11</b><br>Керамика · матрёшка · Городец · Палех · кружевное одеяние · стеклодув.</p><p><b>Отдельно: «Бурлацкая лямка»</b><br>10.11 механика ещё не ясна. Предлагается сначала простой стенд: тяга → датчик → экран.</p><p><b>Ответственность</b><br>Андрей — сценарии; Сергей и Саня — техника. Назначить одного владельца прототипа.</p><small>03.11 — сокращение до шести; 07.11 — рабочий список; 10.11 — запрос на доработку лямки.</small></details></article><article class="slide-copy"><button class="slide-open" data-slide="6" aria-label="Открыть слайд 7: Регион: наследие и сегодняшний день"><img src="media/slide-7.webp" loading="lazy" width="1280" height="720" alt="Слайд 7: Регион: наследие и сегодняшний день"></button><div class="slide-caption"><span>07</span><h3>Регион: наследие и сегодняшний день</h3></div><details><summary>Текст слайда</summary><p>В каждой зоне должен появиться блок «Золотое кольцо 2.0».</p><p><b>Требование Вячеслава</b><br>Экран о современной инфраструктуре в каждом региональном ТЗ.</p><p><b>Выбор реализации · предложение</b><br>Видеоподборка на экране / интерактивный каталог. Сравнить стоимость и обновление.</p><p><b>Разделить решения</b><br>Дорошенко — содержание и региональные контакты. Вячеслав — носитель, поставка и оплата.</p><small>12.11 — требование; 17.11 — схема региональной инфраструктуры. Формат и ответственность не закрыты.</small></details></article><article class="slide-copy"><button class="slide-open" data-slide="7" aria-label="Открыть слайд 8: Владимир: закрепить участие региона"><img src="media/slide-8.webp" loading="lazy" width="1280" height="720" alt="Слайд 8: Владимир: закрепить участие региона"></button><div class="slide-caption"><span>08</span><h3>Владимир: закрепить участие региона</h3></div><details><summary>Текст слайда</summary><p>Предварительный пакет уже готов к предметному разговору с Дорошенко.</p><p><b>Что предлагает пакет 16.11</b><br>НЦ — основная застройка, оборудование и контент. Регион — экспонаты и художественные изделия.</p><p><b>Что нужно утвердить</b><br>Арки и столбы; перечень изделий; права на материалы; ответственный от области.</p><p><b>Развилка · предложение</b><br>Подтвердить модель / перераспределить отдельные изделия и расходы в ТЗ.</p><small>26.10 — замечания и запрос; 17.11 — пакет передан для обсуждения. Изображение из согласования стола 09.11.</small></details></article><article class="slide-copy"><button class="slide-open" data-slide="8" aria-label="Открыть слайд 9: Бюджет: считать один состав"><img src="media/slide-9.webp" loading="lazy" width="1280" height="720" alt="Слайд 9: Бюджет: считать один состав"></button><div class="slide-caption"><span>09</span><h3>Бюджет: считать один состав</h3></div><details><summary>Текст слайда</summary><p>Разрешение на расчёт получено. Общая стоимость не утверждена.</p><p><b>Основание · 15.10</b><br>VARS: 711,5 м². EURO: 1 073 м². Технические стены и общие работы — ЕЭС.</p><p><b>Свести расчёты</b><br>Структура · Росквест · Евроэкспо · VARS. Обновить Кострому и Подмосковье после замен.</p><p><b>Решение Вячеслава</b><br>Подтвердить лимит, обязательные объекты и допустимые сокращения. Назначить владельца сводной сметы.</p><small>21.10 — запрос пересчёта; 28.10 — задержка смет. Роман сверяет состав, подрядчики рассчитывают.</small></details></article><article class="slide-copy"><button class="slide-open" data-slide="9" aria-label="Открыть слайд 10: Кто собирает результат"><img src="media/slide-10.webp" loading="lazy" width="1280" height="720" alt="Слайд 10: Кто собирает результат"></button><div class="slide-caption"><span>10</span><h3>Кто собирает результат</h3></div><details><summary>Текст слайда</summary><p>Функции подтверждаются перепиской; новые назначения обозначены отдельно.</p><p><b>Концепция и содержание</b><br>Роман — сведение материалов и запросов. Елена и дизайнеры — архитектура, отделка, визуализации.</p><p><b>Интерактив и медиа</b><br>Андрей — сценарии. Сергей и Саня — техника. Александр Фаткулин — визуальные и экранные материалы.</p><p><b>Нужно назначить</b><br>Владельца общей сметы, технической интеграции и прототипа лямки. Роман как координатор выпуска — предложение.</p><small>Роли по сообщениям октября–ноября; договорные границы и единый руководитель производства не подтверждены.</small></details></article><article class="slide-copy"><button class="slide-open" data-slide="10" aria-label="Открыть слайд 11: Следующий выпуск — по решениям"><img src="media/slide-11.webp" loading="lazy" width="1280" height="720" alt="Слайд 11: Следующий выпуск — по решениям"></button><div class="slide-caption"><span>11</span><h3>Следующий выпуск — по решениям</h3></div><details><summary>Текст слайда</summary><p>Предлагаемая последовательность. Это не согласованные сроки.</p><p><b>Дни 1–2 · подготовить</b><br>Роман + Елена: актуальные варианты, образцы полов, перечень вопросов и единый состав.</p><p><b>Встречи · зафиксировать</b><br>Вячеслав: вариант, техника, бюджет. Дорошенко: регионы, содержание, календарь. Письменный протокол.</p><p><b>После встреч · выпустить</b><br>Пересчёт → согласованные ТЗ → контент и производство → интеграция и испытания.</p><small>Параллельно: техническая проверка лямки и сбор региональных исходников. Не начинать зависимые работы без решения.</small></details></article><article class="slide-copy"><button class="slide-open" data-slide="11" aria-label="Открыть слайд 12: На выходе — один протокол"><img src="media/slide-12.webp" loading="lazy" width="1280" height="720" alt="Слайд 12: На выходе — один протокол"></button><div class="slide-caption"><span>12</span><h3>На выходе — один протокол</h3></div><details><summary>Текст слайда</summary><p>Встреча должна дать решения, с которыми команда может работать.</p><p><b>Вячеслав</b><br>Пролог; полы; шесть мастерских; инфраструктурные экраны; бюджет и владельцы задач.</p><p><b>Дорошенко</b><br>Владимир; участие регионов; содержание инфраструктуры; экспонаты и права; календарь.</p><p><b>Проверить дату закрытия</b><br>3 октября в закреплённом сообщении / 21 октября 2027 в ноябрьском пакете. Открытие — 21 мая.</p><small>Каждая строка протокола: решение → ответственный → срок → документ. Источник: архив Яндекс Диска.</small></details></article></div></details><div class="note"><h2>Задания на новые материалы</h2><p>Три задания на референсы подготовлены на этой странице. Это следующий выпуск, сами референсы ещё предстоит создать.</p><a href="files/golden-ring-reference-briefs.md" download>Скачать задания · Markdown ↓</a></div></section>
-
-<section id="sources" class="panel" aria-labelledby="sources-title"><p class="eyebrow">ОТКУДА ВЗЯТЫ СТАТУСЫ</p><h1 id="sources-title" tabindex="-1">Источники и версии</h1><p>Главный источник — экспорт переписки и вложения из предоставленного архива. Дата отправки файла сама по себе не подтверждает его утверждение.</p><a class="button" href="https://disk.yandex.ru/d/dhpQs8qRpZ16ww">Открыть архив на Яндекс Диске ↗</a><div class="source-list"><article><h2>Подтверждения трёх решений</h2><p>25.10 — лайтбокс; 09.11 — размеры финала и замена на стол. Точные сообщения и имена файлов указаны в карточках <a href="#approved">«Можно в работу»</a>.</p></article><article><h2>Актуальные рабочие документы</h2><p>Концепция 21.10; список мультимедиа 07.11; механика лямки — обсуждение 10.11; требование инфраструктурных экранов 12.11; пакет участия Владимира 16.11, отправленный 17.11.</p><p class="small">В архиве: «ЗК_участие_Владимир_2026-11-16.pdf», «Зоны регионов_инфраструктура.pdf», экспорт «ChatExport_2026-11-18/messages.html».</p></article><article><h2>История страницы</h2><p><b>19.11.2026 · версия 2.</b> Рабочие разделы по задачам; задания на референсы; подтверждения и ограничения выделены отдельно. Согласования не изменены.</p><p><b>19.11.2026 · версия 1.</b> Презентация, реестр решений и исходные материалы.</p></article></div><details class="card"><summary>Какие навыки использовать дальше</summary><div class="decision-body"><p><b>exhibit-reference-to-build</b> — функция, габариты и границы принятого эталона; нужен сейчас для трёх объектов.</p><p><b>cinema-visual-world</b> — единый визуальный язык и свет, когда выбраны варианты.</p><p><b>interactive-exhibition-systems</b> — механика лямки, датчики, обратная связь и прототип.</p><p><b>russian-exhibition-psychology</b> — проверка понятности действия посетителя и нагрузки в самой экспозиции.</p><p><b>presentations</b> — сборка листов вариантов для выбора на встрече.</p><p class="small">Навыки помогают разработке и проверке. Их применение не присваивает результату статус согласованного.</p></div></details></section>
-</main></div><footer><span>ФАЗА / Золотое кольцо</span><span>Версия 2 · 19.11.2026 · основание по 17.11.2026</span></footer><dialog id="viewer" aria-label="Просмотр презентации"><div class="viewer-top"><span id="slide-label" aria-live="polite"></span><button id="close-show" aria-label="Закрыть презентацию">Закрыть ×</button></div><img id="viewer-image" alt=""><div class="viewer-controls"><button id="prev" aria-label="Предыдущий слайд">← Назад</button><button id="next" aria-label="Следующий слайд">Далее →</button></div></dialog></body></html>
+                </details>
+              </li>
+              <li>
+                <a href="media/slide-2.webp" data-gallery="slides" data-title="Сохранить главное"><span>02</span>Сохранить главное</a>
+                <details class="slide-text"><summary>Текст слайда 2</summary>
+                  <p>Выставка должна завершаться личным маршрутом по реальным городам.</p>
+                  <p><strong>Впечатление</strong> Пролог, карта, семь регионов и мастерская.</p>
+                  <p><strong>Выбор</strong> Штампы интересов превращаются в рекомендацию поездки.</p>
+                  <p><strong>Задача встречи</strong> Зафиксировать состав, ответственность и основания для расчёта.</p>
+                </details>
+              </li>
+              <li>
+                <a href="media/slide-3.webp" data-gallery="slides" data-title="Принято. Берём в работу"><span>03</span>Принято. Берём в работу</a>
+                <details class="slide-text"><summary>Текст слайда 3</summary>
+                  <p>Локальные согласования уже дают основу для следующего выпуска.</p>
+                  <p><strong>09.11 · финальная зона</strong> Экран 21 × 1,5 м; нижний край 1 м; колосья 1 м. Вячеслав: «Ок».</p>
+                  <p><strong>09.11 и 25.10 · замены</strong> Стол во Владимире; лайтбокс и отдельные экраны у консультационной стойки.</p>
+                  <p><strong>03.11 и 12.11 · состав</strong> Шесть мастерских. Современная инфраструктура — в каждом региональном ТЗ.</p>
+                </details>
+              </li>
+              <li>
+                <a href="media/slide-4.webp" data-gallery="slides" data-title="Пролог: выбрать одну дверь"><span>04</span>Пролог: выбрать одну дверь</a>
+                <details class="slide-text"><summary>Текст слайда 4</summary>
+                  <p>Развилка остаётся открытой с 5 ноября.</p>
+                  <p><strong>А · кинетические пилоны</strong> Барельефы, мэппинг и раскрывающийся проход. Проверить движение и безопасность.</p>
+                  <p><strong>Б · станционный смотритель</strong> Персонаж, свет и отправление в путь. Уточнить участие ведущего и режим работы.</p>
+                  <p><strong>Решение Вячеслава</strong> Выбрать один вариант. Роман + Елена фиксируют сценарий и выдачу билетов.</p>
+                </details>
+              </li>
+              <li>
+                <a href="media/slide-5.webp" data-gallery="slides" data-title="Пол и финал: снять задержку"><span>05</span>Пол и финал: снять задержку</a>
+                <details class="slide-text"><summary>Текст слайда 5</summary>
+                  <p>Размеры финальной зоны приняты. Материал пола ещё требует выбора.</p>
+                  <p><strong>Зафиксировано</strong> 21 × 1,5 м; подъём 1 м; колосья 1 м. Запуск визуализации и АР разрешён 09.11.</p>
+                  <p><strong>На выбор · предложение</strong> Сохранить покрытие / заменить локально / заменить весь согласованный участок.</p>
+                  <p><strong>Кто закрывает</strong> Вячеслав выбирает образец и объём. Елена обновляет визуализации; подрядчик — стоимость.</p>
+                </details>
+              </li>
+              <li>
+                <a href="media/slide-6.webp" data-gallery="slides" data-title="Шесть действий посетителя"><span>06</span>Шесть действий посетителя</a>
+                <details class="slide-text"><summary>Текст слайда 6</summary>
+                  <p>Количество принято. Подтвердить состав и довести механику до проверки.</p>
+                  <p><strong>Состав из списка 07.11</strong> Керамика · матрёшка · Городец · Палех · кружевное одеяние · стеклодув.</p>
+                  <p><strong>Отдельно: «Бурлацкая лямка»</strong> 10.11 механика ещё не ясна. Предлагается сначала простой стенд: тяга → датчик → экран.</p>
+                  <p><strong>Ответственность</strong> Андрей — сценарии; Сергей и Саня — техника. Назначить одного владельца прототипа.</p>
+                </details>
+              </li>
+              <li>
+                <a href="media/slide-7.webp" data-gallery="slides" data-title="Регион: наследие и сегодняшний день"><span>07</span>Регион: наследие и сегодняшний день</a>
+                <details class="slide-text"><summary>Текст слайда 7</summary>
+                  <p>В каждой зоне должен появиться блок «Золотое кольцо 2.0».</p>
+                  <p><strong>Требование Вячеслава</strong> Экран о современной инфраструктуре в каждом региональном ТЗ.</p>
+                  <p><strong>Выбор реализации · предложение</strong> Видеоподборка на экране / интерактивный каталог. Сравнить стоимость и обновление.</p>
+                  <p><strong>Разделить решения</strong> Дорошенко — содержание и региональные контакты. Вячеслав — носитель, поставка и оплата.</p>
+                </details>
+              </li>
+              <li>
+                <a href="media/slide-8.webp" data-gallery="slides" data-title="Владимир: закрепить участие региона"><span>08</span>Владимир: закрепить участие региона</a>
+                <details class="slide-text"><summary>Текст слайда 8</summary>
+                  <p>Предварительный пакет уже готов к предметному разговору с Дорошенко.</p>
+                  <p><strong>Что предлагает пакет 16.11</strong> НЦ — основная застройка, оборудование и контент. Регион — экспонаты и художественные изделия.</p>
+                  <p><strong>Что нужно утвердить</strong> Арки и столбы; перечень изделий; права на материалы; ответственный от области.</p>
+                  <p><strong>Развилка · предложение</strong> Подтвердить модель / перераспределить отдельные изделия и расходы в ТЗ.</p>
+                </details>
+              </li>
+              <li>
+                <a href="media/slide-9.webp" data-gallery="slides" data-title="Бюджет: считать один состав"><span>09</span>Бюджет: считать один состав</a>
+                <details class="slide-text"><summary>Текст слайда 9</summary>
+                  <p>Разрешение на расчёт получено. Общая стоимость не утверждена.</p>
+                  <p><strong>Основание · 15.10</strong> VARS: 711,5 м². EURO: 1 073 м². Технические стены и общие работы — ЕЭС.</p>
+                  <p><strong>Свести расчёты</strong> Структура · Росквест · Евроэкспо · VARS. Обновить Кострому и Подмосковье после замен.</p>
+                  <p><strong>Решение Вячеслава</strong> Подтвердить лимит, обязательные объекты и допустимые сокращения. Назначить владельца сводной сметы.</p>
+                </details>
+              </li>
+              <li>
+                <a href="media/slide-10.webp" data-gallery="slides" data-title="Кто собирает результат"><span>10</span>Кто собирает результат</a>
+                <details class="slide-text"><summary>Текст слайда 10</summary>
+                  <p>Функции подтверждаются перепиской; новые назначения обозначены отдельно.</p>
+                  <p><strong>Концепция и содержание</strong> Роман — сведение материалов и запросов. Елена и дизайнеры — архитектура, отделка, визуализации.</p>
+                  <p><strong>Интерактив и медиа</strong> Андрей — сценарии. Сергей и Саня — техника. Александр Фаткулин — визуальные и экранные материалы.</p>
+                  <p><strong>Нужно назначить</strong> Владельца общей сметы, технической интеграции и прототипа лямки. Роман как координатор выпуска — предложение.</p>
+                </details>
+              </li>
+              <li>
+                <a href="media/slide-11.webp" data-gallery="slides" data-title="Следующий выпуск — по решениям"><span>11</span>Следующий выпуск — по решениям</a>
+                <details class="slide-text"><summary>Текст слайда 11</summary>
+                  <p>Предлагаемая последовательность. Это не согласованные сроки.</p>
+                  <p><strong>Дни 1–2 · подготовить</strong> Роман + Елена: актуальные варианты, образцы полов, перечень вопросов и единый состав.</p>
+                  <p><strong>Встречи · зафиксировать</strong> Вячеслав: вариант, техника, бюджет. Дорошенко: регионы, содержание, календарь. Письменный протокол.</p>
+                  <p><strong>После встреч · выпустить</strong> Пересчёт → согласованные ТЗ → контент и производство → интеграция и испытания.</p>
+                </details>
+              </li>
+              <li>
+                <a href="media/slide-12.webp" data-gallery="slides" data-title="На выходе — один протокол"><span>12</span>На выходе — один протокол</a>
+                <details class="slide-text"><summary>Текст слайда 12</summary>
+                  <p>Встреча должна дать решения, с которыми команда может работать.</p>
+                  <p><strong>Вячеслав</strong> Пролог; полы; шесть мастерских; инфраструктурные экраны; бюджет и владельцы задач.</p>
+                  <p><strong>Дорошенко</strong> Владимир; участие регионов; содержание инфраструктуры; экспонаты и права; календарь.</p>
+                  <p><strong>Проверить дату закрытия</strong> 3 октября в закреплённом сообщении / 21 октября 2027 в ноябрьском пакете. Открытие — 21 мая.</p>
+                </details>
+              </li>
+        </ol>
+      </details>
+      <section class="sources" id="sources" aria-labelledby="sources-title">
+        <h2 id="sources-title" tabindex="-1">Исходники проекта</h2>
+        <p>В архиве — визуализации к обсуждению лайтбокса от 25 октября, финальной зоны и стола от 9 ноября, а также региональный пакет, переданный 17 ноября.</p>
+        <a href="https://disk.yandex.ru/d/dhpQs8qRpZ16ww">Открыть архив на Яндекс Диске ↗</a>
+      </section>
+    </section>
+  </main>
+  <footer><a class="brand" href="/">ФАЗА</a><span>Золотое кольцо · НЦ «Россия»</span></footer>
+  <dialog id="viewer" aria-labelledby="viewer-title">
+    <div class="viewer-shell">
+      <div class="viewer-bar">
+        <span id="viewer-title" aria-live="polite"></span>
+        <button id="close-show" type="button" aria-label="Закрыть просмотр">Закрыть ×</button>
+      </div>
+      <div class="image-stage" id="image-stage" tabindex="0" role="region" aria-label="Область просмотра изображения">
+        <img id="viewer-image" alt="">
+      </div>
+      <div class="viewer-controls">
+        <button id="prev" type="button" aria-label="Предыдущее изображение">← Назад</button>
+        <button id="zoom" type="button" aria-pressed="false">Увеличить</button>
+        <button id="next" type="button" aria-label="Следующее изображение">Далее →</button>
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>
