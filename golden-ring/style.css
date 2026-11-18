@@ -223,6 +223,14 @@ body:has(dialog[open]) { overflow: hidden; }
 .experience-copy summary { padding: 10px 0; font-size: 14px; }
 .experience-copy details p, .experience-basis { font-size: 14px; }
 .experience-basis { margin-top: 24px; max-width: 87ch; }
+.lab-links,.lab-actions { display:flex; flex-wrap:wrap; align-items:center; gap:4px 20px; }
+.lab-links { margin-top:16px; }
+.lab-links a,.space-action { padding:7px 0; font-weight:600; }
+.lab-section { font-size:clamp(23px,2.7vw,34px); margin:18px 0; }
+.new-head { margin-top:42px; }
+.lab-actions { margin-top:8px; gap:2px 15px; font-size:.92rem; }
+.lab-actions a { display:inline-flex; align-items:center; min-height:44px; margin:0; }
+.experience-copy h3 { font-family:inherit; font-size:clamp(24px,2.1vw,34px); font-weight:inherit; margin:8px 0 12px; }
 .demo-layout { display: grid; grid-template-rows: auto minmax(0,1fr); height: 100%; }
 .demo-tools { display: flex; align-items: center; gap: 16px; padding: 6px 14px; color: #f8f0dd; background: #282326; }
 .demo-tools button, .demo-tools a { color: inherit; font: inherit; font-size: 14px; }
