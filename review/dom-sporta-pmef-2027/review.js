@@ -236,7 +236,7 @@ selectFolder();
    section.append(el("h2","section-title","Эпизоды по сценарию"));
    const columns=el("div","take-columns");
    columns.append(el("span","","Раскадровка"),el("span","","Чистовые дубли"));
-   section.append(columns);
+   if(list.viewMode!=="production")section.append(columns);
    const groups=list.scriptSections||[];
    const versions={
      "park-vehicle-exterior":"park-vehicle-exterior-hd",
@@ -256,6 +256,7 @@ selectFolder();
    function place(ids,parent){
      for(const id of ids){
        if(!clips.has(id)||secondary.has(id))continue;
+       if(list.viewMode==="production"){appendClip(parent,id,false);continue;}
        const row=el("div","take-row"),left=el("div","take-left");
        row.append(left);parent.append(row);
        appendClip(left,id,true);
