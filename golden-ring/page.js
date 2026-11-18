@@ -136,6 +136,7 @@ function openDemo(event) {
   const name = demoTrigger.dataset.title;
   document.querySelector('#demo-title').textContent = name;
   document.querySelector('#solo-demo').href = demoTrigger.href;
+  document.querySelector('#mechanism-demo').href = 'interactives/spatial.html?scene=' + encodeURIComponent(demoTrigger.dataset.demo) + '&view=detail&part=1';
   demoWindow.title = name;
   demoWindow.src = demoTrigger.href;
   demoPlayer.showModal();
