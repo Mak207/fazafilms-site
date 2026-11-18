@@ -214,6 +214,7 @@ function makeCard(clip,role){
 }
 function selectFolder(){
  const photos=location.hash==="#photos";
+ document.querySelector(".project-brief").hidden=photos;
  document.querySelector("#photos").hidden=!photos;
  for(const id of ["film","scenes"])document.getElementById(id).hidden=photos;
  for(const [id,selected] of [["movies-tab",!photos],["photos-tab",photos]]){
@@ -249,7 +250,7 @@ selectFolder();
      if(!clip)return;
      const title=draft&&!clip.title.endsWith(" · Драфт")?clip.title+" · Драфт":clip.title;
      const card=makeCard({...clip,title},"clip");card.id=id;
-     const timing=card.querySelector(".inpoint");if(timing)timing.textContent=cue(clip.duration)+(clip.hasAudio===false?" · Без звука":" · Со звуком");
+     const timing=card.querySelector(".inpoint");if(timing)timing.textContent=clip.kind==="image"?cue(clip.start)+" – "+cue(clip.start+clip.duration)+" · Схема кадра":cue(clip.duration)+(clip.hasAudio===false?" · Без звука":" · Со звуком");
      parent.append(card);clips.delete(id);
    }
    function place(ids,parent){
