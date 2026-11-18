@@ -15,7 +15,7 @@
     .sound{font-size:14px}.stage{position:relative;border-radius:8px;background:#182b34;overflow:hidden;isolation:isolate;box-shadow:0 0 0 1px #53636a}
     canvas{display:block;width:100%;height:clamp(230px,43vh,400px)}
     .keys{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:12px 0}
-    .keys button{font-size:clamp(14px,1.8vw,19px);font-family:Georgia,serif;border-color:#5a6869}
+    .keys button{border-bottom:2px solid var(--voice,#a78e5c);font-size:clamp(14px,1.8vw,19px);font-family:Georgia,serif;border-color:#5a6869}
     .keys button[aria-pressed=true]{color:#ffe3ae;border-color:#d5ac65;background:#343938}
     .feedback{min-height:1.7em;font-weight:bold;color:#f6d294;margin:10px 0}
     .actions{border-top:1px solid #424b4b;margin-top:13px;padding-top:12px}.actions a{color:#dfd3af;text-underline-offset:4px}
@@ -26,9 +26,9 @@
 </head>
 <body><main>
   <div class="head"><h1>Голоса колоколов</h1><button class="sound" id="sound" aria-pressed="false">Включить звук</button></div>
-  <p class="instruction">Нажмите на три колокола по очереди или вместе. Когда под каждым появится слушатель, прозвучит общая звонница.</p>
-  <div class="stage"><canvas aria-label="Три бронзовых колокола над вечерним городом"></canvas></div>
-  <div class="keys" aria-label="Колокола"><button data-bell="0" aria-pressed="false">1 · Большой</button><button data-bell="1" aria-pressed="false">2 · Средний</button><button data-bell="2" aria-pressed="false">3 · Малый</button></div>
+  <p class="instruction">Ударьте по каждому колоколу, чтобы собрать общий перезвон. Следите за языками и отражением огней на воде.</p>
+  <div class="stage"><canvas aria-label="Три литых колокола над рекой. Удар качает язык и зажигает огни города на дальнем берегу"></canvas></div>
+  <div class="keys" aria-label="Колокола"><button style="--voice:#d8a16b" data-bell="0" aria-pressed="false">1 · Большой</button><button style="--voice:#d4bd82" data-bell="1" aria-pressed="false">2 · Средний</button><button style="--voice:#9cbbc1" data-bell="2" aria-pressed="false">3 · Малый</button></div>
   <p id="feedback" class="feedback" role="status">Выберите первый колокол.</p>
   <div class="actions"><button id="reset">Начать заново</button><a id="audience" target="_blank" rel="noopener">Открыть экран зрителей ↗</a></div>
 </main>
@@ -50,7 +50,7 @@
   function count(){return selected.filter(Boolean).length}
   function announce(){
     const n=count();
-    status.textContent=n===3?'Общая звонница · три голоса разбудили город':n?names[last]+' колокол · слушателей '+n+' из 3':spectator?'Звонница ждёт участников':'Выберите первый колокол.';
+    status.textContent=n===3?'Общая звонница · три голоса разбудили город':n?names[last]+' колокол · голосов '+n+' из 3':spectator?'Звонница ждёт участников':'Выберите первый колокол.';
     document.querySelectorAll('[data-bell]').forEach((b,i)=>b.setAttribute('aria-pressed',String(selected[i])));
   }
   function ring(note,delay=0){
@@ -105,58 +105,113 @@
     const box=canvas.getBoundingClientRect();const y=(e.clientY-box.top)/box.height;
     if(y>.8)return;strike(Math.max(0,Math.min(2,Math.floor(3*(e.clientX-box.left)/box.width))));
   });
-  function circle(x,y,r,color){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=color;ctx.fill()}
-  function curvedBell(x,y,s,hit,active,time){
-    ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.rotate(motion.matches?0:Math.sin(hit*.013)*Math.exp(-hit/620)*.095);
-    ctx.strokeStyle='#596567';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,-120);ctx.lineTo(0,-43);ctx.stroke();
-    const copper=ctx.createLinearGradient(-55,0,57,0);
-    for(const [stop,color] of [[0,'#584836'],[.12,'#937650'],[.29,'#e0c791'],[.43,'#ac9165'],[.68,'#786246'],[.87,'#a08c62'],[1,'#594631']])copper.addColorStop(stop,color);
-    ctx.fillStyle=copper;ctx.beginPath();ctx.moveTo(-49,39);ctx.bezierCurveTo(-34,27,-31,4,-27,-14);ctx.bezierCurveTo(-23,-34,-13,-37,-8,-38);
-    ctx.lineTo(-7,-46);ctx.lineTo(7,-46);ctx.lineTo(9,-38);ctx.bezierCurveTo(24,-35,27,-23,30,-10);ctx.bezierCurveTo(34,14,34,25,50,39);
-    ctx.lineTo(55,44);ctx.quadraticCurveTo(0,62,-55,44);ctx.closePath();ctx.fill();
-    ctx.strokeStyle='#574a37';ctx.lineWidth=1.4;
-    for(const [dy,dx] of [[-20,23],[-16,25],[20,37],[24,39],[36,46]]){
-      ctx.beginPath();ctx.moveTo(-dx,dy);ctx.quadraticCurveTo(0,dy+8,dx,dy);ctx.stroke();
-      ctx.strokeStyle='#dfca9c';ctx.translate(0,1);ctx.stroke();ctx.translate(0,-1);ctx.strokeStyle='#6c573e';
-    }
-    for(let col=-2;col<=2;col++){ctx.save();ctx.translate(col*11,1+3*Math.cos(col));ctx.strokeStyle='#8a704c';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(0,-6);ctx.quadraticCurveTo(12,1,0,8);ctx.quadraticCurveTo(-8,0,0,-6);ctx.stroke();ctx.restore()}
-    ctx.beginPath();ctx.ellipse(0,44,54,7,0,0,Math.PI*2);ctx.fillStyle='#392d22';ctx.fill();ctx.strokeStyle='#d3b88b';ctx.stroke();
-    ctx.fillStyle='#8d7958';ctx.fillRect(-2,42,4,11);circle(0,54,5,'#b29a6b');
+  const bellArt = ['great', 'middle', 'treble'].map(name => loadArt('bells-' + name));
+  const quietCity = loadArt('bells-riverside-dusk');
+  const brightCity = loadArt('bells-riverside');
+  const voices = [
+    { size: 1, y: .058, decay: 1680, period: 960, wave: 2, colour: '255,185,110' },
+    { size: .81, y: .085, decay: 1260, period: 660, wave: 3, colour: '255,224,159' },
+    { size: .65, y: .109, decay: 900, period: 460, wave: 4, colour: '188,232,239' }
+  ];
+
+  function loadArt(name) {
+    const img = new Image();
+    img.addEventListener('load', () => { if (width && height) drawLoop(); });
+    img.src = 'art/' + name + '.webp';
+    return img;
+  }
+
+  function ready(img) { return img.complete && img.naturalWidth > 0; }
+
+  function landscape(img) {
+    const scale = Math.max(width / img.width, height / img.height);
+    const w = img.width * scale, h = img.height * scale;
+    ctx.drawImage(img, (width-w)/2, (height-h)*.65, w, h);
+  }
+
+  function roofBeam() {
+    const h = Math.min(19, height * .052);
+    const beam = ctx.createLinearGradient(0,0,0,h);
+    beam.addColorStop(0,'#302920'); beam.addColorStop(.48,'#29231d'); beam.addColorStop(.72,'#3d3023'); beam.addColorStop(1,'#181913');
+    ctx.fillStyle = beam; ctx.fillRect(0,0,width,h);
+    ctx.fillStyle = '#8d73514d'; ctx.fillRect(0,h-1,width,1);
+    const shade = ctx.createLinearGradient(0,h,0,h+48);
+    shade.addColorStop(0,'#10131a65'); shade.addColorStop(1,'#10131a00');
+    ctx.fillStyle = shade; ctx.fillRect(0,h,width,48);
+  }
+
+  function drawClapper(bw,bh,swing) {
+    // The hinge is inside the casting. Only the bottom of the shaft and its striking ball emerge from the mouth.
+    ctx.save(); ctx.translate(0,bh*.56);ctx.rotate(swing);
+    const base = bh*.404, strikeLength = bh*.493, r = bw*.047;
+    const metal = ctx.createLinearGradient(-r,0,r,0);
+    metal.addColorStop(0,'#332c29'); metal.addColorStop(.3,'#a69b7f'); metal.addColorStop(.49,'#827963'); metal.addColorStop(1,'#332f29');
+    ctx.fillStyle=metal; ctx.fillRect(-r*.38,base,r*.76,strikeLength-base);
+    const patina = ctx.createRadialGradient(-r*.35,strikeLength-r*.65,0,0,strikeLength,r*1.25);
+    patina.addColorStop(0,'#c8b698');patina.addColorStop(.34,'#8c7961');patina.addColorStop(.75,'#594a3b');patina.addColorStop(1,'#2f2a26');
+    ctx.fillStyle=patina;ctx.beginPath();ctx.ellipse(0,strikeLength,r*.94,r*1.22,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#524334';ctx.fillRect(-r*.29,strikeLength+r*.86,r*.58,r*.63);
     ctx.restore();
-    if(active){
-      ctx.save();ctx.strokeStyle='rgba(255,212,131,.45)';ctx.lineWidth=1.5;
-      for(let n=0;n<3;n++){let phase=motion.matches?n/3:((Math.min(hit,2100)/920+n/3)%1);ctx.globalAlpha=1-phase;ctx.beginPath();ctx.ellipse(x,y+59*s,(53+36*phase)*s,(8+14*phase)*s,0,0,Math.PI*2);ctx.stroke()}ctx.restore();
-    }
   }
-  function draw(time){
-    const w=width,h=height,done=count()===3;
-    const dawn=done?(motion.matches?1:Math.min(1,(time-finalAt)/1800)):0;
-    const sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,'#13242e');sky.addColorStop(.55,'#384950');sky.addColorStop(1,'#bf9270');ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
-    const sun=ctx.createRadialGradient(w*.53,h*.82,0,w*.53,h*.82,w*.52);sun.addColorStop(0,'rgba(246,175,99,'+(.18+.64*dawn)+')');sun.addColorStop(1,'rgba(213,150,97,0)');ctx.fillStyle=sun;ctx.fillRect(0,0,w,h);
-    for(let i=0;i<43;i++)circle(((i*773)%997)/997*w,((i*397)%577)/577*h*.62,.5+(i%4)*.24,'#c6bb9f');
-    const level=h*.79;
-    for(let i=0;i<30;i++){
-      const x=i*w/29,wide=w*(.025+i%4*.005),bh=h*(.036+((i*7)%13)*.005);
-      ctx.fillStyle=i%2?'#354248':'#455154';ctx.fillRect(x,level-bh,wide,bh+12);
-      ctx.beginPath();ctx.moveTo(x-2,level-bh);ctx.lineTo(x+wide/2,level-bh-7-i%3*2);ctx.lineTo(x+wide+2,level-bh);ctx.fill();
-      if(i%5===1){ctx.fillRect(x+wide*.45,level-bh-24,wide*.14,21);circle(x+wide*.52,level-bh-24,wide*.12,'#39474a');}
-      ctx.fillStyle=done?'#f6cd82':'#81908b';ctx.fillRect(x+wide*.3,level-bh*.6,2,4);
-    }
-    const water=ctx.createLinearGradient(0,level,0,h);water.addColorStop(0,'#435552');water.addColorStop(1,'#182c34');ctx.fillStyle=water;ctx.fillRect(0,level,w,h-level);
-    for(let i=0;i<95;i++){const x=(i*773%997)/997*w,y=level+2+(i*257%499)/499*(h-level);ctx.fillStyle='rgba(221,195,150,'+(i%3*.05+.09+dawn*.13)+')';ctx.fillRect(x,y,2+(i%8)*1.7,1)}
-    [1,.86,.71].forEach((scale,i)=>{
-      const x=w*(i+.5)/3,y=h*.35,s=Math.min(w/470,h/230)*scale;
-      if(selected[i]){
-        const beam=ctx.createLinearGradient(x,y,x,h*.85);beam.addColorStop(0,'rgba(255,221,143,.02)');beam.addColorStop(1,'rgba(255,214,139,.24)');
-        ctx.fillStyle=beam;ctx.beginPath();ctx.moveTo(x-16*s,y+40*s);ctx.lineTo(x+16*s,y+40*s);ctx.lineTo(x+69*s,h*.84);ctx.lineTo(x-69*s,h*.84);ctx.fill();
+
+  function soundingBell(index, time) {
+    const art = bellArt[index], voice = voices[index];
+    if (!ready(art)) return;
+    const q = Math.min(width*.29/art.width, height*.59/art.height) * voice.size;
+    const bw = art.width*q, bh = art.height*q;
+    const x=width*(index+.5)/3, y=height*voice.y+7;
+    const age = Math.max(0,time-hits[index]), env = Math.exp(-age / voice.decay);
+    const swing = motion.matches ? 0 : Math.cos(age/voice.period*Math.PI*4) * env;
+    // Independent dynamics: the mouth recoils slightly, the clapper swings further and reverses twice as fast.
+    ctx.save();ctx.translate(x,y);ctx.rotate(swing*.022);
+    const chain = ctx.createLinearGradient(-bw*.012,0,bw*.012,0);
+    chain.addColorStop(0,'#242628');chain.addColorStop(.48,'#ac9c7b');chain.addColorStop(.95,'#36332c');
+    ctx.fillStyle=chain;ctx.fillRect(-bw*.009,-y,bw*.018,y+bh*.045);
+    ctx.drawImage(art,-bw*.5,0,bw,bh);
+    drawClapper(bw,bh,swing*.29);
+    ctx.restore();
+
+    if (selected[index]) {
+      // Broad, slow amber arcs for bass; clustered quick silver arcs for treble.
+      const elapsed = motion.matches ? 340 : age;
+      const life = Math.exp(-elapsed / voice.decay), end = y+bh*1.05;
+      const arcs = voice.wave;
+      ctx.save();
+      for (let k=0;k<arcs;k++) {
+        const phase = (elapsed/voice.period + k/arcs)%1;
+        const radius = bw*(.34+phase*(.54+.12*index));
+        ctx.strokeStyle='rgba('+voice.colour+','+((1-phase)*life*.66)+')';
+        ctx.lineWidth = Math.max(1.1,bw*.014)*(1-phase*.4);
+        ctx.beginPath();ctx.ellipse(x,end+bh*(.018+phase*.18),radius,Math.max(4,radius*.10),0,0,Math.PI);ctx.stroke();
       }
-      curvedBell(x,y,s,Math.max(0,time-hits[i]),selected[i],time);
-      if(selected[i]){const py=h*.86;circle(x,py-17,4,'#202f32');ctx.fillStyle='#202f32';ctx.fillRect(x-3,py-13,6,14);}
-    });
+      ctx.restore();
+    }
   }
+
+  function draw(time) {
+    if (!width || !height) return;
+    ctx.fillStyle='#17252e';ctx.fillRect(0,0,width,height);
+    if (ready(quietCity)) landscape(quietCity);
+    const dawn=count()===3 ? motion.matches ? 1 : Math.min(1,(time-finalAt)/2000) : 0;
+    if (ready(brightCity)) {
+      // Progressive illumination of the quay below each participating voice.
+      selected.forEach((on,i)=>{
+        if(!on||dawn>=1)return;
+        const radius=width*.24, x=width*(i+.5)/3;
+        ctx.save();ctx.beginPath();ctx.ellipse(x,height*.78,radius,height*.2,0,0,Math.PI*2);ctx.clip();ctx.globalAlpha=.32*(1-dawn);landscape(brightCity);ctx.restore();
+      });
+      if(dawn){ctx.save();ctx.globalAlpha=dawn;landscape(brightCity);ctx.restore();}
+    }
+    const sides=ctx.createLinearGradient(0,0,width,0);
+    sides.addColorStop(0,'#10121935');sides.addColorStop(.22,'#10121900');sides.addColorStop(.78,'#10121900');sides.addColorStop(1,'#10121936');
+    ctx.fillStyle=sides;ctx.fillRect(0,0,width,height);
+    roofBeam();
+    for(let i=0;i<3;i++)soundingBell(i,time);
+  }
+
   function drawLoop(){
     cancelAnimationFrame(frame);
-    function tick(now){draw(now);if(!motion.matches&&now-Math.max(...hits,finalAt)<2300)frame=requestAnimationFrame(tick)}
+    function tick(now){draw(now);if(!motion.matches&&now-Math.max(...hits,finalAt)<5400)frame=requestAnimationFrame(tick)}
     frame=requestAnimationFrame(tick);
   }
   new ResizeObserver(()=>{
