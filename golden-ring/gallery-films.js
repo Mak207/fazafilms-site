@@ -25,7 +25,7 @@
     if(card.dataset.filmRevision) asset.searchParams.set('v',card.dataset.filmRevision);
     const file = asset.href;
     card.addEventListener('pointerenter', e => {
-      if (e.pointerType !== 'mouse' || dialog.open || navigator.connection?.saveData ||
+      if (cover.closest('.material-unpublished') || e.pointerType !== 'mouse' || dialog.open || navigator.connection?.saveData ||
           matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       stopPreview(); current = card;
       timer = setTimeout(() => {
@@ -39,6 +39,7 @@
       if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || !dialog.showModal) return;
       e.preventDefault(); stopPreview(); trigger = link;
       dialog.querySelector('#film-heading').textContent = title;
+      dialog.querySelector('#gallery-status').textContent = card.dataset.performance ? '' : 'Драфт';
       dialog.querySelector('#film-resolution').textContent = '';
       movie.poster = cover.querySelector('img').src;
       movie.replaceChildren();

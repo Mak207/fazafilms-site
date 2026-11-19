@@ -100,7 +100,10 @@ function displayImage(index) {
 function openGallery(event, gallery, index) {
   if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || !viewer.showModal) return;
   event.preventDefault();
-  activeGallery = gallery;
+  const requested = gallery[index];
+  activeGallery = gallery.filter(item=>!item.closest('.material-unpublished'));
+  if(!activeGallery.length)return;
+  index = Math.max(0,activeGallery.indexOf(requested));
   returnFocus = event.currentTarget;
   displayImage(index);
   viewer.showModal();
@@ -137,7 +140,7 @@ function openDemo(event) {
   const name = demoTrigger.dataset.title;
   document.querySelector('#demo-title').textContent = name;
   document.querySelector('#solo-demo').href = demoTrigger.href;
-  document.querySelector('#mechanism-demo').href = 'interactives/spatial.html?scene=' + encodeURIComponent(demoTrigger.dataset.demo) + '&view=detail&part=1';
+  document.querySelector('#mechanism-demo').href = 'interactives/apparatus.html?scene=' + encodeURIComponent(demoTrigger.dataset.demo) + '&view=detail&part=1';
   demoWindow.title = name;
   demoWindow.src = demoTrigger.href;
   demoPlayer.showModal();

@@ -7,7 +7,7 @@ function asset(name){
   if(assets.has(name))return assets.get(name);
   const entry={scene:null};
   assets.set(name,entry);
-  new GLTFLoader().load(new URL('./people/'+name+'.glb',import.meta.url).href,gltf=>{
+  new GLTFLoader().load(new URL('./people/visitor-'+(name==='emma'?'woman':'man')+'.glb',import.meta.url).href,gltf=>{
     entry.scene=gltf.scene;
     entry.scene.traverse(node=>{
       if(!node.isMesh)return;
@@ -57,7 +57,7 @@ export function createPeople(scene,THREE){
     }
     if(required.some(k=>!bones[k]))return null;
     scene.add(node);
-    const rest=Object.values(bones).map(b=>[b,b.quaternion.clone()]);
+    const rest=Object.values(bones).map(b=>[b,b.quaternion.clone(),b.position.clone()]);
     return {node,bones,rest,name,hipRest:bones.Hips.position.clone(),signature:''};
   }
   function removeActor(actor){
@@ -74,8 +74,8 @@ export function createPeople(scene,THREE){
     const supplied=active&&visitor.target?.length===3?V(...visitor.target):null;
     const signature=[visitor.x,visitor.y,visitor.z,visitor.heading,active,reach,index,visitor.singleHand,visitor.step,visitor.limit?.axis,...(supplied?.toArray()||[])].join('|');
     if(signature===actor.signature)return;
-    actor.signature=signature;
-    for(const [bone,q] of rest)bone.quaternion.copy(q);
+    actor.signature=signature;actor.contacts=[];
+    for(const [bone,q,position] of rest){bone.quaternion.copy(q);bone.position.copy(position);}
     bones.Hips.position.copy(actor.hipRest);
     let yaw=visitor.heading || 0;
     if(supplied){
@@ -133,6 +133,17 @@ export function createPeople(scene,THREE){
         }
         node.updateWorldMatrix(true,true);
       }
+      // Bend from the waist with shoes planted when a grip lies across a table.
+      const grips=[['Right',supplied]];
+      if(visitor.otherTarget && reach>.45)grips.push(['Left',V(...visitor.otherTarget)]);
+      for(let j=0;j<18;j++){
+        const excess=Math.max(...grips.map(([s,g])=>{
+          const shoulder=world(bones[s+'Arm']),elbow=world(bones[s+'ForeArm']),hand=world(bones[s+'Hand']);
+          return shoulder.distanceTo(g)-shoulder.distanceTo(elbow)-elbow.distanceTo(hand)+.028;
+        }));
+        if(excess<=0)break;
+        tilt(bones.Spine,sideAxis,Math.min(.043,excess*1.65));
+      }
       const eyes=world(bones.Head),sight=supplied.clone().sub(eyes);
       const azimuth=Math.atan2(sight.dot(sideAxis),sight.dot(forward));
       const descent=Math.atan2(-sight.y,Math.hypot(sight.x,sight.z));
@@ -161,6 +172,15 @@ export function createPeople(scene,THREE){
           .039+(index%2&&side==='Left'?.11:0)));
       }
       const wrist=palm.clone().addScaledVector(axis,-palmLength);
+      if((far&&supplied)||(support&&visitor.otherTarget)){
+        const offset=wrist.clone().sub(shoulder),gap=offset.length()-(a+b-.004);
+        if(gap>0){
+          // The scapula glides over the ribs during the final reach.
+          const protracted=shoulder.clone().addScaledVector(offset.normalize(),Math.min(.14,gap));
+          arm.position.copy(arm.parent.worldToLocal(protracted));arm.updateWorldMatrix(false,true);
+          shoulder.copy(world(arm));
+        }
+      }
       const delta=wrist.clone().sub(shoulder),distance=delta.length();
       const d=clamp(distance,Math.abs(a-b)+.001,a+b-.001);
       const drive=delta.normalize();
@@ -177,9 +197,13 @@ export function createPeople(scene,THREE){
       // Flex around the anatomical knuckle axis. The index stays legible when indicating a control.
       const across=world(f('Index')).sub(world(f('Pinky'))).normalize().multiplyScalar(-sign);
       fingerNames.forEach((finger,i)=>{
-        const curl=far?(finger==='Index'?.045:.16+.047*i):support?.14:.07+.025*i;
+        const curl=(visitor.grasp&&(far||support))?.84+(i*.035):far?(finger==='Index'?.045:.16+.047*i):support?.14:.07+.025*i;
         for(const n of [1,2,3])if(f(finger,n))tilt(f(finger,n),across,curl*(n===2?.80:n===3?.35:.60));
       });
+      if((far&&supplied)||support&&visitor.otherTarget){
+        const measured=world(hand).lerp(knuckles(),.62);
+        actor.contacts.push({side,mm:1000*measured.distanceTo(palm)});
+      }
     }
     node.updateWorldMatrix(false,true);
   }
@@ -203,6 +227,9 @@ export function createPeople(scene,THREE){
       });
       for(let i=visitors.length;i<holders.length;i++)if(holders[i])holders[i].node.visible=false;
     },
+    ground(){return holders.map(a=>{a.node.updateWorldMatrix(true,true);const mesh=[];a.node.traverse(m=>{if(!m.isSkinnedMesh)return;let lowest=[0,9,0];for(let i=0;i<m.geometry.attributes.position.count;i+=5){const v=m.localToWorld(m.getVertexPosition(i,V()));if(v.y<lowest[1])lowest=v.toArray();}mesh.push(lowest)});return [a.node.position.toArray(),world(a.bones.Hips).toArray(),world(a.bones.LeftFoot).toArray(),world(a.bones.RightFoot).toArray(),mesh];});},
+    nodes(){return holders.filter(Boolean).map(a=>a.node);},
+    contacts(){return holders.flatMap(a=>a?.contacts||[]);},
     readyFor(visitor){return present.has(visitor);},
     dispose(){holders.forEach(removeActor);holders.length=0;present.clear();}
   };

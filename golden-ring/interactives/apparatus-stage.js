@@ -1,6 +1,6 @@
 import * as T from './vendor/three-0.180/three.module.min.js';
 import {GLTFLoader} from './vendor/three-0.180/GLTFLoader.js';
-import {createPhotoPeople} from './photo-people.js';
+import {createPeople} from './spatial-people.js';
 import {makeProjection} from './apparatus-projection.js';
 import {dressGallery} from './apparatus-room.js';
 import {stations} from './apparatus-spec.js';
@@ -40,7 +40,7 @@ export async function createStage(canvas,id,timing,film){
   const morphs=[],pulls=[],mapButtons=[];
   body.traverse(o=>{
     if(!o.isMesh)return;o.castShadow=o.receiveShadow=true;
-    if(id==='soundmap'&&o.name.startsWith('SM04_registered')&&o.material.map)o.material.map.anisotropy=Math.min(12,renderer.capabilities.getMaxAnisotropy());
+    for(const mat of [].concat(o.material||[]))for(const key of ['map','normalMap','roughnessMap','metalnessMap'])if(mat[key])mat[key].anisotropy=renderer.capabilities.getMaxAnisotropy();
     const dict=o.morphTargetDictionary;
     if(dict?.Press!==undefined)morphs.push(o);
     if(dict?.Pull!==undefined)pulls.push(o);
@@ -86,10 +86,11 @@ export async function createStage(canvas,id,timing,film){
     const pane=new T.Mesh(geo,new T.MeshBasicMaterial({map:projection.panes[1],side:T.DoubleSide,toneMapped:false}));pane.position.set(0,.20,(drawing.anchors?.PanelPlane?.[2]??size.z*.45)+.012);scene.add(pane);
     for(const side of [-1,1]){const other=pane.clone();other.position.x=spacing*side;other.material=pane.material.clone();other.material.map=projection.panes[side<0?0:2];scene.add(other);}
   }
-  const people=createPhotoPeople(scene,T,camera,id);
+  const people=createPeople(scene,T);
+  const emptyHall=new URLSearchParams(location.search).has("backgroundPlate");
   const main={role:'user',x:0,z:0,heading:0,reach:0},witness={role:'guest',x:1.58,z:1.44,heading:-2.4};
   const partner={role:id==='loom'?'user':'guest',x:-1,z:.70,heading:1.4,reach:0};
-  const cast=id==='bells'||id==='loom'?[main,witness,partner]:[main,witness];
+  const cast=emptyHall?[]:(id==='bells'||id==='loom'?[main,witness,partner]:[main,witness]);
   const target=V(),look=V(),eye=V();let manualYaw=0,manualPitch=0,manualZoom=1,hold=null;
   let oldWidth=0,oldHeight=0;
   function resize(){const w=canvas.clientWidth||1280,h=canvas.clientHeight||720;if(w!==oldWidth||h!==oldHeight){renderer.setSize(w,h,false);camera.aspect=w/h;oldWidth=w;oldHeight=h;}}
@@ -128,26 +129,19 @@ export async function createStage(canvas,id,timing,film){
       main.x=target.x-.18;main.z=target.z+.24;main.lean=.12*arm;main.singleHand=true;
     }
     main.limit=null;
-    if(id==='barge'){main.x=grip.x-.13;main.z=size.z*.5+.20+p*.14;main.limit={axis:'z',edge:main.z,sign:1};main.crouch=.15*smooth(arm);main.lean=.24*arm;main.otherTarget=[target.x-.018,target.y+.035,target.z-.055];}
+    if(id==='barge'){main.x=grip.x+.015;main.z=size.z*.5+.115+p*.13;main.limit={axis:'z',edge:main.z,sign:1};main.crouch=.225*smooth(arm/.16);main.lean=.10*arm;main.otherTarget=[target.x-.018,target.y+.035,target.z-.055];}
     if(id==='craft'||id==='soundmap'||id==='regional'){
-      main.x=target.x-.16;main.z=size.z*.5+.20;main.limit={axis:'z',edge:main.z,sign:1};
+      main.x=target.x-.16;main.z=size.z*.5+.075;main.limit={axis:'z',edge:main.z,sign:1};
     }
     if(id==='passport'){
-      const side=-size.x*.5-.125,front=size.z*.5+.20,around=smooth((p-.27)/.32),slide=smooth((p-.51)/.31);
+      const side=-size.x*.5-.065,front=size.z*.5+.075,around=smooth((p-.27)/.32),slide=smooth((p-.51)/.31);
       main.x=lerp(side,target.x-.16,slide);main.z=lerp(grip.z+.095,front,around);main.step=clamp((p-.27)/.55,0,1);
       main.limit=around<.995?{axis:'x',edge:side,sign:-1}:{axis:'z',edge:front,sign:1};
       main.lean=.23*arm;
     }
     main.heading=Math.atan2(target.x-main.x,target.z-main.z);main.reach=arm;
-    main.target=arm>.03&&id!=='bells'?target.toArray():null;
-    if(main.target&&arm<.96){main.target[1]=lerp(1.04,target.y,smooth(arm));main.target[2]+= .11*(1-arm);}
-    // The stance axis runs from the implement toward the visitor's shoes.
-    // These plan directions keep the photo in profile and the visitor in the aisle.
-    const axes={barge:[.85,.53],regional:[.73,.68],soundmap:[-.65,.76],craft:[-.68,.73],
-      glass:[.78,.63],loom:[-.84,.54],shadow:[.67,.74],passport:[-.89,.45]};
-    main.stanceAxis=axes[id];
-    main.contact=id==='bells'?null:target.toArray();
-    main.footClearance=['barge','soundmap','regional','craft','shadow','loom'].includes(id)?{z:size.z*.5+.075}:null;
+    main.target=arm>.03&&id!=='bells'?target.toArray():null; main.grasp=['barge','craft','loom','shadow'].includes(id);
+    if(main.target&&arm<.16){const approach=1-smooth(arm/.16);main.target[1]+=.07*approach;main.target[2]+=.09*approach;}
     if(id==='bells'){
       const approaches=state?.participants??[smooth(p*4),smooth((p-.24)*4),smooth((p-.59)*4)];
       bells.update(state?.voices??approaches.map(Number),approaches);
@@ -171,10 +165,12 @@ export async function createStage(canvas,id,timing,film){
     people.sync(cast);controlSurface?.(p);
   }
   const wide=Math.max(2.42,Math.min(4.2,size.x*.65+.8));
+  let performanceCamera;
   function cameraPose(view,u,filmShot){
     const cy=mid.y, sign=grip.x>0?-1:1;
     if(view==='hall'){eye.set(lerp(3.42,2.30,u),lerp(3.85,2.30,u),lerp(5.65,4.4,u));look.set(-.12,lerp(.96,1.04,u),-.31);camera.fov=44;}
     if(view==='user'){eye.set(sign*(wide*.64+.28),1.58+u*.16,2.40+.68*(1-u));look.set(grip.x*.55,clamp((grip.y+1.38)*.5,.82,1.46),.16);camera.fov=42;}
+    if(view==='user'&&id==='barge'){eye.set(3.2-.16*u,1.55,1.28+.36*u);look.set(.65,.96,.77);camera.fov=42;}
     if(view==='user'&&id==='soundmap'){eye.set(2.13,1.76,1.40+.30*(1-u));look.set(.12,1.06,.32);camera.fov=40;}
     if(view==='user'&&id==='loom'){eye.set(-.16-.14*u,1.42+.10*u,4.88+.25*(1-u));look.set(-.05,.98,.53);camera.fov=43;}
     if(view==='detail'){
@@ -228,13 +224,24 @@ export async function createStage(canvas,id,timing,film){
       }
       if(view==='result'){eye.set(.68-.22*u,1.92+.13*u,2.99+.52*u);look.set(-.08,1.85,-2.22);camera.fov=40;}
     }
+    if(view==='performance'){
+      if(!performanceCamera){
+        const face=V(Math.sin(main.heading),0,Math.cos(main.heading));
+        const side=V(face.z,0,-face.x).multiplyScalar(id==='glass'?-1:1);
+        const focus=V(main.x,.87,main.z).addScaledVector(face,.19);
+        const offset=side.multiplyScalar(3.05).addScaledVector(face,.75);offset.y=.39;
+        performanceCamera={look:focus,eye:focus.clone().add(offset)};
+      }
+      look.copy(performanceCamera.look);eye.copy(performanceCamera.eye);camera.fov=38;
+    }
+    if(view==='top'){look.set(0,.55,-.34);eye.set(.015,6.6,.01);camera.fov=56;}
     if(!filmShot){const d=eye.clone().sub(look),sp=new T.Spherical().setFromVector3(d);sp.theta+=manualYaw;sp.phi=clamp(sp.phi-manualPitch,.22,1.53);sp.radius*=manualZoom;eye.copy(look).add(V().setFromSpherical(sp));}
     camera.position.copy(eye);camera.lookAt(look);camera.updateProjectionMatrix();
   }
   function draw(view,u,p,arm,isFilm,elapsed=0,approach=1,state=null){
     resize();fit?.update(p,id!=='shadow'&&view==='detail'&&(!isFilm||u>.40));posePeople(p,arm,elapsed,state);
     projection.redraw(p,elapsed,approach,state);projection.render?.(renderer);
-    cameraPose(view,u,isFilm);people.align(view);renderer.render(scene,camera);
+    cameraPose(view,u,isFilm);renderer.render(scene,camera);
   }
   function frame(t){const c=timing.cues;let idx=0;for(let i=1;i<4;i++)if(t>=c[i].start-.1)idx=i;const start=idx?c[idx].start-.1:0,end=idx===3?timing.duration:c[idx+1].start-.1;
     const u=clamp((t-start)/(end-start),0,1),p=idx===0?0:idx===1?.46*smooth(u):idx===2?.46+.42*smooth(u):.88+.12*smooth(u);
@@ -259,10 +266,40 @@ export async function createStage(canvas,id,timing,film){
   function interactive(view,p,elapsed=0,state=null){hold={view,p,elapsed,state};draw(view,.60,p,p>.002?.85:.03,false,elapsed,1,state);}
   function orbit(x,y,zoom=1){manualYaw+=x;manualPitch=clamp(manualPitch+y,-.9,.8);manualZoom=clamp(manualZoom*zoom,.52,1.75);if(hold)interactive(hold.view,hold.p,hold.elapsed,hold.state);}
   function resetOrbit(){manualYaw=manualPitch=0;manualZoom=1;}
+  function marks(){
+    const screen=v=>{const n=v.clone().project(camera);return [(n.x+1)*.5,(1-n.y)*.5];};
+    return {contact:screen(target),foot:screen(V(main.x,main.y||0,main.z)),grip:target.toArray(),
+      people:cast.map(a=>({foot:screen(V(a.x,a.y||0,a.z)),hand:a.target?screen(V(...a.target)):null}))};
+  }
+  function plate(view,p,pass,time=0){
+    if(view==='performance' && ['loom','bells'].includes(id))view='hall';
+    draw(view,.44,p,id==='bells'?0:1,true,time,1);
+    const nodes=people.nodes(),vis=new Map(scene.children.map(o=>[o,o.visible]));
+    const before=scene.background;
+    if(pass==='actor'){
+      scene.background=new T.Color(0x00ff00);
+      for(const obj of scene.children)if(!obj.isLight && !nodes.includes(obj))obj.visible=false;
+      nodes.forEach((o,i)=>{o.visible=i===0 || id==='bells' || (id==='loom'&&i===2);});
+     }else if(pass==='room'||pass==='occluders'){
+      nodes.forEach(o=>{o.visible=false;});
+    }
+    let curtain;
+    if(pass==='occluders'){
+      curtain=new T.Mesh(new T.PlaneGeometry(60,60),new T.MeshBasicMaterial({color:0x00ff00,toneMapped:false}));
+      curtain.quaternion.copy(camera.quaternion);
+      curtain.position.copy(target).addScaledVector(camera.getWorldDirection(V()),.012);
+      scene.add(curtain);
+    }
+    renderer.render(scene,camera);
+    const result=canvas.toDataURL('image/png');
+    if(curtain){scene.remove(curtain);curtain.geometry.dispose();curtain.material.dispose();}
+    scene.background=before;for(const [obj,visible] of vis)obj.visible=visible;
+    return result;
+  }
   // Resolve only after the textured, independently posed visitors have actually appeared.
   posePeople(0,0);
   const deadline=performance.now()+45000;while(!cast.every(a=>people.readyFor(a))&&performance.now()<deadline){await new Promise(r=>setTimeout(r,80));posePeople(0,0);}
   if(!cast.every(a=>people.readyFor(a)))throw Error('Не удалось загрузить фигуры посетителей');
   frame(0);
-  return {frame,interactive,orbit,resetOrbit,dimensions:size.toArray(),grip:grip.toArray(),detail:(fit?.focus||mechanism).toArray(),mount:fit?.measurements||null};
+  return {marks,ground:()=>people.ground(),plate,frame,interactive,orbit,resetOrbit,cinema:(v,u,p,t,state)=>draw(v,u,p,p,true,t,1,state),contacts:()=>people.contacts(),dimensions:size.toArray(),grip:grip.toArray(),detail:(fit?.focus||mechanism).toArray(),mount:fit?.measurements||null};
 }
