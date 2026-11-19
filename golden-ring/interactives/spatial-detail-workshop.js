@@ -97,19 +97,21 @@
     for(const zz of [front-.106,front+.103]){
       m.rod([-2.75,1.07,zz],[.82,1.07,zz],.029,brass,8);
     }
+    m.shuttlePosition=[shuttleX,1.10,front];
+    const start=m.faces.length;
     shuttle(m,shuttleX,1.10,front);
-    // Raised floats and double selvedges distinguish woven material from a painted board.
-    const height=.20+.59*p;
-    const shades=['#284f55','#b45646','#e4c695','#7d976d'];
-    for(let band=0;band<Math.floor(height/.235);band++){
-      const y=.55+.235*band;
-      for(let motif=0;motif<8;motif++){
-        const x=-2.47+motif*.412;
-        diamond(m,x,y,z+.087,.143,.082,shades[(band+1)%4]);
-        diamond(m,x,y,z+.090,.055,.033,band%2===0?cream:'#a64e3f');
-      }
+    for(let i=start;i<m.faces.length;i++)m.faces[i].fallbackAsset='loom';
+    // A working length of weft leaves the shuttle eye and bows under its own
+    // weight before it enters the shed. It changes sides with the shuttle.
+    const lead=travel<.5?1:-1;
+    const yarnStart=[shuttleX+lead*.175,1.152,front-.048];
+    const yarnEnd=[shuttleX+lead*.46,Math.min(1.135,.587+.59*p),-.257];
+    let tail=yarnStart;
+    for(let i=1;i<=7;i++){
+      const f=i/7,point=yarnStart.map((v,n)=>v+(yarnEnd[n]-v)*f);
+      point[1]-=.062*4*f*(1-f);point[2]-=.012*Math.sin(Math.PI*f);
+      m.rod(tail,point,.0042,'#a56850',7);tail=point;
     }
-    for(const x of [-2.65,.61])m.line([[x,.43,z+.089],[x,.41+height,z+.089]],cream,.041);
     // End receivers and their small indicator lamps make handoff legs visible from the front.
     for(const [i,x] of [-2.79,.78].entries()){
       const atEnd=i===0?travel<.04:travel>.96;

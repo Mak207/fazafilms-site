@@ -1,4 +1,7 @@
 import * as THREE from './vendor/three-0.180/three.module.min.js';
+import { scannedSurfaces } from './spatial-surfaces.js';
+import { createPeople } from './spatial-people.js';
+import { stageObjects } from './spatial-objects.js';
 
 // All dimensions and texture coordinates use the same model space as picking and the sectional views.
 const colourCache = new Map();
@@ -14,6 +17,9 @@ const materials = {
   textile: new Set(['#b65746','#63838d','#485854','#d7c294','#eddfbf','#c9a575']),
   water: new Set(['#74a8a5','#709a9d']),
   glass: new Set(['#8bbfbe','#b8c9bf']),
+  hotGlass: new Set(['#ed9860']),
+  satin: new Set(['#a49c88','#b7b3a5','#8b938e','#808782','#93a39a','#77827c','#68736d']),
+  darkIron: new Set(['#535a55','#57605a','#4e5551','#52625d','#42504c']),
 };
 function finish(face) {
   if (face.media) return 'image';
@@ -40,6 +46,8 @@ function materialMap(kind) {
       intensity=232+8*Math.sin(2*u+.7*Math.cos(v))*Math.sin(2*v)+10*random();
     } else if(kind==='bronze'||kind==='metal') {
       intensity=239+4*Math.sin(v*42+Math.sin(u))+8*random();
+    } else if(kind==='water'){
+      intensity=198+17*Math.sin(v*4+1.6*Math.sin(2*u)+.5*Math.sin(3*v))+10*Math.sin(v*9+.7*Math.cos(3*u));
     } else intensity=240+12*random();
     const i=4*(y*width+x);
     bytes[i]=bytes[i+1]=bytes[i+2]=intensity;bytes[i+3]=255;
@@ -70,6 +78,77 @@ function triangulate(pts) {
   return THREE.ShapeUtils.area(flat)<0?result.map(([a,b,c])=>[a,c,b]):result;
 }
 
+// One optical pass shares the render's actual depth. Controls and hit markers
+// are drawn later on the presentation canvas and stay completely sharp.
+function makeLens(renderer) {
+  if(!renderer.extensions.has('EXT_color_buffer_float'))return null;
+  const plate=new THREE.WebGLRenderTarget(1,1,{
+    type:THREE.HalfFloatType,minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,
+    depthBuffer:true,stencilBuffer:false,samples:Math.min(2,renderer.capabilities.maxSamples)
+  });
+  plate.depthTexture=new THREE.DepthTexture(1,1,THREE.UnsignedIntType);
+  const uniforms={
+    plate:{value:plate.texture},zBuffer:{value:plate.depthTexture},
+    inverseSize:{value:new THREE.Vector2()},focus:{value:1},aperture:{value:1}
+  };
+  const material=new THREE.ShaderMaterial({
+    uniforms,depthTest:false,depthWrite:false,
+    vertexShader:`varying vec2 frame;
+      void main(){frame=uv;gl_Position=vec4(position.xy,0.,1.);}`,
+    fragmentShader:`varying vec2 frame;
+      uniform sampler2D plate,zBuffer;
+      uniform vec2 inverseSize;
+      uniform float focus,aperture;
+      float depthAt(vec2 uv){
+        float d=texture2D(zBuffer,uv).r;
+        return 13.5/(75.-74.82*d);
+      }
+      void main(){
+        vec3 centre=texture2D(plate,frame).rgb;
+        float distance=depthAt(frame);
+        float coc=min(7.,aperture*abs(focus-distance)/max(.55,distance));
+        vec3 collected=centre;
+        float weights=1.,occ=0.;
+        vec2 slope=clamp(vec2(dFdx(distance),dFdy(distance)),vec2(-.06),vec2(.06));
+        for(int i=0;i<10;i++){
+          float fi=float(i);
+          float a=fi*2.39996;
+          vec2 ray=vec2(cos(a),sin(a));
+          vec2 offset=ray*coc*sqrt((fi+.5)/10.);
+          vec2 tap=clamp(frame+offset*inverseSize,vec2(.001),vec2(.999));
+          float sampleDepth=depthAt(tap);
+          // The in-focus silhouette remains distinct against an out-of-focus wall.
+          float weight=smoothstep(-.30,-.02,sampleDepth-distance+.22);
+          collected+=weight*texture2D(plate,tap).rgb;
+          weights+=weight;
+          vec2 nearOffset=ray*(3.+mod(fi,3.)*2.);
+          float gap=distance+dot(slope,nearOffset)-depthAt(frame+nearOffset*inverseSize);
+          occ+=smoothstep(.015,.16,gap)*(1.-smoothstep(.23,.65,gap));
+        }
+        vec3 colour=mix(centre,collected/weights,smoothstep(.25,1.3,coc));
+        colour*=1.-occ*.027;
+        // Low optical falloff keeps the eye at the exhibit without crushing the room.
+        vec2 edge=frame-.5;
+        colour*=1.-.105*dot(edge,edge);
+        gl_FragColor=vec4(colour,1.);
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+      }`
+  });
+  const screen=new THREE.Scene();
+  const quad=new THREE.Mesh(new THREE.PlaneGeometry(2,2),material);quad.frustumCulled=false;screen.add(quad);
+  const camera=new THREE.Camera();
+  return function render(scene,view,width,height,focus,shot){
+    if(plate.width!==width||plate.height!==height)plate.setSize(width,height);
+    uniforms.inverseSize.value.set(1/width,1/height);
+    uniforms.focus.value=focus;
+    // Circle of confusion is capped in output pixels to stay legible on phones.
+    uniforms.aperture.value=(shot==='action'?7.8:shot==='result'?2.0:.42)*Math.min(1.6,width/850);
+    renderer.setRenderTarget(plate);renderer.render(scene,view);
+    renderer.setRenderTarget(null);renderer.render(screen,camera);
+  };
+}
+
 function makeStudio() {
   const canvas=document.createElement('canvas');
   const gl=canvas.getContext('webgl2',{antialias:true,alpha:true,premultipliedAlpha:true,powerPreference:'high-performance'});
@@ -79,18 +158,52 @@ function makeStudio() {
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   renderer.toneMapping=THREE.NoToneMapping;
   const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera();
-  scene.add(new THREE.HemisphereLight(0xfff3de,0xa3b2ac,1.55));
+  const people=createPeople(scene,THREE);
+  const placeObjects=stageObjects(scene);
+  const lens=makeLens(renderer);
+  const sky=new THREE.HemisphereLight(0xfff3de,0xa3b2ac,1.55);scene.add(sky);
   const sun=new THREE.DirectionalLight(0xffe6bd,2.0);sun.position.set(0.8,8,5.8);
   sun.target.position.set(-.55,.15,-.35);scene.add(sun,sun.target);sun.castShadow=true;
   const sh=sun.shadow;sh.mapSize.set(1024,1024);
   Object.assign(sh.camera,{left:-6.5,right:6.5,top:5.4,bottom:-5.2,near:.2,far:19});sh.camera.updateProjectionMatrix();
   sh.bias=-.00022;sh.normalBias=.016;
   const fill=new THREE.DirectionalLight(0xc0dadf,.68);fill.position.set(-4,3.2,-2);scene.add(fill);
+  const spot=new THREE.SpotLight(0xffdea9,0,12,.60,.70,2);
+  const wash=new THREE.PointLight(0xafd6e2,0,8,2);
+  const practical=new THREE.PointLight(0xffbe77,0,5.8,2);
+  scene.add(spot,spot.target,wash,practical);
+  const night=new THREE.Color('#343b3b');
+  let activeGallery;
+  function lightGallery(g,progress){
+    if(g!==activeGallery){
+      activeGallery=g;
+      renderer.toneMapping=g?THREE.ACESFilmicToneMapping:THREE.NoToneMapping;
+      renderer.toneMappingExposure=g?1.16:1;
+      scene.background=g?night:null;
+      scene.environmentIntensity=g?.29:.42;
+      sky.color.set(g?'#dbdddb':'#fff3de');sky.groundColor.set(g?'#9c8977':'#a3b2ac');sky.intensity=g?.70:1.55;
+      sun.color.set(g?g.key:'#ffe6bd');sun.intensity=g?1.63:2;
+      sun.position.set(...(g?[-2.55,5.9,3.15]:[.8,8,5.8]));
+      fill.color.set(g?g.rim:'#c0dadf');fill.intensity=g?1.35:.68;
+      fill.position.set(...(g?[3.3,3.4,-2.75]:[-4,3.2,-2]));
+      spot.intensity=g?54:0;wash.intensity=g?23:0;
+      if(g){
+        const [x,,z]=g.source;
+        spot.color.set(g.key);spot.position.set(x-1.85,3.72,z+1.45);spot.target.position.set(x,.55,z);
+        wash.color.set(g.rim);wash.position.set(2.85,2.70,-2.20);
+        practical.color.set(g.bounce);practical.position.set(...g.source);
+      }
+    }
+    practical.intensity=g?3.2+Math.min(progress,3)*.75:0;
+  }
   const textures=new Map(),surfaceMaterials=new Map(),meshes=new Map(),loader=new THREE.TextureLoader();
+  const applyScans=scannedSurfaces(THREE,loader,renderer);
+  const topology=new WeakMap();
   const repeatMaps=new Map();
   const style={
-    wood:[.71,.04], bronze:[.36,.36], metal:[.43,.32], textile:[.95,0],
-    water:[.22,.12], glass:[.25,.14], floor:[.88,.02],wall:[.92,0],matte:[.78,.03]
+    wood:[.54,.035], bronze:[.31,.66], metal:[.38,.48], textile:[.94,0],
+    water:[.22,.15], glass:[.13,.035],hotGlass:[.16,.04],satin:[.35,.73],darkIron:[.60,.43],
+    floor:[.63,.035],wall:[.91,0],ceiling:[.96,0],matte:[.78,.03]
   };
   // Soft boxes outside the model give brass and glass stable reflections as the camera orbits.
   const studioSet=new THREE.Scene();
@@ -112,6 +225,8 @@ function makeStudio() {
     if(kind==='ink'||kind==='image'){
       mat=new THREE.MeshBasicMaterial(common);
       if(face.media){
+        // Gallery images are calibrated self-luminous displays with their own grade.
+        mat.toneMapped=false;
         if(!textures.has(face.media)){
           const map=loader.load(new URL('art/'+face.media+'.webp',import.meta.url).href,()=>window.dispatchEvent(new Event('ringtexture')));
           map.flipY=false;map.colorSpace=THREE.SRGBColorSpace;map.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());
@@ -121,8 +236,15 @@ function makeStudio() {
       }
     } else {
       const [roughness,metalness]=style[kind]||style.matte;
-      mat=new THREE.MeshStandardMaterial({...common,roughness,metalness});
-      if(['wood','bronze','metal','textile','floor','wall'].includes(kind)){
+      if(kind==='glass'||kind==='hotGlass'){
+        mat=new THREE.MeshPhysicalMaterial({...common,roughness,metalness,clearcoat:.86,clearcoatRoughness:.09,ior:1.50});
+        if(kind==='hotGlass'){mat.emissive.set('#ff7d36');mat.emissiveIntensity=.22;}
+      }else mat=new THREE.MeshStandardMaterial({...common,roughness,metalness});
+      if(kind==='water'){
+        if(!repeatMaps.has(kind))repeatMaps.set(kind,materialMap(kind));
+        mat.bumpMap=repeatMaps.get(kind);mat.bumpScale=.012;
+      }
+      if(!applyScans(mat,kind) && ['bronze','metal','textile','floor'].includes(kind)){
         if(!repeatMaps.has(kind)){
           const initial=materialMap(kind);repeatMaps.set(kind,initial);
           if(['wood','bronze','textile','floor'].includes(kind)){
@@ -130,13 +252,15 @@ function makeStudio() {
               image.wrapS=image.wrapT=THREE.RepeatWrapping;
               image.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());
               for(const other of surfaceMaterials.values())if(other.map===initial){
-                other.map=image;other.bumpMap=image;other.bumpScale=kind==='wood'?.009:kind==='textile'?.006:.004;other.needsUpdate=true;
+                other.map=image;other.bumpMap=image;other.roughnessMap=image;other.needsUpdate=true;
               }
               repeatMaps.set(kind,image);initial.dispose();window.dispatchEvent(new Event('ringtexture'));
             });
           }
         }
         mat.map=repeatMaps.get(kind);
+        mat.bumpMap=mat.map;mat.roughnessMap=mat.map;
+        mat.bumpScale=kind==='wood'?.015:kind==='textile'?.008:kind==='floor'?.010:.004;
       }
     }
     if(face.line){mat.polygonOffset=true;mat.polygonOffsetFactor=-1;mat.polygonOffsetUnits=-1;}
@@ -158,6 +282,7 @@ function makeStudio() {
   function draw(ctx,geometry,settings) {
     const {w,h,eye,forward,focal}=settings;
     if(gl.isContextLost())return false;
+    lightGallery(settings.gallery,settings.progress);
     const pixelRatio=Math.min(devicePixelRatio||1,1.7,Math.sqrt(1400000/(w*h)));
     const rw=Math.round(w*pixelRatio),rh=Math.round(h*pixelRatio);
     if(canvas.width!==rw||canvas.height!==rh)renderer.setSize(rw,rh,false);
@@ -166,15 +291,32 @@ function makeStudio() {
     camera.updateProjectionMatrix();camera.projectionMatrix.elements[9]=.04;
     camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
     const batches=new Map(),look=vector(forward);
+    const visitors=geometry.visitors||[];
+    people.sync(visitors);
+    const installed=placeObjects(geometry,settings);
+    ctx.canvas.dataset.exhibit=installed.object?geometry.sceneId:'';
+    const replacements=visitors.filter(v=>people.readyFor(v));
+    ctx.canvas.dataset.people=String(replacements.length);
     function add(face){
       const pts=face.points;
       if(pts.length<3)return;
-      const n=vector(pts[1]).sub(vector(pts[0])).cross(vector(pts[2]).sub(vector(pts[0]))).normalize();
+      let shape=topology.get(pts);
+      if(!shape){
+        const normal=vector(pts[1]).sub(vector(pts[0])).cross(vector(pts[2]).sub(vector(pts[0]))).normalize();
+        shape={normal,triangles:triangulate(pts)};topology.set(pts,shape);
+      }
       const kind=finish(face),mat=material(kind,face);
       if(!batches.has(mat))batches.set(mat,{positions:[],normals:[],colours:[],uv:[],kind});
-      fillBatch(batches.get(mat),face,triangulate(pts),n);
+      fillBatch(batches.get(mat),face,shape.triangles,shape.normal);
     }
-    for(const face of geometry.faces){
+    let replacement=0;
+    for(let faceIndex=0;faceIndex<geometry.faces.length;faceIndex++){
+      if(replacement<replacements.length && faceIndex===replacements[replacement].firstFace){
+        faceIndex=replacements[replacement++].afterFace-1;
+        continue;
+      }
+      const face=geometry.faces[faceIndex];
+      if(face.fallbackAsset==='loom' && installed.object || face.fallbackAsset==='bench' && installed.bench)continue;
       if(face.line){
         for(let i=1;i<face.points.length;i++){
           const a=vector(face.points[i-1]),b=vector(face.points[i]);
@@ -190,7 +332,7 @@ function makeStudio() {
       let mesh=meshes.get(mat);
       if(!mesh){
         mesh=new THREE.Mesh(new THREE.BufferGeometry(),mat);mesh.frustumCulled=false;
-        mesh.castShadow=b.kind!=='ink'&&b.kind!=='image'&&!mat.transparent;
+        mesh.castShadow=!['ink','image','ceiling'].includes(b.kind)&&!mat.transparent;
         mesh.receiveShadow=b.kind!=='ink'&&b.kind!=='image';scene.add(mesh);meshes.set(mat,mesh);
       }
       mesh.visible=true;
@@ -208,7 +350,8 @@ function makeStudio() {
       }
       mesh.geometry.setDrawRange(0,b.positions.length/3);
     }
-    renderer.render(scene,camera);
+    if(settings.gallery&&lens)lens(scene,camera,rw,rh,settings.focusDistance,settings.shot);
+    else renderer.render(scene,camera);
     ctx.clearRect(0,0,w,h);ctx.drawImage(canvas,0,0,w,h);
     return true;
   }

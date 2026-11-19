@@ -45,7 +45,10 @@
   }
   const select = $('choose');
   let scene, engine, step, points, shape, distance, voice, playing, lastNote;
-  let currentView='overview', inspectedPart=0;
+  const shots = Array.from(document.querySelectorAll('[data-shot]'));
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let currentView='cinema', currentShot='establish', inspectedPart=0;
+  let showTimers=[];
   let muted = true;
   scenes.forEach((item, i) => select.add(new Option((i + 1) + '. ' + item.title, item.id)));
   function makeButton(id, title, callback) {
@@ -59,10 +62,48 @@
   }
   function rememberView(){
     const u=new URL(location.href);
-    if(currentView==='detail'){
-      u.searchParams.set('view','detail');u.searchParams.set('part',String(inspectedPart+1));
-    }else{u.searchParams.delete('view');u.searchParams.delete('part');}
+    u.searchParams.set('view',currentView);
+    if(currentView==='detail')u.searchParams.set('part',String(inspectedPart+1));
+    else u.searchParams.delete('part');
+    if(currentView==='cinema' && currentShot!=='establish')u.searchParams.set('shot',currentShot);
+    else u.searchParams.delete('shot');
     history.replaceState({},'',u);
+  }
+  function chooseShot(name,remember=true){
+    currentShot=shots.some(b=>b.dataset.shot===name)?name:'establish';
+    shots.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.shot===currentShot)));
+    engine?.setShot?.(currentShot);
+    if(remember)rememberView();
+  }
+  function stopShow(){
+    showTimers.forEach(clearTimeout);showTimers=[];
+    $('play-scene').textContent=reducedMotion.matches?'Показать результат':'Смотреть сцену';
+    $('play-scene').setAttribute('aria-pressed','false');
+  }
+  function performAction(index){
+    if(scene.id==='loom')$('handle'+(index%2)).click();
+    else if(scene.id==='soundmap')$('place'+index).click();
+    else if(scene.id==='shadow'){
+      const range=$('distance');range.value=Math.round((index+1)*100/3);
+      range.dispatchEvent(new Event('input'));
+    }else $('advance').click();
+  }
+  function playShow(){
+    if(showTimers.length){stopShow();return;}
+    restart();
+    if(reducedMotion.matches){
+      for(let i=0;i<3;i++)performAction(i);
+      chooseShot('result');return;
+    }
+    chooseShot('establish');
+    $('play-scene').textContent='Остановить показ';
+    $('play-scene').setAttribute('aria-pressed','true');
+    showTimers=[
+      setTimeout(()=>{chooseShot('action');performAction(0);},1150),
+      setTimeout(()=>performAction(1),2530),
+      setTimeout(()=>{performAction(2);chooseShot('result');},4100),
+      setTimeout(stopShow,5500)
+    ];
   }
   function describePart(){
     const detail=window.RingDetails?.[scene.id];
@@ -77,10 +118,12 @@
   }
   function camera(view,remember=true) {
     currentView=view;
+    $('cinema-controls').hidden=view!=='cinema';
     if(view==='detail')$('hardware').checked=true;
     views.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === view)));
     engine?.setState({hardware:$('hardware').checked,inspect:view==='detail'?inspectedPart:-1});
     engine?.setView(view);
+    if(view==='cinema')chooseShot(currentShot,false);
     describePart();
     if(remember)rememberView();
   }
@@ -184,8 +227,9 @@
     refresh();
   }
   function openScene(id, record) {
+    stopShow();
     scene=scenes.find(item=>item.id===id)||scenes[0];
-    if(record){const u=new URL(location.href);u.searchParams.set('scene',scene.id);u.searchParams.delete('view');u.searchParams.delete('part');history.pushState({},'',u);}
+    if(record){const u=new URL(location.href);u.searchParams.set('scene',scene.id);['view','part','shot'].forEach(k=>u.searchParams.delete(k));history.pushState({},'',u);}
     select.value=scene.id;$('name').textContent=scene.title;document.title=scene.title+' в 3D · Золотое кольцо';
     ['zone','aim','apparatus','decision'].forEach(k=>$(k).textContent=scene[k]);$('composition').textContent=scene.staging;
     $('original').hidden=!scene.steps;if(scene.steps)$('original').href=scene.id+'.html?v=2';
@@ -193,8 +237,13 @@
     engine=typeof window.RingSpatial==='function'?window.RingSpatial($('space'),{id:scene.id}):null;
     $('render-note').hidden=Boolean(engine);
     const query=new URL(location.href).searchParams;
+    currentShot=shots.some(b=>b.dataset.shot===query.get('shot'))?query.get('shot'):'establish';
+    const view=views.some(b=>b.dataset.view===query.get('view'))?query.get('view'):'cinema';
     inspectedPart=Math.min(2,Math.max(0,Number.parseInt(query.get('part'),10)-1||0));
-    listParts();camera(query.get('view')==='detail'?'detail':'overview',false);populate();restart();
+    $('poster-title').textContent=scene.title+' · художественная заставка';
+    $('scene-poster').alt='Художественная заставка интерактива «'+scene.title+'»';
+    $('scene-poster').src='../media/poster-'+scene.id+'.webp';
+    listParts();camera(view,false);populate();restart();
   }
   select.addEventListener('change',()=>openScene(select.value,true));
   $('next').addEventListener('click',()=>{openScene(scenes[(scenes.indexOf(scene)+1)%scenes.length].id,true);select.focus();select.scrollIntoView({block:'start'});});
@@ -211,6 +260,44 @@
     else if(scene.steps && action==='advance')$('advance').click();
   });
   views.forEach(b=>b.addEventListener('click',()=>camera(b.dataset.view)));
+  shots.forEach(b=>b.addEventListener('click',()=>chooseShot(b.dataset.shot)));
+  $('play-scene').addEventListener('click',playShow);
+  const posterDialog=$('poster-dialog');
+  $('show-poster').addEventListener('click',()=>posterDialog.showModal());
+  $('close-poster').addEventListener('click',()=>posterDialog.close());
+  posterDialog.addEventListener('click',event=>{if(event.target===posterDialog)posterDialog.close();});
+  const objectDialog=$('object-dialog');
+  let objectViewer;
+  $('show-object').addEventListener('click',async()=>{
+    const id=scene.id;
+    $('object-title').textContent='Предмет крупно · '+scene.title;
+    $('object-still').src='../media/object-'+id+'.webp';
+    $('object-still').hidden=false;$('object-model').hidden=true;$('object-tools').hidden=true;
+    $('switch-object').textContent='Студийный кадр';
+    document.querySelectorAll('[data-orbit]').forEach(b=>b.hidden=false);
+    objectDialog.showModal();
+    try{
+      objectViewer ||= await import('./spatial-object-viewer.js');
+      if(objectDialog.open && scene.id===id)await objectViewer.displayObject(id);
+    }catch{/* The studio render is available without WebGL. */}
+  });
+  $('close-object').addEventListener('click',()=>objectDialog.close());
+  $('switch-object').addEventListener('click',()=>{
+    const still=$('object-still'),showStill=still.hidden;
+    still.hidden=!showStill;$('object-model').hidden=showStill;
+    $('switch-object').textContent=showStill?'Вернуться к 3D':'Студийный кадр';
+    document.querySelectorAll('[data-orbit]').forEach(b=>b.hidden=showStill);
+  });
+  objectDialog.addEventListener('click',event=>{if(event.target===objectDialog)objectDialog.close();});
+  document.querySelectorAll('[data-orbit]').forEach(b=>b.addEventListener('click',()=>objectViewer?.turnObject(Number(b.dataset.orbit)*.29)));
+  for(const type of ['click','input','pointerdown']){
+    document.addEventListener(type,event=>{
+      if(showTimers.length && event.isTrusted && !event.target.closest('#play-scene'))stopShow();
+    },true);
+  }
+  reducedMotion.addEventListener('change',stopShow);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)stopShow();});
+  window.addEventListener('pagehide',stopShow);
   document.querySelectorAll('[data-camera]').forEach(b=>b.addEventListener('click',()=>{
     const op=b.dataset.camera;
     if(op==='left'||op==='right')engine?.turn((op==='left'?-1:1)*Math.PI/10);

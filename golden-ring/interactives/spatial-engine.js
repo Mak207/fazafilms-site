@@ -25,7 +25,7 @@
   };
 
   class Model {
-    constructor(detailView=false) { this.faces=[];this.labels=[];this.actions=[];this.detailView=detailView; }
+    constructor(detailView=false) { this.faces=[];this.labels=[];this.actions=[];this.visitors=[];this.detailView=detailView; }
     face(points,color,options={}) {
       this.faces.push({points,color,...options});
     }
@@ -34,8 +34,9 @@
     }
     box(x,y,z,w,h,d,color) {
       const a=x-w/2,b=x+w/2,c=z-d/2,e=z+d/2,t=y+h;
-      if(Math.min(w,h,d)>.098 && Math.max(w,h,d)<5.3){
-        const r=Math.min(.026,Math.min(w,h,d)*.065);
+      const minimumEdge=Math.min(w,h,d),bevelThreshold=this.cinema ? .025 : .098;
+      if(minimumEdge>bevelThreshold && Math.max(w,h,d)<5.3){
+        const r=Math.min(.026,minimumEdge*(this.cinema ? .095 : .065));
         const oct=(yy,inset)=>[[a+r,yy,c+inset],[b-r,yy,c+inset],[b-inset,yy,c+r],[b-inset,yy,e-r],[b-r,yy,e-inset],[a+r,yy,e-inset],[a+inset,yy,e-r],[a+inset,yy,c+r]];
         const lower=oct(y,0),shoulder=oct(t-r,0),top=oct(t,r*.68);
         for(let i=0;i<8;i++){
@@ -51,16 +52,19 @@
       this.face([[b,y,e],[b,y,c],[b,t,c],[b,t,e]],color);
       this.face([[a,t,e],[b,t,e],[b,t,c],[a,t,c]],color);
     }
-    profile(x,y,z,rings,color,n=14,depth=1) {
+    profile(x,y,z,rings,color,n=14,depth=1,smooth=false) {
       const pts = rings.map(([offset,r]) => Array.from({length:n},(_,j)=>{
         const a=j*TAU/n;return [x+r*Math.cos(a),y+offset,z+r*depth*Math.sin(a)];
       }));
       for(let i=0;i<pts.length-1;i++) for(let j=0;j<n;j++){
         const k=(j+1)%n;
-        const slope=(rings[i+1][1]-rings[i][1])/Math.max(.00001,rings[i+1][0]-rings[i][0]);
-        const normal=a=>unit([Math.cos(a*TAU/n),-slope,Math.sin(a*TAU/n)/depth]);
+        const normal=(a,ring)=>{
+          const lo=smooth?Math.max(0,ring-1):i,hi=smooth?Math.min(rings.length-1,ring+1):i+1;
+          const slope=(rings[hi][1]-rings[lo][1])/Math.max(.00001,rings[hi][0]-rings[lo][0]);
+          return unit([Math.cos(a*TAU/n),-slope,Math.sin(a*TAU/n)/depth]);
+        };
         this.face([pts[i][k],pts[i][j],pts[i+1][j],pts[i+1][k]],color,
-          {normals:[normal(k),normal(j),normal(j),normal(k)]});
+          {normals:[normal(k,i),normal(j,i),normal(j,i+1),normal(k,i+1)]});
       }
       this.face([...pts.at(-1)].reverse(),color);
       this.face(pts[0],color);
@@ -69,18 +73,22 @@
       this.profile(x,y,z,[[0,r],[h,r]],color,n,depth);
     }
     orb(x,y,z,rx,ry,rz,color) {
-      const n=7, rings=Array.from({length:n+1},(_,i)=>{
+      const n=this.cinema?10:7, rings=Array.from({length:n+1},(_,i)=>{
         const a=-Math.PI/2+i*Math.PI/n;return [ry*Math.sin(a),Math.max(.004, rx*Math.cos(a))];
       });
-      this.profile(x,y,z,rings,color,16,rz/rx);
+      this.profile(x,y,z,rings,color,this.cinema?22:16,rz/rx,true);
     }
     rod(a,b,r,color,n=r>.06?14:8) {
       const axis=unit(sub(b,a)), right=unit(cross(axis,Math.abs(axis[1])>.9?[1,0,0]:[0,1,0])),up=cross(axis,right);
-      const ends=[a,b].map(end=>Array.from({length:n},(_,i)=>{
-        const angle=i*TAU/n;return add(end,add(scale(right,r*Math.cos(angle)),scale(up,r*Math.sin(angle))));
-      }));
-      for(let i=0;i<n;i++){const k=(i+1)%n;this.face([ends[0][k],ends[0][i],ends[1][i],ends[1][k]],color);}
-      this.face(ends[1],color);
+      const normals=Array.from({length:n},(_,i)=>{
+        const angle=i*TAU/n;return add(scale(right,Math.cos(angle)),scale(up,Math.sin(angle)));
+      });
+      const ends=[a,b].map(end=>normals.map(v=>add(end,scale(v,r))));
+      for(let i=0;i<n;i++){
+        const k=(i+1)%n;
+        this.face([ends[0][i],ends[0][k],ends[1][k],ends[1][i]],color,n>6?{normals:[normals[i],normals[k],normals[k],normals[i]]}:{});
+      }
+      this.face(ends[1],color);this.face([...ends[0]].reverse(),color);
     }
     disc(x,z,rx,rz,color,opacity=1,y=.012,layer=1) {
       this.face(Array.from({length:32},(_,i)=>[x+rx*Math.cos(TAU*i/32),y,z+rz*Math.sin(TAU*i/32)]),color,{opacity,unlit:true,layer});
@@ -96,6 +104,19 @@
     }
     person(x,z,heading,role='guest',reach=0) {
       if(this.detailView)return;
+      if(this.poseVisitors&&this.sceneId==='craft'&&role==='user'){
+        // The craft assembly defines its brush axis from this wrist. Give the
+        // photographic skeleton the same grip as the hand-built visitor.
+        const forward=.04+reach*.43;
+        this.rightHandTarget=[x+.19*Math.cos(heading)+forward*Math.sin(heading),.89+reach*.27,z-.19*Math.sin(heading)+forward*Math.cos(heading)];
+      }
+      if(window.RingCinemaVisitors){
+        const visitor={x,z,heading,role,reach,target:this.rightHandTarget?.slice(),firstFace:this.faces.length};
+        window.RingCinemaVisitors.draw(this,x,z,heading,role,reach);
+        visitor.afterFace=this.faces.length;this.visitors.push(visitor);
+        if(this.sceneId==='craft')this.rightHandTarget=null;
+        return;
+      }
       const tint=role==='user'?C.user:C.guest;
       const local=(u,y,v)=>[x+u*Math.cos(heading)+v*Math.sin(heading),y,z-u*Math.sin(heading)+v*Math.cos(heading)];
       this.disc(x,z,.35,.24,'#685d44',.20);
@@ -192,7 +213,12 @@
     m.cyl(-.80,.02,.87,.29,.77,C.wood);
     m.rod([-.80,.62,.87],[-.80,.85,.87],.34,C.bronze);
     m.line([[x+.91,.55,z],[-.58,.70,.75],[-.83,.83,.98],[-1.06,.91+p*.055,1.48]],'#705138',.07);
-    m.person(-1.03,1.7,Math.PI,'user',.85);if(p>=2)m.person(-1.73,1.82,Math.PI,'user',.85);
+    if(m.poseVisitors){
+      const pull=Math.min(1,p)*(.75+.25*Math.sin(Math.PI*p)**2);
+      m.rightHandTarget=[-1.075,1.036+.075*pull,1.49+.13*pull];
+      m.person(-.88,1.99+.055*pull,Math.PI,'user',.73+.24*pull);m.rightHandTarget=null;
+    }else m.person(-1.03,1.7,Math.PI,'user',.85);
+    if(p>=2)m.person(-1.73,1.82,Math.PI,'user',.85);
     if(p===3)for(const zz of [-1.96,.14])m.orb(1.95,.90,zz,.095,.13,.095,C.light);
     m.mark([-.8,.91,.87],'Датчик тяги');m.mark([1.93,.88,.12],'Причал');m.mark([1.9,2.66,-3.19],'Общий экран');
   }
@@ -210,7 +236,12 @@
     if(p===3)for(let i=0;i<4;i++){const angle=.55+i*.65;m.line([[1.18,1.75,-3.18],[1.18+Math.cos(angle)*1.75,1.75+Math.sin(angle)*.81,-3.18]],C.light,.025,{opacity:.8})}
     const width=.65+.23*p;
     m.picturePlane(1.16,1.20,-3.15,width,1.05+p*.25,p>2.5?'glass-vase':'glass-gather');
-    m.person(-1.71,.98,2.52,'user',1);m.mark([-1.45,1.52,.49],'Трубка');m.mark([-2.55,1.2,-.82],'Печь');m.mark([2.6,2.74,-3.2],'Проекция формы');
+    if(m.poseVisitors){
+      const pressure=Math.sin(Math.min(1,p/3)*Math.PI);
+      m.rightHandTarget=[-1.49,1.424-.085*pressure,.32];
+      m.person(-1.71,.98,2.52,'user',1.45-.22*pressure);m.rightHandTarget=null;
+    }else m.person(-1.71,.98,2.52,'user',1);
+    m.mark([-1.45,1.52,.49],'Трубка');m.mark([-2.55,1.2,-.82],'Печь');m.mark([2.6,2.74,-3.2],'Проекция формы');
   }
 
   function archPoints(x,y,z,w,h) {
@@ -297,25 +328,140 @@
       }
     }
     m.orb(0,3.16,-2.60,.42,.42,.17,C.gold);
-    m.person(-.92,1.48,Math.PI,'user',1);m.mark([-.17,1.22,.01],'Считыватель');m.mark([2.69,2.46,-3.13],'Маршрут на панораме');
+    if(m.poseVisitors){
+      const pass=clamp(p-1,0,1),relax=clamp(p-2,0,1);
+      // The first stamp is reachable from the end of the counter. The visitor
+      // releases it and walks around the corner to insert the ticket from the front.
+      if(pass<.05){
+        m.rightHandTarget=[-2.29,1.232+.03*(1-Math.min(1,p)),.12];
+        m.person(-3.00,.24,1.74,'user',1.15);
+      }else if(pass>.94){
+        m.rightHandTarget=[-.66,1.10+.08*relax,.285+.17*relax];
+        m.person(-.82,1.02+.08*relax,Math.PI,'user',1.14-.37*relax);
+      }else{
+        const firstHalf=Math.min(1,pass*2),secondHalf=Math.max(0,pass*2-1);
+        m.person(-3.0+2.18*secondHalf,.24+.79*firstHalf,1.74+pass*1.4,'user',.22);
+      }
+      m.rightHandTarget=null;
+    }else m.person(-.92,1.48,Math.PI,'user',1);
+    m.mark([-.17,1.22,.01],'Считыватель');m.mark([2.69,2.46,-3.13],'Маршрут на панораме');
   }
 
+  const loomStates=new Map();
+  function wovenCloth(m,p,shuttleX){
+    if(loomStates.has(p)){m.faces.push(...loomStates.get(p));return;}
+    const first=m.faces.length,left=-2.73,width=3.42,bottom=.42,height=.20+p*.59,repeat=.426,step=.0108;
+    const flax='#bba586',undyed='#d7c2a3',madder='#87503d',indigo='#405861',ochre='#b38b54';
+    // Coordinates are those of the undyed cloth, before it bows under tension.
+    const at=(u,v)=>{
+      const edge=Math.sin(Math.PI*u);
+      const x=left+u*width+.008*Math.sin(9.1*v+.5)*Math.cos(Math.PI*u);
+      const local=Math.exp(-Math.pow((x-shuttleX)/.53,2)),rise=v/height;
+      const y=bottom+v-(.012+.022*rise*rise)*edge-.024*local*rise*rise;
+      const z=-.275+edge*(.044*Math.sin(15*u+v*.83)+.015*Math.sin(36*u-.5*v))
+        +.024*local*Math.exp(-Math.pow((bottom+v-1.10)/.43,2))
+        +.00067*Math.cos(Math.PI*v/step+.12*Math.sin(8*u));
+      return [x,y,z];
+    };
+    // The 21 cm photographed textile tile has world-space UVs shared across
+    // every weft colour, including the motifs and the two reinforced edges.
+    const patch=(u0,u1,v0,v1,color)=>{
+      const uv=[[u0*width,v0],[u1*width,v0],[u1*width,v1],[u0*width,v1]].map(q=>[q[0]/.21,q[1]/.21]);
+      m.face([at(u0,v0),at(u1,v0),at(u1,v1),at(u0,v1)],color,{material:'textile',uv});
+    };
+    // The small variation comes from neighbouring lengths of spun yarn. Its
+    // irregular sequence avoids a high-contrast periodic grid on small screens.
+    const dyes=new Map();
+    const dye=(color,level)=>{
+      const key=color+level;
+      if(!dyes.has(key)){
+        const factor=1+level*.026;
+        const channels=rgb(color).map(c=>Math.round(clamp(c*factor,0,255)).toString(16).padStart(2,'0'));
+        dyes.set(key,'#'+channels.join(''));
+      }
+      return dyes.get(key);
+    };
+    const period=.31;
+    for(let row=0;row*step<height-.000001;row++){
+      const v0=row*step,v1=Math.min(height,v0+step),mid=(v0+v1)/2;
+      const band=Math.floor(mid/period),f=(mid-band*period)/period;
+      const ground=[flax,madder,indigo,undyed][band%4];
+      const motif=[indigo,undyed,flax,madder][band%4];
+      const border=f<.07||f>.92, pinstripe=f>.11&&f<.16||f>.83&&f<.88;
+      const base=border?(band%2?ochre:madder):pinstripe?(band%2?flax:indigo):ground;
+      const mark=Math.max(0,1-Math.abs(f-.50)/.285)*.139;
+      const inset=Math.max(0,1-Math.abs(f-.50)/.12)*.056;
+      const cuts=[0,.024,.044,width-.044,width-.024,width],centres=[];
+      // Additional vertices carry broad, continuous folds even in a monochrome band.
+      for(let j=1;j<24;j++)cuts.push(width*j/24);
+      if(mark>.0001){
+        for(let x=.214+(band%2)*repeat*.5;x<width+.14;x+=repeat){
+          centres.push(x);
+          for(const k of [x-mark,x+mark,...(inset>.001?[x-inset,x+inset]:[])]){
+            if(k>.045&&k<width-.045)cuts.push(k);
+          }
+        }
+      }
+      cuts.sort((a,b)=>a-b);
+      for(let i=1;i<cuts.length;i++){
+        const a=cuts[i-1],b=cuts[i],c=(a+b)/2;
+        if(b-a<.00005)continue;
+        let col=base;
+        if(c<.024||c>width-.024)col=indigo;
+        else if(c<.044||c>width-.044)col=ochre;
+        else for(const centre of centres){
+          const dx=Math.abs(centre-c);
+          if(dx<=mark){col=dx<inset?ground:motif;break;}
+        }
+        const blend=Math.sin(row*2.17+.37*Math.sin(c*3))+.5*Math.sin(row*.77+c*.48);
+        patch(a/width,b/width,v0,v1,dye(col,Math.round(blend*1.8)));
+      }
+    }
+    // The cut edge shows the thickness of two layers of yarn from a side angle.
+    for(const u of [0,1])for(let j=0;j<10;j++){
+      const a=at(u,height*j/10),b=at(u,height*(j+1)/10);
+      m.face([a,b,[b[0],b[1],b[2]-.005],[a[0],a[1],a[2]-.005]],'#675d4e',{material:'textile'});
+    }
+    for(let j=0;j<48;j++){
+      const a=at(j/48,height),b=at((j+1)/48,height);
+      m.face([a,b,[b[0],b[1]+.002,b[2]-.005],[a[0],a[1]+.002,a[2]-.005]],undyed,{material:'textile'});
+    }
+    // At the live weaving edge individual doubled warp ends emerge from the
+    // fabric. Their modest contrast and irregular spacing stay stable in wide shots.
+    for(let i=0;i<=112;i++){
+      const u=clamp((i+.09*Math.sin(i*2.19))/112,0,1),start=at(u,height);
+      const x=left+u*width+.006*Math.sin(i*.76);
+      const col=['#bca783','#c5b190','#ad9675','#c0ab88','#d0bf9f'][i%5];
+      const half=(i%4===0?.0036:.0025),middleY=start[1]+(2.55-start[1])*.51;
+      const mid=[(start[0]+x)/2,middleY,-.304+.009*Math.sin(i*1.61)];
+      const top=[x,2.565,-.322+(i%2)*.008];
+      const warp=(a,b)=>m.face([[a[0]-half,a[1],a[2]],[a[0]+half,a[1],a[2]],
+        [b[0]+half,b[1],b[2]],[b[0]-half,b[1],b[2]]],col,{material:'textile'});
+      warp(start,mid);warp(mid,top);
+    }
+    if(Number.isInteger(p))loomStates.set(p,m.faces.slice(first));
+  }
   function loom(m,p,t) {
     const baseZ=-.33;
     for(const x of [-2.86,.93])m.box(x,0,baseZ,.21,2.75,.27,C.wood);
     for(const y of [.37,2.55])m.rod([-2.91,y,baseZ],[1.01,y,baseZ],.13,C.oak,12);
-    for(let i=0;i<21;i++){const x=-2.71+.171*i;m.line([[x,.4,baseZ],[x,2.54,baseZ]],'#d7c294',.019);}
     const h=.20+p*.59;
-    for(let i=0;i<Math.ceil(h/.085);i++){
-      const y=.42+i*.085;const col=[C.red,C.white,C.gold,C.green][Math.floor(i/3)%4];m.box(-1.02,y,baseZ+.03,3.42,.083,.066,col);
-      for(let j=0;j<9;j++)if((j+i)%5===0)m.face([[-2.68+j*.40,y+.006,baseZ+.069],[-2.55+j*.40,y+.04,baseZ+.069],[-2.67+j*.40,y+.078,baseZ+.069]],C.navy,{unlit:true});
-    }
     const pass=Math.round(p),start=pass%2===0 ? -2.45 : .44;
     const shuttleX=p===pass ? start : (-2.45+2.89*(Math.floor(p)%2===0 ? p%1 : 1-p%1));
+    wovenCloth(m,p,shuttleX);
     if(!window.RingDetails?.loom)m.orb(shuttleX,.59+h,baseZ+.12,.23,.078,.08,C.navy);
     for(const x of [-2.83,.88]){
-      m.rod([x,1.09,baseZ],[x,1.09,.31],.062,C.iron);m.orb(x,1.09,.32,.10,.10,.11,C.gold);
-      m.person(x+(x<0?-.23:.23),.97,Math.PI,'user',.87);
+      m.rod([x,1.09,baseZ],[x,1.09,.31],.062,C.iron);m.orb(x,1.09,.32,.10,.10,.11,'#a49c88');
+      for(let i=0;i<18;i++){
+        const a=i*TAU/18;
+        const end=(angle,z,r)=>[x+r*Math.cos(angle),1.09+r*Math.sin(angle),z];
+        m.rod(end(a-.07,.335,.100),end(a+.06,.369,.090),.0024,'#808782',6);
+      }
+      if(m.poseVisitors){
+        const handoff=.5-.5*Math.cos(Math.PI*p),pressed=Math.min(1,p)*(x<0?handoff:1-handoff);
+        m.rightHandTarget=[x,1.146+.042*(1-pressed),.355+.15*(1-pressed)];
+        m.person(x+.185,.95,Math.PI,'user',.72+.33*pressed);m.rightHandTarget=null;
+      }else m.person(x+(x<0?-.23:.23),.97,Math.PI,'user',.87);
       m.action([x,1.16,.33],x<0?'left':'right',x<0?'→':'←',pass<3&&(pass%2===0)===(x<0));
     }
     m.mark([-.83,2.55,baseZ],'Основа ткани');m.mark([.88,1.16,.33],'Рукоятка');m.mark([-2.82,1.15,.31],'Рукоятка');
@@ -339,7 +485,12 @@
         for(const side of [-1,1])m.line([[x+side*.16,2.56,-.51],[a[0]+side*.35,1.26,a[2]]],C.light,.028,{opacity:.78});
       }
     }
-    m.person(-.68,1.66,Math.PI,'user',1);m.mark([-.64,1.28,-.55],'Точка на карте');m.mark([.89,2.63,-.51],'Звуковой купол');
+    if(m.poseVisitors){
+      const key=state.lastNote??state.points?.at(-1)??clamp(Math.round(p)-1,0,2);
+      const [x,,z]=pts[key],pose=[[-1.91,1.17,Math.PI],[-.83,-1.41,0],[1.76,.09,-Math.PI/2]][key];
+      m.rightHandTarget=[x,p>.05?1.255:1.32,z+.018];m.person(...pose,'user',1.24);m.rightHandTarget=null;
+    }else m.person(-.68,1.66,Math.PI,'user',1);
+    m.mark([-.64,1.28,-.55],'Точка на карте');m.mark([.89,2.63,-.51],'Звуковой купол');
   }
 
   function shadow(m,p,t,state) {
@@ -359,11 +510,204 @@
     m.face(outline.map(([u,v])=>[x+u,lightY+v,z]),C.navy);
     m.face(outline.map(([u,v])=>[x+u*projection,lightY+v*projection,screenZ+.025]),'#34403f',{unlit:true});
     for(const side of [-1,1])m.face([[x,lightY,lightZ],[x+side*2.42,.50,screenZ+.07],[x+side*2.42,2.87,screenZ+.07]],'#fbcf75',{opacity:.17,unlit:true});
-    m.person(-1.65,-.45,1.70,'user',1);m.mark([x,lightY+.17,lightZ],'Источник света');m.mark([x,lightY+.22,z],'Силуэт');m.mark([2.1,2.51,screenZ],'Теневой экран');
+    if(m.poseVisitors){
+      m.rightHandTarget=[x-.045,1.21,z+.036];
+      m.person(-1.50,z+.26,1.66,'user',1.1+.12*distance);m.rightHandTarget=null;
+    }else m.person(-1.65,-.45,1.70,'user',1);
+    m.mark([x,lightY+.17,lightZ],'Источник света');m.mark([x,lightY+.22,z],'Силуэт');m.mark([2.1,2.51,screenZ],'Теневой экран');
   }
 
   const models={barge,glass,regional,bells,craft,passport,loom,soundmap,shadow};
   const themes={barge:'#adc1b7',glass:'#bbb3a2',regional:'#c9c6ae',bells:'#b6baa8',craft:'#c2b79d',passport:'#b0bbaa',loom:'#c8b89e',soundmap:'#b6c4b1',shadow:'#beb39e'};
+
+  // Each line holds a position in the actual hall, its point of interest, and
+  // the horizontal angle of view. Mobile keeps the full subject in the frame.
+  const galleries={
+    barge:{wall:'#395455',floor:'#635f55',trim:'#977653',key:'#ffdeb0',rim:'#9de2f3',bounce:'#61cbd4',source:[-1.1,.5,-1.45],
+      establish:[[3.7,2.5,5.65],[-.62,1.3,-.80],54],action:[[1.08,1.74,2.77],[-.80,.84,.78],48],result:[[1.5,1.55,3.27],[-.69,.98,-1.39],58]},
+    glass:{wall:'#4a4746',floor:'#625952',trim:'#a27a59',key:'#ffcf97',rim:'#b4d7e5',bounce:'#ff8232',source:[-2.55,1,-.61],
+      establish:[[3.2,2.1,5.75],[-.65,1.42,-1.06],55],action:[[.20,1.79,2.56],[-.91,1.28,.28],52],result:[[-1.85,1.78,2.45],[.69,1.82,-1.94],51]},
+    regional:{wall:'#817968',floor:'#746d61',trim:'#b3a080',key:'#fff0d3',rim:'#b1d6dd',bounce:'#dae6c6',source:[-.3,2,-2.60],
+      establish:[[1.45,1.81,5.84],[-.35,1.53,-2.28],59],action:[[-1.20,1.79,1.45],[-3.15,1.43,-2.08],64],result:[[.30,1.70,3.31],[-.28,1.54,-3.08],68]},
+    bells:{wall:'#444857',floor:'#5e5c64',trim:'#ab8859',key:'#ffe1a5',rim:'#abbff4',bounce:'#f2bf71',source:[-1.06,2.29,-.28],
+      establish:[[2.78,2.0,6.08],[-.55,1.61,-.69],62],action:[[-1.15,1.40,3.52],[-2.50,1.43,-.39],68],result:[[1.16,1.55,3.45],[-.61,2.23,-.86],70]},
+    craft:{wall:'#4e5b4f',floor:'#6c6052',trim:'#a18b62',key:'#ffe4b9',rim:'#a9d6c1',bounce:'#e3ae71',source:[-.97,1.82,-.05],
+      establish:[[2.76,2.16,4.78],[-.75,1.50,-1.16],60],action:[[-2.58,2.13,2.15],[-1.03,1.13,.20],49],result:[[1.28,1.84,2.06],[-.33,1.96,-3.01],75]},
+    passport:{wall:'#47565c',floor:'#605c54',trim:'#a07e57',key:'#f9deaa',rim:'#a5cfe0',bounce:'#e4b874',source:[-.60,1.80,.16],
+      establish:[[2.82,2.12,5.88],[-.54,1.55,-1.39],58],action:[[.63,2.06,2.06],[-1.13,1.03,.20],50],result:[[.10,1.65,3.14],[-.22,2.01,-3.16],71]},
+    loom:{wall:'#635453',floor:'#6f6156',trim:'#aa8861',key:'#ffe1b2',rim:'#e2bab5',bounce:'#db9c77',source:[-.90,1.60,.42],
+      establish:[[2.70,1.96,5.38],[-.94,1.35,-.04],59],action:[[-.98,1.74,.74],[-2.65,1.15,.17],52],result:[[.70,1.86,3.32],[-.98,1.48,-.26],60]},
+    soundmap:{wall:'#455a56',floor:'#625f54',trim:'#998867',key:'#ffe8bd',rim:'#9ddbcc',bounce:'#a4dac1',source:[-.75,1.86,-.36],
+      establish:[[3.32,2.57,5.25],[-.83,1.53,-.64],59],action:[[.28,2.68,2.60],[-.93,1.12,-.08],57],result:[[1.48,1.68,3.81],[-.92,1.91,-1.17],59]},
+    shadow:{wall:'#53474e',floor:'#5e5453',trim:'#9f765f',key:'#f4d8bd',rim:'#bdb3d7',bounce:'#ffd278',source:[-.83,1.65,.62],
+      establish:[[3.71,2.17,4.63],[-.48,1.53,-1.18],59],action:[[1.65,1.79,1.98],[-.93,1.45,-.70],54],result:[[1.55,1.60,1.60],[-.68,1.58,-2.65],72]}
+  };
+
+  function cinemaHall(m,g,hardware,yaw,id) {
+    const w=6.3,back=-3.48,front=10.5,height=4.2;
+    if(window.RingArchitecture)window.RingArchitecture.floor(m,id,g,w,back,front);
+    else m.face([[-w,-.009,front],[w,-.009,front],[w,-.009,back],[-w,-.009,back]],g.floor,{material:'floor'});
+    const lining={material:'wall'};
+    if(Math.cos(yaw)>-.18){
+      m.face([[-w,0,back],[w,0,back],[w,height,back],[-w,height,back]],g.wall,lining);
+      m.box(0,.02,back+.035,w*2,.12,.07,'#393d39');
+      // Wall reveal and recessed light trough. No fixture hangs in front of the exhibits.
+      m.box(0,3.53,back+.028,w*2,.19,.065,'#363a38');
+      m.box(0,3.69,back+.075,w*2,.06,.15,g.trim);
+      m.line([[-w,3.70,back+.113],[w,3.70,back+.113]],'#fce8bc',.018,{unlit:true});
+      for(const sign of [-1,1]){
+        for(let i=0;i<12;i++){
+          const x=(4.16+i*.15)*sign;
+          m.box(x,.15,back+.070,.052,3.31,.13,g.trim);
+        }
+      }
+    }
+    for(const side of [-1,1]){
+      if(side*Math.sin(yaw)>.40)continue;
+      const x=side*w;
+      m.face([[x,0,front],[x,0,back],[x,height,back],[x,height,front]],g.wall,lining);
+      m.box(x-side*.07,0,3.5,.14,.15,front-back,'#393d39');
+      for(let i=0;i<6;i++){
+        const z=back+.86+i*1.95;
+        m.box(x-side*.07,.15,z,.12,3.45,.085,g.trim);
+      }
+    }
+    // Dark open ceiling and real track luminaires anchor the cameras looking upward.
+    m.face([[-w,height,front],[-w,height,back],[w,height,back],[w,height,front]],'#414442',{material:'ceiling'});
+    for(const z of [-.18,2.78]){
+      m.box(0,3.98,z,2*w,.080,.075,'#454c49');
+      for(const x of [-3.55,-.55,2.81]){
+        const top=[x,3.98,z],lens=[x+.08,3.67,z-.15];
+        m.rod(top,[x,3.86,z],.026,'#393f3c');
+        m.rod([x,3.87,z],lens,.092,'#414a47');
+        m.rod(lens,[lens[0]+.005,3.655,z-.166],.075,'#f4d8a0',12);
+      }
+    }
+    window.RingArchitecture?.architecture(m,id,yaw);
+    if(hardware)m.disc(2.8,1.9,1.35,.73,'#7ab4a4',.23);
+  }
+
+  // Recessed slotted heads have a washer, a turned face and a real slot.
+  function fixing(m,x,y,z,r,up=false){
+    const plane=(u,v,d)=>up?[x+u,y+d,z+v]:[x+u,y+v,z+d];
+    m.rod(plane(0,0,0),plane(0,0,r*.17),r,'#535a55',14);
+    m.rod(plane(0,0,r*.17),plane(0,0,r*.29),r*.78,'#a49c88',14);
+    m.line([plane(-r*.47,-r*.13,r*.30),plane(r*.47,r*.13,r*.30)],'#42504c',r*.14);
+  }
+  function scenicFinish(m,id,p){
+    if(id==='barge'){
+      const x=-1.55+p*.54,z=-1.10;
+      // The running rigging and its deck eyes travel with the model vessel.
+      for(const side of [-1,1]){
+        m.line([[x+.24,1.45,z],[x+.82,.59,z+side*.16]],'#a48a63',.008);
+        m.line([[x-.82,.585,z+side*.18],[x+.24,1.45,z]],'#a48a63',.008);
+        fixing(m,x+.82,.585,z+side*.16,.033,true);
+        m.rod([x+.72,.588,z+side*.235],[x+.716,.655,z+side*.235],.018,'#535a55',9);
+        m.rod([x+.65,.656,z+side*.235],[x+.775,.656,z+side*.235],.015,'#8b938e',9);
+      }
+      for(let i=0;i<3;i++){
+        const rope=Array.from({length:27},(_,j)=>{
+          const a=j*TAU/26,r=.15+i*.027;
+          return [-1.16+r*Math.cos(a),.025+i*.005,1.04+r*.62*Math.sin(a)];
+        });
+        m.line(rope,'#ae9066',.021);
+      }
+      m.line([[-1.30,.026,1.08],[-1.42,.027,.99],[-1.37,.024,.86],[-1.06,.026,.74],[-.94,.085,.72]],'#ae9066',.021);
+      for(const xx of [-.61,-.15])for(const zz of [.54,.84])fixing(m,xx,.16,zz,.025,true);
+      for(const z of [-1.96,.14])for(let i=0;i<3;i++)
+        m.cyl(1.95,.55+i*.045,z,.099,.014,'#99714b',14);
+    }else if(id==='glass'){
+      for(let j=0;j<7;j++){
+        const y=.09+j*.171;
+        for(let k=0;k<6;k++){
+          const x=-3.27+k*.271+(j%2)*.135;
+          if(x>-1.89||(x>-3.09&&x< -1.997&&y>.38&&y<1.08))continue;
+          m.box(x,y,-.866,.254,.143,.051,['#976b58','#aa745b','#8f6454'][(k+j)%3]);
+        }
+      }
+      for(const xx of [-1.54,-1.13])for(const zz of [.20,.44])fixing(m,xx,1.125,zz,.024,true);
+      for(const xx of [-2.99,-2.12])fixing(m,xx,.486,-.674,.043);
+    }else if(id==='regional'){
+      for(let k=0;k<3;k++){
+        const x=-2.83+2.55*k;
+        for(const side of [-1,1]){
+          m.box(x+side*.97,.247,-2.97,.122,.026,.103,'#8b938e');
+          fixing(m,x+side*.97,.274,-2.955,.024,true);
+        }
+        for(let j=0;j<=16;j++){
+          const a=j*Math.PI/16,c=Math.cos(a),s=Math.sin(a);
+          m.line([[x+c*1.048,1.956+s*1.048,-3.066],[x+c*1.152,1.956+s*1.152,-3.066]],'#c5b399',.011);
+        }
+      }
+    }else if(id==='bells'){
+      for(let i=0;i<3;i++){
+        const x=-2.72+i*2.13,r=.63-i*.10,h=.88-i*.115,top=2.85-i*.08;
+        for(const [at,radius] of [[.22,.812],[.24,.795],[.68,.545],[.70,.537]])
+          m.profile(x,top-h+h*at,-.70,[[0,r*radius],[.010,r*radius+.008],[.021,r*radius-.004]],'#bc995e',26);
+          for(const dx of [-.22,.22])fixing(m,x+dx,2.897,-.473,.032);
+      }
+    }else if(id==='craft'){
+      for(let i=0;i<3;i++){
+        const z=-.30+i*.036;
+        m.rod([-2.35,1.045,z],[-1.95,1.053,z+.065],.012,'#705138');
+        m.rod([-1.95,1.053,z+.065],[-1.90,1.053,z+.076],.013,'#b58d56');
+      }
+      m.profile(-1.09,1.034,.11,[[0,.34],[.028,.37],[.043,.43]],'#79563c',42,.66);
+      m.box(-2.28,1.032,-.34,.28,.028,.23,'#8b938e');
+      for(const dx of [-.105,.105])for(const dz of [-.076,.076])fixing(m,-2.28+dx,1.061,-.34+dz,.019,true);
+    }else if(id==='passport'){
+      for(let i=0;i<5;i++){
+        const z=-.01+i*.13;
+        m.line([[-2.46,1.027,z],[-1.71,1.027,z]],'#a89064',.010);
+      }
+      for(let i=0;i<3;i++){
+        const x=-2.29+i*.31;
+        m.profile(x,1.097,.11,[[0,.067],[.012,.063],[.021,.050]],'#b58d56',22);
+        m.profile(x,1.215,.11,[[0,.042],[.011,.054],[.023,.045]],'#99714b',18);
+      }
+      for(const dx of [-.12,.12])fixing(m,-.20+dx,1.144,.107,.014,true);
+    }else if(id==='loom'){
+      for(let i=0;i<3;i++){
+        const x=-3.91+i*.25,z=-.59+(i%2)*.18;
+        m.cyl(x,.018,z,.122,.035,'#99714b',16);
+        m.cyl(x,.055,z,.091,.23,['#995943','#c6af80','#667e79'][i],18);
+        m.cyl(x,.285,z,.122,.035,'#99714b',16);
+      }
+      for(const x of [-2.83,.88]){
+        m.profile(x,1.02,.312,[[0,.064],[.018,.082],[.035,.071]],'#ad905f',16);
+        fixing(m,x,1.09,.425,.028);
+      }
+    }else if(id==='soundmap'){
+      for(let i=0;i<5;i++){
+        const x=-2.60+i*.81,z=-.63+.18*Math.sin(i*1.3);
+        const contour=Array.from({length:25},(_,j)=>{
+          const a=j*Math.PI/12,r=.23+.037*Math.sin(3*a+i);
+          return [x+r*Math.cos(a),1.051,z+r*.76*Math.sin(a)];
+        });
+        m.line(contour,'#b4bd94',.012);
+      }
+      for(const [x,z] of [[-2.1,.20],[-.64,-.55],[.90,.28]]){
+        m.profile(x,1.053,z,[[0,.17],[.014,.176],[.026,.155]],'#808782',28);
+        for(const side of [-1,1])fixing(m,x+side*.16,1.074,z,.012,true);
+      }
+    }else if(id==='shadow'){
+      for(const side of [-1,1]){
+        const edge=side<0?-3.63:2.84;
+        for(let i=0;i<13;i++){
+          const x=edge+side*(i*.108),z=-2.72+.063*Math.cos(i*1.6);
+          const z2=-2.72+.063*Math.cos((i+1)*1.6);
+          m.face([[x,.08,z],[x+side*.109,.08,z2],[x+side*.109,3.25,z2],[x,3.25,z]],i%3===0?'#684b50':'#78545a',{material:'textile'});
+        }
+      }
+      // Rear fan guard and access screws face the operator, the lens faces the screen.
+      m.rod([-.83,1.65,1.332],[-.83,1.65,1.347],.183,'#42504c',28);
+      for(let i=-3;i<=3;i++){
+        const yy=1.65+i*.034,half=Math.sqrt(.144**2-(i*.034)**2);
+        m.rod([-.83-half,yy,1.353],[-.83+half,yy,1.353],.006,'#8b938e',7);
+      }
+      for(const dx of [-.125,.125])for(const dy of [-.125,.125])fixing(m,-.83+dx,1.65+dy,1.338,.017);
+    }
+  }
 
   // A scanline depth buffer keeps wall graphics, instruments, limbs and floor
   // marks on their own surfaces even when the visitor rotates the cutaway.
@@ -393,16 +737,17 @@
   }
   function createRaster(){
     const surface=document.createElement('canvas'),out=surface.getContext('2d');
-    let width=0,height=0,image,pixels,buffer,background;
+    let width=0,height=0,image,pixels,buffer,background,night;
     const packed=(r,g,b)=>(255<<24)|(b<<16)|(g<<8)|r;
-    function begin(w,h){
-      if(w!==width||h!==height){
+    function begin(w,h,cinema){
+      if(w!==width||h!==height||night!==cinema){
+        night=cinema;
         width=w;height=h;surface.width=w;surface.height=h;
         image=out.createImageData(w,h);pixels=new Uint32Array(image.data.buffer);
         background=new Uint32Array(w*h);buffer=new Float32Array(w*h);
         for(let y=0;y<h;y++){
           const a=y/Math.max(1,h-1);
-          background.fill(packed(244-23*a,241-24*a,232-31*a),y*w,(y+1)*w);
+            background.fill(cinema?packed(42-10*a,50-11*a,49-10*a):packed(244-23*a,241-24*a,232-31*a),y*w,(y+1)*w);
         }
       }
       pixels.set(background);buffer.fill(0);
@@ -448,8 +793,8 @@
         }
       }
     }
-    function draw({face,pts,depth,shade},resolution,focal,ready){
-      const c=rgb(face.color),col=packed(...c.map(v=>Math.round(clamp(v*shade,0,255))));
+    function draw({face,pts,depth,shade,tint},resolution,focal,ready){
+      const c=rgb(face.color),col=packed(...c.map((v,i)=>Math.round(clamp(v*(tint?tint[i]:shade),0,255))));
       const tex=face.media ? texture(face.media,ready) : null;
       if(face.media&&!tex)return;
       const vertices=pts.map((pt,i)=>{
@@ -473,7 +818,8 @@
     const detail=window.RingDetails?.[id];
     const raster=createRaster(), extra={points:null,distance:null,shape:'bird',lastNote:null,inspect:-1,hardware:false,detailView:false};
     let hits=[];
-    let view='overview',yaw=.53,pitch=.46,factor=1,step=0,hardware=false,frame=0,drag=null,alive=true;
+    const gallery=galleries[id]||galleries.barge,hallViews=new Map();
+    let view='overview',shot='establish',yaw=.53,pitch=.46,factor=1,step=0,hardware=false,frame=0,drag=null,alive=true;
     let progress=0,startProgress=0,since=0,inTransition=false;
     let size={w:0,h:0};
     const motion=matchMedia('(prefers-reduced-motion: reduce)');
@@ -485,28 +831,51 @@
         const a=motion.matches?1:clamp((now-since)/650,0,1);
         progress=startProgress+(step-startProgress)*(1-Math.pow(1-a,3));inTransition=a<1;
       }
-      const first=view==='participant',standingHere=view==='spectator',close=view==='detail' && detail;
+      const first=view==='participant',standingHere=view==='spectator',cinema=view==='cinema',close=view==='detail' && detail;
       const part=detail?.parts[extra.inspect];
       const partPosition=part?.locate?.(progress,extra)||part?.position;
-      const at=close?(partPosition||detail.focus):first?[-.55,1.18,-1.0]:[0,.94,0];
-      const dir=[Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch)];
+      const [cameraPoint,lookPoint,horizontalFov]=gallery[shot];
+      let actionShift=0,trackedYaw=yaw;
+      if(shot==='action'&&id==='regional')actionShift=Math.min(2,Math.floor(progress))*2.55;
+      if(shot==='action'&&id==='loom'&&detail){
+        const offset=detail.parts[0].locate(progress,extra)[0]-detail.parts[0].position[0];
+        // Stay inside the two participants' positions so the receiving hand and shuttle share the frame.
+        const travel=offset/2.89;
+        actionShift=3.31*travel;
+        if(cinema)trackedYaw-=2*travel*Math.atan2(cameraPoint[0]-lookPoint[0],cameraPoint[2]-lookPoint[2]);
+      }
+      let at=cinema?add(lookPoint,[actionShift,0,0]):close?(partPosition||detail.focus):first?[-.55,1.18,-1.0]:[0,.94,0];
+      if(cinema&&shot==='action'&&id==='soundmap'){
+        const key=extra.lastNote??extra.points?.at(-1)??clamp(Math.round(progress)-1,0,2);
+        at=[[-2.05,1.18,.22],[-.67,1.18,-.49],[.84,1.18,.25]][key];
+      }
+      const dir=[Math.sin(trackedYaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(trackedYaw)*Math.cos(pitch)];
       const radius=part?.radius||detail?.radius||1.4;
-      const distance=(close?Math.max(radius*2.9,2.3):first?8.5:18)/factor;
+      const distance=(cinema?Math.hypot(...sub(cameraPoint,lookPoint)):close?Math.max(radius*2.9,2.3):first?8.5:18)/factor;
       const eye=standingHere?spectatorEye:add(at,scale(dir,distance)),forward=scale(dir,-1);
       const right=unit(cross(forward,[0,1,0])),up=unit(cross(right,forward));
-      const focal=close?Math.min(w/(2*radius),h/(1.65*radius))*Math.max(radius*2.9,2.3):standingHere?Math.min(w/2.72,h/1.15)*factor:Math.min(w/(first?1.04:.78),h/(first?.71:.56));
+      const focal=cinema?Math.min(w,h*1.84)/(2*Math.tan(horizontalFov*Math.PI/360)):close?Math.min(w/(2*radius),h/(1.65*radius))*Math.max(radius*2.9,2.3):standingHere?Math.min(w/2.72,h/1.15)*factor:Math.min(w/(first?1.04:.78),h/(first?.71:.56));
       function project(v){
         const rel=sub(v,eye),z=dot(rel,forward);
         return {x:w*.5+focal*dot(rel,right)/z,y:h*.52-focal*dot(rel,up)/z,z};
       }
       const geometry=new Model(Boolean(close));
-      extra.detailView=Boolean(close);extra.hardware=hardware;
-      room(geometry,themes[id]||themes.barge,yaw,hardware);
+      extra.detailView=Boolean(close);extra.hardware=hardware;geometry.cinema=cinema;geometry.poseVisitors=!close;geometry.sceneId=id;
+      if(cinema){
+        const hallKey=[Math.cos(trackedYaw)>-.18,Math.sin(trackedYaw)<-.40,Math.sin(trackedYaw)>.40,hardware].join('/');
+        if(!hallViews.has(hallKey)){
+          const hall=new Model();
+          cinemaHall(hall,gallery,hardware,trackedYaw,id);hallViews.set(hallKey,hall.faces);
+        }
+        geometry.faces.push(...hallViews.get(hallKey));
+      }
+      else room(geometry,themes[id]||themes.barge,yaw,hardware);
       const time=motion.matches?0:now*.001;
       model(geometry,progress,time,extra);
       detail?.draw(geometry,progress,time,extra);
+      if(cinema)scenicFinish(geometry,id,progress);
       if(!close)listeners(geometry,step,standingHere);
-      const lit=window.RingLitRender?.(ctx,geometry,{w,h,eye,forward,focal})||false;
+      const lit=window.RingLitRender?.(ctx,geometry,{w,h,eye,forward,focal,gallery:cinema?gallery:null,shot,focusDistance:distance,progress})||false;
       canvas.dataset.rendering=lit?'lit':'canvas';
       if(!lit){
       const faces=[];
@@ -514,12 +883,18 @@
         if(face.points.length<(face.line?2:3))return;
         const depth=pts.reduce((n,pt)=>n+pt.z,0)/pts.length;
         if(pts.every(pt=>pt.x<0)||pts.every(pt=>pt.x>w)||pts.every(pt=>pt.y<0)||pts.every(pt=>pt.y>h))return;
-        let shade=1;
+        let shade=1,tint;
         if(!face.line&&!face.unlit){
           const n=unit(cross(sub(face.points[1],face.points[0]),sub(face.points[2],face.points[0])));
           shade=.76+.30*Math.max(-.20,dot(n,light));
+          if(cinema){
+            const offset=sub(gallery.source,face.points[0]),d=Math.hypot(...offset);
+            const bounce=Math.max(0,dot(n,offset)/Math.max(.01,d))/(1+d*d*.42);
+            const key=Math.max(0,dot(n,light)),rim=Math.max(0,.59*n[0]+.49*n[1]-.62*n[2]);
+            tint=rgb(gallery.key).map((value,i)=>.51+.60*key*value/255+.29*rim*rgb(gallery.rim)[i]/255+.58*bounce*rgb(gallery.bounce)[i]/255);
+          }
         }
-        faces.push({face,pts,depth,shade,layer:face.layer??3});
+        faces.push({face,pts,depth,shade,tint,layer:face.layer??3});
       }
       const near=.18;
       for(const face of geometry.faces){
@@ -554,7 +929,7 @@
         if(!face.line)submit(clipped);
       }
       const resolution=Math.min(1.4,Math.sqrt(900000/(w*h)));
-      raster.begin(Math.max(1,Math.round(w*resolution)),Math.max(1,Math.round(h*resolution)));
+      raster.begin(Math.max(1,Math.round(w*resolution)),Math.max(1,Math.round(h*resolution)),cinema);
       faces.sort((a,b)=>Number((a.face.opacity??1)<1)-Number((b.face.opacity??1)<1)||b.depth-a.depth);
       for(const item of faces)raster.draw(item,resolution,focal,request);
       raster.finish(ctx,w,h);
@@ -598,9 +973,18 @@
       }
     }
     function request(){if(!frame&&alive)frame=requestAnimationFrame(render);}
+    function frameShot(){
+      const [eye,at]=gallery[shot],d=unit(sub(eye,at));
+      yaw=Math.atan2(d[0],d[2]);pitch=Math.asin(d[1]);factor=1;
+    }
+    function setShot(name){
+      if(!['establish','action','result'].includes(name))return;
+      shot=name;if(view==='cinema')frameShot();request();
+    }
     function setView(name){
-      if(!['overview','participant','spectator','technical','detail'].includes(name))return;
+      if(!['overview','participant','spectator','technical','detail','cinema'].includes(name))return;
       view=name;factor=1;
+      if(name==='cinema'){frameShot();request();return;}
       const camera={overview:[.53,.46],participant:[-.10,.14],spectator:[.60,.068],technical:[.005,1.48],detail:detail?.parts[extra.inspect]?.angle||[.42,.37]};
       [yaw,pitch]=camera[name];
       request();
@@ -630,7 +1014,7 @@
       if(drag.id!==e.pointerId)return;
       if(!drag.moved&&Math.hypot(e.clientX-drag.startX,e.clientY-drag.startY)<5)return;
       drag.moved=true;canvas.style.cursor='grabbing';const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
-      yaw-=dx*.008;pitch=clamp(pitch+dy*.006,.07,1.50);drag.x=e.clientX;drag.y=e.clientY;request();
+      yaw-=dx*.008;pitch=clamp(pitch+dy*.006,view==='cinema'?-.24:.07,1.50);drag.x=e.clientX;drag.y=e.clientY;request();
     }
     function end(e){
       if(drag?.id!==e.pointerId)return;
@@ -644,7 +1028,7 @@
       size={w:rect.width,h:rect.height};canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);request();
     });
     observer.observe(canvas);window.addEventListener('ringtexture',request);request();
-    return {setView,turn,zoom,setState,destroy(){
+    return {setView,setShot,turn,zoom,setState,destroy(){
       alive=false;observer.disconnect();window.removeEventListener('ringtexture',request);cancelAnimationFrame(frame);
       canvas.removeEventListener('pointerdown',down);canvas.removeEventListener('pointermove',move);canvas.removeEventListener('pointerup',end);canvas.removeEventListener('pointercancel',end);canvas.removeEventListener('lostpointercapture',end);
     }};

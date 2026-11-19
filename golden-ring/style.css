@@ -223,6 +223,17 @@ body:has(dialog[open]) { overflow: hidden; }
 .experience-copy summary { padding: 10px 0; font-size: 14px; }
 .experience-copy details p, .experience-basis { font-size: 14px; }
 .experience-basis { margin-top: 24px; max-width: 87ch; }
+.gallery-heading { display:flex; justify-content:space-between; align-items:flex-end; gap:15px 30px; flex-wrap:wrap; max-width:none; }
+.gallery-heading p { margin-bottom:0; }
+.gallery-heading > a { font-weight:600; padding-block:8px; }
+.cinema-grid .play-cover { overflow:hidden; }
+.cinema-grid .play-cover img { aspect-ratio:16/9; transition:transform .28s ease-out; }
+.cinema-grid .play-cover:focus-visible { outline-offset:-4px; }
+.cinema-grid .lab-actions { gap:4px 18px; }
+.cinema-grid .play-action { border-radius:5px; padding:7px 14px; background:var(--olive); color:white; text-decoration:none; }
+.cinema-grid .play-action:hover { background:#263e31; }
+.cinema-grid .action-demo { display:inline-block; padding:4px 0 10px; }
+@media (hover:hover) and (prefers-reduced-motion:no-preference) { .cinema-grid .play-cover:hover img { transform:scale(1.035); } }
 .lab-links,.lab-actions { display:flex; flex-wrap:wrap; align-items:center; gap:4px 20px; }
 .lab-links { margin-top:16px; }
 .lab-links a,.space-action { padding:7px 0; font-weight:600; }

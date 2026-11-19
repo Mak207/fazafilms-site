@@ -1,0 +1,7 @@
+CC0 surface maps from Poly Haven, adapted for the FazaFilms browser renderer.
+Grayscale colour maps are tinted per installation. Normal and roughness maps are separate.
+
+Plaster Grey 04 — Rob Tuytel, 1.5 m. https://polyhaven.com/a/plaster_grey_04
+Interior Tiles — Charlotte Baglioni, 1.9 m. https://polyhaven.com/a/interior_tiles
+Oak Veneer 01 — Jenelle van Heerden, 1.8 m. https://polyhaven.com/a/oak_veneer_01
+License: https://polyhaven.com/license
