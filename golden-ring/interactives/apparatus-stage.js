@@ -48,6 +48,24 @@ export async function createStage(canvas,id,timing,film){
       if(dict?.[name]!==undefined)mapButtons.push({mesh:o,slot,index:dict[name]});
     }
   });
+  let sheaveRotation;
+  if(id==='barge'){
+    const wheel=body.getObjectByName('Turned_measuring_sheave_-_real_U_groove') ||
+      (()=>{let part;body.traverse(o=>{if(o.isMesh && /Turned.measuring.sheave/i.test(o.name))part=o;});return part;})();
+    if(!wheel)throw Error('В модели отсутствует измерительный ролик');
+    const center=V(...drawing.anchors.MeasuringSheave),axle=V(.22037,.82834,-.51506).normalize();
+    const parent=wheel.parent,pivot=new T.Group();pivot.position.copy(center);parent.add(pivot);pivot.attach(wheel);
+    // A flush painted witness line on the outer cheek makes rotation legible in a close shot.
+    const radial=V(1,0,0).addScaledVector(axle,-axle.x).normalize();
+    const plate=new T.PlaneGeometry(.052,.009);
+    for(const sign of [-1,1]){
+      const line=new T.Mesh(plate,new T.MeshStandardMaterial({color:0xf2ca80,roughness:.7,side:T.DoubleSide}));
+      line.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(radial,axle.clone().cross(radial),axle));
+      line.position.copy(radial).multiplyScalar(.077).addScaledVector(axle,sign*.0348);pivot.add(line);
+    }
+    // Groove root radius 46.929 mm plus half the working rope diameter 40.8 mm.
+    sheaveRotation=p=>pivot.quaternion.setFromAxisAngle(axle,-.160*p/(.046929+.0204));
+  }
   if(base&&drawing.standParts)for(const piece of drawing.standParts){
     for(const xyz of piece.points){const n=room.box(...xyz,...piece.size,piece.key==='SH-02'?room.oak:room.black);n.name='Drawing_'+piece.key;}
   }
@@ -90,7 +108,8 @@ export async function createStage(canvas,id,timing,film){
   const emptyHall=new URLSearchParams(location.search).has("backgroundPlate");
   const main={role:'user',x:0,z:0,heading:0,reach:0},witness={role:'guest',x:1.58,z:1.44,heading:-2.4};
   const partner={role:id==='loom'?'user':'guest',x:-1,z:.70,heading:1.4,reach:0};
-  const cast=emptyHall?[]:(id==='bells'||id==='loom'?[main,witness,partner]:[main,witness]);
+  const directed=new URLSearchParams(location.search).has('directed');
+  const cast=emptyHall?[]:id==='bells'?[main,witness,partner]:id==='loom'?(directed?[main,partner]:[main,witness,partner]):directed?[main]:[main,witness];
   const target=V(),look=V(),eye=V();let manualYaw=0,manualPitch=0,manualZoom=1,hold=null;
   let oldWidth=0,oldHeight=0;
   function resize(){const w=canvas.clientWidth||1280,h=canvas.clientHeight||720;if(w!==oldWidth||h!==oldHeight){renderer.setSize(w,h,false);camera.aspect=w/h;oldWidth=w;oldHeight=h;}}
@@ -129,7 +148,7 @@ export async function createStage(canvas,id,timing,film){
       main.x=target.x-.18;main.z=target.z+.24;main.lean=.12*arm;main.singleHand=true;
     }
     main.limit=null;
-    if(id==='barge'){main.x=grip.x+.015;main.z=size.z*.5+.115+p*.13;main.limit={axis:'z',edge:main.z,sign:1};main.crouch=.225*smooth(arm/.16);main.lean=.10*arm;main.otherTarget=[target.x-.018,target.y+.035,target.z-.055];}
+    if(id==='barge'){main.x=grip.x+.015;main.z=size.z*.5+.115+p*.13;main.limit={axis:'z',edge:main.z,sign:1};main.crouch=(.12+.09*p)*smooth(arm/.16);main.lean=(.12-.22*p)*arm;main.otherTarget=[target.x-.018,target.y+.035,target.z-.055];}
     if(id==='craft'||id==='soundmap'||id==='regional'){
       main.x=target.x-.16;main.z=size.z*.5+.075;main.limit={axis:'z',edge:main.z,sign:1};
     }
@@ -160,6 +179,7 @@ export async function createStage(canvas,id,timing,film){
       }
     }
     for(const m of morphs)m.morphTargetInfluences[m.morphTargetDictionary.Press]=id==='passport'?stampStroke:id==='glass'?p:arm;
+    sheaveRotation?.(p);
     for(const m of pulls)m.morphTargetInfluences[m.morphTargetDictionary.Pull]=p;
     indicators.forEach((mark,index)=>{mark.material.opacity=p>0&&clamp(Math.ceil(p*3-.00001)-1,0,2)===index?.98:.06;});
     people.sync(cast);controlSurface?.(p);
@@ -223,6 +243,11 @@ export async function createStage(canvas,id,timing,film){
         }
       }
       if(view==='result'){eye.set(.68-.22*u,1.92+.13*u,2.99+.52*u);look.set(-.08,1.85,-2.22);camera.fov=40;}
+    }
+    if(view==='joint'){
+      const contact=target;
+      if(id==='barge'){look.set(.48,.86,.51);look.set(.55,.90,.79);eye.set(3.37,1.48,.89);camera.fov=40;}
+      else{look.copy(contact).lerp(mechanism,.32);look.y+=.22;eye.copy(look).add(V(2.42,.69,1.54));camera.fov=39;}
     }
     if(view==='performance'){
       if(!performanceCamera){
