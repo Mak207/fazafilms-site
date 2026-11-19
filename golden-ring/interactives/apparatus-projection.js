@@ -10,7 +10,6 @@ export async function makeProjection(T,id,spec) {
   const first=await src(id==='bells'?'bells-finale':spec.surface), last=id==='bells'||spec.result===spec.surface?first:await src(spec.result);
   const vessel=id==='barge'?await src('barge-vessel'):null;
   const weave=id==='loom'?await src('loom-finale'):null;
-  const proof=id==='passport'?await src(id+'-finale'):null;
   const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;texture.generateMipmaps=false;texture.minFilter=T.LinearFilter;
   const w=canvas.width,h=canvas.height;
   const bellSpots=[.29,.56,.86];
@@ -62,17 +61,20 @@ export async function makeProjection(T,id,spec) {
         }
       for(let x=0;x<w;x+=7){ctx.fillStyle='rgba(233,206,172,.11)';ctx.fillRect(x,0,2,h);}
     }else if(id==='passport'||id==='soundmap'){
+      if(id==='passport'&&p<.86){texture.needsUpdate=true;return;}
+      if(id==='passport')p=Math.min(1,(p-.86)/.14);
       ctx.fillStyle='rgba(20,30,31,.55)';ctx.fillRect(0,0,w,h);
       const pts=id==='soundmap'?[[.19,.70],[.51,.46],[.83,.28]]:[[.13,.72],[.40,.43],[.64,.58],[.86,.27]];ctx.lineWidth=4;ctx.strokeStyle='#ffe2a5';ctx.shadowColor='#ffd399';ctx.shadowBlur=12;
       for(let i=0;i<pts.length-1;i++){const q=Math.min(1,Math.max(0,p*(pts.length-1)-i)),a=pts[i],b=pts[i+1];ctx.beginPath();ctx.moveTo(a[0]*w,a[1]*h);ctx.lineTo((a[0]+(b[0]-a[0])*q)*w,(a[1]+(b[1]-a[1])*q)*h);ctx.stroke();}
       const selected=Math.max(0,Math.min(2,Math.ceil(p*3-.00001)-1));
       pts.forEach(([x,y],i)=>{ctx.fillStyle=(id==='soundmap'?p>0&&i===selected:p*3>=i)?'#ffde9a':'#998d7c';ctx.beginPath();ctx.arc(x*w,y*h,8,0,7);ctx.fill();if(id==='soundmap'&&p>0&&selected===i){ctx.beginPath();ctx.arc(x*w,y*h,24,0,7);ctx.stroke();}});ctx.shadowBlur=0;
+      if(id==='passport'){
+        ctx.fillStyle='#fff3d4';ctx.font='38px Georgia';ctx.fillText('Маршрут билета',w*.08,h*.17);
+        ctx.font='24px Georgia';
+        pts.forEach(([x,y],i)=>{if(p*3+.001>=i){ctx.beginPath();ctx.strokeStyle='#ffdc91';ctx.lineWidth=2;ctx.arc(x*w,y*h,17,0,Math.PI*2);ctx.stroke();ctx.fillText(i?String(i):'Старт',x*w-(i?6:26),y*h-25);}});
+      }
     }else{
       ctx.globalAlpha=p;cover(last,1.06+.07*(1-p));
-    }
-    if(proof&&p>.78){
-      ctx.globalCompositeOperation='source-over';ctx.globalAlpha=Math.min(1,(p-.78)/.18);
-      cover(proof,1.015+.05*(1-p));
     }
     ctx.globalAlpha=1;texture.needsUpdate=true;
   }

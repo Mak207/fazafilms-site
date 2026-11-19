@@ -21,7 +21,11 @@
     "duration": 41
   },
   "bells": {
-    "revision": "59a96793f60c15"
+    "revision": "339ddcfcfa34e0",
+    "performance": true,
+    "width": 1920,
+    "height": 1080,
+    "duration": 41
   },
   "craft": {
     "revision": "705dc6f8a71a48",
@@ -31,7 +35,7 @@
     "duration": 41
   },
   "passport": {
-    "revision": "815fad863396a7",
+    "revision": "0b9f9168e1f414",
     "performance": true,
     "width": 1920,
     "height": 1080,
@@ -45,9 +49,17 @@
     "duration": 41
   },
   "soundmap": {
-    "revision": "63101657e5782d"
+    "revision": "55257c05b6ad11",
+    "performance": true,
+    "width": 1920,
+    "height": 1080,
+    "duration": 41
   },
   "shadow": {
-    "revision": "57a859aaaffb95"
+    "revision": "9e7ff0b8c406df",
+    "performance": true,
+    "width": 1920,
+    "height": 1080,
+    "duration": 42
   }
 }
