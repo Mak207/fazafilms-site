@@ -875,7 +875,8 @@
       detail?.draw(geometry,progress,time,extra);
       if(cinema)scenicFinish(geometry,id,progress);
       if(!close)listeners(geometry,step,standingHere);
-      const lit=window.RingLitRender?.(ctx,geometry,{w,h,eye,forward,focal,gallery:cinema?gallery:null,shot,focusDistance:distance,progress})||false;
+      const device={distance:extra.distance,hardware,detailView:Boolean(close),open:extra.deviceOpen};
+      const lit=window.RingLitRender?.(ctx,geometry,{w,h,eye,forward,focal,gallery:cinema?gallery:null,shot,focusDistance:distance,progress,device})||false;
       canvas.dataset.rendering=lit?'lit':'canvas';
       if(!lit){
       const faces=[];
@@ -990,6 +991,7 @@
       request();
     }
     function setState(state={}){
+      if(state.deviceOpen===null||typeof state.deviceOpen==='boolean')extra.deviceOpen=state.deviceOpen;
       if(typeof state.hardware==='boolean')hardware=state.hardware;
       if(Number.isInteger(state.inspect))extra.inspect=clamp(state.inspect,-1,2);
       if(state.lastNote===null || [0,1,2].includes(state.lastNote))extra.lastNote=state.lastNote;

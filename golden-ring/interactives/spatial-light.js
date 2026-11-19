@@ -2,6 +2,7 @@ import * as THREE from './vendor/three-0.180/three.module.min.js';
 import { scannedSurfaces } from './spatial-surfaces.js';
 import { createPeople } from './spatial-people.js';
 import { stageObjects } from './spatial-objects.js';
+import { createMoscowDevices } from './art/production/moscow-devices.js';
 
 // All dimensions and texture coordinates use the same model space as picking and the sectional views.
 const colourCache = new Map();
@@ -160,6 +161,7 @@ function makeStudio() {
   const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera();
   const people=createPeople(scene,THREE);
   const placeObjects=stageObjects(scene);
+  const devices=createMoscowDevices(scene,THREE);
   const lens=makeLens(renderer);
   const sky=new THREE.HemisphereLight(0xfff3de,0xa3b2ac,1.55);scene.add(sky);
   const sun=new THREE.DirectionalLight(0xffe6bd,2.0);sun.position.set(0.8,8,5.8);
@@ -294,6 +296,9 @@ function makeStudio() {
     const visitors=geometry.visitors||[];
     people.sync(visitors);
     const installed=placeObjects(geometry,settings);
+    const mounted=devices.sync({id:geometry.sceneId,progress:settings.progress,...settings.device});
+    ctx.canvas.dataset.device=mounted.device?(mounted.service?'open':'closed'):'';
+    ctx.canvas.dataset.deviceMask=String(mounted.mask??0);
     ctx.canvas.dataset.exhibit=installed.object?geometry.sceneId:'';
     const replacements=visitors.filter(v=>people.readyFor(v));
     ctx.canvas.dataset.people=String(replacements.length);
@@ -316,6 +321,7 @@ function makeStudio() {
         continue;
       }
       const face=geometry.faces[faceIndex];
+      if((face.fallbackAsset==='guide'&&mounted.guide)||(face.fallbackAsset==='device'&&mounted.device))continue;
       if(face.fallbackAsset==='loom' && installed.object || face.fallbackAsset==='bench' && installed.bench)continue;
       if(face.line){
         for(let i=1;i<face.points.length;i++){

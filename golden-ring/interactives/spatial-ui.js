@@ -109,6 +109,9 @@
     const detail=window.RingDetails?.[scene.id];
     const shown=Boolean(detail && $('hardware').checked);
     $('part-panel').hidden=!shown;
+    const cover=$('device-cover');
+    cover.hidden=!(shown&&currentView==='detail'&&((scene.id==='loom'&&inspectedPart===1)||(scene.id==='shadow'&&inspectedPart===0)));
+    cover.textContent=deviceOpen?'Закрыть кожух':'Снять кожух';
     if(!shown)return;
     const part=detail.parts[inspectedPart];
     Array.from($('part-buttons').children).forEach((b,i)=>b.setAttribute('aria-pressed',String(i===inspectedPart)));
@@ -121,7 +124,7 @@
     $('cinema-controls').hidden=view!=='cinema';
     if(view==='detail')$('hardware').checked=true;
     views.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === view)));
-    engine?.setState({hardware:$('hardware').checked,inspect:view==='detail'?inspectedPart:-1});
+    engine?.setState({hardware:$('hardware').checked,deviceOpen:view==='detail'?deviceOpen:null,inspect:view==='detail'?inspectedPart:-1});
     engine?.setView(view);
     if(view==='cinema')chooseShot(currentShot,false);
     describePart();
@@ -133,6 +136,10 @@
       $('space').scrollIntoView({block:'start',behavior:'instant'});
     }
   }
+  let deviceOpen=false;
+  $('device-cover').addEventListener('click',()=>{
+    deviceOpen=!deviceOpen;engine?.setState({deviceOpen});describePart();
+  });
   function listParts(){
     const group=$('part-buttons');group.replaceChildren();
     (window.RingDetails?.[scene.id]?.parts||[]).forEach((part,i)=>{
@@ -233,7 +240,7 @@
     select.value=scene.id;$('name').textContent=scene.title;document.title=scene.title+' в 3D · Золотое кольцо';
     ['zone','aim','apparatus','decision'].forEach(k=>$(k).textContent=scene[k]);$('composition').textContent=scene.staging;
     $('original').hidden=!scene.steps;if(scene.steps)$('original').href=scene.id+'.html?v=2';
-    engine?.destroy();$('hardware').checked=false;
+    engine?.destroy();$('hardware').checked=false;deviceOpen=false;
     engine=typeof window.RingSpatial==='function'?window.RingSpatial($('space'),{id:scene.id}):null;
     $('render-note').hidden=Boolean(engine);
     const query=new URL(location.href).searchParams;
