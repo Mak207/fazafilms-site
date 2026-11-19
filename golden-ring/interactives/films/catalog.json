@@ -7,27 +7,59 @@
     "duration": 40
   },
   "glass": {
-    "revision": "6b4020e5a687cf"
+    "revision": "bd7be15bfe5778",
+    "performance": true,
+    "width": 1920,
+    "height": 1080,
+    "duration": 42
   },
   "regional": {
-    "revision": "7b887b9e9eb91f"
+    "revision": "1dec7e1475cdb9",
+    "performance": true,
+    "width": 1920,
+    "height": 1080,
+    "duration": 41
   },
   "bells": {
-    "revision": "59a96793f60c15"
+    "revision": "339ddcfcfa34e0",
+    "performance": true,
+    "width": 1920,
+    "height": 1080,
+    "duration": 41
   },
   "craft": {
-    "revision": "175d10fa2fa613"
+    "revision": "705dc6f8a71a48",
+    "performance": true,
+    "width": 1920,
+    "height": 1080,
+    "duration": 41
   },
   "passport": {
-    "revision": "6fb054f3bb168c"
+    "revision": "0b9f9168e1f414",
+    "performance": true,
+    "width": 1920,
+    "height": 1080,
+    "duration": 41
   },
   "loom": {
-    "revision": "392507bd3066d1"
+    "revision": "08796afedc4b6c",
+    "performance": true,
+    "width": 1920,
+    "height": 1080,
+    "duration": 41
   },
   "soundmap": {
-    "revision": "63101657e5782d"
+    "revision": "55257c05b6ad11",
+    "performance": true,
+    "width": 1920,
+    "height": 1080,
+    "duration": 41
   },
   "shadow": {
-    "revision": "57a859aaaffb95"
+    "revision": "9e7ff0b8c406df",
+    "performance": true,
+    "width": 1920,
+    "height": 1080,
+    "duration": 42
   }
 }

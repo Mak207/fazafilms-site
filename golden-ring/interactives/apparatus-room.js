@@ -43,5 +43,5 @@ export function dressGallery(T,scene,renderer,projection,theme){
     const p=new T.Mesh(new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({color:new T.Color(power,power*.91,power*.79),side:T.DoubleSide}));p.position.set(x,y,z);p.lookAt(0,1,0);softbox.add(p);
   }
   const pm=new T.PMREMGenerator(renderer);scene.environment=pm.fromScene(softbox,.025,.1,16,{size:64}).texture;scene.environmentIntensity=.42;pm.dispose();
-  return {box,oak,bronze,black,wash};
+  return {box,oak,bronze,black,wash,display};
 }

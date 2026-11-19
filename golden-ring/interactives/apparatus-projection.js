@@ -1,5 +1,6 @@
 // The luminous back wall is exhibition media. It responds to the same normalized control as the physical prop.
 export async function makeProjection(T,id,spec) {
+  if(id==='craft')return (await import('./craft-camera.js')).craftCamera(T);
   if(id==='regional'||id==='soundmap')return (await import('./river-media.js')).riverMedia(T,id);
   if(id==='glass')return (await import('./glass-process.js')).glassProcess(T);
   if(id==='shadow')return (await import('./shadow-fairground.js')).makeFairground(T);
@@ -9,7 +10,6 @@ export async function makeProjection(T,id,spec) {
   const first=await src(id==='bells'?'bells-finale':spec.surface), last=id==='bells'||spec.result===spec.surface?first:await src(spec.result);
   const vessel=id==='barge'?await src('barge-vessel'):null;
   const weave=id==='loom'?await src('loom-finale'):null;
-  const proof=['passport','craft'].includes(id)?await src(id+'-finale'):null;
   const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;texture.generateMipmaps=false;texture.minFilter=T.LinearFilter;
   const w=canvas.width,h=canvas.height;
   const bellSpots=[.29,.56,.86];
@@ -22,14 +22,6 @@ export async function makeProjection(T,id,spec) {
   }):null;
   function cover(im,zoom=1,pan=.5){const k=Math.max(w/im.width,h/im.height)*zoom;ctx.drawImage(im,(w-im.width*k)*pan,(h-im.height*k)*.5,im.width*k,im.height*k);}
   function place(im,left,bottom,width,height){const k=Math.min(width/im.width,height/im.height);ctx.drawImage(im,left-im.width*k/2,bottom-im.height*k,im.width*k,im.height*k);}
-  function rosette(x,y,size,p){
-    ctx.save();ctx.translate(x,y);ctx.scale(size,size);
-    for(let j=0;j<3;j++){const count=10-j*3;for(let i=0;i<count;i++){
-        if((j+i/count)/3>p)continue;
-        const a=2*Math.PI*i/count;ctx.save();ctx.rotate(a);ctx.fillStyle=['#923e35','#d46e59','#edd4ae'][j];
-        ctx.beginPath();ctx.ellipse(0,-63+18*j,29-5*j,51-9*j,0,0,2*Math.PI);ctx.fill();ctx.restore();
-    }}ctx.restore();
-  }
   let prior=-1;
   function redraw(p,elapsed,approach,state){
     const voices=state?.voices??[];
@@ -68,22 +60,21 @@ export async function makeProjection(T,id,spec) {
           ctx.drawImage(weave,0,h-row*(i+1),w,row);ctx.restore();
         }
       for(let x=0;x<w;x+=7){ctx.fillStyle='rgba(233,206,172,.11)';ctx.fillRect(x,0,2,h);}
-    }else if(id==='craft'){
-      ctx.fillStyle='rgba(33,23,17,'+(.28+.26*p)+')';ctx.fillRect(0,0,w,h);
-      ctx.globalAlpha=p;rosette(w*.49,h*.53,1.7,p);
-      if(p>.80){ctx.globalAlpha=(p-.8)*4;place(last,w*.5,h*.93,w*.4,h*.23);}
     }else if(id==='passport'||id==='soundmap'){
+      if(id==='passport'&&p<.86){texture.needsUpdate=true;return;}
+      if(id==='passport')p=Math.min(1,(p-.86)/.14);
       ctx.fillStyle='rgba(20,30,31,.55)';ctx.fillRect(0,0,w,h);
       const pts=id==='soundmap'?[[.19,.70],[.51,.46],[.83,.28]]:[[.13,.72],[.40,.43],[.64,.58],[.86,.27]];ctx.lineWidth=4;ctx.strokeStyle='#ffe2a5';ctx.shadowColor='#ffd399';ctx.shadowBlur=12;
       for(let i=0;i<pts.length-1;i++){const q=Math.min(1,Math.max(0,p*(pts.length-1)-i)),a=pts[i],b=pts[i+1];ctx.beginPath();ctx.moveTo(a[0]*w,a[1]*h);ctx.lineTo((a[0]+(b[0]-a[0])*q)*w,(a[1]+(b[1]-a[1])*q)*h);ctx.stroke();}
       const selected=Math.max(0,Math.min(2,Math.ceil(p*3-.00001)-1));
       pts.forEach(([x,y],i)=>{ctx.fillStyle=(id==='soundmap'?p>0&&i===selected:p*3>=i)?'#ffde9a':'#998d7c';ctx.beginPath();ctx.arc(x*w,y*h,8,0,7);ctx.fill();if(id==='soundmap'&&p>0&&selected===i){ctx.beginPath();ctx.arc(x*w,y*h,24,0,7);ctx.stroke();}});ctx.shadowBlur=0;
+      if(id==='passport'){
+        ctx.fillStyle='#fff3d4';ctx.font='38px Georgia';ctx.fillText('Маршрут билета',w*.08,h*.17);
+        ctx.font='24px Georgia';
+        pts.forEach(([x,y],i)=>{if(p*3+.001>=i){ctx.beginPath();ctx.strokeStyle='#ffdc91';ctx.lineWidth=2;ctx.arc(x*w,y*h,17,0,Math.PI*2);ctx.stroke();ctx.fillText(i?String(i):'Старт',x*w-(i?6:26),y*h-25);}});
+      }
     }else{
       ctx.globalAlpha=p;cover(last,1.06+.07*(1-p));
-    }
-    if(proof&&p>.78){
-      ctx.globalCompositeOperation='source-over';ctx.globalAlpha=Math.min(1,(p-.78)/.18);
-      cover(proof,1.015+.05*(1-p));
     }
     ctx.globalAlpha=1;texture.needsUpdate=true;
   }
