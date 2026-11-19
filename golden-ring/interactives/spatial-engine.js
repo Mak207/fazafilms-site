@@ -347,21 +347,116 @@
     m.mark([-.17,1.22,.01],'Считыватель');m.mark([2.69,2.46,-3.13],'Маршрут на панораме');
   }
 
+  const loomStates=new Map();
+  function wovenCloth(m,p,shuttleX){
+    if(loomStates.has(p)){m.faces.push(...loomStates.get(p));return;}
+    const first=m.faces.length,left=-2.73,width=3.42,bottom=.42,height=.20+p*.59,repeat=.426,step=.0108;
+    const flax='#bba586',undyed='#d7c2a3',madder='#87503d',indigo='#405861',ochre='#b38b54';
+    // Coordinates are those of the undyed cloth, before it bows under tension.
+    const at=(u,v)=>{
+      const edge=Math.sin(Math.PI*u);
+      const x=left+u*width+.008*Math.sin(9.1*v+.5)*Math.cos(Math.PI*u);
+      const local=Math.exp(-Math.pow((x-shuttleX)/.53,2)),rise=v/height;
+      const y=bottom+v-(.012+.022*rise*rise)*edge-.024*local*rise*rise;
+      const z=-.275+edge*(.044*Math.sin(15*u+v*.83)+.015*Math.sin(36*u-.5*v))
+        +.024*local*Math.exp(-Math.pow((bottom+v-1.10)/.43,2))
+        +.00067*Math.cos(Math.PI*v/step+.12*Math.sin(8*u));
+      return [x,y,z];
+    };
+    // The 21 cm photographed textile tile has world-space UVs shared across
+    // every weft colour, including the motifs and the two reinforced edges.
+    const patch=(u0,u1,v0,v1,color)=>{
+      const uv=[[u0*width,v0],[u1*width,v0],[u1*width,v1],[u0*width,v1]].map(q=>[q[0]/.21,q[1]/.21]);
+      m.face([at(u0,v0),at(u1,v0),at(u1,v1),at(u0,v1)],color,{material:'textile',uv});
+    };
+    // The small variation comes from neighbouring lengths of spun yarn. Its
+    // irregular sequence avoids a high-contrast periodic grid on small screens.
+    const dyes=new Map();
+    const dye=(color,level)=>{
+      const key=color+level;
+      if(!dyes.has(key)){
+        const factor=1+level*.026;
+        const channels=rgb(color).map(c=>Math.round(clamp(c*factor,0,255)).toString(16).padStart(2,'0'));
+        dyes.set(key,'#'+channels.join(''));
+      }
+      return dyes.get(key);
+    };
+    const period=.31;
+    for(let row=0;row*step<height-.000001;row++){
+      const v0=row*step,v1=Math.min(height,v0+step),mid=(v0+v1)/2;
+      const band=Math.floor(mid/period),f=(mid-band*period)/period;
+      const ground=[flax,madder,indigo,undyed][band%4];
+      const motif=[indigo,undyed,flax,madder][band%4];
+      const border=f<.07||f>.92, pinstripe=f>.11&&f<.16||f>.83&&f<.88;
+      const base=border?(band%2?ochre:madder):pinstripe?(band%2?flax:indigo):ground;
+      const mark=Math.max(0,1-Math.abs(f-.50)/.285)*.139;
+      const inset=Math.max(0,1-Math.abs(f-.50)/.12)*.056;
+      const cuts=[0,.024,.044,width-.044,width-.024,width],centres=[];
+      // Additional vertices carry broad, continuous folds even in a monochrome band.
+      for(let j=1;j<24;j++)cuts.push(width*j/24);
+      if(mark>.0001){
+        for(let x=.214+(band%2)*repeat*.5;x<width+.14;x+=repeat){
+          centres.push(x);
+          for(const k of [x-mark,x+mark,...(inset>.001?[x-inset,x+inset]:[])]){
+            if(k>.045&&k<width-.045)cuts.push(k);
+          }
+        }
+      }
+      cuts.sort((a,b)=>a-b);
+      for(let i=1;i<cuts.length;i++){
+        const a=cuts[i-1],b=cuts[i],c=(a+b)/2;
+        if(b-a<.00005)continue;
+        let col=base;
+        if(c<.024||c>width-.024)col=indigo;
+        else if(c<.044||c>width-.044)col=ochre;
+        else for(const centre of centres){
+          const dx=Math.abs(centre-c);
+          if(dx<=mark){col=dx<inset?ground:motif;break;}
+        }
+        const blend=Math.sin(row*2.17+.37*Math.sin(c*3))+.5*Math.sin(row*.77+c*.48);
+        patch(a/width,b/width,v0,v1,dye(col,Math.round(blend*1.8)));
+      }
+    }
+    // The cut edge shows the thickness of two layers of yarn from a side angle.
+    for(const u of [0,1])for(let j=0;j<10;j++){
+      const a=at(u,height*j/10),b=at(u,height*(j+1)/10);
+      m.face([a,b,[b[0],b[1],b[2]-.005],[a[0],a[1],a[2]-.005]],'#675d4e',{material:'textile'});
+    }
+    for(let j=0;j<48;j++){
+      const a=at(j/48,height),b=at((j+1)/48,height);
+      m.face([a,b,[b[0],b[1]+.002,b[2]-.005],[a[0],a[1]+.002,a[2]-.005]],undyed,{material:'textile'});
+    }
+    // At the live weaving edge individual doubled warp ends emerge from the
+    // fabric. Their modest contrast and irregular spacing stay stable in wide shots.
+    for(let i=0;i<=112;i++){
+      const u=clamp((i+.09*Math.sin(i*2.19))/112,0,1),start=at(u,height);
+      const x=left+u*width+.006*Math.sin(i*.76);
+      const col=['#bca783','#c5b190','#ad9675','#c0ab88','#d0bf9f'][i%5];
+      const half=(i%4===0?.0036:.0025),middleY=start[1]+(2.55-start[1])*.51;
+      const mid=[(start[0]+x)/2,middleY,-.304+.009*Math.sin(i*1.61)];
+      const top=[x,2.565,-.322+(i%2)*.008];
+      const warp=(a,b)=>m.face([[a[0]-half,a[1],a[2]],[a[0]+half,a[1],a[2]],
+        [b[0]+half,b[1],b[2]],[b[0]-half,b[1],b[2]]],col,{material:'textile'});
+      warp(start,mid);warp(mid,top);
+    }
+    if(Number.isInteger(p))loomStates.set(p,m.faces.slice(first));
+  }
   function loom(m,p,t) {
     const baseZ=-.33;
     for(const x of [-2.86,.93])m.box(x,0,baseZ,.21,2.75,.27,C.wood);
     for(const y of [.37,2.55])m.rod([-2.91,y,baseZ],[1.01,y,baseZ],.13,C.oak,12);
-    for(let i=0;i<21;i++){const x=-2.71+.171*i;m.line([[x,.4,baseZ],[x,2.54,baseZ]],'#d7c294',.019);}
     const h=.20+p*.59;
-    for(let i=0;i<Math.ceil(h/.085);i++){
-      const y=.42+i*.085;const col=[C.red,C.white,C.gold,C.green][Math.floor(i/3)%4];m.box(-1.02,y,baseZ+.03,3.42,.083,.066,col);
-      for(let j=0;j<9;j++)if((j+i)%5===0)m.face([[-2.68+j*.40,y+.006,baseZ+.069],[-2.55+j*.40,y+.04,baseZ+.069],[-2.67+j*.40,y+.078,baseZ+.069]],C.navy,{unlit:true});
-    }
     const pass=Math.round(p),start=pass%2===0 ? -2.45 : .44;
     const shuttleX=p===pass ? start : (-2.45+2.89*(Math.floor(p)%2===0 ? p%1 : 1-p%1));
+    wovenCloth(m,p,shuttleX);
     if(!window.RingDetails?.loom)m.orb(shuttleX,.59+h,baseZ+.12,.23,.078,.08,C.navy);
     for(const x of [-2.83,.88]){
-      m.rod([x,1.09,baseZ],[x,1.09,.31],.062,C.iron);m.orb(x,1.09,.32,.10,.10,.11,C.gold);
+      m.rod([x,1.09,baseZ],[x,1.09,.31],.062,C.iron);m.orb(x,1.09,.32,.10,.10,.11,'#a49c88');
+      for(let i=0;i<18;i++){
+        const a=i*TAU/18;
+        const end=(angle,z,r)=>[x+r*Math.cos(angle),1.09+r*Math.sin(angle),z];
+        m.rod(end(a-.07,.335,.100),end(a+.06,.369,.090),.0024,'#808782',6);
+      }
       if(m.poseVisitors){
         const handoff=.5-.5*Math.cos(Math.PI*p),pressed=Math.min(1,p)*(x<0?handoff:1-handoff);
         m.rightHandTarget=[x,1.146+.042*(1-pressed),.355+.15*(1-pressed)];

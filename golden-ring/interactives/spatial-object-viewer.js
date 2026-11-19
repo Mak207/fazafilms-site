@@ -1,9 +1,11 @@
 import * as THREE from './vendor/three-0.180/three.module.min.js';
 import {loadObjects,objectName} from './spatial-objects.js';
 
-let studio;
+let studio,unavailable=false;
 function makeViewer(canvas){
-  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
+  const gl=canvas.getContext('webgl2',{antialias:true,alpha:false});
+  if(!gl)return null;
+  const renderer=new THREE.WebGLRenderer({canvas,context:gl,antialias:true,alpha:false});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure=1.14;
@@ -75,10 +77,12 @@ export async function displayObject(id) {
   still.hidden=false;canvas.hidden=true;tools.hidden=true;
   document.getElementById('object-title').textContent=objectName(id);
   still.alt='Студийный рендер — '+objectName(id);
+  if(unavailable)return;
   try{
+    studio ||= makeViewer(canvas);
+    if(!studio){unavailable=true;return;}
     const library=await loadObjects();
     if(sequence!==request || !document.getElementById('object-dialog').open)return;
-    studio ||= makeViewer(canvas);
     const source=library.getObjectByName(id);
     if(!source)return;
     canvas.hidden=false;still.hidden=true;tools.hidden=false;
