@@ -20,6 +20,7 @@ export async function createStage(canvas,id,timing,film){
   renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.10;
   const scene=new T.Scene(),camera=new T.PerspectiveCamera(39,16/9,.025,40);
   const room=dressGallery(T,scene,renderer,projection,spec.color);
+  projection.connect?.(scene,room.display,drawing.anchors);
   const {scene:body}=await new GLTFLoader().loadAsync('art/production/'+id+'.glb');
   const holder=new T.Group();holder.add(body);scene.add(holder);
   // The rope extends 160 mm in Pull. Register the neutral triangles to the CAD
@@ -107,13 +108,19 @@ export async function createStage(canvas,id,timing,film){
   const indicators=[];
   if(id==='soundmap')for(const point of drawing.buttons){
     const ring=new T.Mesh(new T.RingGeometry(.031,.035,64),new T.MeshBasicMaterial({color:0xffd29a,side:T.DoubleSide,transparent:true,opacity:0,depthWrite:false}));
-    ring.rotation.x=-Math.PI/2;ring.position.set(...point);ring.position.y+=.004;scene.add(ring);indicators.push(ring);
+    ring.rotation.x=-Math.PI/2;ring.position.set(...point);
+    const ray=new T.Raycaster(V(point[0]+.032,point[1]+.08,point[2]),V(0,-1,0),0,.15);
+    const cap=ray.intersectObject(body,true)[0];
+    ring.userData.restY=(cap?.point.y??point[1])+.00025;
+    ring.position.y=ring.userData.restY;scene.add(ring);indicators.push(ring);
   }
 
-  let travelling=null,controlSurface=null;
+  let travelling=null,controlSurface=null,paintStroke;
   const amber=new T.MeshStandardMaterial({color:0xcfab71,metalness:.54,roughness:.40});
   const dark=new T.MeshStandardMaterial({color:0x413025,metalness:.06,roughness:.70});
   if(id==='craft'){
+    const {brushStroke}=await import('./craft-camera.js');
+    paintStroke=brushStroke(T,scene,body,grip);
     travelling=new T.Group();scene.add(travelling);
     const handle=new T.Mesh(new T.CylinderGeometry(.006,.009,.22,16),room.oak);
     handle.position.y=.13;travelling.add(handle);
@@ -151,8 +158,9 @@ export async function createStage(canvas,id,timing,film){
     if(id==='barge'&&pulls.length){const end=drawing.anchors?.GripAtFullPull||drawing.anchors?.HandGripAtFullPull||[grip.x,grip.y,grip.z+.16];target.lerp(V(...end),p);}
     if(id==='regional'){target.x+=size.x*(p-.5)*.61;target.z+=.095;}
     if(id==='craft'){
-      target.x+=.08*Math.cos(p*6.9);target.z+=.055*Math.sin(p*6.9);
-      travelling.position.copy(target);target.y+=.13;
+      paintStroke(p,target);
+      travelling.position.copy(target).sub(V(0,-.0295,0).applyQuaternion(travelling.quaternion));
+      target.y+=.13;
     }
     if(id==='passport'){
       const slide=smooth((p-.31)/.44);travelling.position.copy(V(...drawing.paperFrom)).lerp(V(...drawing.paperTo),slide);travelling.position.y+=.004;
@@ -164,7 +172,7 @@ export async function createStage(canvas,id,timing,film){
       const prev=Math.max(0,index-1);target.copy(V(...drawing.buttons[prev])).lerp(V(...drawing.buttons[index]),smooth(phase/.43));
       const stroke=smooth((phase-.60)/.20)*(1-smooth((phase-.87)/.12));
       for(const button of mapButtons)button.mesh.morphTargetInfluences[button.index]=button.slot===index?stroke:0;
-      indicators.forEach((mark,i)=>{mark.position.y=drawing.buttons[i][1]+.004-(i===index?.003*stroke:0);});
+      indicators.forEach((mark,i)=>{mark.position.y=mark.userData.restY-(i===index?.003*stroke:0);});
       target.y+=.048*Math.sin(Math.PI*Math.min(1,phase/.63))-.003*stroke;
     }
     if(id==='shadow'){
@@ -298,6 +306,12 @@ export async function createStage(canvas,id,timing,film){
     if(view==='roller' && id==='barge'){
       look.copy(mechanism);eye.copy(look).add(V(.37,.50,-.24));camera.fov=36;
     }
+    if(view==='stamp' && id==='passport'){
+      look.copy(grip).add(V(0,-.16,0));eye.copy(look).add(V(-.53,.13,.34));camera.fov=39;
+    }
+    if(view==='key-travel' && id==='soundmap'){
+      look.copy(grip);eye.copy(look).add(V(.10,.045,.17));camera.fov=32;
+    }
     if(!filmShot){const d=eye.clone().sub(look),sp=new T.Spherical().setFromVector3(d);sp.theta+=manualYaw;sp.phi=clamp(sp.phi-manualPitch,.22,1.53);sp.radius*=manualZoom;eye.copy(look).add(V().setFromSpherical(sp));}
     camera.position.copy(eye);camera.lookAt(look);camera.updateProjectionMatrix();
   }
@@ -364,5 +378,6 @@ export async function createStage(canvas,id,timing,film){
   const deadline=performance.now()+45000;while(!cast.every(a=>people.readyFor(a))&&performance.now()<deadline){await new Promise(r=>setTimeout(r,80));posePeople(0,0);}
   if(!cast.every(a=>people.readyFor(a)))throw Error('Не удалось загрузить фигуры посетителей');
   frame(0);
+  if(!film)projection.enableMotion?.(()=>renderer.render(scene,camera),canvas);
   return {marks,ground:()=>people.ground(),plate,frame,interactive,orbit,resetOrbit,cinema:(v,u,p,t,state)=>draw(v,u,p,p,true,t,1,state),contacts:()=>people.contacts(),dimensions:size.toArray(),grip:grip.toArray(),detail:(fit?.focus||mechanism).toArray(),mount:fit?.measurements||null};
 }

@@ -33,10 +33,47 @@ export async function glassProcess(T){
     return sheet;
   });
   const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;texture.minFilter=T.LinearFilter;texture.generateMipmaps=false;
-  let stamp='';
+  let stamp='',phase=-1,player,repaint,visible=true;
+  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+  function paintMovie(){
+    if(!player||player.readyState<2||document.hidden||!visible||reducedMotion.matches)return;
+    const width=Math.round(h*photos[phase].width/photos[phase].height);
+    const scale=Math.max(width/player.videoWidth,h/player.videoHeight);
+    const sw=width/scale,sh=h/scale;
+    ctx.drawImage(player,(player.videoWidth-sw)/2,(player.videoHeight-sh)/2,sw,sh,0,0,width,h);
+    texture.needsUpdate=true;
+    repaint();
+  }
+  function playVisible(){
+    if(!player)return;
+    if(visible&&!document.hidden&&!reducedMotion.matches&&!player.ended)player.play().catch(()=>{});
+    else player.pause();
+  }
+  function chooseMovie(index){
+    if(!repaint||phase===index)return;
+    if(player){player.pause();player.removeAttribute('src');player.load();player=null;}
+    phase=index;
+    if(index<2||reducedMotion.matches)return;
+    const video=document.createElement('video');
+    player=video;video.muted=true;video.playsInline=true;
+    video.src=new URL('./art/glass-process/'+(index+1)+'.mp4',import.meta.url);
+    if(video.requestVideoFrameCallback){
+      const frame=()=>{if(player!==video)return;paintMovie();if(!video.ended)video.requestVideoFrameCallback(frame);};
+      video.requestVideoFrameCallback(frame);
+    }else video.ontimeupdate=()=>{if(player===video)paintMovie();};
+    playVisible();
+  }
+  function enableMotion(render,element){
+    repaint=render;
+    const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;playVisible();});
+    observer.observe(element);
+    document.addEventListener('visibilitychange',playVisible);
+    reducedMotion.addEventListener('change',()=>{const old=phase;chooseMovie(-1);stamp='';if(old>=2){ctx.drawImage(plates[old],0,0);texture.needsUpdate=true;render();chooseMovie(old);}});
+  }
   function redraw(progress,elapsed,approach,state){
     const s=state?.glassPhase??clamp(progress)*3;
     const i=Math.min(3,Math.floor(s)),mix=i<3?smooth((s-i-.68)/.32):0;
+    chooseMovie(mix?-1:i);
     const t=i===3?(elapsed||0):0,next=i+'/'+mix.toFixed(3)+'/'+Math.round(t*16);if(next===stamp)return;stamp=next;
     ctx.globalAlpha=1;ctx.drawImage(plates[i],0,0);
     if(mix){
@@ -57,5 +94,5 @@ export async function glassProcess(T){
     }
     texture.needsUpdate=true;
   }
-  redraw(0);return {texture,redraw};
+  redraw(0);return {texture,redraw,enableMotion};
 }
