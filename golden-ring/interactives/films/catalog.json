@@ -1,1 +1,29 @@
-{"barge": true, "glass": true, "regional": true, "bells": true, "craft": true, "passport": true, "loom": true, "soundmap": true, "shadow": true}
+{
+  "barge": {
+    "revision": "662f04b786ee53"
+  },
+  "glass": {
+    "revision": "6b4020e5a687cf"
+  },
+  "regional": {
+    "revision": "7b887b9e9eb91f"
+  },
+  "bells": {
+    "revision": "59a96793f60c15"
+  },
+  "craft": {
+    "revision": "175d10fa2fa613"
+  },
+  "passport": {
+    "revision": "6fb054f3bb168c"
+  },
+  "loom": {
+    "revision": "392507bd3066d1"
+  },
+  "soundmap": {
+    "revision": "63101657e5782d"
+  },
+  "shadow": {
+    "revision": "57a859aaaffb95"
+  }
+}

@@ -68,15 +68,15 @@ const api=window.apparatus={frame:t=>stage.frame(t),still:(v,p=.7,seconds=0)=>{i
 api.ready=(async()=>{const times=await fetch('films/timings.json').then(r=>r.json());stage=await createStage(canvas,id,times[id],film);$('#loading').hidden=true;api.dimensions=stage.dimensions;api.grip=stage.grip;api.detail=stage.detail;api.mount=stage.mount;api.duration=times[id].duration;if(!film){const firstView=qs.get('view')||(qs.get('shot')==='action'?'user':'hall');if(['hall','user','detail','result'].includes(firstView))active(firstView);draw();}return true;})();
 api.ready.catch(()=>{$('#loading').hidden=false;$('#loading').textContent='Трёхмерный вид не загрузился. Работу прибора можно изучить по схеме ниже.';});
 if(!film){new ResizeObserver(()=>{if(stage)draw();}).observe(canvas);}
-if(!film)fetch('films/catalog.json').then(r=>r.ok?r.json():{}).then(list=>{const take=list[id];if(!take)return;
+if(!film)fetch('films/catalog.json?v=20261119a').then(r=>r.ok?r.json():{}).then(list=>{const take=list[id];if(!take)return;
  const movie=$('#movie');movie.onloadedmetadata=()=>{$('#draft-size').textContent=movie.videoWidth+' × '+movie.videoHeight;};
  movie.addEventListener('play',()=>fair?.pauseSound());
- movie.src='films/'+id+'.mp4'+(id==='shadow'?'?v=fair1':'');movie.poster='../media/poster-'+(id==='shadow'?'fair':id)+'.webp';
+ const rev=take.revision?'?v='+take.revision:'';movie.src='films/'+id+'.mp4'+rev;movie.poster='../media/poster-'+(id==='shadow'?'fair':id)+'.webp?v=stage2';
  if(take.clean){
    const clean=document.createElement('video');clean.controls=true;clean.playsInline=true;clean.preload='metadata';
    clean.setAttribute('aria-label','Чистовой ролик');clean.onloadedmetadata=()=>{$('#clean-label').textContent=clean.videoWidth+' × '+clean.videoHeight;};
    clean.addEventListener('play',()=>{movie.pause();fair?.pauseSound();});movie.addEventListener('play',()=>clean.pause());
    clean.src=take.clean;$('#clean-pending').replaceWith(clean);$('.film-versions').classList.add('paired');
  }
- const track=document.createElement('track');Object.assign(track,{kind:'captions',label:'Русский',srclang:'ru',src:'films/'+id+'.vtt'});movie.append(track);$('#film-panel').hidden=false;
+ const track=document.createElement('track');Object.assign(track,{kind:'captions',label:'Русский',srclang:'ru',src:'films/'+id+'.vtt'+rev});movie.append(track);$('#film-panel').hidden=false;
  if(location.hash==='#film-panel')$('#film-panel').scrollIntoView();}).catch(()=>{});

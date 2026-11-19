@@ -21,7 +21,9 @@
   for (const card of document.querySelectorAll('.experience[data-scene]')) {
     const cover = card.querySelector('.play-cover');
     const title = card.querySelector('h2').textContent;
-    const file = cover.href;
+    const asset = new URL(cover.href);
+    if(card.dataset.filmRevision) asset.searchParams.set('v',card.dataset.filmRevision);
+    const file = asset.href;
     card.addEventListener('pointerenter', e => {
       if (e.pointerType !== 'mouse' || dialog.open || navigator.connection?.saveData ||
           matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -41,7 +43,7 @@
       movie.poster = cover.querySelector('img').src;
       movie.replaceChildren();
       const captions = document.createElement('track');
-      Object.assign(captions, {kind:'captions', label:'Русский', srclang:'ru',src:file.replace(/\.mp4$/,'.vtt')});
+      Object.assign(captions, {kind:'captions', label:'Русский', srclang:'ru',src:file.replace(/\.mp4(?=\?|$)/,'.vtt')});
       movie.append(captions); movie.src = file; movie.muted = false;
       dialog.showModal(); movie.play().catch(() => {}); dialog.querySelector('button').focus();
     });
