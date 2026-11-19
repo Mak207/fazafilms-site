@@ -58,7 +58,7 @@ export function createPeople(scene,THREE){
     if(required.some(k=>!bones[k]))return null;
     scene.add(node);
     const rest=Object.values(bones).map(b=>[b,b.quaternion.clone()]);
-    return {node,bones,rest,name,signature:''};
+    return {node,bones,rest,name,hipRest:bones.Hips.position.clone(),signature:''};
   }
   function removeActor(actor){
     if(!actor)return;
@@ -72,17 +72,18 @@ export function createPeople(scene,THREE){
     const {node,bones,rest}=actor;
     const active=visitor.role==='user',reach=Number(visitor.reach)||0;
     const supplied=active&&visitor.target?.length===3?V(...visitor.target):null;
-    const signature=[visitor.x,visitor.z,visitor.heading,active,reach,index,...(supplied?.toArray()||[])].join('|');
+    const signature=[visitor.x,visitor.y,visitor.z,visitor.heading,active,reach,index,visitor.singleHand,visitor.step,visitor.limit?.axis,...(supplied?.toArray()||[])].join('|');
     if(signature===actor.signature)return;
     actor.signature=signature;
     for(const [bone,q] of rest)bone.quaternion.copy(q);
+    bones.Hips.position.copy(actor.hipRest);
     let yaw=visitor.heading || 0;
     if(supplied){
       const angle=Math.atan2(supplied.x-visitor.x,supplied.z-visitor.z);
       const turn=Math.atan2(Math.sin(angle-yaw),Math.cos(angle-yaw));
       yaw+=clamp(turn*.65,-.70,.70);
     }
-    node.position.set(visitor.x,.004,visitor.z);
+    node.position.set(visitor.x,(visitor.y||0)+.004,visitor.z);
     node.rotation.y=yaw;
     node.updateWorldMatrix(true,true);
     const sideAxis=lateral.clone().applyAxisAngle(up,yaw);
@@ -90,9 +91,30 @@ export function createPeople(scene,THREE){
     const transformed=v=>v.clone().applyAxisAngle(up,yaw);
     const place=v=>transformed(v).add(node.position);
     const tilt=(bone,axis,angle)=>rotateWorld(bone,Q().setFromAxisAngle(axis,angle));
+    if(visitor.crouch>0){
+      const legs=['Left','Right'].map(s=>[bones[s+'UpLeg'],bones[s+'Leg'],bones[s+'Foot']]).filter(a=>a.every(Boolean));
+      const planted=legs.map(a=>[world(a[2]),a[2].getWorldQuaternion(Q())]);
+      const lowered=world(bones.Hips).addScaledVector(up,-visitor.crouch);
+      bones.Hips.position.copy(bones.Hips.parent.worldToLocal(lowered));node.updateWorldMatrix(false,true);
+      legs.forEach(([hip,knee,ankle],i)=>{
+        const origin=world(hip),dest=planted[i][0],axis=dest.clone().sub(origin).normalize();
+        const a=world(knee).distanceTo(origin),b=world(ankle).distanceTo(world(knee)),d=clamp(origin.distanceTo(dest),Math.abs(a-b)+.001,a+b-.001);
+        const u=(a*a-b*b+d*d)/(2*d),pole=forward.clone().addScaledVector(axis,-forward.dot(axis)).normalize();
+        direct(hip,knee,origin.clone().addScaledVector(axis,u).addScaledVector(pole,Math.sqrt(Math.max(0,a*a-u*u))));
+        direct(knee,ankle,dest);ankle.quaternion.copy(ankle.parent.getWorldQuaternion(Q()).invert().multiply(planted[i][1]));ankle.updateWorldMatrix(false,true);
+      });
+    }
+    if(visitor.step>0&&visitor.step<1){
+      const phase=visitor.step*Math.PI*3,weight=Math.sin(visitor.step*Math.PI);
+      for(const [leg,sign] of [['Left',1],['Right',-1]]){
+        const hip=bones[leg+'UpLeg'],knee=bones[leg+'Leg'],ankle=bones[leg+'Foot'];if(!hip||!knee||!ankle)continue;
+        const swing=sign*Math.sin(phase)*weight*.27,flex=Math.max(0,-swing)*.81;
+        tilt(hip,sideAxis,-swing);tilt(knee,sideAxis,flex);tilt(ankle,sideAxis,swing*.59-flex);
+      }
+    }
 
     // The torso commits to the gesture before the arm extends. Both shoes remain on the floor.
-    tilt(bones.Spine,sideAxis,active?.075+Math.min(reach,1.5)*.050:.005);
+    tilt(bones.Spine,sideAxis,active?.075+Math.min(reach,1.5)*.050+(visitor.lean||0):.005);
     tilt(bones.Spine1,forward,active?-.038:(index%2?.024:-.022));
     tilt(bones.Neck,sideAxis,active?.10:.018);
     tilt(bones.Head,up,active?-.055:(index%2?.12:-.13));
@@ -105,6 +127,10 @@ export function createPeople(scene,THREE){
       const allowance=Math.sqrt(Math.max(.025,(span+.018)**2-toPoint.y**2));
       if(distance>allowance){
         node.position.addScaledVector(horizontal.normalize(),distance-allowance);
+        if(visitor.limit){
+          const {axis,edge,sign}=visitor.limit;
+          node.position[axis]=sign>0?Math.max(edge,node.position[axis]):Math.min(edge,node.position[axis]);
+        }
         node.updateWorldMatrix(true,true);
       }
       const eyes=world(bones.Head),sight=supplied.clone().sub(eyes);
@@ -117,7 +143,7 @@ export function createPeople(scene,THREE){
       const arm=bones[side+'Arm'],forearm=bones[side+'ForeArm'],hand=bones[side+'Hand'];
       const f=(finger,n=1)=>bones[side+'Hand'+finger+n];
       const far=active&&side==='Right'&&(supplied||reach>.25);
-      const support=active&&side==='Left'&&reach>.45;
+      const support=active&&side==='Left'&&reach>.45&&!visitor.singleHand;
       const shoulder=world(arm);
       const a=shoulder.distanceTo(world(forearm)),b=world(forearm).distanceTo(world(hand));
       const knuckles=()=>fingerNames.reduce((v,key)=>v.add(world(f(key))),V()).multiplyScalar(.25);
@@ -128,7 +154,7 @@ export function createPeople(scene,THREE){
       let palm;
       if(far&&supplied)palm=supplied.clone();
       else if(far)palm=place(V(-.17,1.08+.13*Math.min(reach,1),.25+.17*Math.min(reach,1.5)));
-      else if(support)palm=place(V(.20,1.05,.19));
+      else if(support)palm=visitor.otherTarget?V(...visitor.otherTarget):place(V(.20,1.05,.19));
       else {
         const resting=actor.name==='emma'?.056:0;
         palm=place(V(sign*(.193+resting*.3),.887+resting+(index%2&&side==='Left'?.045:0),

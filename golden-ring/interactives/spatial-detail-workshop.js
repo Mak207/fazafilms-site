@@ -3,6 +3,9 @@
   const oak = '#a66e42', walnut = '#694935', brass = '#d7ae68', iron = '#384b4c';
   const cream = '#f5dfac', enamel = '#365e62', gold = '#ffc765';
   const front = 0.04;
+  function tagDevice(m,start,kind) {
+    for(let i=start;i<m.faces.length;i++)m.faces[i].fallbackAsset=kind;
+  }
 
   // Coordinates follow the exhibit geometry: y is up, positive z faces the public.
   function ring(m, x, y, z, radius, axis, colour, width, count=24) {
@@ -94,9 +97,11 @@
     for(const x of [-2.77,.83]){
       m.rod([x-.055,2.64,z],[x+.055,2.64,z],.162,brass,12);
     }
+    const railStart=m.faces.length;
     for(const zz of [front-.106,front+.103]){
       m.rod([-2.75,1.07,zz],[.82,1.07,zz],.029,brass,8);
     }
+    tagDevice(m,railStart,'guide');
     m.shuttlePosition=[shuttleX,1.10,front];
     const start=m.faces.length;
     shuttle(m,shuttleX,1.10,front);
@@ -113,9 +118,10 @@
       m.rod(tail,point,.0042,'#a56850',7);tail=point;
     }
     // End receivers and their small indicator lamps make handoff legs visible from the front.
+    const deviceStart=m.faces.length;
     for(const [i,x] of [-2.79,.78].entries()){
       const atEnd=i===0?travel<.04:travel>.96;
-      const cutaway=state.hardware || state.detailView,dir=i===0?1:-1;
+      const cutaway=state.deviceOpen??(state.hardware || state.detailView),dir=i===0?1:-1;
       if(cutaway){
         m.box(x,.94,.06,.275,.045,.35,enamel);
         m.box(x-dir*.117,.98,.06,.037,.19,.35,enamel);
@@ -133,7 +139,9 @@
         m.box(x,.98,.25,.20,.082,.034,brass);
       }
       m.box(x-dir*.102,1.157,.082,.049,.022,.13,atEnd?gold:'#8b988b');
+      for(let n=0;n<3;n++)m.box(x+(n-1)*.040,cutaway?1.042:1.163,.153,.023,.008,.014,p>=n+1?gold:'#53615d');
     }
+    tagDevice(m,deviceStart,'device');
   }
 
   const mapPoints=[[-2.10,.20],[-.64,-.55],[.90,.28]];
@@ -257,6 +265,7 @@
       }
     }
     // Carriage rollers run along two fixed rails; a knurled collar clamps the silhouette.
+    const guideStart=m.faces.length;
     for(const dx of [-.16,.16]){
       m.rod([x+dx,.51,sz+.18],[x+dx,.51,lz-.19],.029,brass,8);
       m.rod([x+dx,.41,sz+.18],[x+dx,.41,lz-.19],.035,iron,6);
@@ -265,12 +274,24 @@
       m.box(x,.33,end,.44,.22,.10,walnut);
       for(const dx of [-.16,.16])m.rod([x+dx,.50,end-.06],[x+dx,.50,end+.06],.056,iron,8);
     }
-    m.box(x,.545,z,.45,.09,.30,enamel);
+    tagDevice(m,guideStart,'guide');
+    const deviceStart=m.faces.length;
+    const service=state.deviceOpen??(state.hardware||state.detailView);
+    m.box(x,.545,z,.40,service ? .027 : .09,.30,enamel);
+    if(service){
+      m.box(x+.050,.575,z,.14,.012,.11,'#4b8170');
+      m.box(x+.055,.589,z,.052,.012,.030,iron);
+      m.box(x-.088,.576,z+.035,.059,.024,.051,'#77927d');
+      for(const dx of [-.068,.068])m.rod([x+dx,.569,z-.069],[x+dx,.601,z-.069],.007,brass,8);
+    }
+    const index=Math.min(2,Math.floor((state.distance??p/3)*3));
+    for(let n=0;n<3;n++)m.box(x+(n-1)*.037,service ? .583 : .64,z+.101,.027,.007,.012,n===index?gold:'#526263');
     for(const zz of [z-.10,z+.10])for(const dx of [-.17,.17]){
       m.rod([x+dx-.038,.558,zz],[x+dx+.038,.558,zz],.050,brass,9);
     }
     m.cyl(x,.64,z,.083,.133,iron,12);ring(m,x,.744,z,.086,'y',brass,.021,12);
     m.rod([x-.08,.73,z],[x-.22,.73,z],.033,brass,6);
+    tagDevice(m,deviceStart,'device');
     m.box(x,1.12,z,.142,.16,.09,enamel);
     m.rod([x+.06,1.20,z],[x+.13,1.20,z],.032,brass);
     // Focusing barrel, vented body and tilting yoke. The lens faces the screen.
@@ -300,7 +321,7 @@
       focus:[-.99,1.40,-.06],radius:1.65,
       parts:[
         {name:'Челнок с катушкой',position:[-2.45,1.14,.04],locate:p=>[-2.45+2.89*shuttleTravel(p),1.14,.04],radius:.51,angle:[.25,.97],description:'Две деревянные щёчки держат катушку на оси. Участники по очереди передают челнок вдоль направляющей от одной рукояти к другой.',active:'При передаче челнок пересекает станок.'},
-        {name:'Приёмник на конце хода',position:[.78,1.10,.14],radius:.39,angle:[-.60,.80],description:'На каждом конце направляющей предусмотрен роликовый концевик. Дошедший челнок нажимает рычажок. Контроллер принимает попеременно левый и правый сигналы.',active:'Индикатор загорается у того края, куда пришёл челнок.'},
+        {name:'Приёмник на конце хода',position:[.78,1.09,.075],radius:.27,angle:[-.65,.83],description:'На конце хода челнок нажимает ролик концевого выключателя. Рычаг, клеммы и съёмный лоток контроллера видны под кожухом.',active:'Три огонька отмечают принятые по очереди проходы челнока.'},
         {name:'Основа и цветной уток',position:[-.99,1.34,-.23],radius:1.36,angle:[.21,.20],description:'На вертикальной основе подсвечивается следующая полоса. В макете один проход добавляет целый фрагмент орнамента, чтобы общий ритм был виден из зала.',active:'После каждого прохода на полотне появляется новый цветной пояс.'}
       ],draw:drawLoom
     },
@@ -315,7 +336,7 @@
     shadow:{
       focus:[-.83,1.24,-.68],radius:1.63,
       parts:[
-        {name:'Каретка с фигурой',position:[-.83,.69,-2.39],locate:(p,s)=>[-.83,.69,-2.39+(s?.distance??p/3)*1.88],radius:.72,angle:[1.12,.43],description:'Сменная птица или башня зажата на вертикальной стойке. Каретка катится на роликах по двум рельсам. Упоры ограничивают перемещение между лампой и экраном.',active:'Ползунок перемещает и каретку, и фигуру вдоль рельсов.'},
+        {name:'Каретка с фигурой',position:[-.83,.62,-2.39],locate:(p,s)=>[-.83,.62,-2.39+(s?.distance??p/3)*1.88],radius:.37,angle:[1.02,.68],description:'Стойку фигуры держит винтовой зажим. Каретка катится по двум направляющим. Под кожухом показан вариант датчика для синхронизации звука или видео.',active:'Ползунок передвигает фигуру. Тень меняется оптически, а индикатор показывает ближнюю, среднюю или дальнюю часть пути.'},
         {name:'Светильник с линзой',position:[-.83,1.65,.96],radius:.61,angle:[2.35,.26],description:'Светильник закреплён в поворотной скобе. Лучи расходятся от источника; силуэт перекрывает часть пучка. В разборе показаны лучи, проходящие через края выбранной фигуры.',active:'Чем ближе фигура к источнику, тем шире расходятся граничные лучи до экрана.'},
         {name:'Матовый экран',position:[-.83,1.80,-2.64],radius:1.24,angle:[-.64,.19],description:'Тень возникает оптически на светлом полотне. Размер зависит от положения фигуры, а форма повторяет её контур. Шторы по краям обрамляют освещённое поле.',active:'Контур птицы или башни меняется на экране одновременно с движением каретки.'}
       ],draw:drawShadow
