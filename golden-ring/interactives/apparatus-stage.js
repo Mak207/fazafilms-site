@@ -49,7 +49,37 @@ export async function createStage(canvas,id,timing,film){
     }
   });
   let sheaveRotation;
+  let moveWorkingRope;
   if(id==='barge'){
+    const strands=[];
+    body.traverse(o=>{if(o.isMesh && /Hemp.working.strand/i.test(o.name))strands.push(o);});
+    strands.sort((a,b)=>a.name.localeCompare(b.name));
+    if(strands.length===3){
+      const sides=8; // Octagonal cross-sections of all three strands in the web GLB.
+      const positions=strands.map(o=>o.geometry.getAttribute('position'));
+      const neutral=positions.map(a=>Float32Array.from(a.array));
+      const rings=positions[0].count/sides;
+      const offsets=Array.from({length:rings},(_,i)=>{
+        const centres=positions.map(a=>{const sum=V();for(let j=0;j<sides;j++)sum.add(V().fromBufferAttribute(a,i*sides+j));return sum.multiplyScalar(1/sides);});
+        const axisPoint=centres.reduce((sum,c)=>sum.add(c),V()).multiplyScalar(1/3);
+        const radial=centres.map(c=>c.sub(axisPoint));
+        return radial.map((v,n)=>[v,radial[(n+1)%3].clone().addScaledVector(v,.5).multiplyScalar(2/Math.sqrt(3))]);
+      });
+      let previous;
+      moveWorkingRope=p=>{
+        if(previous===p)return;previous=p;
+        const phase=-2*Math.PI*.160*p/.103,co=Math.cos(phase)-1,si=Math.sin(phase);
+        positions.forEach((pos,n)=>{
+          for(let i=0;i<rings;i++){
+            const [u,v]=offsets[i][n],dx=u.x*co+v.x*si,dy=u.y*co+v.y*si,dz=u.z*co+v.z*si;
+            for(let j=0;j<sides;j++){
+              const ix=(i*sides+j)*3;pos.array[ix]=neutral[n][ix]+dx;pos.array[ix+1]=neutral[n][ix+1]+dy;pos.array[ix+2]=neutral[n][ix+2]+dz;
+            }
+          }
+          pos.needsUpdate=true;
+        });
+      };
+    }
     const wheel=body.getObjectByName('Turned_measuring_sheave_-_real_U_groove') ||
       (()=>{let part;body.traverse(o=>{if(o.isMesh && /Turned.measuring.sheave/i.test(o.name))part=o;});return part;})();
     if(!wheel)throw Error('В модели отсутствует измерительный ролик');
@@ -180,6 +210,7 @@ export async function createStage(canvas,id,timing,film){
     }
     for(const m of morphs)m.morphTargetInfluences[m.morphTargetDictionary.Press]=id==='passport'?stampStroke:id==='glass'?p:arm;
     sheaveRotation?.(p);
+    moveWorkingRope?.(p);
     for(const m of pulls)m.morphTargetInfluences[m.morphTargetDictionary.Pull]=p;
     indicators.forEach((mark,index)=>{mark.material.opacity=p>0&&clamp(Math.ceil(p*3-.00001)-1,0,2)===index?.98:.06;});
     people.sync(cast);controlSurface?.(p);
@@ -246,7 +277,11 @@ export async function createStage(canvas,id,timing,film){
     }
     if(view==='joint'){
       const contact=target;
-      if(id==='barge'){look.set(.48,.86,.51);look.set(.55,.90,.79);eye.set(3.37,1.48,.89);camera.fov=40;}
+      if(id==='barge'){look.set(.55,.90,.79);eye.set(3.37,1.48,.89);camera.fov=40;}
+      else if(id==='bells'){look.set(0,1.12,.08);eye.set(.62,2.12,6.35);camera.fov=47;}
+      else if(id==='loom'){look.set(-.05,1.02,.55);eye.set(-.24,1.62,4.65);camera.fov=43;}
+      else if(id==='glass'){look.set(.12,.91,-.17);eye.set(1.73,1.61,-1.70);camera.fov=45;}
+      else if(id==='shadow'){look.set(.06,1.22,-.045);eye.set(-2.04,1.65,1.68);camera.fov=43;}
       else{look.copy(contact).lerp(mechanism,.32);look.y+=.22;eye.copy(look).add(V(2.42,.69,1.54));camera.fov=39;}
     }
     if(view==='performance'){
@@ -260,6 +295,9 @@ export async function createStage(canvas,id,timing,film){
       look.copy(performanceCamera.look);eye.copy(performanceCamera.eye);camera.fov=38;
     }
     if(view==='top'){look.set(0,.55,-.34);eye.set(.015,6.6,.01);camera.fov=56;}
+    if(view==='roller' && id==='barge'){
+      look.copy(mechanism);eye.copy(look).add(V(.37,.50,-.24));camera.fov=36;
+    }
     if(!filmShot){const d=eye.clone().sub(look),sp=new T.Spherical().setFromVector3(d);sp.theta+=manualYaw;sp.phi=clamp(sp.phi-manualPitch,.22,1.53);sp.radius*=manualZoom;eye.copy(look).add(V().setFromSpherical(sp));}
     camera.position.copy(eye);camera.lookAt(look);camera.updateProjectionMatrix();
   }
