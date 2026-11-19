@@ -235,6 +235,12 @@
   }
   function openScene(id, record) {
     stopShow();
+    if(['shadow','soundmap','bells','glass','regional'].includes(id)){
+      const q=new URLSearchParams(location.search);
+      const next=q.get('view')==='detail'?'../drawings.html?scene='+id+'&sheet=2':'apparatus.html?scene='+id;
+      if(record)location.assign(next);else location.replace(next);
+      return;
+    }
     scene=scenes.find(item=>item.id===id)||scenes[0];
     if(record){const u=new URL(location.href);u.searchParams.set('scene',scene.id);['view','part','shot'].forEach(k=>u.searchParams.delete(k));history.pushState({},'',u);}
     select.value=scene.id;$('name').textContent=scene.title;document.title=scene.title+' в 3D · Золотое кольцо';

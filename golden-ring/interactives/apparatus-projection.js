@@ -1,21 +1,27 @@
 // The luminous back wall is exhibition media. It responds to the same normalized control as the physical prop.
 export async function makeProjection(T,id,spec) {
+  if(id==='regional'||id==='soundmap')return (await import('./river-media.js')).riverMedia(T,id);
+  if(id==='glass')return (await import('./glass-process.js')).glassProcess(T);
+  if(id==='shadow')return (await import('./shadow-fairground.js')).makeFairground(T);
   const canvas=document.createElement('canvas'); canvas.width=1280;canvas.height=544;
   const ctx=canvas.getContext('2d',{alpha:false});
   const src=name=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src='art/'+name+'.webp';});
-  const first=await src(spec.surface), last=spec.result===spec.surface?first:await src(spec.result);
+  const first=await src(id==='bells'?'bells-finale':spec.surface), last=id==='bells'||spec.result===spec.surface?first:await src(spec.result);
   const vessel=id==='barge'?await src('barge-vessel'):null;
-  const weave=id==='loom'?await src('loom-weave'):null;
-  const hot=id==='glass'?await src('glass-gather'):null;
+  const weave=id==='loom'?await src('loom-finale'):null;
+  const proof=['passport','craft'].includes(id)?await src(id+'-finale'):null;
   const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;texture.generateMipmaps=false;texture.minFilter=T.LinearFilter;
   const w=canvas.width,h=canvas.height;
+  const bellSpots=[.29,.56,.86];
+  const skyline=id==='bells'?bellSpots.map(x=>{
+    const layer=document.createElement('canvas');layer.width=w;layer.height=h;
+    const c=layer.getContext('2d'),k=Math.max(w/first.width,h/first.height);
+    c.filter='brightness(1.26) saturate(1.16)';c.drawImage(first,(w-first.width*k)/2,(h-first.height*k)/2,first.width*k,first.height*k);c.filter='none';
+    const gradient=c.createRadialGradient(x*w,h*.55,w*.026,x*w,h*.55,w*.25);gradient.addColorStop(0,'#fff');gradient.addColorStop(1,'transparent');
+    c.globalCompositeOperation='destination-in';c.fillStyle=gradient;c.fillRect(0,0,w,h);return layer;
+  }):null;
   function cover(im,zoom=1,pan=.5){const k=Math.max(w/im.width,h/im.height)*zoom;ctx.drawImage(im,(w-im.width*k)*pan,(h-im.height*k)*.5,im.width*k,im.height*k);}
   function place(im,left,bottom,width,height){const k=Math.min(width/im.width,height/im.height);ctx.drawImage(im,left-im.width*k/2,bottom-im.height*k,im.width*k,im.height*k);}
-  function bird(x,y,k){
-    ctx.save();ctx.translate(x,y);ctx.scale(k,k);ctx.fillStyle='#2d231c';ctx.beginPath();
-    ctx.moveTo(-90,21);ctx.bezierCurveTo(-56,17,-33,-2,-12,-16);ctx.bezierCurveTo(1,-25,12,-26,20,-38);ctx.bezierCurveTo(29,-63,52,-63,60,-43);
-    ctx.lineTo(83,-41);ctx.lineTo(59,-32);ctx.bezierCurveTo(53,-2,28,23,1,27);ctx.lineTo(-6,44);ctx.lineTo(8,45);ctx.lineTo(5,49);ctx.lineTo(-17,48);ctx.lineTo(-10,27);ctx.lineTo(-89,29);ctx.closePath();ctx.fill();ctx.restore();
-  }
   function rosette(x,y,size,p){
     ctx.save();ctx.translate(x,y);ctx.scale(size,size);
     for(let j=0;j<3;j++){const count=10-j*3;for(let i=0;i<count;i++){
@@ -25,17 +31,30 @@ export async function makeProjection(T,id,spec) {
     }}ctx.restore();
   }
   let prior=-1;
-  function redraw(p){
-    const step=Math.round(p*130);if(step===prior)return;prior=step;
+  function redraw(p,elapsed,approach,state){
+    const voices=state?.voices??[];
+    const step=id==='bells'?[Math.round(p*40),...voices.map(x=>Math.round(x*30))].join('/'):Math.round(p*130);if(step===prior)return;prior=step;
     ctx.globalAlpha=1;ctx.fillStyle='#251e18';ctx.fillRect(0,0,w,h);cover(first,1.08,.5-.1*p);
     if(id==='barge'){
       place(last,w*.89,h*.97,w*.32,h*.49);
       place(vessel,w*(.09+.55*p),h*(.67+.13*p),w*(.20+.25*p),h*.42);
-    }else if(id==='glass'){
-      ctx.fillStyle='rgba(18,17,18,'+(.20+.20*p)+')';ctx.fillRect(0,0,w,h);
-      const change=Math.min(1,Math.max(0,(p-.60)/.28));
-      ctx.globalCompositeOperation='screen';ctx.globalAlpha=(1-change)*Math.min(1,p*11);place(hot,w*.54,h*.91,w*.34,h*(.20+.48*p));
-      ctx.globalAlpha=change;place(last,w*.54,h*.91,w*.36,h*.82);ctx.globalCompositeOperation='source-over';
+    }else if(id==='bells'){
+      ctx.globalAlpha=1;ctx.filter='brightness(.65) saturate(.78)';cover(last);ctx.filter='none';
+      const active=state?.participants||[];
+      for(const [i,x] of bellSpots.entries()){
+        const a=voices[i]??Math.max(0,Math.min(1,3*p-i));
+        if(a<=.01&&!active[i])continue;
+        ctx.globalAlpha=Math.min(1,a+.14*Number(active[i]||0));ctx.drawImage(skyline[i],0,0);ctx.globalAlpha=1;
+        ctx.save();ctx.beginPath();ctx.rect((x-.16)*w,0,w*.32,h);ctx.clip();
+        const blend=ctx.createRadialGradient(x*w,h*.68,2,x*w,h*.68,w*.17);
+        blend.addColorStop(0,'rgba(255,189,107,'+(.035*Number(active[i]||0)+.26*a)+')');blend.addColorStop(1,'rgba(255,185,100,0)');
+        ctx.fillStyle=blend;ctx.globalCompositeOperation='screen';ctx.fillRect(0,0,w,h);
+        ctx.strokeStyle='rgba(255,208,141,'+(.57*a)+')';ctx.lineWidth=1.3;
+        for(let j=0;j<12;j++){
+          const width=(1+j*.8)*(.5+.5*a),cx=w*x+Math.sin(i*10+j*5.3)*width*1.6;
+          ctx.beginPath();ctx.moveTo(cx-width,h*(.73+j*.017));ctx.lineTo(cx+width,h*(.73+j*.017));ctx.stroke();
+        }ctx.restore();
+      }
     }else if(id==='regional'){
       ctx.save();ctx.beginPath();ctx.rect(0,0,w*p,h);ctx.clip();cover(last);ctx.restore();
       ctx.fillStyle='rgba(183,210,205,.33)';ctx.fillRect(w*p,0,w*(1-p),h);
@@ -49,10 +68,6 @@ export async function makeProjection(T,id,spec) {
           ctx.drawImage(weave,0,h-row*(i+1),w,row);ctx.restore();
         }
       for(let x=0;x<w;x+=7){ctx.fillStyle='rgba(233,206,172,.11)';ctx.fillRect(x,0,2,h);}
-    }else if(id==='shadow'){
-      const glow=ctx.createRadialGradient(w*.50,h*.48,h*.1,w*.50,h*.48,w*.62);
-      glow.addColorStop(0,'#ffeac6');glow.addColorStop(.60,'#d4b693');glow.addColorStop(1,'#46352a');ctx.fillStyle=glow;ctx.fillRect(0,0,w,h);
-      bird(w*.51,h*.53,1+2.8*p);
     }else if(id==='craft'){
       ctx.fillStyle='rgba(33,23,17,'+(.28+.26*p)+')';ctx.fillRect(0,0,w,h);
       ctx.globalAlpha=p;rosette(w*.49,h*.53,1.7,p);
@@ -65,6 +80,10 @@ export async function makeProjection(T,id,spec) {
       pts.forEach(([x,y],i)=>{ctx.fillStyle=(id==='soundmap'?p>0&&i===selected:p*3>=i)?'#ffde9a':'#998d7c';ctx.beginPath();ctx.arc(x*w,y*h,8,0,7);ctx.fill();if(id==='soundmap'&&p>0&&selected===i){ctx.beginPath();ctx.arc(x*w,y*h,24,0,7);ctx.stroke();}});ctx.shadowBlur=0;
     }else{
       ctx.globalAlpha=p;cover(last,1.06+.07*(1-p));
+    }
+    if(proof&&p>.78){
+      ctx.globalCompositeOperation='source-over';ctx.globalAlpha=Math.min(1,(p-.78)/.18);
+      cover(proof,1.015+.05*(1-p));
     }
     ctx.globalAlpha=1;texture.needsUpdate=true;
   }

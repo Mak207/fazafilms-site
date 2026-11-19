@@ -16,7 +16,7 @@ function filterDecisions() {
   for (const decision of decisions) {
     const owner = decision.dataset.owner;
     const search = ownerFilter.value;
-    const jointQuestion = owner === 'Оба' && (search === 'Вячеслав' || search === 'Дорошенко');
+    const jointQuestion = owner === 'Оба' && (search === 'Заказчик' || search === 'Куратор регионов');
     const matches = !search || owner === search || jointQuestion;
     decision.hidden = !matches;
     if (matches) visible++;

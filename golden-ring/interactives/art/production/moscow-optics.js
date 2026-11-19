@@ -33,6 +33,22 @@ export function buildTabletopOptics(T,scene,body,bounds,plan,movingParts){
     projected.name='Actual silhouette on the matte screen';
     projected.frustumCulled=false;projected.renderOrder=2;original.add(projected);
   }
+  function captureTarget(){
+    const pts=[];
+    for(const original of leaves){
+      original.updateWorldMatrix(true,false);
+      const edges=new T.EdgesGeometry(original.geometry,38),v=edges.getAttribute('position');
+      for(let n=0;n<v.count;n++){
+        const world=new T.Vector3().fromBufferAttribute(v,n).applyMatrix4(original.matrixWorld);
+        const reach=(x-lamp.x)/(world.x-lamp.x);
+        pts.push(x-.0008,lamp.y+(world.y-lamp.y)*reach,lamp.z+(world.z-lamp.z)*reach);
+      }
+      edges.dispose();
+    }
+    const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(pts,3));
+    const outline=new T.LineSegments(g,new T.LineBasicMaterial({color:0x9b7042,transparent:true,opacity:.56,depthWrite:false}));
+    outline.name='Registration mark on diffuser';scene.add(outline);
+  }
   return {apertureMm:lamp.toArray().map(v=>Math.round(v*1000)),screenXmm:Math.round(x*1000),
-    usableScreenMm:[Math.round((upper.z-lower.z)*1000),Math.round((upper.y-lower.y)*1000)]};
+    usableScreenMm:[Math.round((upper.z-lower.z)*1000),Math.round((upper.y-lower.y)*1000)],captureTarget};
 }
