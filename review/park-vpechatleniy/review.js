@@ -6,7 +6,6 @@ const fmt=n=>{const t=Math.max(0,Math.floor(n||0));return Math.floor(t/60)+":"+S
 const cue=n=>{const tenths=Math.round(Math.max(0,n||0)*10);return fmt(tenths/10)+(tenths%10?","+tenths%10:"")};
 function filmTime(clip,seconds){const mark=[...(clip.timeline||[])].reverse().find(s=>s.at<=seconds);return mark?mark.film+seconds-mark.at:Number(clip.start||0)+seconds}
 function el(tag,cls="",s=""){const e=document.createElement(tag);e.className=cls;e.textContent=s;return e}
-let active=null;
 const mediaList=[];
 const [folder, editQuery] = location.hash.split("?");
 const access = new URLSearchParams(editQuery).get("edit");
@@ -51,8 +50,9 @@ function mountEditor(card,clip){
  const bar=el("div","media-tools"),label=el("label","file-label","Добавить файл");
  const input=el("input","file");input.type="file";input.accept="video/mp4,image/jpeg,image/png,image/webp";label.append(input);
  const status=el("span","status");status.setAttribute("role","status");
- const remove=el("button","","Удалить файл");remove.type="button";
- bar.append(clip.src?remove:label,status);card.append(bar);
+ const remove=el("button","media-remove","×");remove.type="button";
+ remove.title="Убрать «"+clip.title+"»";remove.setAttribute("aria-label",remove.title);
+ if(clip.src){card.classList.add("media-card");card.append(remove,status)}else{bar.append(label,status);card.append(bar)}
  async function save(file){
    if(input.disabled)return;
    const kind=file?(/\.mp4$/i.test(file.name)||file.type==="video/mp4"?"video":"image"):"empty";
@@ -72,14 +72,14 @@ function mountEditor(card,clip){
    }catch(error){status.textContent=error.message;input.disabled=remove.disabled=false;input.value=""}
  }
  input.onchange=()=>{if(input.files[0])save(input.files[0])};
- remove.onclick=()=>{if(confirm("Убрать основной файл из карточки «"+clip.title+"»?"))save(null)};
+ remove.onclick=()=>{if(confirm("Убрать «"+clip.title+"» со страницы?"))save(null)};
 }
 function mountForm(card,clip,player){
  const strip=el("div","comment-pictures");for(const id of clip.pictures||[])addThumb(strip,id);card.append(strip);
  const box=document.querySelector("#feedback").content.firstElementChild.cloneNode(true);
  card.append(box);
  const q=c=>box.querySelector("."+c),form=box.querySelector("form");
- let current=0,blob=null,url=null,recording=null,stream=null,timer=null,started=0,requestId=null,busy=false;const parts=[];
+ let current=0,requestId=null,busy=false;
  const show=(msg,kind="")=>{q("status").textContent=msg;q("status").className="status "+kind};
  const pictureInput=q("picture"),preview=q("picture-preview"),pictures=new Set();
  function discardPicture(item){
@@ -105,47 +105,18 @@ function mountForm(card,clip,player){
  };
  if(!player)q("form-head").hidden=true;
  const capture=()=>{current=Math.round(Math.min(Number(clip.duration||0),Math.max(0,player?.currentTime||0))*1000)/1000;q("clock").textContent=cue(filmTime(clip,current));requestId=null};
- const audio=b=>{if(url)URL.revokeObjectURL(url);url=null;blob=b;requestId=null;q("voice").removeAttribute("src");
-     if(b){url=URL.createObjectURL(b);q("voice").src=url}q("voice-preview").hidden=!b};
- const area=()=>{form.querySelectorAll("button,input,textarea").forEach(i=>i.disabled=busy);if(recording?.state==="recording"){q("send").disabled=true;q("file").disabled=true}};
- function cleanup(){clearInterval(timer);stream?.getTracks().forEach(t=>t.stop());stream=null;recording=null;active=null;
-   q("record").classList.remove("active");q("record").textContent="Записать голос";q("timer").textContent="";area()}
- function end(){if(recording&&recording.state==="recording")recording.stop()}
- box.addEventListener("toggle",()=>{if(box.open&&!q("note").value&&!blob&&!pictures.size&&!busy){capture();player?.pause()}});
+ const area=()=>{form.querySelectorAll("button,input,textarea").forEach(i=>i.disabled=busy)};
+ box.addEventListener("toggle",()=>{if(box.open&&!q("note").value&&!pictures.size&&!busy){capture();player?.pause()}});
  q("capture").onclick=()=>{player?.pause();capture()};
  form.addEventListener("input",()=>requestId=null);
- q("discard").onclick=()=>{audio(null);q("file").value="";show("")};
- q("file").onchange=()=>{const f=q("file").files[0];if(!f)return;
-    if(f.size>maxBytes||!f.size){q("file").value="";show("Выберите аудиофайл до 8 МБ.","bad");return}
-    audio(f);show("Запись можно прослушать перед отправкой.")};
- q("record").onclick=async()=>{
-   if(recording?.state==="recording"){end();return}
-   if(active&&active!==box){show("Сначала остановите другую запись.","bad");return}
-   if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){show("Выберите готовый аудиофайл — запись с микрофона в этом браузере недоступна.","bad");return}
-   if(active===box)return;
-   active=box;q("record").disabled=true;show("Разрешите доступ к микрофону.");
-   try{
-      stream=await navigator.mediaDevices.getUserMedia({audio:true});
-      const mime=["audio/webm;codecs=opus","audio/mp4","audio/ogg;codecs=opus","audio/webm"].find(v=>MediaRecorder.isTypeSupported(v));
-      recording=new MediaRecorder(stream,mime?{mimeType:mime}:{});parts.length=0;
-      let bytes=0,failed=false;recording.ondataavailable=e=>{if(e.data.size){parts.push(e.data);bytes+=e.data.size;if(bytes>maxBytes)end()}};
-      recording.onerror=()=>{failed=true;show("Микрофон прервал запись. Вы можете выбрать аудиофайл.","bad");end();cleanup()};
-      recording.onstop=()=>{const b=new Blob(parts,{type:mime||parts[0]?.type||"audio/webm"});cleanup();
-        if(failed)return;if(!b.size||b.size>maxBytes){show("Запись пуста или больше 8 МБ.","bad");return}
-        audio(b);show("Прослушайте запись или отправьте её.")};
-      for(const v of mediaList)v.pause();q("voice").pause();player?.pause();
-      started=Date.now();recording.start(800);q("record").classList.add("active");q("record").textContent="Остановить запись";area();show("");
-      timer=setInterval(()=>{const t=(Date.now()-started)/1000;q("timer").textContent=fmt(t)+" / 3:00";if(t>=180)end()},250)
-   }catch(e){cleanup();show("Микрофон недоступен. Разрешите запись в браузере или выберите аудиофайл.","bad")}
- };
- form.onsubmit=async e=>{e.preventDefault();if(busy||recording?.state==="recording")return;
+ form.onsubmit=async e=>{e.preventDefault();if(busy)return;
    const note=q("note").value.trim(),author=q("author").value.trim(),selected=Array.from(pictures);
-   if(!note&&!blob&&!selected.length){show("Добавьте комментарий, запись или картинку.","bad");return}
+    if(!note&&!selected.length){show("Добавьте комментарий или картинку.","bad");return}
    busy=true;area();show("Отправляем…");
    if(!requestId)requestId=crypto.randomUUID();
    const meta={id:clip.id,version:clip.version,seconds:current,author,text:note,request_id:requestId,images:selected.map(p=>({size:p.file.size,key:p.key}))};
    try{
-     const raw=new Blob([...(blob?[blob]:[]),...selected.map(p=>p.file)]),step=640*1024,total=Math.max(1,Math.ceil(raw.size/step));let saved=null;
+      const raw=new Blob(selected.map(p=>p.file)),step=640*1024,total=Math.max(1,Math.ceil(raw.size/step));let saved=null;
      for(let part=0;part<total;part++){
        const response=await fetch(api+"feedback",{method:"POST",headers:{"Content-Type":"application/octet-stream"},body:envelope({...meta,part,total},raw.slice(part*step,(part+1)*step))});
        const result=await response.json();if(!response.ok)throw new Error(result.error||"Не удалось отправить.");
@@ -153,11 +124,10 @@ function mountForm(card,clip,player){
      }
      if(!saved||saved.pictures?.length!==selected.length)throw new Error("Не все вложения подтверждены сервером.");
      selected.forEach((item,i)=>{if(saved.pictures[i])addThumb(strip,saved.pictures[i],item.key);discardPicture(item)});
-     form.reset();audio(null);show(player?"Замечание сохранено · "+cue(filmTime(clip,current)):"Замечание сохранено","ok");
+      form.reset();show(player?"Замечание сохранено · "+cue(filmTime(clip,current)):"Замечание сохранено","ok");
    }catch(err){show((err.message==="Failed to fetch"?"Проверьте подключение.":err.message)+" Текст и запись сохранены в форме.","bad")}
    finally{busy=false;area()}
  };
- window.addEventListener("pagehide",()=>{end();stream?.getTracks().forEach(t=>t.stop())},{once:true});
 }
 function mountApproval(info,clip,photo=false){
  const button=el("button","approve","Утвердить");
@@ -196,12 +166,12 @@ function makeCard(clip,role){
    const info=el("div","meta");info.append(el("h2","",clip.title));if(role!=="lead")mountApproval(info,clip,true);
    card.append(info);mountEditor(card,clip);mountForm(card,clip,null);return card;
  }
- const card=el("article","card");const v=el("video","player");v.controls=true;v.playsInline=true;v.preload=role==="lead"?"metadata":"none";v.setAttribute("aria-label",clip.title);
- if(role==="lead"&&!clip.hasAudio){v.defaultMuted=true;v.muted=true}if(clip.poster)v.poster=clip.poster;v.src=clip.src;card.append(v);
+ const card=el("article","card");const v=el("video","player");v.controls=true;v.playsInline=true;v.preload=role==="lead"?"metadata":"none";v.setAttribute("aria-label",clip.title+". Просмотр без звука");
+ v.defaultMuted=true;v.muted=true;v.volume=0;v.addEventListener("volumechange",()=>{if(!v.muted||v.volume!==0){v.muted=true;v.volume=0}});if(clip.poster)v.poster=clip.poster;v.src=clip.src;card.append(v);
  mediaList.push(v);v.addEventListener("play",()=>mediaList.forEach(o=>{if(o!==v)o.pause()}));
  const info=el("div","meta"),heading=el(role==="clip"?"h3":"h2","",clip.title);
  info.append(heading); if(role==="clip"){info.append(el("span","inpoint",cue(clip.start)+" – "+cue(clip.start+clip.duration)))}
- else {info.append(el("span","pill",role==="lead"&&!clip.hasAudio?"Без звука":"Со звуком"),el("span","pill",fmt(clip.duration)))}
+ else {info.append(el("span","pill","Просмотр без звука"),el("span","pill",fmt(clip.duration)))}
  card.append(info);
  const fileUrl=new URL(clip.src,location.href);
  fileUrl.searchParams.set("download","1");
@@ -249,7 +219,7 @@ selectFolder();
      if(!clip)return;
      const title=draft&&!clip.title.endsWith(" · Драфт")?clip.title+" · Драфт":clip.title;
      const card=makeCard({...clip,title},"clip");card.id=id;
-     const timing=card.querySelector(".inpoint");if(timing)timing.textContent=cue(clip.duration)+(clip.hasAudio===false?" · Без звука":" · Со звуком");
+     const timing=card.querySelector(".inpoint");if(timing)timing.textContent=cue(clip.duration)+" · Без звука";
      parent.append(card);clips.delete(id);
    }
    function place(ids,parent){
