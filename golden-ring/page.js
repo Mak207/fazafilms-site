@@ -70,6 +70,7 @@ const next = document.getElementById('next');
 const zoom = document.getElementById('zoom');
 const galleries = {
   boards: Array.from(document.querySelectorAll('[data-gallery="boards"]')),
+  study: Array.from(document.querySelectorAll('[data-gallery="study"]')),
   slides: Array.from(document.querySelectorAll('[data-gallery="slides"]'))
 };
 let activeGallery = [];
