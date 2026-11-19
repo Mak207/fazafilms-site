@@ -226,6 +226,7 @@ body:has(dialog[open]) { overflow: hidden; }
 .gallery-heading { display:flex; justify-content:space-between; align-items:flex-end; gap:15px 30px; flex-wrap:wrap; max-width:none; }
 .gallery-heading p { margin-bottom:0; }
 .gallery-heading > a { font-weight:600; padding-block:8px; }
+.light-study img { display:block; width:100%; height:auto; border-radius:5px; }
 .cinema-grid .play-cover { overflow:hidden; }
 .cinema-grid .play-cover img { aspect-ratio:16/9; transition:transform .28s ease-out; }
 .cinema-grid .play-cover:focus-visible { outline-offset:-4px; }
