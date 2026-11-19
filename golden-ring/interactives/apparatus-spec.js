@@ -8,5 +8,5 @@ export const stations={
  passport:{height:1.37,contact:[-.32,.85,.15],detail:[.23,.91,.10],surface:'spatial-regional-2',result:'barge-river',control:'Поставить штамп',quantity:'Маршрут билета',subject:'Штамп и считывающая камера',color:'#ceb880'},
  loom:{height:1.76,contact:[-.40,.50,.24],detail:[-.35,.50,.31],surface:'surface-textile',result:'surface-textile',control:'Передать ход',quantity:'Ход челнока',subject:'Челнок, нити и крайнее положение',color:'#ec9c83'},
  soundmap:{height:1.75,contact:[0,.52,.30],detail:[.15,.52,.32],surface:'barge-river',result:'spatial-regional-1',control:'Нажать точку',quantity:'Место на реке',subject:'Тактильная карта и динамик',color:'#aed3c8'},
- shadow:{height:.66,stand:.78,contact:[.04,.26,.27],detail:[.0,.24,.20],surface:'surface-wood',result:'surface-wood',control:'Сдвинуть каретку',quantity:'Положение силуэта',subject:'Фонарь, каретка и экран',color:'#ecc28c'}
+ shadow:{height:.66,stand:.78,contact:[.04,.26,.27],detail:[.0,.24,.20],surface:'surface-wood',result:'surface-wood',control:'Подвести зазывалу к балагану',quantity:'Положение зазывалы',subject:'Откройте балаган',color:'#ecc28c'}
 };

@@ -1,7 +1,29 @@
-const byId=id=>document.getElementById(id);const select=byId('station');let sheet=1;
-for(const item of window.RingScenes)select.add(new Option(item.title,item.id));
-function update(){const item=window.RingScenes.find(s=>s.id===select.value);const file='media/drawings/'+item.id+'-'+sheet+'.webp';byId('sheet').src=file;byId('sheet').alt=item.title+' — '+(sheet===1?'габариты и сборка':'разрез и детали');byId('zoom').href=file.replace('.webp','-full.webp');byId('zoom').setAttribute('aria-label','Увеличить чертёж — '+item.title);
-byId('decision').textContent=item.decision;byId('model').href='interactives/apparatus.html?scene='+item.id;
-document.querySelectorAll('[data-sheet]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.sheet)===sheet)));history.replaceState(null,'','?scene='+item.id+'&sheet='+sheet);}
-const q=new URLSearchParams(location.search);if(window.RingScenes.some(s=>s.id===q.get('scene')))select.value=q.get('scene');sheet=q.get('sheet')==='2'?2:1;
-select.addEventListener('change',update);document.querySelectorAll('[data-sheet]').forEach(b=>b.onclick=()=>{sheet=Number(b.dataset.sheet);update();});update();
+const sheets = document.getElementById('sheets');
+for (const item of window.RingScenes) {
+  const section = document.createElement('section');
+  section.id = item.id;
+  const heading = document.createElement('h2');
+  heading.textContent = item.title;
+  const link = document.createElement('a');
+  link.href = 'interactives/apparatus.html?scene=' + item.id;
+  link.textContent = 'Посмотреть в 3D →';
+  const head = document.createElement('div');
+  head.className = 'station-head'; head.append(heading,link);
+  const pair = document.createElement('div');
+  pair.className = 'pair';
+  for (const [i, caption] of ['Габариты и сборка','Разрез и детали'].entries()) {
+    const prefix = 'media/drawings/'+item.id+'-'+(i+1);
+    const figure = document.createElement('figure');
+    figure.id = item.id+'-'+(i+1);
+    const title = document.createElement('figcaption'); title.textContent = caption;
+    const zoom = document.createElement('a');
+    zoom.href = prefix+'-full.webp'; zoom.target = '_blank'; zoom.rel = 'noopener';
+    const img = document.createElement('img');
+    Object.assign(img,{src:prefix+'.webp',width:1430,height:1011,loading:'lazy',alt:item.title+' — '+caption+'. Увеличить лист'});
+    zoom.append(img); figure.append(title,zoom); pair.append(figure);
+  }
+  section.append(head,pair); sheets.append(section);
+}
+const query = new URLSearchParams(location.search);
+const initial = document.getElementById((query.get('scene')||'')+'-'+(query.get('sheet')==='2'?'2':'1'));
+if(initial) requestAnimationFrame(()=>initial.scrollIntoView({block:'start'}));

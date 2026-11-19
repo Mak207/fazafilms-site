@@ -6,7 +6,7 @@ const SHOE_HALF=.065, ENCLOSURE_HALF=.0985, SHADOW_GAUGE=.138, AXLE_HEIGHT=.056;
 const roundMM=v=>Math.round(v*1000);
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 
-export async function fitMoscowApparatus(scene,T,body,id,{base=0,grip,detail,standFootprint,controllerBase}={}) {
+export async function fitMoscowApparatus(scene,T,body,id,{base=0,grip,detail,standFootprint,controllerBase,fairground}={}) {
   if(id!=='loom'&&id!=='shadow')return null;
   body.updateWorldMatrix(true,true);
   const measuredBody=new T.Box3().setFromObject(body,true),registered=body.userData.moscowRegistrationM;
@@ -141,6 +141,25 @@ export async function fitMoscowApparatus(scene,T,body,id,{base=0,grip,detail,sta
     const knob=new T.Mesh(new T.SphereGeometry(1,22,14),new T.MeshStandardMaterial({color:0x72442d,roughness:.46}));
     knob.scale.set(.023,.024,.041);knob.position.set(0,.022,.15);sled.add(knob);
   }
+  let targetPlate=null;
+  if(id==='shadow'&&fairground){
+    const add=(part,geometry,mat)=>{const mesh=new T.Mesh(geometry,mat);mesh.name='Drawing_'+part.id;mesh.position.fromArray(part.position);group.add(mesh);return mesh;};
+    const metal=new T.MeshStandardMaterial({color:0x69665b,roughness:.43,metalness:.72});
+    const presence=fairground.presence,sensor=fairground.sensor,bracket=fairground.bracket,target=fairground.target;
+    const hood=add(presence,new T.BoxGeometry(...presence.size),new T.MeshStandardMaterial({color:0x272829,roughness:.52}));
+    const lens=new T.Mesh(new T.CircleGeometry(.005,20),new T.MeshPhysicalMaterial({color:0x202735,roughness:.18,metalness:.32}));lens.position.z=presence.size[2]/2+.0005;hood.add(lens);
+    const probe=add(sensor,new T.CylinderGeometry(sensor.size[0]/2,sensor.size[0]/2,sensor.size[1],20),metal);
+    const cap=new T.Mesh(new T.CylinderGeometry(.004,.004,.0006,20),new T.MeshStandardMaterial({color:0x72543e}));cap.position.y=sensor.size[1]/2;probe.add(cap);
+    const [bw,bh,bd]=bracket.size,th=.003;
+    // Separate the upper flange so its sensor bore is modelled through the sheet.
+    const bottom=add(bracket,new T.BoxGeometry(bw,th,bd),metal);bottom.position.y-=.5*(bh-th);
+    const side=add(bracket,new T.BoxGeometry(th,bh-2*th,bd),metal);side.position.x-=.5*(bw-th);
+    const section=new T.Shape();section.moveTo(-bw/2,-bd/2);section.lineTo(bw/2,-bd/2);section.lineTo(bw/2,bd/2);section.lineTo(-bw/2,bd/2);section.closePath();
+    const hole=new T.Path();hole.absarc(0,0,.00425,0,Math.PI*2,true);section.holes.push(hole);
+    const upper=new T.ExtrudeGeometry(section,{depth:th,bevelEnabled:false,curveSegments:16});upper.rotateX(-Math.PI/2);
+    const top=add(bracket,upper,metal);top.position.y+=bh/2-th;
+    targetPlate=add(target,new T.BoxGeometry(...target.size),metal);
+  }
   const movingParts=[];
   body.traverse(o=>{if(o.userData.movingCraftPart)movingParts.push(o);});
   const craft=new T.Group();craft.name='WorkingCraftPart';group.add(craft);
@@ -162,8 +181,7 @@ export async function fitMoscowApparatus(scene,T,body,id,{base=0,grip,detail,sta
   const ySeat=id==='loom'?guideHeight+.014:units[0].root.position.y+(controller ? .051+(plan.cutoutPinMm||0)/1000 : .149);
   if(craftMid){
     if(id==='shadow'&&plan.lamp){
-      // The scan shows the bird broadside to a front camera. Rotate the real
-      // cutout across the beam so the lantern projects its profile, not an edge.
+      // Orient the cutout across the optical axis for a readable projected profile.
       craft.rotation.y=rotation-Math.PI/2;
       craftMid.applyAxisAngle(new T.Vector3(0,1,0),craft.rotation.y);
     }
@@ -208,6 +226,7 @@ export async function fitMoscowApparatus(scene,T,body,id,{base=0,grip,detail,sta
     }
     const shift=(travel-.5)*stroke*(plan.runDirection||1)*cosine;
     const along=mid[widthAxis]+datum+shift,crossing=mid[cross]+offset+slope*shift;
+    if(targetPlate){targetPlate.position.fromArray(fairground.target.position);targetPlate.position[widthAxis]+=shift;targetPlate.position[cross]+=slope*shift;}
     if(craftMid){craft.position[widthAxis]=along-craftMid[widthAxis];craft.position[cross]=crossing-craftMid[cross];}
     const mask=id==='loom'?(1<<Math.floor(scaled+.00001))-1:1<<Math.min(2,Math.floor(p*3));
     units.forEach((u,i)=>{
@@ -264,6 +283,7 @@ export async function fitMoscowApparatus(scene,T,body,id,{base=0,grip,detail,sta
     const stand=new T.Box3(new T.Vector3(-w/2,0,-d/2),new T.Vector3(w/2,base,d/2));
     measurements.withDisplayStandMm=millimetres(stand.union(swept));
   }
+  if(optical&&fairground){update(1,false);optical.captureTarget();}
   update(0,false);
   const opticalTarget=optical?new T.Vector3(optical.screenXmm/1000,base+.43,mid.z):null;
   return {group,measurements,focus,handTarget,handGrips,update,opticalTarget};
