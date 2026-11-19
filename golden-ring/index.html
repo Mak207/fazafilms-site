@@ -10,8 +10,8 @@
   <link rel="icon" href="/favicon.svg">
   <meta property="og:title" content="Золотое кольцо — референсы и решения">
   <meta property="og:image" content="https://fazafilms.ru/golden-ring/media/hero.jpg">
-  <link rel="stylesheet" href="style.css?v=9">
-  <script defer src="page.js?v=9"></script>
+  <link rel="stylesheet" href="style.css?v=10">
+  <script defer src="page.js?v=10"></script>
 </head>
 <body>
   <a class="skip" href="#main">Перейти к содержанию</a>
@@ -22,6 +22,7 @@
       <nav aria-label="Разделы проекта">
         <a href="#approved" data-nav="approved">Референсы</a>
         <a href="#interactives" data-nav="interactives">Интерактивы</a>
+        <a href="#spatial" data-nav="spatial">Пространственная схема</a>
         <a href="drawings.html">Чертежи приборов</a>
         <a href="#decisions" data-nav="decisions">Вопросы к встрече</a>
         <a href="#materials" data-nav="materials">Материалы</a>
@@ -86,6 +87,70 @@
       </div>
       <p class="meeting-link">После обсуждения выбранный вариант и комментарии можно записать в <a href="files/golden-ring-decisions.xlsx" download>реестр решений Excel</a>.</p>
     </section>
+    <section class="panel" id="spatial" aria-labelledby="spatial-title">
+      <div class="heading-row spatial-heading">
+        <div>
+          <p class="eyebrow">Общая сборка 1911 · цветовая версия</p>
+          <h1 id="spatial-title" tabindex="-1">Пространственная схема</h1>
+          <p class="intro">Цвет показывает тип поверхности и назначение объекта. Сначала смотрите общую структуру, затем маршрут и рабочие площади, после — девять сценариев взаимодействия.</p>
+        </div>
+        <a class="button" href="files/golden-ring-spatial-scheme.docx" download>Скачать альбом Word</a>
+      </div>
+
+      <article class="spatial-overview">
+        <a class="spatial-overview-image" href="media/spatial/01-overview.png" data-gallery="spatial" data-title="Цветовая пространственная схема" aria-label="Открыть цветовую пространственную схему">
+          <img src="media/spatial/01-overview.png" width="1920" height="1080" alt="Светлая аксонометрия выставки с цветовым разделением полов, стен, сценографии, экранов, инженерных конструкций и интерактивов." decoding="async">
+        </a>
+        <div class="spatial-legend" aria-label="Цветовая легенда">
+          <h2>Как читать цвет</h2>
+          <ul>
+            <li><i style="--swatch:#c2ab80"></i><span><b>Полы</b> и движение</span></li>
+            <li><i style="--swatch:#c7d4c7"></i><span><b>Стены</b> и перегородки</span></li>
+            <li><i style="--swatch:#7da183"></i><span><b>Сценография</b></span></li>
+            <li><i style="--swatch:#b06345"></i><span><b>Экспонаты</b> и мебель</span></li>
+            <li><i style="--swatch:#1f3b4d"></i><span><b>Экраны</b> и медиа</span></li>
+            <li><i style="--swatch:#66858f"></i><span><b>Металл</b> и инженерия</span></li>
+            <li><i style="--swatch:#248a80"></i><span><b>Новые интерактивы</b></span></li>
+          </ul>
+          <p>Легенда одинакова на общем виде и планах. Это позволяет быстро отделить архитектуру от оборудования и понять, где происходит действие посетителя.</p>
+        </div>
+      </article>
+
+      <div class="spatial-reading" aria-label="Порядок чтения материалов">
+        <article><b>1 · Маршрут</b><span>От входа через регионы и мастерские к финальной зоне.</span></article>
+        <article><b>2 · Рабочие площади</b><span>Показано место не только для корпуса, но и для действия человека.</span></article>
+        <article><b>3 · Сценарий</b><span>На каждом листе: место → действие → реакция → результат.</span></article>
+      </div>
+
+      <div class="spatial-plan-grid">
+        <figure>
+          <a href="media/spatial/02-route-plan.png" data-gallery="spatial" data-title="Рекомендуемый маршрут зрителя"><img src="media/spatial/02-route-plan.png" width="1920" height="1080" alt="План выставки с рекомендуемым маршрутом зрителя через тринадцать зон." loading="lazy" decoding="async"></a>
+          <figcaption><b>Маршрут зрителя</b><span>Тринадцать зон и единое направление движения без встречного потока.</span></figcaption>
+        </figure>
+        <figure>
+          <a href="media/spatial/03-areas-plan.png" data-gallery="spatial" data-title="Объекты и рабочие площади"><img src="media/spatial/03-areas-plan.png" width="1920" height="1080" alt="План выставки с девятью интерактивами и расчетными рабочими площадями." loading="lazy" decoding="async"></a>
+          <figcaption><b>Объекты и рабочие площади</b><span>Габариты корпусов, места посетителей и свободные подходы.</span></figcaption>
+        </figure>
+      </div>
+
+      <div class="spatial-section-title">
+        <p class="eyebrow">Детализация по приборам</p>
+        <h2>Девять интерактивов в пространстве</h2>
+        <p>На каждом листе показаны реальная 3D-модель, место установки, рабочая площадь, три шага посетителя, согласованное и решение, которое ещё требуется.</p>
+      </div>
+      <div class="spatial-sheet-grid">
+        <figure><a href="media/spatial/04-barge.png" data-gallery="spatial" data-title="Бурлацкая лямка"><img src="media/spatial/04-barge.png" width="1920" height="1080" alt="Пространственный лист интерактива Бурлацкая лямка." loading="lazy" decoding="async"></a><figcaption><b>Бурлацкая лямка</b><span>Канат → датчик усилия → движение судна.</span></figcaption></figure>
+        <figure><a href="media/spatial/05-glass.png" data-gallery="spatial" data-title="Дыхание стекла"><img src="media/spatial/05-glass.png" width="1920" height="1080" alt="Пространственный лист интерактива Дыхание стекла." loading="lazy" decoding="async"></a><figcaption><b>Дыхание стекла</b><span>Формование → считывание → макропроцессы стекла.</span></figcaption></figure>
+        <figure><a href="media/spatial/06-regional.png" data-gallery="spatial" data-title="Окна на Волгу"><img src="media/spatial/06-regional.png" width="1920" height="1080" alt="Пространственный лист интерактива Окна на Волгу." loading="lazy" decoding="async"></a><figcaption><b>Окна на Волгу</b><span>Жест руки открывает новые неповторяющиеся виды.</span></figcaption></figure>
+        <figure><a href="media/spatial/07-bells.png" data-gallery="spatial" data-title="Голоса колоколов"><img src="media/spatial/07-bells.png" width="1920" height="1080" alt="Пространственный лист интерактива Голоса колоколов." loading="lazy" decoding="async"></a><figcaption><b>Голоса колоколов</b><span>Три размера и тембра складываются в общий перезвон.</span></figcaption></figure>
+        <figure><a href="media/spatial/08-craft.png" data-gallery="spatial" data-title="Городецкая роза"><img src="media/spatial/08-craft.png" width="1920" height="1080" alt="Пространственный лист интерактива Городецкая роза." loading="lazy" decoding="async"></a><figcaption><b>Городецкая роза</b><span>Траектория кисти раскрывает слои ремесла.</span></figcaption></figure>
+        <figure><a href="media/spatial/09-passport.png" data-gallery="spatial" data-title="Билет путешественника"><img src="media/spatial/09-passport.png" width="1920" height="1080" alt="Пространственный лист интерактива Билет путешественника." loading="lazy" decoding="async"></a><figcaption><b>Билет путешественника</b><span>Личный маршрут связывается с финальной панорамой.</span></figcaption></figure>
+        <figure><a href="media/spatial/10-loom.png" data-gallery="spatial" data-title="Узор в четыре руки"><img src="media/spatial/10-loom.png" width="1920" height="1080" alt="Пространственный лист интерактива Узор в четыре руки." loading="lazy" decoding="async"></a><figcaption><b>Узор в четыре руки</b><span>Два участника собирают рисунок только вместе.</span></figcaption></figure>
+        <figure><a href="media/spatial/11-soundmap.png" data-gallery="spatial" data-title="Волга на слух"><img src="media/spatial/11-soundmap.png" width="1920" height="1080" alt="Пространственный лист интерактива Волга на слух." loading="lazy" decoding="async"></a><figcaption><b>Волга на слух</b><span>От локальной точки — к масштабу всей реки и страны.</span></figcaption></figure>
+        <figure><a href="media/spatial/12-shadow.png" data-gallery="spatial" data-title="Оживи Нижегородскую ярмарку"><img src="media/spatial/12-shadow.png" width="1920" height="1080" alt="Пространственный лист интерактива Оживи Нижегородскую ярмарку." loading="lazy" decoding="async"></a><figcaption><b>Оживи Нижегородскую ярмарку</b><span>Зазывала открывает балаган и запускает панораму.</span></figcaption></figure>
+      </div>
+    </section>
+
     <section class="panel" id="interactives" aria-labelledby="interactives-title">
       <div class="experience-heading gallery-heading">
         <div><h1 id="interactives-title" tabindex="-1">Интерактивы</h1>
