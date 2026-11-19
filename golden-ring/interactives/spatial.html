@@ -3,9 +3,9 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,follow"><title>Интерактивы в пространстве · Золотое кольцо</title>
 <link rel="icon" href="/favicon.svg">
-<link rel="stylesheet" href="spatial.css?v=3"><script defer src="spatial-data.js?v=3"></script>
-<script defer src="spatial-detail-river.js?v=3"></script><script defer src="spatial-detail-studio.js?v=3"></script><script defer src="spatial-detail-workshop.js?v=3"></script>
-<script type="module" src="spatial-light.js?v=3"></script><script defer src="spatial-engine.js?v=3"></script><script defer src="spatial-ui.js?v=3"></script>
+<link rel="stylesheet" href="spatial.css?v=4"><script defer src="spatial-data.js?v=3"></script>
+<script defer src="spatial-detail-river.js?v=3"></script><script defer src="spatial-detail-studio.js?v=3"></script><script defer src="spatial-detail-workshop.js?v=4"></script>
+<script type="module" src="spatial-light.js?v=4"></script><script defer src="spatial-visitors.js?v=4"></script><script defer src="spatial-architecture.js?v=4"></script><script defer src="spatial-engine.js?v=4"></script><script defer src="spatial-ui.js?v=4"></script>
 </head><body>
 <header class="mast"><a href="../#interactives">← Золотое кольцо</a><a href="research.html">Мировой опыт и решения</a></header>
 <main>
@@ -15,11 +15,15 @@
   <div class="workspace">
     <section class="viewer" aria-label="Трёхмерный макет">
       <div class="views" role="group" aria-label="Точка обзора">
-        <button data-view="overview" aria-pressed="true">Общий вид</button><button data-view="participant" aria-pressed="false">От участника</button><button data-view="spectator" aria-pressed="false">От зрителя</button><button data-view="technical" aria-pressed="false">Сверху</button><button data-view="detail" class="detail-view" aria-pressed="false">Механизм крупно</button>
+        <button data-view="cinema" aria-pressed="true">Кинокадр</button><button data-view="overview" aria-pressed="false">Общий вид</button><button data-view="participant" aria-pressed="false">От участника</button><button data-view="spectator" aria-pressed="false">От зрителя</button><button data-view="technical" aria-pressed="false">Сверху</button><button data-view="detail" class="detail-view" aria-pressed="false">Механизм крупно</button>
       </div>
       <canvas id="space" aria-label="Вращаемый трёхмерный макет выставочной сцены" aria-describedby="composition"></canvas>
+      <div id="cinema-controls" class="cinema-controls">
+        <div class="shots" role="group" aria-label="Крупность кадра"><button data-shot="establish" aria-pressed="true">Зал</button><button data-shot="action" aria-pressed="false">Действие</button><button data-shot="result" aria-pressed="false">Результат</button></div>
+        <button type="button" id="play-scene" aria-pressed="false">Смотреть сцену</button>
+      </div>
       <p id="render-note" hidden>Трёхмерный вид недоступен. Ниже описаны расстановка людей и работа оборудования.</p>
-      <div class="legend"><span><i class="actor"></i>Участник</span><span><i class="guest"></i>Зритель</span><span class="rotate-hint">Потяните, чтобы повернуть зал</span></div>
+      <div class="legend"><button type="button" id="show-object">Предмет крупно</button><button type="button" id="show-poster">Заставка</button><span class="rotate-hint">Потяните, чтобы повернуть зал</span></div>
       <div id="compact-controls"></div>
       <div class="viewer-tools"><div role="group" aria-label="Поворот и масштаб"><button data-camera="left" aria-label="Повернуть влево">↶</button><button data-camera="right" aria-label="Повернуть вправо">↷</button><button data-camera="out" aria-label="Отдалить">−</button><button data-camera="in" aria-label="Приблизить">+</button></div>
         <label class="hardware"><input type="checkbox" id="hardware">Показать механизмы</label></div>
@@ -39,4 +43,11 @@
   <p class="fine">В моделях показаны предложенные варианты механизмов. Размеры и привязку к площадке уточняют после обмеров и натурной пробы. <a href="../files/golden-ring-mechanisms.docx" download>Листы девяти механизмов в Word</a></p>
   <nav class="next"><a href="../#interactives">← Все интерактивы</a><button id="next">Следующая сцена →</button></nav>
   <noscript>Для управления трёхмерными сценами включите JavaScript. <a href="research.html">Читать исследование</a></noscript>
-</main></body></html>
+</main>
+<dialog id="poster-dialog" aria-labelledby="poster-title"><div class="poster-bar"><h2 id="poster-title"></h2><button id="close-poster" autofocus>Вернуться в 3D</button></div><img id="scene-poster" width="1440" height="810" alt=""></dialog>
+<dialog id="object-dialog" aria-labelledby="object-title"><div class="poster-bar"><h2 id="object-title">Предмет крупно</h2><button id="close-object" autofocus>Вернуться в зал</button></div>
+  <img id="object-still" width="1120" height="630" alt="Студийный рендер предмета">
+  <canvas id="object-model" tabindex="0" aria-label="Объёмный предмет. Поверните мышью или стрелками." hidden></canvas>
+  <div id="object-tools" role="group" aria-label="Вид предмета" hidden><button id="switch-object">Студийный кадр</button><button data-orbit="-1">Повернуть влево</button><button data-orbit="1">Вправо</button><button data-orbit="0">Исходный вид</button></div>
+</dialog>
+</body></html>

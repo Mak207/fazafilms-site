@@ -97,7 +97,10 @@
     for(const zz of [front-.106,front+.103]){
       m.rod([-2.75,1.07,zz],[.82,1.07,zz],.029,brass,8);
     }
+    m.shuttlePosition=[shuttleX,1.10,front];
+    const start=m.faces.length;
     shuttle(m,shuttleX,1.10,front);
+    for(let i=start;i<m.faces.length;i++)m.faces[i].fallbackAsset='loom';
     // Raised floats and double selvedges distinguish woven material from a painted board.
     const height=.20+.59*p;
     const shades=['#284f55','#b45646','#e4c695','#7d976d'];

@@ -10,7 +10,7 @@
   <link rel="icon" href="/favicon.svg">
   <meta property="og:title" content="Золотое кольцо — референсы и решения">
   <meta property="og:image" content="https://fazafilms.ru/golden-ring/media/hero.jpg">
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=8">
   <script defer src="page.js?v=7"></script>
 </head>
 <body>
@@ -86,99 +86,167 @@
       <p class="meeting-link">После обсуждения выбранный вариант и комментарии можно записать в <a href="files/golden-ring-decisions.xlsx" download>реестр решений Excel</a>.</p>
     </section>
     <section class="panel" id="interactives" aria-labelledby="interactives-title">
-      <div class="experience-heading">
-        <h1 id="interactives-title" tabindex="-1">Интерактивы</h1>
-        <p>Попробуйте действие на экране или откройте зал в 3D. Ракурс «Механизм крупно» показывает устройство экспоната и реакцию его деталей.</p>
-        <div class="lab-links"><a href="interactives/spatial.html?scene=barge">Осмотреть залы в 3D →</a><a href="interactives/spatial.html?scene=loom&amp;view=detail&amp;part=2">Рассмотреть механизм →</a><a href="interactives/research.html">Мировой опыт и решения</a></div>
+      <div class="experience-heading gallery-heading">
+        <div><h1 id="interactives-title" tabindex="-1">Интерактивы</h1>
+          <p>Выберите сцену. В 3D можно занять место участника, попробовать действие и рассмотреть механизм крупно.</p></div>
+        <a href="interactives/research.html">Мировой опыт и решения →</a>
       </div>
-      <h2 class="lab-section">Шесть сцен проекта</h2>
-      <div class="experience-grid"><article class="experience">
-          <a class="play-cover" href="interactives/barge.html?v=2" data-demo="barge" data-title="Бурлацкая лямка" aria-label="Попробовать «Бурлацкая лямка»">
-            <img src="media/demo-barge.webp?v=2" width="800" height="440" loading="lazy" alt="">
-            <span aria-hidden="true">▶</span>
+      <div class="experience-grid cinema-grid">
+        <article class="experience" data-scene="barge">
+          <a class="play-cover" href="interactives/spatial.html?scene=barge&amp;view=cinema" aria-label="Открыть в 3D — Бурлацкая лямка">
+            <img src="media/poster-barge.webp" width="1440" height="810" alt="Рука тянет канат у выставочного ворота перед речной панорамой." loading="lazy" decoding="async">
           </a>
           <div class="experience-copy">
             <small>Ярославская область</small>
             <h2>Бурлацкая лямка</h2>
-            <p>Попадите в ритм тяги. Судно приближается к причалу, за кормой расходятся волны. Можно тянуть по очереди вдвоём.</p>
-            <div class="lab-actions"><a class="play-action" href="interactives/barge.html?v=2" data-demo="barge" data-title="Бурлацкая лямка" aria-label="Попробовать «Бурлацкая лямка»">Попробовать на экране</a><a class="space-action" href="interactives/spatial.html?scene=barge">Зал и механизм в 3D ↗</a></div>
-            <details><summary>Как это работает в выставочном зале</summary><p>В зале участники тянут настоящий канат. На общем экране зрители видят ход судна. Способ измерения тяги и сопротивление ещё предстоит выбрать.</p></details>
+            <p>Потяните канат. Ритм двух участников приводит в движение баржу на волжской панораме.</p>
+            <div class="lab-actions">
+              <a class="play-action" href="interactives/spatial.html?scene=barge&amp;view=cinema" aria-label="Открыть в 3D — Бурлацкая лямка">Открыть в 3D <span aria-hidden="true">→</span></a>
+              <a class="space-action" href="interactives/spatial.html?scene=barge&amp;view=detail&amp;part=1" aria-label="Устройство — Бурлацкая лямка">Устройство</a>
+            </div>
+            <details><summary>Как попробовать</summary><p>Тяните по очереди или задайте ритм в одиночку. В экранной версии попробуйте довести судно до пристани.</p>
+              <a class="action-demo" href="interactives/barge.html?v=2" data-demo="barge" data-title="Бурлацкая лямка">Запустить действие <span aria-hidden="true">↗</span></a>
+            </details>
           </div>
         </article>
-<article class="experience">
-          <a class="play-cover" href="interactives/glass.html?v=2" data-demo="glass" data-title="Дыхание стекла" aria-label="Попробовать «Дыхание стекла»">
-            <img src="media/demo-glass.webp?v=2" width="800" height="440" loading="lazy" alt="">
-            <span aria-hidden="true">▶</span>
+        <article class="experience" data-scene="glass">
+          <a class="play-cover" href="interactives/spatial.html?scene=glass&amp;view=cinema" aria-label="Открыть в 3D — Дыхание стекла">
+            <img src="media/poster-glass.webp" width="1440" height="810" alt="Ручной мех на верстаке и стеклянная форма в свете печи." loading="lazy" decoding="async">
           </a>
           <div class="experience-copy">
-            <small>Мастерская · Гусь-Хрустальный</small>
+            <small>Гусь-Хрустальный</small>
             <h2>Дыхание стекла</h2>
-            <p>Выдуйте хрустальную вазу ровным потоком воздуха. Когда она остынет, передвиньте лампу и проследите за световым узором на верстаке.</p>
-            <div class="lab-actions"><a class="play-action" href="interactives/glass.html?v=2" data-demo="glass" data-title="Дыхание стекла" aria-label="Попробовать «Дыхание стекла»">Попробовать на экране</a><a class="space-action" href="interactives/spatial.html?scene=glass">Зал и механизм в 3D ↗</a></div>
-            <details><summary>Как это работает в выставочном зале</summary><p>В концепции предусмотрена трубка с датчиком интенсивности. На экране мастерской зрители видят, как из горячей заготовки получается изделие.</p></details>
+            <p>Подайте воздух ручным мехом. Заготовка растёт, а свет в финале открывает грани готового сосуда.</p>
+            <div class="lab-actions">
+              <a class="play-action" href="interactives/spatial.html?scene=glass&amp;view=cinema" aria-label="Открыть в 3D — Дыхание стекла">Открыть в 3D <span aria-hidden="true">→</span></a>
+              <a class="space-action" href="interactives/spatial.html?scene=glass&amp;view=detail&amp;part=1" aria-label="Устройство — Дыхание стекла">Устройство</a>
+            </div>
+            <details><summary>Как попробовать</summary><p>В 3D рассмотрите отвод давления. В экранной мастерской выровняйте поток и переместите лампу у готовой вазы.</p>
+              <a class="action-demo" href="interactives/glass.html?v=2" data-demo="glass" data-title="Дыхание стекла">Запустить действие <span aria-hidden="true">↗</span></a>
+            </details>
           </div>
         </article>
-<article class="experience">
-          <a class="play-cover" href="interactives/regional.html?v=2" data-demo="regional" data-title="Окна на Волгу" aria-label="Попробовать «Окна на Волгу»">
-            <img src="media/demo-regional.webp?v=2" width="800" height="440" loading="lazy" alt="">
-            <span aria-hidden="true">▶</span>
+        <article class="experience" data-scene="regional">
+          <a class="play-cover" href="interactives/spatial.html?scene=regional&amp;view=cinema" aria-label="Открыть в 3D — Окна на Волгу">
+            <img src="media/poster-regional.webp" width="1440" height="810" alt="Ладонь открывает вид на реку за запотевшим арочным стеклом." loading="lazy" decoding="async">
           </a>
           <div class="experience-copy">
             <small>Тверская область</small>
             <h2>Окна на Волгу</h2>
-            <p>Проведите пальцем или мышью по запотевшему стеклу. За тремя окнами скрыты разные виды Волги.</p>
-            <div class="lab-actions"><a class="play-action" href="interactives/regional.html?v=2" data-demo="regional" data-title="Окна на Волгу" aria-label="Попробовать «Окна на Волгу»">Попробовать на экране</a><a class="space-action" href="interactives/spatial.html?scene=regional">Зал и механизм в 3D ↗</a></div>
-            <details><summary>Как это работает в выставочном зале</summary><p>В зале движение руки может отслеживать лидар. Панорама и движение света остаются видны всей группе.</p></details>
+            <p>Проведите рукой у запотевшей арки. За следом ладони открывается вид на Волгу.</p>
+            <div class="lab-actions">
+              <a class="play-action" href="interactives/spatial.html?scene=regional&amp;view=cinema" aria-label="Открыть в 3D — Окна на Волгу">Открыть в 3D <span aria-hidden="true">→</span></a>
+              <a class="space-action" href="interactives/spatial.html?scene=regional&amp;view=detail&amp;part=1" aria-label="Устройство — Окна на Волгу">Устройство</a>
+            </div>
+            <details><summary>Как попробовать</summary><p>В экранном опыте проведите мышью или пальцем по стеклу. Откройте три окна, чтобы увидеть панораму целиком.</p>
+              <a class="action-demo" href="interactives/regional.html?v=2" data-demo="regional" data-title="Окна на Волгу">Запустить действие <span aria-hidden="true">↗</span></a>
+            </details>
           </div>
         </article>
-<article class="experience">
-          <a class="play-cover" href="interactives/bells.html?v=2" data-demo="bells" data-title="Голоса колоколов" aria-label="Попробовать «Голоса колоколов»">
-            <img src="media/demo-bells.webp?v=2" width="800" height="440" loading="lazy" alt="">
-            <span aria-hidden="true">▶</span>
+        <article class="experience" data-scene="bells">
+          <a class="play-cover" href="interactives/spatial.html?scene=bells&amp;view=cinema" aria-label="Открыть в 3D — Голоса колоколов">
+            <img src="media/poster-bells.webp" width="1440" height="810" alt="Три бронзовых колокола над слушателями на фоне вечернего города." loading="lazy" decoding="async">
           </a>
           <div class="experience-copy">
             <small>Московская область</small>
             <h2>Голоса колоколов</h2>
-            <p>Добавьте по слушателю под каждый колокол. Когда зазвучат все три, на другом берегу загорятся окна.</p>
-            <div class="lab-actions"><a class="play-action" href="interactives/bells.html?v=2" data-demo="bells" data-title="Голоса колоколов" aria-label="Попробовать «Голоса колоколов»">Попробовать на экране</a><a class="space-action" href="interactives/spatial.html?scene=bells">Зал и механизм в 3D ↗</a></div>
-            <details><summary>Как это работает в выставочном зале</summary><p>В зале у каждого колокола своя звуковая зона. Когда слушатели занимают все места, начинается общий звон. Для показа на втором мониторе откройте «Экран зрителей» внутри опыта.</p></details>
+            <p>Займите места под тремя колоколами. Отдельные голоса складываются в перезвон, на берегу зажигаются окна.</p>
+            <div class="lab-actions">
+              <a class="play-action" href="interactives/spatial.html?scene=bells&amp;view=cinema" aria-label="Открыть в 3D — Голоса колоколов">Открыть в 3D <span aria-hidden="true">→</span></a>
+              <a class="space-action" href="interactives/spatial.html?scene=bells&amp;view=detail&amp;part=1" aria-label="Устройство — Голоса колоколов">Устройство</a>
+            </div>
+            <details><summary>Как попробовать</summary><p>Добавляйте слушателей по одному. Для просмотра результата всей группой в экранной версии можно открыть отдельный экран зрителей.</p>
+              <a class="action-demo" href="interactives/bells.html?v=2" data-demo="bells" data-title="Голоса колоколов">Запустить действие <span aria-hidden="true">↗</span></a>
+            </details>
           </div>
         </article>
-<article class="experience">
-          <a class="play-cover" href="interactives/craft.html?v=2" data-demo="craft" data-title="Городецкая роза" aria-label="Попробовать «Городецкая роза»">
-            <img src="media/demo-craft.webp?v=2" width="800" height="440" loading="lazy" alt="">
-            <span aria-hidden="true">▶</span>
+        <article class="experience" data-scene="craft">
+          <a class="play-cover" href="interactives/spatial.html?scene=craft&amp;view=cinema" aria-label="Открыть в 3D — Городецкая роза">
+            <img src="media/poster-craft.webp" width="1440" height="810" alt="Художник ведёт кисть по деревянному блюду с городецким цветком." loading="lazy" decoding="async">
           </a>
           <div class="experience-copy">
-            <small>Мастерская · Городец</small>
+            <small>Городец</small>
             <h2>Городецкая роза</h2>
-            <p>Подберите краски и распишите три цветка на деревянном блюде. Готовый орнамент появится на стене мастерской.</p>
-            <div class="lab-actions"><a class="play-action" href="interactives/craft.html?v=2" data-demo="craft" data-title="Городецкая роза" aria-label="Попробовать «Городецкая роза»">Попробовать на экране</a><a class="space-action" href="interactives/spatial.html?scene=craft">Зал и механизм в 3D ↗</a></div>
-            <details><summary>Как это работает в выставочном зале</summary><p>В мастерской кисть и палитра управляют изображением. Готовую роспись можно развернуть на общей стене, чтобы остальные увидели результат художника.</p></details>
+            <p>Проведите кистью по блюду. Цветы, которые появились под рукой, разворачиваются в роспись на стене.</p>
+            <div class="lab-actions">
+              <a class="play-action" href="interactives/spatial.html?scene=craft&amp;view=cinema" aria-label="Открыть в 3D — Городецкая роза">Открыть в 3D <span aria-hidden="true">→</span></a>
+              <a class="space-action" href="interactives/spatial.html?scene=craft&amp;view=detail&amp;part=1" aria-label="Устройство — Городецкая роза">Устройство</a>
+            </div>
+            <details><summary>Как попробовать</summary><p>В экранной мастерской подберите три краски по образцу. Сравните готовый орнамент на блюде и на стене.</p>
+              <a class="action-demo" href="interactives/craft.html?v=2" data-demo="craft" data-title="Городецкая роза">Запустить действие <span aria-hidden="true">↗</span></a>
+            </details>
           </div>
         </article>
-<article class="experience">
-          <a class="play-cover" href="interactives/passport.html?v=2" data-demo="passport" data-title="Билет путешественника" aria-label="Попробовать «Билет путешественника»">
-            <img src="media/demo-passport.webp?v=2" width="800" height="440" loading="lazy" alt="">
-            <span aria-hidden="true">▶</span>
+        <article class="experience" data-scene="passport">
+          <a class="play-cover" href="interactives/spatial.html?scene=passport&amp;view=cinema" aria-label="Открыть в 3D — Билет путешественника">
+            <img src="media/poster-passport.webp" width="1440" height="810" alt="Бумажный билет со штампами у оптического считывателя на деревянном столе." loading="lazy" decoding="async">
           </a>
           <div class="experience-copy">
             <small>Пролог и финальная зона</small>
             <h2>Билет путешественника</h2>
-            <p>Выберите три штампа и отсканируйте билет. На карте появится ваш путь, а под ней — карточки трёх остановок.</p>
-            <div class="lab-actions"><a class="play-action" href="interactives/passport.html?v=2" data-demo="passport" data-title="Билет путешественника" aria-label="Попробовать «Билет путешественника»">Попробовать на экране</a><a class="space-action" href="interactives/spatial.html?scene=passport">Зал и механизм в 3D ↗</a></div>
-            <details><summary>Как это работает в выставочном зале</summary><p>При входе посетитель получает билет. В финале центральный стол считывает отметки, а панорамный экран показывает предложенный маршрут. Правила подбора городов в прототипе иллюстративные.</p></details>
+            <p>Отметьте интересы на билете и поднесите его к считывателю. Ваши отметки превращаются в маршрут на панораме.</p>
+            <div class="lab-actions">
+              <a class="play-action" href="interactives/spatial.html?scene=passport&amp;view=cinema" aria-label="Открыть в 3D — Билет путешественника">Открыть в 3D <span aria-hidden="true">→</span></a>
+              <a class="space-action" href="interactives/spatial.html?scene=passport&amp;view=detail&amp;part=1" aria-label="Устройство — Билет путешественника">Устройство</a>
+            </div>
+            <details><summary>Как попробовать</summary><p>Выберите три штампа и отсканируйте билет. В экранном опыте можно менять порядок остановок. Маршруты иллюстративные.</p>
+              <a class="action-demo" href="interactives/passport.html?v=2" data-demo="passport" data-title="Билет путешественника">Запустить действие <span aria-hidden="true">↗</span></a>
+            </details>
           </div>
-        </article></div>
-      <h2 class="lab-section new-head">Три новые идеи для обсуждения</h2>
-      <div class="experience-grid"><article class="experience proposal">
-        <a class="play-cover" href="interactives/spatial.html?scene=loom" aria-label="Открыть в 3D — Узор в четыре руки"><img src="media/space-loom.webp?v=3" width="800" height="440" loading="lazy" alt=""></a>
-        <div class="experience-copy"><small>Текстильная мастерская</small><h3>Узор в четыре руки</h3><p>Передавайте челнок между двумя сторонами рамы. Каждый проход добавляет полосу к общему полотну.</p><a class="play-action" href="interactives/spatial.html?scene=loom">Попробовать в 3D →</a></div></article><article class="experience proposal">
-        <a class="play-cover" href="interactives/spatial.html?scene=soundmap" aria-label="Открыть в 3D — Волга на слух"><img src="media/space-soundmap.webp?v=3" width="800" height="440" loading="lazy" alt=""></a>
-        <div class="experience-copy"><small>Речные города</small><h3>Волга на слух</h3><p>Выберите точку на рельефной карте. Послушайте эскизы воды, мастерской и пристани в своём порядке.</p><a class="play-action" href="interactives/spatial.html?scene=soundmap">Попробовать в 3D →</a></div></article><article class="experience proposal">
-        <a class="play-cover" href="interactives/spatial.html?scene=shadow" aria-label="Открыть в 3D — Театр дорожных теней"><img src="media/space-shadow.webp?v=3" width="800" height="440" loading="lazy" alt=""></a>
-        <div class="experience-copy"><small>Рассказы о городах</small><h3>Театр дорожных теней</h3><p>Выберите птицу или башню и придвиньте фигуру к лампе. Размер тени меняется прямо на экране в зале.</p><a class="play-action" href="interactives/spatial.html?scene=shadow">Попробовать в 3D →</a></div></article></div>
-      <p class="experience-basis">Основа — перечень мультимедийных инсталляций от 7 ноября и обсуждение от 10 ноября. Расположение участников, оборудование и три новых сценария предложены для обсуждения.</p>
+        </article>
+        <article class="experience" data-scene="loom">
+          <a class="play-cover" href="interactives/spatial.html?scene=loom&amp;view=cinema" aria-label="Открыть в 3D — Узор в четыре руки">
+            <img src="media/poster-loom.webp" width="1440" height="810" alt="Передача деревянного челнока между руками у ткацкой рамы." loading="lazy" decoding="async">
+          </a>
+          <div class="experience-copy">
+            <small>Текстильная мастерская · новая идея</small>
+            <h2>Узор в четыре руки</h2>
+            <p>Передавайте челнок от одной стороны рамы к другой. Каждый проход добавляет полосу к общему полотну.</p>
+            <div class="lab-actions">
+              <a class="play-action" href="interactives/spatial.html?scene=loom&amp;view=cinema" aria-label="Открыть в 3D — Узор в четыре руки">Открыть в 3D <span aria-hidden="true">→</span></a>
+              <a class="space-action" href="interactives/spatial.html?scene=loom&amp;view=detail&amp;part=1" aria-label="Устройство — Узор в четыре руки">Устройство</a>
+            </div>
+            <details><summary>Как попробовать</summary><p>Начните слева, верните челнок справа и проведите его ещё раз. Один посетитель может выполнить обе роли.</p>
+              <a class="action-demo" href="interactives/spatial.html?scene=loom&amp;view=cinema&amp;shot=action">Запустить действие <span aria-hidden="true">↗</span></a>
+            </details>
+          </div>
+        </article>
+        <article class="experience" data-scene="soundmap">
+          <a class="play-cover" href="interactives/spatial.html?scene=soundmap&amp;view=cinema" aria-label="Открыть в 3D — Волга на слух">
+            <img src="media/poster-soundmap.webp" width="1440" height="810" alt="Рука на рельефной карте Волги под локальным громкоговорителем." loading="lazy" decoding="async">
+          </a>
+          <div class="experience-copy">
+            <small>Речные города · новая идея</small>
+            <h2>Волга на слух</h2>
+            <p>Коснитесь рельефной карты. Три места отвечают звуками воды, мастерской и пристани.</p>
+            <div class="lab-actions">
+              <a class="play-action" href="interactives/spatial.html?scene=soundmap&amp;view=cinema" aria-label="Открыть в 3D — Волга на слух">Открыть в 3D <span aria-hidden="true">→</span></a>
+              <a class="space-action" href="interactives/spatial.html?scene=soundmap&amp;view=detail&amp;part=1" aria-label="Устройство — Волга на слух">Устройство</a>
+            </div>
+            <details><summary>Как попробовать</summary><p>Включите звук и выберите любую точку. У каждого звукового эскиза есть подпись и световая реакция.</p>
+              <a class="action-demo" href="interactives/spatial.html?scene=soundmap&amp;view=cinema&amp;shot=action">Запустить действие <span aria-hidden="true">↗</span></a>
+            </details>
+          </div>
+        </article>
+        <article class="experience" data-scene="shadow">
+          <a class="play-cover" href="interactives/spatial.html?scene=shadow&amp;view=cinema" aria-label="Открыть в 3D — Театр дорожных теней">
+            <img src="media/poster-shadow.webp" width="1440" height="810" alt="Лампа освещает плоскую фигуру на направляющей перед теневым экраном." loading="lazy" decoding="async">
+          </a>
+          <div class="experience-copy">
+            <small>Рассказы о городах · новая идея</small>
+            <h2>Театр дорожных теней</h2>
+            <p>Передвиньте силуэт вдоль луча. Чем ближе фигура к лампе, тем крупнее её тень на экране.</p>
+            <div class="lab-actions">
+              <a class="play-action" href="interactives/spatial.html?scene=shadow&amp;view=cinema" aria-label="Открыть в 3D — Театр дорожных теней">Открыть в 3D <span aria-hidden="true">→</span></a>
+              <a class="space-action" href="interactives/spatial.html?scene=shadow&amp;view=detail&amp;part=1" aria-label="Устройство — Театр дорожных теней">Устройство</a>
+            </div>
+            <details><summary>Как попробовать</summary><p>Выберите птицу или башню. Ползунком переместите каретку от экрана к лампе и проследите за краями тени.</p>
+              <a class="action-demo" href="interactives/spatial.html?scene=shadow&amp;view=cinema&amp;shot=action">Запустить действие <span aria-hidden="true">↗</span></a>
+            </details>
+          </div>
+        </article>
+      </div>
+      <p class="experience-basis">Основа — перечень мультимедийных инсталляций от 7 ноября и обсуждение от 10 ноября. Расположение участников, оборудование и три новых сценария предложены для обсуждения. <a href="files/cinema-treatment.docx" download>План доработки девяти сцен в Word ↓</a></p>
     </section>
     <section class="panel" id="decisions" aria-labelledby="decisions-title">
       <div class="heading-row">
@@ -245,6 +313,8 @@
         <p class="intro">Откройте презентацию для общего обсуждения или скачайте материалы для работы с вариантами.</p></div>
       </div>
       <div class="file-grid">
+        <article class="file-card"><h2>Как доработать девять 3D-сцен</h2><p>Пилот на ткацком стане, художественные решения по каждому залу и вопросы для совместного просмотра.</p>
+          <a href="files/cinema-treatment.docx" download>Скачать Word ↓</a></article>
         <article class="file-card"><h2>Три листа визуализаций</h2><p>Финальная зона, стол во Владимире и лайтбокс с экранами. По два варианта на каждом листе.</p>
           <a href="files/golden-ring-references.docx?v=4" download>Скачать Word ↓</a></article>
         <article class="file-card"><h2>Устройство девяти интерактивов</h2><p>По листу на каждый зал. Общий вид, крупный план и объяснения трёх рабочих узлов.</p>
