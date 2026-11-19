@@ -1,6 +1,10 @@
 {
   "barge": {
-    "revision": "662f04b786ee53"
+    "revision": "e4c8cc23411645",
+    "performance": true,
+    "width": 1920,
+    "height": 1080,
+    "duration": 40
   },
   "glass": {
     "revision": "6b4020e5a687cf"

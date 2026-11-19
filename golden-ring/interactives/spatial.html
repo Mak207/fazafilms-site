@@ -1,54 +1,7 @@
-<!doctype html>
-<html lang="ru"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,follow"><title>Интерактивы в пространстве · Золотое кольцо</title>
-<link rel="icon" href="/favicon.svg">
-<link rel="stylesheet" href="spatial.css?v=4"><script defer src="spatial-data.js?v=3"></script>
-<script defer src="spatial-detail-river.js?v=3"></script><script defer src="spatial-detail-studio.js?v=3"></script><script defer src="spatial-detail-workshop.js?v=4"></script>
-<script type="module" src="spatial-light.js?v=4"></script><script defer src="spatial-visitors.js?v=4"></script><script defer src="spatial-architecture.js?v=4"></script><script defer src="spatial-engine.js?v=4"></script><script defer src="spatial-ui.js?v=4"></script>
-</head><body>
-<header class="mast"><a href="../#interactives">← Золотое кольцо</a><a href="research.html">Мировой опыт и решения</a></header>
-<main>
-  <div class="selector"><label for="choose">Сцена в пространстве</label><select id="choose"></select></div>
-  <div class="screen-title"><div><p class="place" id="zone"></p><h1 id="name">Интерактивы в пространстве</h1></div></div>
-  <p class="intro" id="aim"></p>
-  <div class="workspace">
-    <section class="viewer" aria-label="Трёхмерный макет">
-      <div class="views" role="group" aria-label="Точка обзора">
-        <button data-view="cinema" aria-pressed="true">Кинокадр</button><button data-view="overview" aria-pressed="false">Общий вид</button><button data-view="participant" aria-pressed="false">От участника</button><button data-view="spectator" aria-pressed="false">От зрителя</button><button data-view="technical" aria-pressed="false">Сверху</button><button data-view="detail" class="detail-view" aria-pressed="false">Механизм крупно</button>
-      </div>
-      <canvas id="space" aria-label="Вращаемый трёхмерный макет выставочной сцены" aria-describedby="composition"></canvas>
-      <div id="cinema-controls" class="cinema-controls">
-        <div class="shots" role="group" aria-label="Крупность кадра"><button data-shot="establish" aria-pressed="true">Зал</button><button data-shot="action" aria-pressed="false">Действие</button><button data-shot="result" aria-pressed="false">Результат</button></div>
-        <button type="button" id="play-scene" aria-pressed="false">Смотреть сцену</button>
-      </div>
-      <p id="render-note" hidden>Трёхмерный вид недоступен. Ниже описаны расстановка людей и работа оборудования.</p>
-      <div class="legend"><button type="button" id="show-object">Предмет крупно</button><button type="button" id="show-poster">Заставка</button><span class="rotate-hint">Потяните, чтобы повернуть зал</span></div>
-      <div id="compact-controls"></div>
-      <div class="viewer-tools"><div role="group" aria-label="Поворот и масштаб"><button data-camera="left" aria-label="Повернуть влево">↶</button><button data-camera="right" aria-label="Повернуть вправо">↷</button><button data-camera="out" aria-label="Отдалить">−</button><button data-camera="in" aria-label="Приблизить">+</button></div>
-        <label class="hardware"><input type="checkbox" id="hardware">Показать механизмы</label></div>
-      <div id="part-panel" hidden>
-        <div id="part-buttons" role="group" aria-label="Выбрать узел механизма"></div>
-        <p id="part-description"></p><p id="part-response"></p><p class="part-state">Состояние в модели <strong id="part-state"></strong></p>
-        <button type="button" id="device-cover" hidden>Снять кожух</button>
-      </div>
-    </section>
-    <section class="console" id="console"><h2>Попробовать действие</h2>
-      <p id="prompt"></p><div id="actions"></div>
-      <p id="feedback" role="status" aria-live="polite"></p>
-      <div class="progress" aria-hidden="true"><i></i><i></i><i></i></div>
-      <div class="foot-actions"><button class="reset" id="reset">Сначала</button><a id="original" href="#">Экранный интерактив ↗</a></div>
-    </section>
-  </div>
-  <section class="notes"><div><h2>Участники и зрители</h2><p id="composition"></p></div><div><h2>Механизм в зале</h2><p id="apparatus"></p></div><div><h2>Что обсудить</h2><p id="decision"></p></div></section>
-  <p class="fine">В моделях показаны предложенные варианты механизмов. Размеры и привязку к площадке уточняют после обмеров и натурной пробы. <a href="../files/golden-ring-mechanisms.docx" download>Листы девяти механизмов в Word</a></p>
-  <nav class="next"><a href="../#interactives">← Все интерактивы</a><button id="next">Следующая сцена →</button></nav>
-  <noscript>Для управления трёхмерными сценами включите JavaScript. <a href="research.html">Читать исследование</a></noscript>
-</main>
-<dialog id="poster-dialog" aria-labelledby="poster-title"><div class="poster-bar"><h2 id="poster-title"></h2><button id="close-poster" autofocus>Вернуться в 3D</button></div><img id="scene-poster" width="1440" height="810" alt=""></dialog>
-<dialog id="object-dialog" aria-labelledby="object-title"><div class="poster-bar"><h2 id="object-title">Предмет крупно</h2><button id="close-object" autofocus>Вернуться в зал</button></div>
-  <img id="object-still" width="1120" height="630" alt="Студийный рендер предмета">
-  <canvas id="object-model" tabindex="0" aria-label="Объёмный предмет. Поверните мышью или стрелками." hidden></canvas>
-  <div id="object-tools" role="group" aria-label="Вид предмета" hidden><button id="switch-object">Студийный кадр</button><button data-orbit="-1">Повернуть влево</button><button data-orbit="1">Вправо</button><button data-orbit="0">Исходный вид</button></div>
-</dialog>
-</body></html>
+<!doctype html><html lang="ru"><meta charset="utf-8"><title>Прибор в зале · Золотое кольцо</title><script>
+const destination=new URL('apparatus.html',location.href), q=new URLSearchParams(location.search);
+const views={overview:'hall',participant:'user',spectator:'result',technical:'top',detail:'detail',cinema:({action:'user',result:'result'}[q.get('shot')]||'hall')};
+destination.searchParams.set('scene',q.get('scene')||'glass');
+destination.searchParams.set('view',views[q.get('view')]||'hall');
+destination.hash=location.hash;location.replace(destination);
+</script><p><a href="apparatus.html">Перейти к модели прибора</a></p></html>

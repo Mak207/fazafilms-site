@@ -12,6 +12,10 @@ export function dressGallery(T,scene,renderer,projection,theme){
   // Individual slabs, a continuous skirting and a bronze shadow-gap read at eye level.
   box(0,-.10,0,16,.16,18,basalt);
   for(let iz=-4;iz<7;iz++)for(let ix=-4;ix<4;ix++)box(ix*1.85+(iz%2)*.47,-.023,iz*1.42,1.845,.045,1.415,floor);
+  box(0,2.30,8.45,13.15,4.60,.20,plaster);
+  box(0,.18,8.31,13.10,.32,.09,oak);
+  for(const x of [-4.5,-2.25,0,2.25,4.5])box(x,2.2,8.30,.10,4.4,.10,oak);
+  for(const side of [-1,1])box(side*6.52,2.25,6.66,.16,4.5,3.72,plaster);
   box(0,2.30,-3.55,13.8,4.60,.20,plaster);
   for(const side of [-1,1]){
     box(side*6.52,2.25,.6,.16,4.5,8.4,plaster);box(side*6.41,.20,.6,.06,.38,8.4,oak);

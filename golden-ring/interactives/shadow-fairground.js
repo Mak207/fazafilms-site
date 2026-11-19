@@ -1,3 +1,4 @@
+import {GLTFLoader} from './vendor/three-0.180/GLTFLoader.js';
 import {mergeGeometries} from './vendor/three-0.180/BufferGeometryUtils.js';
 
 const turn=Math.PI*2;
@@ -22,7 +23,7 @@ export async function makeFairground(T){
   const loader=new T.TextureLoader(),tex=async file=>{
     const t=await loader.loadAsync(art(file));t.colorSpace=T.SRGBColorSpace;return t;
   };
-  const [panorama,facade,people,performer,profile]=await Promise.all([tex('fairground/fair-panorama.webp'),tex('fairground/show-booth.webp'),tex('fair-crowd.webp'),tex('fairground/skomorokh.webp'),fetch(art('fairground/crier-profile.json')).then(r=>r.json())]);
+  const [panorama,facade,puppet,profile]=await Promise.all([tex('fairground/fair-panorama.webp'),tex('fairground/show-booth.webp'),new GLTFLoader().loadAsync(art('fairground/puppet.glb')),fetch(art('fairground/crier-profile.json')).then(r=>r.json())]);
   const scene=new T.Scene(),camera=new T.OrthographicCamera(-8,8,3.22,-3.22,.1,45);
   camera.position.set(0,3.0,19);camera.lookAt(0,-.03,0);
   const target=new T.WebGLRenderTarget(1536,618,{depthBuffer:true,stencilBuffer:false});
@@ -98,30 +99,36 @@ export async function makeFairground(T){
   const player=new T.Group();booth.add(player);player.position.set(.07,.64,-.15);
   const boots=lit(0x493e32);
   function puppetLayer(parent,pts,m,z){return cutout(parent,shape(pts),.035,m,0,0,z);}
-  const actorHeight=1.51,actorWidth=actorHeight*performer.image.width/performer.image.height;
-  const actorGeometry=new T.PlaneGeometry(actorWidth,actorHeight,30,46);
-  actorGeometry.translate(0,actorHeight/2,0);
-  const actorPosition=actorGeometry.getAttribute('position'),rest=actorPosition.array.slice();
-  actorPosition.setUsage(T.DynamicDrawUsage);
-  const actor=mesh(player,actorGeometry,new T.MeshBasicMaterial({map:performer,alphaTest:.28,side:T.DoubleSide,toneMapped:false}));
-  actor.name='Painted skomorokh with articulated tambourine arm';
-  function perform(t,life){
-    const shoulderX=.09*actorWidth,shoulderY=.73*actorHeight;
-    const lift=life*(.045+.12*Math.sin(t*4.45)+.024*Math.sin(t*8.9));
-    for(let i=0;i<actorPosition.count;i++){
-      const x=rest[3*i],y=rest[3*i+1];
-      const u=x/actorWidth+.5,v=y/actorHeight;
-      const armWeight=ease((u-.53)/.21)*ease((v-.65)/.13);
-      const angle=lift*armWeight,cs=Math.cos(angle),sn=Math.sin(angle);
-      const handX=x-shoulderX,handY=y-shoulderY;
-      const kick=ease((u-.52)/.16)*ease((.66-v)/.14)*ease((v-.19)/.16);
-      actorPosition.setXY(i,shoulderX+cs*handX-sn*handY+.017*life*kick*Math.sin(t*2.22),shoulderY+sn*handX+cs*handY+.053*life*kick*Math.sin(t*2.22));
+  const actor=puppet.scene;
+  const bounds=new T.Box3().setFromObject(actor),center=bounds.getCenter(new T.Vector3());
+  const scale=1.51/(bounds.max.y-bounds.min.y);
+  actor.scale.setScalar(scale);actor.position.set(-center.x*scale,-bounds.min.y*scale,-center.z*scale);
+  player.add(actor);
+  const joints=[];
+  actor.traverse(mesh=>{
+    if(!mesh.isMesh)return;
+    const pos=mesh.geometry.attributes.position,base=pos.array.slice();
+    const box=new T.Box3().setFromBufferAttribute(pos),size=box.getSize(new T.Vector3());
+    const indices=[];
+    for(let i=0;i<pos.count;i++){
+      const u=(pos.getX(i)-box.min.x)/size.x,v=(pos.getY(i)-box.min.y)/size.y;
+      const w=ease((.45-u)/.19)*ease((v-.52)/.15);
+      if(w>0)indices.push([i,w]);
     }
-    actorPosition.needsUpdate=true;
-    player.rotation.z=life*.032*Math.sin(t*2.22);
-    player.position.y=.64+life*.033*(1-Math.cos(t*4.45));
+    joints.push({pos,base,indices,x:box.min.x+.39*size.x,y:box.min.y+.72*size.y});
+  });
+  function perform(t,life){
+    const swing=.17*life*Math.sin(t*4.45);
+    for(const {pos,base,indices,x,y} of joints){
+      for(const [i,w] of indices){
+        const dx=base[i*3]-x,dy=base[i*3+1]-y,c=Math.cos(w*swing),s=Math.sin(w*swing);
+        pos.setXY(i,x+dx*c-dy*s,y+dx*s+dy*c);
+      }
+      pos.needsUpdate=true;
+    }
+    player.rotation.y=.13*Math.sin(t*2.23)*life;
+    player.position.y=.64+.025*life*(1-Math.cos(t*4.45));
   }
-
   const carousel=new T.Group();carousel.position.set(4.53,-2.12,.02);scene.add(carousel);
   const footing=new T.Group();carousel.add(footing);
   disc(footing,0,.05,0,1.75,1.81,.15,blue);disc(footing,0,.17,0,1.67,1.73,.10,gild);
@@ -174,12 +181,6 @@ export async function makeFairground(T){
   const silhouette=shape(profile.profile_mm.map(([x,y])=>[x/64,y/64]));
   for(const loop of profile.cutouts_mm){const path=new T.Path();loop.forEach(([x,y],i)=>i?path.lineTo(x/64,y/64):path.moveTo(x/64,y/64));path.closePath();silhouette.holes.push(path);}
   const barker=cutout(scene,silhouette,.019,flat(0x3f2b21),-3.95,-2.14,1.08);
-  const spectators=[],bounds=[[9,516],[557,1054],[1123,1696],[1782,2106]];
-  for(const [i,[a,b]] of bounds.entries()){
-    const t=people.clone();t.offset.x=a/2172;t.repeat.x=(b-a)/2172;t.needsUpdate=true;
-    const h=[1.72,1.44,1.63,1.29][i],o=plane(scene,t,0,0,0,h*(b-a)/724,h);
-    spectators.push(o);
-  }
   const lamps=new T.Group();booth.add(lamps);
   const lampMat=new T.MeshBasicMaterial({color:0xffdfa3,toneMapped:false});
   for(let i=0;i<13;i++)orb(lamps,-2.10+i*.35,.62,.54,.032,.032,.03,lampMat);
@@ -193,11 +194,6 @@ export async function makeFairground(T){
     barker.position.x=-4.34+1.53*p;barker.position.y=-2.17+.20*p;barker.scale.setScalar(1.01+.42*p);
     drumGroup.rotation.y=.38+Math.max(0,t-2.10)*.64*life;
     horses.forEach((o,i)=>o.position.y=1.09+.13*life*Math.sin(t*2+i*1.75));
-    spectators.forEach((o,i)=>{
-      const initial=[-7.74,7.92,6.94,7.72][i],end=[-4.93,6.72,.94,2.65][i],reveal=ease((t-1.0-i*.56)/(2.7+i*.3));
-      const h=[1.72,1.44,1.63,1.29][i];o.position.set(initial+(end-initial)*reveal,-2.40+h*.46+(.035*Math.sin(t*4+i))*reveal*(1-reveal),.48+i*.14);
-      o.visible=i<2||reveal>0;o.material.color.setScalar(.88+.12*reveal);
-    });
     const light=.40+.32*clamp(approach)+.28*life;
     back.material.color.setRGB(light,light*.98,light*.92);
     facadeMesh.material.color.setRGB(.70+.30*light,.72+.26*light,.69+.25*light);

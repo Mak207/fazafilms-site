@@ -8,9 +8,9 @@ const id=Object.hasOwn(stations,qs.get('scene'))?qs.get('scene'):'glass';
 const spec=stations[id],data=window.RingScenes.find(x=>x.id===id),canvas=$('#stage'),range=$('#range');
 document.documentElement.classList.toggle('film',film);document.title=data.title+' · Золотое кольцо';
 for(const [s,v] of Object.entries({'#title':data.title,'#zone':data.zone,'#aim':data.aim,'#action-title':spec.subject,'#measure':spec.quantity,'#operate':spec.control,'#how':data.apparatus,'#decision':data.decision,'#feedback':data.beats[0]}))$(s).textContent=v;
-$('#schema').href='spatial.html?scene='+id+'&view=detail&part=1';
 $('#drawing').href='../drawings.html?scene='+id;
-if(['glass','bells','regional','soundmap'].includes(id)){$('#schema').href='apparatus.html?scene='+id+'&view=detail';$('#schema').textContent='Механизм крупным планом →';}
+$('#schema').href='../drawings.html?scene='+id+'&sheet=2';
+$('#schema').textContent='Разрез и детали →';
 if(id==='shadow'){
   $('#schema').href='../drawings.html?scene=shadow&sheet=2';
   $('#schema').textContent='Разрез каретки и датчика →';
@@ -64,19 +64,14 @@ let drag;canvas.onpointerdown=e=>{fair?.manualView();drag=[e.clientX,e.clientY];
 canvas.onpointermove=e=>{if(!drag||!stage)return;stage.orbit((drag[0]-e.clientX)*.007,(e.clientY-drag[1])*.006);drag=[e.clientX,e.clientY];};
 canvas.onpointerup=canvas.onpointercancel=()=>{drag=null;};
 canvas.onwheel=e=>{e.preventDefault();stage?.orbit(0,0,Math.exp(e.deltaY*.001));};
-const api=window.apparatus={frame:t=>stage.frame(t),still:(v,p=.7,seconds=0)=>{if(['hall','user','detail','result'].includes(v))stage.interactive(v,p,seconds);},showBells:state=>{if(id==='bells'&&stage)stage.interactive('hall',state.participants.filter(Boolean).length/3,0,state);}};
-api.ready=(async()=>{const times=await fetch('films/timings.json').then(r=>r.json());stage=await createStage(canvas,id,times[id],film);$('#loading').hidden=true;api.dimensions=stage.dimensions;api.grip=stage.grip;api.detail=stage.detail;api.mount=stage.mount;api.duration=times[id].duration;if(!film){const firstView=qs.get('view')||(qs.get('shot')==='action'?'user':'hall');if(['hall','user','detail','result'].includes(firstView))active(firstView);draw();}return true;})();
+const api=window.apparatus={marks:()=>stage.marks(),ground:()=>stage.ground(),plate:(...args)=>stage.plate(...args),cinema:(...args)=>stage.cinema(...args),contacts:()=>stage.contacts(),frame:t=>stage.frame(t),still:(v,p=.7,seconds=0)=>{if(['hall','user','detail','result','top'].includes(v))stage.interactive(v,p,seconds);},showBells:state=>{if(id==='bells'&&stage)stage.interactive('hall',state.participants.filter(Boolean).length/3,0,state);}};
+api.ready=(async()=>{const times=await fetch('films/timings.json').then(r=>r.json());stage=await createStage(canvas,id,times[id],film);$('#loading').hidden=true;api.dimensions=stage.dimensions;api.grip=stage.grip;api.detail=stage.detail;api.mount=stage.mount;api.duration=times[id].duration;if(!film){const firstView=qs.get('view')||(qs.get('shot')==='action'?'user':'hall');if(['hall','user','detail','result','top'].includes(firstView))active(firstView);draw();}return true;})();
 api.ready.catch(()=>{$('#loading').hidden=false;$('#loading').textContent='Трёхмерный вид не загрузился. Работу прибора можно изучить по схеме ниже.';});
 if(!film){new ResizeObserver(()=>{if(stage)draw();}).observe(canvas);}
-if(!film)fetch('films/catalog.json?v=20261119a').then(r=>r.ok?r.json():{}).then(list=>{const take=list[id];if(!take)return;
+if(!film)fetch('films/catalog.json?v=visitor-performance').then(r=>r.ok?r.json():{}).then(list=>{const take=list[id];if(!take)return;
  const movie=$('#movie');movie.onloadedmetadata=()=>{$('#draft-size').textContent=movie.videoWidth+' × '+movie.videoHeight;};
  movie.addEventListener('play',()=>fair?.pauseSound());
- const rev=take.revision?'?v='+take.revision:'';movie.src='films/'+id+'.mp4'+rev;movie.poster='../media/poster-'+(id==='shadow'?'fair':id)+'.webp?v=stage2';
- if(take.clean){
-   const clean=document.createElement('video');clean.controls=true;clean.playsInline=true;clean.preload='metadata';
-   clean.setAttribute('aria-label','Чистовой ролик');clean.onloadedmetadata=()=>{$('#clean-label').textContent=clean.videoWidth+' × '+clean.videoHeight;};
-   clean.addEventListener('play',()=>{movie.pause();fair?.pauseSound();});movie.addEventListener('play',()=>clean.pause());
-   clean.src=take.clean;$('#clean-pending').replaceWith(clean);$('.film-versions').classList.add('paired');
- }
+ const rev=take.revision?'?v='+take.revision:'';movie.src='films/'+id+'.mp4'+rev;movie.poster='../media/poster-'+(id==='shadow'?'fair':id)+'.webp'+rev;
+ $('#take-status').textContent=take.performance?'':'Драфт';
  const track=document.createElement('track');Object.assign(track,{kind:'captions',label:'Русский',srclang:'ru',src:'films/'+id+'.vtt'+rev});movie.append(track);$('#film-panel').hidden=false;
  if(location.hash==='#film-panel')$('#film-panel').scrollIntoView();}).catch(()=>{});
