@@ -3,6 +3,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
 const root = document.querySelector(".viewer-shell");
 const canvas = document.getElementById("exhibitionCanvas");
@@ -17,6 +18,7 @@ const zones = ["technology", "construction", "transport"];
 const zoneLabels = { technology: "Технологии", construction: "Строительство", transport: "Транспорт" };
 const zoneColors = { technology: "#52d5d7", construction: "#b7df78", transport: "#89a8ff" };
 const exhibitionPeriod = "2000–2025";
+const showRawHi3DCandidates = new URLSearchParams(window.location.search).get("quality") === "raw";
 
 const content = Object.fromEntries(zones.map((zone) => [zone, allItems.filter((item) => item.zone === zone)]));
 const state = {
@@ -93,7 +95,10 @@ function init() {
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x080b0a);
-  scene.fog = new THREE.FogExp2(0x080b0a, 0.022);
+  scene.fog = new THREE.FogExp2(0x080b0a, 0.014);
+  const pmremGenerator = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.035).texture;
+  pmremGenerator.dispose();
 
   const camera = new THREE.PerspectiveCamera(42, 1, 0.05, 80);
   camera.position.set(4.35, 5.4, 7.8);
@@ -108,6 +113,7 @@ function init() {
   addExhibitionLighting(scene);
 
   buildPavilion(scene);
+  addNicheLighting(scene);
   buildPhysicalModels(scene);
   buildCentralMoscow(scene);
 
@@ -157,9 +163,9 @@ function init() {
 }
 
 function addExhibitionLighting(scene) {
-  scene.add(new THREE.HemisphereLight(0xe2ebe5, 0x151a16, 1.18));
+  scene.add(new THREE.HemisphereLight(0xe2ebe5, 0x151a16, 0.92));
 
-  const key = new THREE.DirectionalLight(0xfff4e5, 1.72);
+  const key = new THREE.DirectionalLight(0xfff4e5, 1.42);
   key.position.set(4.5, 10.5, 8.5);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
@@ -182,9 +188,9 @@ function addExhibitionLighting(scene) {
     scene.add(spot);
   };
 
-  addSpot([-2.8, 4.7, -0.6], [0, 0.8, -2.35], 54, 0xffead0, 0.34);
-  addSpot([2.9, 4.3, 1.2], [0, 0.45, 0.15], 46, 0xfff0dc, 0.31);
-  addSpot([-2.3, 4.0, 4.5], [0, 0.45, 2.45], 44, 0xffe8cc, 0.30);
+  addSpot([-2.8, 4.7, -0.6], [0, 0.8, -2.35], 38, 0xffead0, 0.34);
+  addSpot([2.9, 4.3, 1.2], [0, 0.45, 0.15], 34, 0xfff0dc, 0.31);
+  addSpot([-2.3, 4.0, 4.5], [0, 0.45, 2.45], 32, 0xffe8cc, 0.30);
 
   const technologyWash = new THREE.PointLight(0x52d5d7, 7, 10, 2);
   technologyWash.position.set(-4.0, 2.25, -2.2);
@@ -194,22 +200,58 @@ function addExhibitionLighting(scene) {
   scene.add(transportWash);
 }
 
+function addNicheLighting(scene) {
+  const warm = 0xffe8c5;
+  const ledMaterial = new THREE.MeshBasicMaterial({ color: warm, transparent: true, opacity: 0.88, toneMapped: false });
+  const accentMaterials = {
+    technology: new THREE.MeshBasicMaterial({ color: zoneColors.technology, transparent: true, opacity: 0.72, toneMapped: false }),
+    construction: new THREE.MeshBasicMaterial({ color: zoneColors.construction, transparent: true, opacity: 0.72, toneMapped: false }),
+    transport: new THREE.MeshBasicMaterial({ color: zoneColors.transport, transparent: true, opacity: 0.72, toneMapped: false })
+  };
+
+  addBox(scene, [0.025, 0.028, 16.0], [-4.39, 1.465, 0], ledMaterial);
+  addBox(scene, [0.025, 0.028, 16.0], [4.39, 1.465, 0], ledMaterial);
+  addBox(scene, [9.35, 0.028, 0.025], [0, 1.465, -7.89], ledMaterial);
+  addBox(scene, [0.025, 0.018, 16.0], [-4.37, 0.595, 0], accentMaterials.technology);
+  addBox(scene, [0.025, 0.018, 16.0], [4.37, 0.595, 0], accentMaterials.transport);
+  addBox(scene, [9.35, 0.018, 0.025], [0, 0.595, -7.87], accentMaterials.construction);
+
+  const addNicheSpot = (position, targetPosition, color = warm) => {
+    const target = new THREE.Object3D();
+    target.position.set(...targetPosition);
+    scene.add(target);
+    const light = new THREE.SpotLight(color, 13, 1.65, 0.72, 0.78, 1.5);
+    light.position.set(...position);
+    light.target = target;
+    light.castShadow = false;
+    scene.add(light);
+  };
+
+  for (let i = 0; i < 7; i += 1) {
+    const z = THREE.MathUtils.lerp(-6.85, 6.85, i / 6);
+    addNicheSpot([-4.08, 1.40, z], [-4.60, 0.91, z]);
+    addNicheSpot([4.08, 1.40, z], [4.60, 0.91, z]);
+    const x = THREE.MathUtils.lerp(-4.15, 4.15, i / 6);
+    addNicheSpot([x, 1.40, -7.60], [x, 0.91, -8.10]);
+  }
+}
+
 function buildPavilion(scene) {
-  const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x1c231f, roughness: 0.76, metalness: 0.08 });
+  const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x151b18, roughness: 0.78, metalness: 0.06, envMapIntensity: 0.16 });
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(12.5, 20), floorMaterial);
   floor.rotation.x = -Math.PI / 2;
   floor.position.z = 0.4;
   floor.receiveShadow = true;
   scene.add(floor);
 
-  const wallMaterial = new THREE.MeshStandardMaterial({ color: 0x222925, roughness: 0.8, metalness: 0.12 });
+  const wallMaterial = new THREE.MeshStandardMaterial({ color: 0x202622, roughness: 0.82, metalness: 0.08, envMapIntensity: 0.12 });
   addBox(scene, [0.32, 4, 17], [-5.16, 2, 0], wallMaterial);
   addBox(scene, [0.32, 4, 17], [5.16, 2, 0], wallMaterial);
   addBox(scene, [10.0, 4, 0.32], [0, 2, -8.66], wallMaterial);
 
   addSeamlessMediaWalls(scene);
 
-  const shelfMaterial = new THREE.MeshStandardMaterial({ color: 0x303933, roughness: 0.52, metalness: 0.34 });
+  const shelfMaterial = new THREE.MeshStandardMaterial({ color: 0x2b332e, roughness: 0.58, metalness: 0.22, envMapIntensity: 0.24 });
   addBox(scene, [0.62, 0.08, 16.6], [-4.72, 0.54, 0], shelfMaterial);
   addBox(scene, [0.62, 0.08, 16.6], [4.72, 0.54, 0], shelfMaterial);
   addBox(scene, [9.6, 0.08, 0.62], [0, 0.54, -8.22], shelfMaterial);
@@ -343,7 +385,11 @@ function buildPhysicalModels(scene) {
     modelObjects[id] = anchor;
     anchor.traverse((child) => { child.userData.modelId = id; });
     clickTargets.push(anchor);
-    loadHi3D(id, meta, anchor, proxy);
+    if (showRawHi3DCandidates) {
+      loadHi3D(id, meta, anchor, proxy);
+    } else {
+      meta.status = "Параметрический выставочный макет · очищенная форма по реальному прототипу";
+    }
   });
 }
 
@@ -482,9 +528,54 @@ function fitToEnvelope(group, dims) {
   group.position.y -= fitted.min.y;
 }
 
+function applyMuseumFinish(model, meta, id) {
+  const finish = id === "center-01"
+    ? { primary: 0xd9ddd8, secondary: 0xaeb9b4, accent: 0xffb26f }
+    : id === "center-02"
+      ? { primary: 0xd7d3c8, secondary: 0x7d8780, accent: 0xb7df78 }
+      : id === "center-03"
+        ? { primary: 0xe1e5e2, secondary: 0x526a82, accent: 0x89a8ff }
+        : meta.zone === "technology"
+          ? { primary: 0xc9d8d4, secondary: 0x607d79, accent: 0x52d5d7 }
+          : meta.zone === "construction"
+            ? { primary: 0xd8d4c7, secondary: 0x7f8775, accent: 0xb7df78 }
+            : { primary: 0xd6dce4, secondary: 0x65758b, accent: 0x89a8ff };
+
+  const makeMaterial = (color, metalness, roughness, clearcoat = 0.18) => new THREE.MeshPhysicalMaterial({
+    color,
+    metalness,
+    roughness,
+    clearcoat,
+    clearcoatRoughness: 0.32,
+    envMapIntensity: 0.82,
+    side: THREE.FrontSide
+  });
+  const materials = [
+    makeMaterial(finish.primary, 0.08, 0.34, 0.24),
+    makeMaterial(finish.secondary, 0.18, 0.30, 0.16),
+    makeMaterial(finish.accent, 0.12, 0.28, 0.22)
+  ];
+
+  let meshIndex = 0;
+  model.traverse((child) => {
+    if (!child.isMesh) return;
+    if (child.geometry?.attributes?.position && !child.geometry.morphAttributes?.position?.length) {
+      child.geometry.computeVertexNormals();
+    }
+    const materialIndex = meshIndex > 0 && meshIndex % 7 === 0 ? 2 : meshIndex % 3 === 0 ? 1 : 0;
+    child.material = materials[materialIndex];
+    child.castShadow = true;
+    child.receiveShadow = true;
+    child.userData.modelId = id;
+    meshIndex += 1;
+  });
+  model.userData.finish = "museum-maquette-v1";
+}
+
 function loadHi3D(id, meta, anchor, proxy) {
   gltfLoader.load(`./assets/models/hitem/${id}.glb`, (gltf) => {
     const model = gltf.scene;
+    applyMuseumFinish(model, meta, id);
     model.updateMatrixWorld(true);
     let size = new THREE.Box3().setFromObject(model).getSize(new THREE.Vector3());
     const regularScale = Math.min(meta.dims[0] / Math.max(size.x, 0.0001), meta.dims[2] / Math.max(size.y, 0.0001), meta.dims[1] / Math.max(size.z, 0.0001));
@@ -502,7 +593,6 @@ function loadHi3D(id, meta, anchor, proxy) {
     const fittedSize = normalized.getSize(new THREE.Vector3());
     model.position.sub(center);
     model.position.y -= normalized.min.y - center.y;
-    model.traverse((child) => { if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; child.userData.modelId = id; } });
     anchor.remove(proxy);
     anchor.add(model);
     meta.occupancy = {
@@ -516,7 +606,7 @@ function loadHi3D(id, meta, anchor, proxy) {
       ["глубина", meta.occupancy.depth]
     ];
     const limitingAxis = axisOccupancy.reduce((best, entry) => entry[1] > best[1] ? entry : best, axisOccupancy[0]);
-    meta.status = `Hi3D · максимум: ${meta.occupancy.width}% ш / ${meta.occupancy.height}% в / ${meta.occupancy.depth}% гл · ограничитель — ${limitingAxis[0]}`;
+    meta.status = `Hi3D · музейная отделка · максимум: ${meta.occupancy.width}% ш / ${meta.occupancy.height}% в / ${meta.occupancy.depth}% гл · ограничитель — ${limitingAxis[0]}`;
     if (selectedModelId === id) selectModel(id);
   }, undefined, () => {
     meta.status = "Размерный прокси";
@@ -561,15 +651,89 @@ function buildCentralMoscow(scene) {
     anchor.position.set(...entry.position);
     anchor.rotation.y = entry.rotation;
     anchor.userData.modelId = entry.id;
-    const proxy = createProxy({ ...meta, zone: "technology", kind: entry.id === "center-02" ? "bridge" : entry.id === "center-03" ? "fastTrain" : "district" });
-    proxy.userData.modelId = entry.id;
-    anchor.add(proxy);
+    const maquette = createCenterMaquette(entry.id, meta);
+    maquette.userData.modelId = entry.id;
+    anchor.add(maquette);
     scene.add(anchor);
     modelObjects[entry.id] = anchor;
     anchor.traverse((child) => { child.userData.modelId = entry.id; });
     clickTargets.push(anchor);
-    loadHi3D(entry.id, meta, anchor, proxy);
+    if (showRawHi3DCandidates) {
+      loadHi3D(entry.id, meta, anchor, maquette);
+    } else {
+      meta.status = "Параметрический выставочный макет · очищенная форма по прототипу";
+    }
   });
+}
+
+function createCenterMaquette(id, meta) {
+  const group = new THREE.Group();
+  const ivory = new THREE.MeshPhysicalMaterial({ color: 0xe2e3dd, roughness: 0.30, metalness: 0.08, clearcoat: 0.22, clearcoatRoughness: 0.28, envMapIntensity: 0.78 });
+  const silver = new THREE.MeshPhysicalMaterial({ color: 0xaab6ba, roughness: 0.27, metalness: 0.26, clearcoat: 0.18, envMapIntensity: 0.84 });
+  const graphite = new THREE.MeshPhysicalMaterial({ color: 0x263036, roughness: 0.34, metalness: 0.32, envMapIntensity: 0.72 });
+  const blue = new THREE.MeshPhysicalMaterial({ color: 0x466b91, roughness: 0.28, metalness: 0.18, clearcoat: 0.26, envMapIntensity: 0.82 });
+  const glass = new THREE.MeshPhysicalMaterial({ color: 0x172b3a, roughness: 0.12, metalness: 0.22, clearcoat: 0.42, envMapIntensity: 1.0 });
+
+  if (id === "center-01") {
+    group.add(meshOf(new RoundedBoxGeometry(1.88, 0.06, 1.32, 4, 0.05), graphite, [0, 0.03, 0]));
+    const towers = [
+      [-0.56, -0.26, 0.24, 0.28, 0.88, -0.08],
+      [-0.28, 0.27, 0.22, 0.24, 1.18, 0.04],
+      [0.03, -0.08, 0.28, 0.30, 1.55, -0.03],
+      [0.34, 0.23, 0.24, 0.25, 1.02, 0.08],
+      [0.62, -0.20, 0.20, 0.23, 0.74, -0.10],
+      [-0.70, 0.30, 0.18, 0.20, 0.60, 0.10]
+    ];
+    towers.forEach(([x, z, w, d, h, rotation], index) => {
+      const tower = meshOf(new RoundedBoxGeometry(w, h, d, 4, Math.min(w, d) * 0.14), index % 2 ? silver : ivory, [x, h / 2 + 0.06, z], [0, rotation, 0]);
+      group.add(tower);
+      if (index === 2) group.add(meshOf(new THREE.ConeGeometry(0.035, 0.28, 18), silver, [x, h + 0.20, z]));
+    });
+  } else if (id === "center-02") {
+    const points = [
+      new THREE.Vector3(-1.52, 0.18, -0.24),
+      new THREE.Vector3(-0.58, 0.18, -0.06),
+      new THREE.Vector3(0.30, 0.18, 0.20),
+      new THREE.Vector3(1.55, 0.18, 0.30)
+    ];
+    for (let i = 0; i < points.length - 1; i += 1) {
+      const a = points[i];
+      const b = points[i + 1];
+      const dx = b.x - a.x;
+      const dz = b.z - a.z;
+      const length = Math.hypot(dx, dz);
+      const segment = new THREE.Group();
+      segment.position.set((a.x + b.x) / 2, a.y, (a.z + b.z) / 2);
+      segment.rotation.y = -Math.atan2(dz, dx);
+      segment.add(meshOf(new RoundedBoxGeometry(length + 0.03, 0.10, 0.42, 4, 0.04), ivory, [0, 0, 0]));
+      segment.add(meshOf(new THREE.BoxGeometry(length, 0.045, 0.035), silver, [0, 0.095, -0.18]));
+      segment.add(meshOf(new THREE.BoxGeometry(length, 0.045, 0.035), silver, [0, 0.095, 0.18]));
+      group.add(segment);
+    }
+    [-0.72, 0.62].forEach((x) => group.add(meshOf(new THREE.CylinderGeometry(0.055, 0.075, 0.18, 20), graphite, [x, 0.09, 0.02])));
+  } else {
+    group.add(meshOf(new RoundedBoxGeometry(2.84, 0.46, 0.56, 8, 0.10), ivory, [0, 0.32, 0]));
+    group.add(meshOf(new RoundedBoxGeometry(2.64, 0.08, 0.49, 6, 0.05), silver, [0, 0.58, 0]));
+    group.add(meshOf(new THREE.BoxGeometry(2.46, 0.12, 0.43), graphite, [0, 0.12, 0]));
+    [-0.98, 0.98].forEach((x) => [-1, 1].forEach((z) => group.add(meshOf(new THREE.CylinderGeometry(0.105, 0.105, 0.055, 24), graphite, [x, 0.09, z * 0.235], [Math.PI / 2, 0, 0]))));
+    [-1, 1].forEach((side) => {
+      const z = side * 0.286;
+      [-1.02, -0.67, -0.31, 0.31, 0.67, 1.02].forEach((x) => group.add(meshOf(new RoundedBoxGeometry(0.25, 0.17, 0.018, 3, 0.025), glass, [x, 0.39, z])));
+      [-0.49, 0.49].forEach((x) => group.add(meshOf(new RoundedBoxGeometry(0.30, 0.34, 0.020, 3, 0.025), blue, [x, 0.31, z])));
+      group.add(meshOf(new THREE.BoxGeometry(2.60, 0.035, 0.022), blue, [0, 0.22, z + side * 0.004]));
+    });
+    group.add(meshOf(new RoundedBoxGeometry(0.02, 0.22, 0.32, 3, 0.03), glass, [1.425, 0.39, 0]));
+    group.add(meshOf(new RoundedBoxGeometry(0.02, 0.22, 0.32, 3, 0.03), glass, [-1.425, 0.39, 0]));
+  }
+
+  fitToEnvelope(group, meta.dims);
+  group.traverse((child) => {
+    if (!child.isMesh) return;
+    child.castShadow = true;
+    child.receiveShadow = true;
+    child.userData.modelId = id;
+  });
+  return group;
 }
 
 function createStationLabel(title, index, color) {
