@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 
 const root = document.querySelector(".viewer-shell");
 const canvas = document.getElementById("exhibitionCanvas");
@@ -34,9 +35,9 @@ const physicalModels = Object.fromEntries(exhibitCatalog.map((item) => [item.id,
   placement: item.zone === "technology" ? "левая ниша" : item.zone === "transport" ? "правая ниша" : "торцевая ниша"
 }]));
 const centerEnvelopes = [
-  { id: "center-01", dims: [1.90, 1.35, 1.65], position: [0, 0.19, -1.55], placement: "центральный подиум" },
-  { id: "center-02", dims: [3.20, 0.75, 0.55], position: [0, 0.19, 0.52], placement: "центральный подиум" },
-  { id: "center-03", dims: [2.80, 0.60, 0.52], position: [0, 0.19, 2.15], placement: "центральный подиум" }
+  { id: "center-01", dims: [2.35, 1.85, 1.75], position: [0, 0.30, -2.35], rotation: 0, placement: "станция 01 · город" },
+  { id: "center-02", dims: [3.35, 0.90, 0.62], position: [0, 0.20, 0.15], rotation: -0.08, placement: "станция 02 · инфраструктура" },
+  { id: "center-03", dims: [3.20, 0.72, 0.68], position: [0, 0.22, 2.45], rotation: 0.06, placement: "станция 03 · движение" }
 ];
 (window.CENTER_PROPOSAL || []).forEach((item, index) => {
   const envelope = centerEnvelopes[index];
@@ -95,36 +96,20 @@ function init() {
   scene.fog = new THREE.FogExp2(0x080b0a, 0.022);
 
   const camera = new THREE.PerspectiveCamera(42, 1, 0.05, 80);
-  camera.position.set(12.8, 10.8, 20.4);
+  camera.position.set(4.35, 5.4, 7.8);
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
   controls.dampingFactor = 0.065;
-  controls.target.set(0, 1.5, -1.5);
+  controls.target.set(0, 0.95, -2.0);
   controls.minDistance = 2.2;
   controls.maxDistance = 34;
   controls.maxPolarAngle = Math.PI * 0.49;
 
-  scene.add(new THREE.HemisphereLight(0xd8fff4, 0x11130f, 1.55));
-  const key = new THREE.DirectionalLight(0xffffff, 2.1);
-  key.position.set(5, 12, 10);
-  key.castShadow = true;
-  key.shadow.mapSize.set(2048, 2048);
-  key.shadow.camera.left = -14;
-  key.shadow.camera.right = 14;
-  key.shadow.camera.top = 18;
-  key.shadow.camera.bottom = -18;
-  scene.add(key);
-  const cyan = new THREE.PointLight(0x52d5d7, 24, 16, 2);
-  cyan.position.set(-3.8, 3.2, -5);
-  scene.add(cyan);
-  const orange = new THREE.PointLight(0xff8a45, 18, 14, 2);
-  orange.position.set(3.5, 2.6, 3);
-  scene.add(orange);
+  addExhibitionLighting(scene);
 
   buildPavilion(scene);
   buildPhysicalModels(scene);
   buildCentralMoscow(scene);
-  buildSuspendedObjects(scene);
 
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
@@ -171,8 +156,46 @@ function init() {
   }
 }
 
+function addExhibitionLighting(scene) {
+  scene.add(new THREE.HemisphereLight(0xe2ebe5, 0x151a16, 1.18));
+
+  const key = new THREE.DirectionalLight(0xfff4e5, 1.72);
+  key.position.set(4.5, 10.5, 8.5);
+  key.castShadow = true;
+  key.shadow.mapSize.set(2048, 2048);
+  key.shadow.camera.left = -11;
+  key.shadow.camera.right = 11;
+  key.shadow.camera.top = 14;
+  key.shadow.camera.bottom = -14;
+  key.shadow.bias = -0.00012;
+  scene.add(key);
+
+  const addSpot = (position, targetPosition, intensity, color, angle = 0.38) => {
+    const target = new THREE.Object3D();
+    target.position.set(...targetPosition);
+    scene.add(target);
+    const spot = new THREE.SpotLight(color, intensity, 12, angle, 0.72, 1.75);
+    spot.position.set(...position);
+    spot.target = target;
+    spot.castShadow = true;
+    spot.shadow.mapSize.set(1024, 1024);
+    scene.add(spot);
+  };
+
+  addSpot([-2.8, 4.7, -0.6], [0, 0.8, -2.35], 54, 0xffead0, 0.34);
+  addSpot([2.9, 4.3, 1.2], [0, 0.45, 0.15], 46, 0xfff0dc, 0.31);
+  addSpot([-2.3, 4.0, 4.5], [0, 0.45, 2.45], 44, 0xffe8cc, 0.30);
+
+  const technologyWash = new THREE.PointLight(0x52d5d7, 7, 10, 2);
+  technologyWash.position.set(-4.0, 2.25, -2.2);
+  scene.add(technologyWash);
+  const transportWash = new THREE.PointLight(0x89a8ff, 6, 10, 2);
+  transportWash.position.set(4.0, 2.25, -2.2);
+  scene.add(transportWash);
+}
+
 function buildPavilion(scene) {
-  const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x151a17, roughness: 0.76, metalness: 0.08 });
+  const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x1c231f, roughness: 0.76, metalness: 0.08 });
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(12.5, 20), floorMaterial);
   floor.rotation.x = -Math.PI / 2;
   floor.position.z = 0.4;
@@ -183,19 +206,6 @@ function buildPavilion(scene) {
   addBox(scene, [0.32, 4, 17], [-5.16, 2, 0], wallMaterial);
   addBox(scene, [0.32, 4, 17], [5.16, 2, 0], wallMaterial);
   addBox(scene, [10.0, 4, 0.32], [0, 2, -8.66], wallMaterial);
-
-  zones.forEach((zone) => {
-    const layer = document.createElement("canvas");
-    layer.width = 1024;
-    layer.height = 1024;
-    screenCanvases[zone] = layer;
-    drawScreen(zone, 0);
-    const texture = new THREE.CanvasTexture(layer);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    texture.anisotropy = 8;
-    screenTextures[zone] = texture;
-    screenMaterials[zone] = new THREE.MeshBasicMaterial({ map: texture, toneMapped: false });
-  });
 
   addSeamlessMediaWalls(scene);
 
@@ -234,6 +244,8 @@ function addSeamlessMediaWalls(scene) {
     segments.push({ a, b, zone, start: zoneLengths[zone], length, index: i });
     zoneLengths[zone] += length;
   }
+
+  createScreenLayers(zoneLengths);
 
   const pathOffsets = path.map((point, index) => {
     const normalFor = (from, to) => {
@@ -281,11 +293,34 @@ function addSeamlessMediaWalls(scene) {
     scene.add(new THREE.Mesh(geometry, materials));
   };
 
-  const mediaMaterials = zones.map((zone) => screenMaterials[zone]);
-  buildStrip(0, 0.5, mediaMaterials);
-  buildStrip(1.5, 4, mediaMaterials);
+  buildStrip(0, 0.5, zones.map((zone) => screenMaterials[zone].lower));
+  buildStrip(1.5, 4, zones.map((zone) => screenMaterials[zone].upper));
   const niche = new THREE.MeshStandardMaterial({ color: 0x070a08, roughness: 0.92, metalness: 0.06 });
   buildStrip(0.5, 1.5, [niche, niche, niche]);
+}
+
+function createScreenLayers(zoneLengths) {
+  zones.forEach((zone) => {
+    const lengthMeters = zoneLengths[zone];
+    screenCanvases[zone] = {};
+    screenTextures[zone] = {};
+    screenMaterials[zone] = {};
+    [
+      ["upper", 2.5, 210],
+      ["lower", 0.5, 240]
+    ].forEach(([band, heightMeters, pixelsPerMeter]) => {
+      const layer = document.createElement("canvas");
+      layer.width = Math.min(4096, Math.max(1536, Math.round(lengthMeters * pixelsPerMeter)));
+      layer.height = Math.max(112, Math.round(layer.width * heightMeters / lengthMeters));
+      screenCanvases[zone][band] = layer;
+      const texture = new THREE.CanvasTexture(layer);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.anisotropy = 8;
+      screenTextures[zone][band] = texture;
+      screenMaterials[zone][band] = new THREE.MeshBasicMaterial({ map: texture, toneMapped: false });
+    });
+    drawScreen(zone, 0);
+  });
 }
 
 function buildPhysicalModels(scene) {
@@ -464,12 +499,24 @@ function loadHi3D(id, meta, anchor, proxy) {
     model.updateMatrixWorld(true);
     const normalized = new THREE.Box3().setFromObject(model);
     const center = normalized.getCenter(new THREE.Vector3());
+    const fittedSize = normalized.getSize(new THREE.Vector3());
     model.position.sub(center);
     model.position.y -= normalized.min.y - center.y;
     model.traverse((child) => { if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; child.userData.modelId = id; } });
     anchor.remove(proxy);
     anchor.add(model);
-    meta.status = "Hi3D · модель из референсной фотографии";
+    meta.occupancy = {
+      width: Math.min(100, Math.round(fittedSize.x / meta.dims[0] * 100)),
+      depth: Math.min(100, Math.round(fittedSize.z / meta.dims[1] * 100)),
+      height: Math.min(100, Math.round(fittedSize.y / meta.dims[2] * 100))
+    };
+    const axisOccupancy = [
+      ["ширина", meta.occupancy.width],
+      ["высота", meta.occupancy.height],
+      ["глубина", meta.occupancy.depth]
+    ];
+    const limitingAxis = axisOccupancy.reduce((best, entry) => entry[1] > best[1] ? entry : best, axisOccupancy[0]);
+    meta.status = `Hi3D · максимум: ${meta.occupancy.width}% ш / ${meta.occupancy.height}% в / ${meta.occupancy.depth}% гл · ограничитель — ${limitingAxis[0]}`;
     if (selectedModelId === id) selectModel(id);
   }, undefined, () => {
     meta.status = "Размерный прокси";
@@ -478,15 +525,41 @@ function loadHi3D(id, meta, anchor, proxy) {
 }
 
 function buildCentralMoscow(scene) {
-  const plinthMaterial = new THREE.MeshStandardMaterial({ color: 0x252d29, roughness: 0.62, metalness: 0.18 });
-  addBox(scene, [3.6, 0.18, 6.4], [0, 0.09, 0.35], plinthMaterial);
+  const stations = [
+    { id: "center-01", base: [2.85, 0.28, 2.20], color: 0xffb26f, label: "ГОРОД · МОСКВА-СИТИ" },
+    { id: "center-02", base: [3.80, 0.18, 1.22], color: 0xb7df78, label: "ИНФРАСТРУКТУРА · ЗАРЯДЬЕ" },
+    { id: "center-03", base: [3.62, 0.20, 1.18], color: 0x89a8ff, label: "ДВИЖЕНИЕ · МОСКВА-2024" }
+  ];
+  const plinthMaterial = new THREE.MeshStandardMaterial({ color: 0x2a332d, roughness: 0.64, metalness: 0.10 });
 
-  centerEnvelopes.forEach((entry) => {
+  centerEnvelopes.forEach((entry, index) => {
     const meta = physicalModels[entry.id];
     if (!meta) return;
+    const station = stations[index];
+    const plinth = new THREE.Mesh(new RoundedBoxGeometry(...station.base, 5, 0.07), plinthMaterial);
+    plinth.position.set(entry.position[0], station.base[1] / 2, entry.position[2]);
+    plinth.rotation.y = entry.rotation;
+    plinth.castShadow = true;
+    plinth.receiveShadow = true;
+    scene.add(plinth);
+
+    const underlight = new THREE.Mesh(
+      new RoundedBoxGeometry(station.base[0] + 0.05, 0.025, station.base[2] + 0.05, 4, 0.06),
+      new THREE.MeshBasicMaterial({ color: station.color, transparent: true, opacity: 0.34 })
+    );
+    underlight.position.set(entry.position[0], 0.018, entry.position[2]);
+    underlight.rotation.y = entry.rotation;
+    scene.add(underlight);
+
+    const label = createStationLabel(station.label, String(index + 1).padStart(2, "0"), station.color);
+    label.position.set(entry.position[0], station.base[1] + 0.008, entry.position[2] + station.base[2] * 0.36);
+    label.rotation.set(-Math.PI / 2, 0, entry.rotation);
+    scene.add(label);
+
     const anchor = new THREE.Group();
     anchor.name = entry.id;
     anchor.position.set(...entry.position);
+    anchor.rotation.y = entry.rotation;
     anchor.userData.modelId = entry.id;
     const proxy = createProxy({ ...meta, zone: "technology", kind: entry.id === "center-02" ? "bridge" : entry.id === "center-03" ? "fastTrain" : "district" });
     proxy.userData.modelId = entry.id;
@@ -497,133 +570,261 @@ function buildCentralMoscow(scene) {
     clickTargets.push(anchor);
     loadHi3D(entry.id, meta, anchor, proxy);
   });
-
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(1.55, 0.035, 12, 96), new THREE.MeshBasicMaterial({ color: 0xff8a45 }));
-  ring.rotation.x = Math.PI / 2;
-  ring.position.set(0, 0.205, 0.35);
-  scene.add(ring);
 }
 
-function buildSuspendedObjects(scene) {
-  const material = new THREE.MeshStandardMaterial({ color: 0xe6e2d8, roughness: 0.32, metalness: 0.28 });
-  const accent = new THREE.MeshStandardMaterial({ color: 0x89a8ff, roughness: 0.28, metalness: 0.26 });
-  const plane = new THREE.Group();
-  plane.add(meshOf(new THREE.CylinderGeometry(0.10, 0.10, 1.65, 24), material, [0, 0, 0], [0, 0, Math.PI / 2]));
-  plane.add(meshOf(new THREE.ConeGeometry(0.10, 0.28, 24), material, [0.96, 0, 0], [0, 0, -Math.PI / 2]));
-  plane.add(meshOf(new THREE.BoxGeometry(0.42, 0.035, 1.36), accent, [0.05, 0, 0]));
-  plane.position.set(3.0, 3.22, 3.9);
-  plane.rotation.y = -0.35;
-  scene.add(plane);
-  const satellite = new THREE.Group();
-  satellite.add(meshOf(new THREE.BoxGeometry(0.34, 0.34, 0.34), accent, [0, 0, 0]));
-  satellite.add(meshOf(new THREE.BoxGeometry(1.55, 0.035, 0.38), material, [0, 0, 0]));
-  satellite.position.set(-3.0, 3.15, 3.85);
-  satellite.rotation.set(0.18, 0.28, 0.24);
-  scene.add(satellite);
+function createStationLabel(title, index, color) {
+  const layer = document.createElement("canvas");
+  layer.width = 1024;
+  layer.height = 160;
+  const ctx = layer.getContext("2d");
+  ctx.fillStyle = "#111713";
+  roundedRect(ctx, 0, 0, layer.width, layer.height, 28);
+  ctx.fill();
+  ctx.fillStyle = `#${color.toString(16).padStart(6, "0")}`;
+  ctx.fillRect(34, 34, 8, 92);
+  ctx.font = "700 42px 'IBM Plex Mono', Consolas, monospace";
+  ctx.fillText(index, 72, 102);
+  ctx.fillStyle = "#e5e2da";
+  ctx.font = "600 37px Oswald, Arial";
+  ctx.fillText(title, 172, 102);
+  const texture = new THREE.CanvasTexture(layer);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return new THREE.Mesh(new THREE.PlaneGeometry(1.90, 0.30), new THREE.MeshBasicMaterial({ map: texture, transparent: true, toneMapped: false }));
 }
 
 function drawScreen(zone, phase) {
-  const layer = screenCanvases[zone];
-  if (!layer || !content[zone].length) return;
-  const ctx = layer.getContext("2d");
+  const layers = screenCanvases[zone];
+  if (!layers?.upper || !layers?.lower || !content[zone].length) return;
   const item = content[zone][state.indices[zone]];
   const accent = zoneColors[zone];
   const frame = screenFrames[zone];
-  ctx.clearRect(0, 0, 1024, 1024);
-  if (state.mode !== "plate" && frame && frame.complete && frame.naturalWidth) {
-    const drift = Math.sin(phase * 0.16) * 34;
-    const scale = Math.max(1024 / frame.naturalWidth, 1024 / frame.naturalHeight);
-    const width = frame.naturalWidth * scale;
-    const height = frame.naturalHeight * scale;
-    ctx.drawImage(frame, (1024 - width) / 2 + drift, (1024 - height) / 2, width, height);
-    const shade = ctx.createLinearGradient(0, 0, 1024, 1024);
-    shade.addColorStop(0, "rgba(6,10,8,.12)");
-    shade.addColorStop(0.62, "rgba(6,10,8,.36)");
-    shade.addColorStop(1, "rgba(6,10,8,.78)");
-    ctx.fillStyle = shade;
-    ctx.fillRect(0, 0, 1024, 1024);
-  } else {
-    ctx.fillStyle = "#07100e";
-    ctx.fillRect(0, 0, 1024, 1024);
-    const gradient = ctx.createLinearGradient(0, 0, 1024, 1024);
-    gradient.addColorStop(0, `${accent}55`);
-    gradient.addColorStop(0.42, "#0a1714");
-    gradient.addColorStop(1, "#050706");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 1024, 1024);
-  }
-  ctx.save();
-  ctx.globalAlpha = state.mode === "frame" ? 0.14 : 0.28;
-  ctx.strokeStyle = accent;
-  ctx.lineWidth = 2;
-  for (let i = 0; i < 10; i += 1) {
-    const x = (i * 173 + phase * 24) % 1180 - 80;
-    const y = (i * 97 + phase * 13) % 1040 - 20;
-    if (zone === "technology") {
-      ctx.beginPath(); ctx.moveTo(x, y + 48); ctx.lineTo(x + 28, y); ctx.lineTo(x + 56, y + 48); ctx.closePath(); ctx.stroke();
-    } else if (zone === "construction") {
-      ctx.strokeRect(x, y, 62, 62);
-    } else {
-      ctx.beginPath(); ctx.arc(x, y, 33, 0, Math.PI * 2); ctx.stroke();
-    }
-  }
-  ctx.restore();
+  drawUpperScreen(layers.upper, zone, item, accent, frame, phase);
+  drawLowerScreen(layers.lower, zone, item, accent, phase);
+  screenTextures[zone].upper.needsUpdate = true;
+  screenTextures[zone].lower.needsUpdate = true;
+}
 
-  if (state.mode !== "frame") {
+function drawUpperScreen(layer, zone, item, accent, frame, phase) {
+  const ctx = layer.getContext("2d");
+  const { width: w, height: h } = layer;
+  ctx.clearRect(0, 0, w, h);
+  paintScreenGround(ctx, w, h, accent);
+
+  const hasFrame = state.mode !== "plate" && frame?.complete && frame.naturalWidth;
+  const reverse = zone === "transport";
+  const heroX = reverse ? w * 0.025 : w * 0.565;
+  const heroW = w * 0.41;
+  const heroY = h * 0.08;
+  const heroH = h * 0.84;
+  const drift = Math.sin(phase * 0.16) * w * 0.006;
+
+  if (hasFrame) {
     ctx.save();
-    ctx.shadowColor = "rgba(0,0,0,.44)";
-    ctx.shadowBlur = 52;
-    ctx.fillStyle = "rgba(13,20,17,.78)";
-    roundedRect(ctx, 52, state.mode === "hybrid" ? 530 : 104, 880, state.mode === "hybrid" ? 390 : 760, 44);
-    ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = "rgba(222,238,229,.16)";
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    ctx.globalAlpha = 0.22;
+    ctx.filter = `blur(${Math.max(10, h * 0.035)}px) saturate(.72)`;
+    drawImageCover(ctx, frame, -w * 0.03 + drift, -h * 0.08, w * 1.06, h * 1.16);
     ctx.restore();
 
-    const top = state.mode === "hybrid" ? 585 : 165;
+    ctx.save();
+    roundedRect(ctx, heroX, heroY, heroW, heroH, h * 0.055);
+    ctx.clip();
+    drawImageCover(ctx, frame, heroX, heroY, heroW, heroH);
+    const heroShade = ctx.createLinearGradient(heroX, heroY, heroX + heroW, heroY + heroH);
+    heroShade.addColorStop(0, "rgba(5,9,8,.03)");
+    heroShade.addColorStop(1, "rgba(5,9,8,.48)");
+    ctx.fillStyle = heroShade;
+    ctx.fillRect(heroX, heroY, heroW, heroH);
+    ctx.restore();
+    ctx.strokeStyle = "rgba(229,238,232,.18)";
+    ctx.lineWidth = Math.max(1, h * 0.004);
+    roundedRect(ctx, heroX, heroY, heroW, heroH, h * 0.055);
+    ctx.stroke();
+  }
+
+  drawScreenPattern(ctx, zone, accent, w, h, phase);
+
+  const textX = reverse ? w * 0.52 : w * 0.055;
+  const textW = w * 0.41;
+  const safeTop = h * 0.13;
+  if (state.mode === "frame") {
+    ctx.fillStyle = "rgba(7,12,10,.78)";
+    roundedRect(ctx, textX, h * 0.68, textW * 0.76, h * 0.20, h * 0.035);
+    ctx.fill();
     ctx.fillStyle = accent;
-    ctx.font = "700 23px 'IBM Plex Mono', Consolas, monospace";
-    ctx.fillText(`${exhibitionPeriod}  /  ${zoneLabels[zone].toUpperCase()}`, 92, top);
-    const titleGradient = ctx.createLinearGradient(92, top + 42, 92, top + 255);
+    ctx.font = `700 ${Math.round(h * 0.055)}px 'IBM Plex Mono', Consolas, monospace`;
+    ctx.fillText(`${zoneLabels[zone].toUpperCase()} · КАДР 01`, textX + h * 0.06, h * 0.80);
+  } else {
+    ctx.fillStyle = accent;
+    ctx.font = `700 ${Math.round(h * 0.047)}px 'IBM Plex Mono', Consolas, monospace`;
+    ctx.fillText(`${exhibitionPeriod}  /  ${zoneLabels[zone].toUpperCase()}`, textX, safeTop);
+
+    const titleGradient = ctx.createLinearGradient(textX, h * 0.25, textX, h * 0.68);
     titleGradient.addColorStop(0, "#f3f0e7");
     titleGradient.addColorStop(1, "#aeb9b3");
     ctx.fillStyle = titleGradient;
-    ctx.font = "600 66px Oswald, Arial";
-    wrapText(ctx, item.title.toUpperCase(), 92, top + 100, 790, 70, state.mode === "hybrid" ? 2 : 3);
-    if (state.mode === "plate") {
-      const accentWord = (item.title.match(/[А-ЯЁA-Z][а-яёa-z-]{4,}/) || [zoneLabels[zone]])[0];
-      ctx.fillStyle = accent;
-      ctx.font = "italic 600 42px 'Playfair Display', Georgia, serif";
-      ctx.fillText(accentWord, 92, top + 330);
-      ctx.fillStyle = "rgba(218,224,218,.72)";
-      ctx.font = "500 28px Inter, Arial";
-      wrapText(ctx, item.text, 92, top + 405, 760, 42, 4);
-    }
+    drawFittedWrappedText(ctx, item.title.toUpperCase(), textX, h * 0.32, textW, h * 0.34, Math.round(h * 0.155), Math.round(h * 0.09), 2, "600", "Oswald, Arial");
+
+    const motto = { technology: "точность", construction: "создавать", transport: "движение" }[zone];
     ctx.fillStyle = accent;
-    ctx.fillRect(92, 902, 152, 6);
-    ctx.fillStyle = "#d9ddd7";
-    ctx.font = "600 23px 'IBM Plex Mono', Consolas, monospace";
-    ctx.fillText(`${String(state.indices[zone] + 1).padStart(2, "0")} / 14`, 92, 954);
-  } else {
-    ctx.fillStyle = "rgba(7,12,10,.74)";
-    roundedRect(ctx, 66, 840, 410, 104, 28);
-    ctx.fill();
-    ctx.fillStyle = accent;
-    ctx.font = "700 22px 'IBM Plex Mono', Consolas, monospace";
-    ctx.fillText(`${zoneLabels[zone].toUpperCase()}  ·  КАДР 01`, 96, 900);
+    ctx.font = `italic 600 ${Math.round(h * 0.078)}px 'Playfair Display', Georgia, serif`;
+    ctx.fillText(motto, textX, h * 0.74);
+
+    ctx.fillStyle = "rgba(218,224,218,.72)";
+    ctx.font = `500 ${Math.round(h * 0.047)}px Inter, Arial`;
+    const support = shortenWords(item.text, 9);
+    drawWrappedLines(ctx, support, textX, h * 0.84, textW, h * 0.063, 2);
   }
+
+  ctx.fillStyle = accent;
+  ctx.fillRect(textX, h * 0.93, Math.min(textW * 0.25, h * 0.45), Math.max(3, h * 0.012));
+  ctx.fillStyle = "#d9ddd7";
+  ctx.font = `600 ${Math.round(h * 0.048)}px 'IBM Plex Mono', Consolas, monospace`;
+  ctx.fillText(`${String(state.indices[zone] + 1).padStart(2, "0")} / 14`, textX + Math.min(textW * 0.29, h * 0.54), h * 0.955);
+  addScreenGrain(ctx, w, h, accent);
+}
+
+function drawLowerScreen(layer, zone, item, accent, phase) {
+  const ctx = layer.getContext("2d");
+  const { width: w, height: h } = layer;
+  ctx.clearRect(0, 0, w, h);
+  const gradient = ctx.createLinearGradient(0, 0, w, 0);
+  gradient.addColorStop(0, "#07100e");
+  gradient.addColorStop(0.5, "#0b1512");
+  gradient.addColorStop(1, "#07100e");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, 0, w, Math.max(2, h * 0.045));
+
+  const repeat = Math.max(2, Math.round(w / (h * 8.4)));
+  const cellW = w / repeat;
+  for (let i = 0; i < repeat; i += 1) {
+    const x = i * cellW + h * 0.34;
+    ctx.fillStyle = "rgba(205,214,207,.52)";
+    ctx.font = `700 ${Math.round(h * 0.18)}px 'IBM Plex Mono', Consolas, monospace`;
+    ctx.fillText(`${zoneLabels[zone].toUpperCase()} · ${exhibitionPeriod}`, x, h * 0.35);
+    ctx.fillStyle = "#e5e2da";
+    ctx.font = `600 ${Math.round(h * 0.29)}px Oswald, Arial`;
+    drawFittedSingleLine(ctx, item.title.toUpperCase(), x, h * 0.76, cellW - h * 1.55, Math.round(h * 0.29), Math.round(h * 0.18), "600", "Oswald, Arial");
+    ctx.fillStyle = accent;
+    ctx.font = `700 ${Math.round(h * 0.24)}px 'IBM Plex Mono', Consolas, monospace`;
+    ctx.fillText(String(state.indices[zone] + 1).padStart(2, "0"), (i + 1) * cellW - h * 0.78, h * 0.68);
+    ctx.strokeStyle = "rgba(229,238,232,.12)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo((i + 1) * cellW - h * 0.18, h * 0.20);
+    ctx.lineTo((i + 1) * cellW - h * 0.18, h * 0.82);
+    ctx.stroke();
+  }
+  const pulse = (phase * 0.035) % 1;
+  ctx.fillStyle = `${accent}aa`;
+  ctx.fillRect(pulse * w, h * 0.93, Math.max(h * 0.65, w * 0.015), Math.max(2, h * 0.025));
+  addScreenGrain(ctx, w, h, accent, 0.035);
+}
+
+function paintScreenGround(ctx, width, height, accent) {
+  const gradient = ctx.createLinearGradient(0, 0, width, height);
+  gradient.addColorStop(0, "#07100e");
+  gradient.addColorStop(0.46, "#0c1714");
+  gradient.addColorStop(1, "#050706");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+  const wash = ctx.createRadialGradient(width * 0.67, height * 0.40, 0, width * 0.67, height * 0.40, width * 0.44);
+  wash.addColorStop(0, `${accent}3b`);
+  wash.addColorStop(1, `${accent}00`);
+  ctx.fillStyle = wash;
+  ctx.fillRect(0, 0, width, height);
+}
+
+function drawScreenPattern(ctx, zone, accent, width, height, phase) {
   ctx.save();
-  ctx.globalAlpha = 0.055;
-  for (let i = 0; i < 6200; i += 1) {
-    const x = (i * 73) % 1024;
-    const y = (i * 151) % 1024;
+  ctx.globalAlpha = state.mode === "frame" ? 0.14 : 0.28;
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = Math.max(1, height * 0.004);
+  const count = Math.max(12, Math.round(width / Math.max(height * 0.55, 1)));
+  for (let i = 0; i < count; i += 1) {
+    const x = (i * height * 0.73 + phase * height * 0.08) % (width + height) - height * 0.5;
+    const y = (i * height * 0.31 + phase * height * 0.04) % (height * 1.1) - height * 0.05;
+    const unit = height * 0.075;
+    if (zone === "technology") {
+      ctx.beginPath(); ctx.moveTo(x, y + unit); ctx.lineTo(x + unit * 0.58, y); ctx.lineTo(x + unit * 1.16, y + unit); ctx.closePath(); ctx.stroke();
+    } else if (zone === "construction") {
+      ctx.strokeRect(x, y, unit, unit);
+    } else {
+      ctx.beginPath(); ctx.arc(x, y, unit * 0.5, 0, Math.PI * 2); ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+function addScreenGrain(ctx, width, height, accent, alpha = 0.05) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  const count = Math.min(7000, Math.round(width * height / 120));
+  for (let i = 0; i < count; i += 1) {
+    const x = (i * 73) % width;
+    const y = (i * 151) % height;
     ctx.fillStyle = i % 3 ? "#f3f0e7" : accent;
     ctx.fillRect(x, y, 1, 1);
   }
   ctx.restore();
-  if (screenTextures[zone]) screenTextures[zone].needsUpdate = true;
+}
+
+function drawImageCover(ctx, image, x, y, width, height) {
+  const scale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
+  const drawWidth = image.naturalWidth * scale;
+  const drawHeight = image.naturalHeight * scale;
+  ctx.drawImage(image, x + (width - drawWidth) / 2, y + (height - drawHeight) / 2, drawWidth, drawHeight);
+}
+
+function drawFittedWrappedText(ctx, text, x, y, width, maxHeight, maxSize, minSize, maxLines, weight, family) {
+  let size = maxSize;
+  let lines = [];
+  while (size >= minSize) {
+    ctx.font = `${weight} ${size}px ${family}`;
+    lines = getWrappedLines(ctx, text, width);
+    const lineHeight = size * 1.02;
+    if (lines.length <= maxLines && lines.length * lineHeight <= maxHeight) break;
+    size -= 2;
+  }
+  const lineHeight = size * 1.02;
+  lines.slice(0, maxLines).forEach((line, index) => ctx.fillText(line, x, y + index * lineHeight));
+}
+
+function drawWrappedLines(ctx, text, x, y, width, lineHeight, maxLines) {
+  getWrappedLines(ctx, text, width).slice(0, maxLines).forEach((line, index) => ctx.fillText(line, x, y + index * lineHeight));
+}
+
+function getWrappedLines(ctx, text, width) {
+  const words = text.split(/\s+/);
+  const lines = [];
+  let line = "";
+  words.forEach((word) => {
+    const test = line ? `${line} ${word}` : word;
+    if (line && ctx.measureText(test).width > width) {
+      lines.push(line);
+      line = word;
+    } else line = test;
+  });
+  if (line) lines.push(line);
+  return lines;
+}
+
+function drawFittedSingleLine(ctx, text, x, y, width, maxSize, minSize, weight, family) {
+  let size = maxSize;
+  while (size > minSize) {
+    ctx.font = `${weight} ${size}px ${family}`;
+    if (ctx.measureText(text).width <= width) break;
+    size -= 1;
+  }
+  let output = text;
+  while (ctx.measureText(output).width > width && output.length > 4) output = `${output.slice(0, -2).trim()}…`;
+  ctx.fillText(output, x, y);
+}
+
+function shortenWords(text, maxWords) {
+  const words = text.replace(/[.!?]+$/g, "").split(/\s+/);
+  return words.length > maxWords ? `${words.slice(0, maxWords).join(" ")}…` : words.join(" ");
 }
 
 function roundedRect(ctx, x, y, width, height, radius) {
@@ -721,7 +922,7 @@ function pickPhysicalModel(zone, title) {
 
 function selectModel(id) {
   selectedModelId = id;
-  Object.entries(modelObjects).forEach(([modelId, object]) => object.scale.setScalar(modelId === id ? 1.18 : 1));
+  Object.values(modelObjects).forEach((object) => object.scale.setScalar(1));
   const meta = physicalModels[id];
   if (!meta) return;
   document.getElementById("modelTitle").textContent = meta.title;
@@ -735,11 +936,11 @@ function selectModel(id) {
 
 function focusCamera(name, camera, controls) {
   const views = {
-    overview: { position: [12.8, 10.8, 20.4], target: [0, 1.5, -1.5] },
-    visitor: { position: [0, 1.65, 7.2], target: [0, 1.55, -4] },
-    technology: { position: [2.2, 1.8, 1.5], target: [-4.8, 1.65, -1.0] },
-    construction: { position: [0, 1.9, 1.5], target: [0, 1.65, -8.4] },
-    transport: { position: [-2.2, 1.8, 1.5], target: [4.8, 1.65, -1.0] }
+    overview: { position: [4.35, 5.4, 7.8], target: [0, 0.95, -2.0] },
+    visitor: { position: [0, 1.65, 7.7], target: [0, 1.28, 1.2] },
+    technology: { position: [-1.55, 1.75, -0.4], target: [-4.75, 1.42, -0.4] },
+    construction: { position: [0, 3.2, 0.2], target: [0, 1.65, -8.25] },
+    transport: { position: [1.55, 1.75, -0.4], target: [4.75, 1.42, -0.4] }
   };
   const view = views[name] || views.overview;
   state.camera = name;

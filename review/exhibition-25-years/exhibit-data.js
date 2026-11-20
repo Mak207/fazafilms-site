@@ -91,9 +91,9 @@
   };
 
   const dimensions = {
-    transport: [1.02, 0.52, 0.58],
-    construction: [0.58, 0.52, 0.58],
-    technology: [1.02, 0.52, 0.58]
+    transport: [1.08, 0.54, 0.88],
+    construction: [0.64, 0.54, 0.88],
+    technology: [1.08, 0.54, 0.88]
   };
 
   const catalog = [];
