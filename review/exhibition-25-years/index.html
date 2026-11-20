@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="theme-color" content="#0b0d0c">
+  <meta name="referrer" content="no-referrer">
+  <title>Выставка 25 лет развития России — материалы проекта ФАЗА</title>
+  <meta name="description" content="Рабочая структура выставочного пространства: технологии, строительство и транспорт. 42 позиции экспозиции.">
+  <link rel="icon" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css?v=5">
+  <script defer src="./page.js?v=1"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.min.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="./exhibition-3d.js?v=3"></script>
+</head>
+<body>
+  <a class="skip-link" href="#register">К списку экспонатов</a>
+
+  <header class="site-header">
+    <a class="brand" href="https://fazafilms.ru/" aria-label="Студия ФАЗА">ФАЗА<span>.</span></a>
+    <nav aria-label="Разделы страницы">
+      <a href="#concept">Концепция</a>
+      <a href="#interactive">3D-просмотр</a>
+      <a href="#register">42 позиции</a>
+      <a href="#space">Пространство</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-copy">
+        <p class="eyebrow">Рабочие материалы выставки</p>
+        <h1 id="page-title">25 лет<br>развития России<span>.</span></h1>
+        <p class="hero-lead">Технологии создают основу. Строительство превращает её в инфраструктуру. Транспорт связывает территорию и людей.</p>
+        <div class="hero-stats" aria-label="Ключевые параметры">
+          <div><strong>42</strong><span>позиции экспозиции</span></div>
+          <div><strong>3</strong><span>тематические зоны</span></div>
+          <div><strong>4 м</strong><span>общая высота стены</span></div>
+        </div>
+      </div>
+
+      <div class="media-orbit" aria-label="Схема тематического медиапериметра">
+        <div class="orbit-screen">
+          <span class="orbit-label orbit-label--construction">Строительство</span>
+          <span class="orbit-label orbit-label--technology">Технологии</span>
+          <span class="orbit-label orbit-label--transport">Транспорт</span>
+          <span class="shape shape--circle a"></span>
+          <span class="shape shape--square b"></span>
+          <span class="shape shape--triangle c"></span>
+          <span class="shape shape--circle d"></span>
+          <span class="shape shape--square e"></span>
+          <span class="shape shape--triangle f"></span>
+          <div class="moscow-core"><span>Центр</span><strong>Москва</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="interactive" id="interactive" aria-labelledby="interactive-title">
+      <div class="section-heading interactive-heading">
+        <div>
+          <p class="eyebrow">Интерактивное согласование</p>
+          <h2 id="interactive-title">Пройдите выставку до монтажа</h2>
+        </div>
+        <p>Рабочая сцена 10 × 17 × 4 м: план восстановлен по метровой сетке схемы, высота собрана по утверждённому разрезу. Выберите стену, переключайте контент и фиксируйте решение по каждому сюжету.</p>
+      </div>
+
+      <div class="viewer-shell" data-viewer-state="loading">
+        <div class="viewer-stage">
+          <canvas id="exhibitionCanvas" aria-label="Интерактивная трёхмерная модель выставочного павильона"></canvas>
+          <div class="viewer-loading" id="viewerLoading" role="status">Собираем пространство…</div>
+          <div class="viewer-badge">М 1:1 <span>·</span> 4 м</div>
+          <div class="viewer-cameras" role="group" aria-label="Точки обзора">
+            <button type="button" data-camera="overview" class="is-active">Общий вид</button>
+            <button type="button" data-camera="visitor">Посетитель</button>
+            <button type="button" data-camera="technology">Технологии</button>
+            <button type="button" data-camera="construction">Строительство</button>
+            <button type="button" data-camera="transport">Транспорт</button>
+            <button type="button" id="walkMode" aria-pressed="false">Прогулка</button>
+            <button type="button" id="viewerFullscreen" aria-pressed="false">На весь экран</button>
+          </div>
+          <p class="walk-hint" id="walkHint">WASD или стрелки · мышь — осмотр · Shift — быстрее</p>
+          <div class="walk-pad" aria-label="Управление прогулкой">
+            <button type="button" data-move="forward" aria-label="Вперёд">↑</button>
+            <button type="button" data-move="left" aria-label="Влево">←</button>
+            <button type="button" data-move="back" aria-label="Назад">↓</button>
+            <button type="button" data-move="right" aria-label="Вправо">→</button>
+          </div>
+        </div>
+
+        <aside class="viewer-panel" aria-label="Управление контентом и оценка">
+          <div class="viewer-zone-tabs" role="tablist" aria-label="Тематические стены">
+            <button type="button" role="tab" data-zone="technology" aria-selected="true">Технологии</button>
+            <button type="button" role="tab" data-zone="construction" aria-selected="false">Строительство</button>
+            <button type="button" role="tab" data-zone="transport" aria-selected="false">Транспорт</button>
+          </div>
+
+          <div class="viewer-content-card">
+            <div class="viewer-content-meta"><span id="screenPeriod">2000–2025</span><span id="screenIndex">01 / 14</span></div>
+            <h3 id="screenTitle">Атомный реактор и проект «Прорыв»</h3>
+            <p id="screenBody">Выберите сюжет — соответствующая медиастена обновится прямо в пространстве.</p>
+            <label class="viewer-select-label" for="screenSelect">Сюжет на экране</label>
+            <select id="screenSelect"></select>
+            <div class="viewer-stepper">
+              <button type="button" id="screenPrev">Предыдущий</button>
+              <button type="button" id="screenPlay" aria-pressed="false">Автопоказ</button>
+              <button type="button" id="screenNext">Следующий</button>
+            </div>
+          </div>
+
+          <div class="viewer-object-card">
+            <p class="viewer-kicker">Физический макет</p>
+            <h3 id="modelTitle">Промышленный робот</h3>
+            <dl>
+              <div><dt>Габарит</dt><dd id="modelSize">0,38 × 0,42 × 0,55 м</dd></div>
+              <div><dt>Размещение</dt><dd id="modelPlacement">левая ниша</dd></div>
+              <div><dt>Статус 3D</dt><dd id="modelStatus">Hi3D · пилот</dd></div>
+            </dl>
+          </div>
+
+          <form class="viewer-review" id="reviewForm">
+            <p class="viewer-kicker">Решение заказчика</p>
+            <div class="review-status" role="group" aria-label="Статус решения">
+              <button type="button" data-review="approved">Подходит</button>
+              <button type="button" data-review="changes">На доработку</button>
+            </div>
+            <label for="reviewNote">Комментарий к выбранному сюжету</label>
+            <textarea id="reviewNote" rows="3" placeholder="Например: увеличить макет и замедлить фон"></textarea>
+            <div class="review-actions">
+              <button type="button" id="copyReviewLink">Скопировать этот вид</button>
+              <button type="button" id="downloadReview">Скачать решения</button>
+            </div>
+            <p class="review-help">Решения сохраняются в этом браузере. Для передачи команде скачайте JSON-файл.</p>
+            <p class="review-saved" id="reviewSaved" aria-live="polite"></p>
+          </form>
+        </aside>
+      </div>
+
+      <div class="physical-register" aria-label="Выбранные физические макеты">
+        <article><span>Транспорт</span><strong>«Ангара»</strong><small>0,12 × 0,12 × 0,58 м</small></article>
+        <article><span>Транспорт</span><strong>Атомный ледокол</strong><small>0,85 × 0,18 × 0,28 м</small></article>
+        <article><span>Строительство</span><strong>Стадион</strong><small>0,58 × 0,45 × 0,18 м</small></article>
+        <article><span>Строительство</span><strong>Арочный мост</strong><small>1,60 × 0,22 × 0,32 м</small></article>
+        <article><span>Технологии</span><strong>Промышленный робот</strong><small>0,38 × 0,42 × 0,55 м</small></article>
+        <article><span>Технологии</span><strong>ГЛОНАСС</strong><small>0,55 × 0,55 × 0,42 м</small></article>
+      </div>
+    </section>
+
+    <section class="concept" id="concept" aria-labelledby="concept-title">
+      <div class="section-heading">
+        <p class="eyebrow">Концепция пространства</p>
+        <h2 id="concept-title">Единая медиасреда и реальные объекты</h2>
+      </div>
+      <div class="concept-grid">
+        <article>
+          <span>01</span>
+          <h3>П-образный экран</h3>
+          <p>Бесшовный экранный периметр загибается П-образно по внутренней стороне павильона и работает как единая хронологическая лента.</p>
+        </article>
+        <article>
+          <span>02</span>
+          <h3>Экспонаты и ниши</h3>
+          <p>В нишах высотой 1 м между нижней и верхней частями экрана размещаются физические макеты объектов, связанных с выполненными задачами.</p>
+        </article>
+        <article>
+          <span>03</span>
+          <h3>Москва в центре</h3>
+          <p>Центральный блок показывает столицу как пример комплексного соединения технологий, строительства и транспорта.</p>
+        </article>
+        <article>
+          <span>04</span>
+          <h3>Единый визуальный язык</h3>
+          <p>Круги, квадраты и треугольники связывают фоновую графику, информационные плашки, видеоролики и предметную часть.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="register" id="register" aria-labelledby="register-title">
+      <div class="section-heading register-heading">
+        <div>
+          <p class="eyebrow">Состав экспозиции</p>
+          <h2 id="register-title">42 позиции</h2>
+        </div>
+        <p>Полный рабочий список из концепции: по 14 позиций в каждой тематической зоне.</p>
+      </div>
+
+      <div class="register-tools">
+        <div class="filters" role="group" aria-label="Фильтр по тематической зоне">
+          <button class="filter is-active" type="button" data-zone="all" aria-pressed="true">Все <span>42</span></button>
+          <button class="filter" type="button" data-zone="transport" aria-pressed="false">Транспорт <span>14</span></button>
+          <button class="filter" type="button" data-zone="construction" aria-pressed="false">Строительство <span>14</span></button>
+          <button class="filter" type="button" data-zone="technology" aria-pressed="false">Технологии <span>14</span></button>
+        </div>
+        <label class="search-field">
+          <span>Поиск по позициям</span>
+          <input id="search" type="search" autocomplete="off" placeholder="Например, мосты или роботы">
+        </label>
+      </div>
+
+      <p class="result-count" id="resultCount" role="status" aria-live="polite">Показано 42 позиции</p>
+      <div class="exhibit-grid" id="exhibitGrid"></div>
+      <p class="empty-state" id="emptyState" hidden>По этому запросу ничего не найдено.</p>
+    </section>
+
+    <section class="space" id="space" aria-labelledby="space-title">
+      <div class="space-copy">
+        <p class="eyebrow">Принцип пространственной сборки</p>
+        <h2 id="space-title">Экран — фон. Экспонат — доказательство.</h2>
+        <p>Фоновая анимация поддерживает тематику зоны и не спорит с текстовыми плашками. Каждая позиция получает связь с конкретным годом, экранным сюжетом и физическим объектом или моделью.</p>
+      </div>
+      <div class="space-technical">
+        <figure class="wall-section">
+          <figcaption>Разрез медиастены <span>4 м</span></figcaption>
+          <div class="wall-stack" aria-label="Снизу вверх: 0,5 метра экрана, 1 метр ниши с физическими объектами, 2,5 метра экрана">
+            <div class="wall-segment wall-segment--upper"><strong>Верхний экран</strong><span>2,5 м</span></div>
+            <div class="wall-segment wall-segment--niche">
+              <strong>Физические объекты и макеты</strong><span>ниша 1 м</span>
+              <i></i><i></i><i></i>
+            </div>
+            <div class="wall-segment wall-segment--lower"><strong>Нижний экран</strong><span>0,5 м</span></div>
+          </div>
+        </figure>
+        <dl class="space-specs">
+          <div><dt>Конструкция</dt><dd>единый бесшовный П-образный медиапериметр внутри павильона</dd></div>
+          <div><dt>Высота</dt><dd>0,5 м экран + 1 м ниша + 2,5 м экран до потолка = 4 м</dd></div>
+          <div><dt>Экспонаты</dt><dd>физические объекты и макеты внутри ниш</dd></div>
+          <div><dt>Контент</dt><dd>тематический фон + модульные информационные плашки</dd></div>
+        </dl>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand" href="https://fazafilms.ru/">ФАЗА<span>.</span></a>
+    <p>Рабочая страница проекта · 42 позиции</p>
+    <a href="#page-title">К началу</a>
+  </footer>
+</body>
+</html>
