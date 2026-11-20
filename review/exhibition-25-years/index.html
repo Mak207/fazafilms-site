@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css?v=8">
+  <link rel="stylesheet" href="./style.css?v=9">
   <script defer src="./exhibit-data.js?v=2"></script>
   <script defer src="./page.js?v=2"></script>
   <script type="importmap">
@@ -23,7 +23,7 @@
       }
     }
   </script>
-    <script type="module" src="./exhibition-3d.js?v=15"></script>
+    <script type="module" src="./exhibition-3d.js?v=16"></script>
 </head>
 <body>
   <a class="skip-link" href="#register">К списку экспонатов</a>
@@ -106,6 +106,51 @@
             <button type="button" role="tab" data-zone="transport" aria-selected="false">Транспорт</button>
           </div>
 
+          <section class="screen-channel-console" aria-label="Независимое управление тремя экранами">
+            <div class="screen-channel is-selected" data-screen-channel="technology">
+              <button class="screen-channel-focus" type="button" data-channel-focus="technology">
+                <span>Технологии</span><small data-channel-index>01 / 14</small>
+              </button>
+              <p data-channel-title>Атомный реактор и проект «Прорыв»</p>
+              <div class="screen-channel-footer">
+                <span class="screen-channel-state" data-channel-state>в эфире</span>
+                <div class="screen-channel-controls">
+                  <button type="button" data-channel-zone="technology" data-channel-action="prev" aria-label="Предыдущая сцена: технологии">←</button>
+                  <button type="button" data-channel-zone="technology" data-channel-action="play" aria-label="Пауза или пуск: технологии" aria-pressed="true">Пауза</button>
+                  <button type="button" data-channel-zone="technology" data-channel-action="next" aria-label="Следующая сцена: технологии">→</button>
+                </div>
+              </div>
+            </div>
+            <div class="screen-channel" data-screen-channel="construction">
+              <button class="screen-channel-focus" type="button" data-channel-focus="construction">
+                <span>Строительство</span><small data-channel-index>01 / 14</small>
+              </button>
+              <p data-channel-title>Программа газификации</p>
+              <div class="screen-channel-footer">
+                <span class="screen-channel-state" data-channel-state>в эфире</span>
+                <div class="screen-channel-controls">
+                  <button type="button" data-channel-zone="construction" data-channel-action="prev" aria-label="Предыдущая сцена: строительство">←</button>
+                  <button type="button" data-channel-zone="construction" data-channel-action="play" aria-label="Пауза или пуск: строительство" aria-pressed="true">Пауза</button>
+                  <button type="button" data-channel-zone="construction" data-channel-action="next" aria-label="Следующая сцена: строительство">→</button>
+                </div>
+              </div>
+            </div>
+            <div class="screen-channel" data-screen-channel="transport">
+              <button class="screen-channel-focus" type="button" data-channel-focus="transport">
+                <span>Транспорт</span><small data-channel-index>01 / 14</small>
+              </button>
+              <p data-channel-title>Семейство ракет-носителей «Ангара»</p>
+              <div class="screen-channel-footer">
+                <span class="screen-channel-state" data-channel-state>в эфире</span>
+                <div class="screen-channel-controls">
+                  <button type="button" data-channel-zone="transport" data-channel-action="prev" aria-label="Предыдущая сцена: транспорт">←</button>
+                  <button type="button" data-channel-zone="transport" data-channel-action="play" aria-label="Пауза или пуск: транспорт" aria-pressed="true">Пауза</button>
+                  <button type="button" data-channel-zone="transport" data-channel-action="next" aria-label="Следующая сцена: транспорт">→</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
           <div class="viewer-content-card">
             <div class="viewer-content-meta"><span id="screenPeriod">2000–2025</span><span id="screenIndex">01 / 14</span></div>
             <h3 id="screenTitle">Атомный реактор и проект «Прорыв»</h3>
@@ -114,13 +159,13 @@
             <select id="screenSelect"></select>
             <label class="viewer-select-label" for="screenMode">Вид экранного контента</label>
             <select id="screenMode">
-              <option value="plate">Плашка + живая графика</option>
+              <option value="plate">Анимированная экранная сцена</option>
               <option value="frame">Пробный кадр ролика</option>
               <option value="hybrid">Пробный кадр + плашка</option>
             </select>
             <div class="viewer-stepper">
               <button type="button" id="screenPrev">Предыдущий</button>
-              <button type="button" id="screenPlay" aria-pressed="false">Автопоказ</button>
+              <button type="button" id="screenPlay" aria-pressed="true">Пауза</button>
               <button type="button" id="screenNext">Следующий</button>
             </div>
           </div>
