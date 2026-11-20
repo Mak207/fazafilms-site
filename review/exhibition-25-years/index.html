@@ -12,8 +12,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css?v=2">
+  <link rel="stylesheet" href="./style.css?v=4">
   <script defer src="./page.js?v=1"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.min.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="./exhibition-3d.js?v=2"></script>
 </head>
 <body>
   <a class="skip-link" href="#register">К списку экспонатов</a>
@@ -22,6 +31,7 @@
     <a class="brand" href="https://fazafilms.ru/" aria-label="Студия ФАЗА">ФАЗА<span>.</span></a>
     <nav aria-label="Разделы страницы">
       <a href="#concept">Концепция</a>
+      <a href="#interactive">3D-просмотр</a>
       <a href="#register">42 позиции</a>
       <a href="#space">Пространство</a>
     </nav>
@@ -53,6 +63,87 @@
           <span class="shape shape--triangle f"></span>
           <div class="moscow-core"><span>Центр</span><strong>Москва</strong></div>
         </div>
+      </div>
+    </section>
+
+    <section class="interactive" id="interactive" aria-labelledby="interactive-title">
+      <div class="section-heading interactive-heading">
+        <div>
+          <p class="eyebrow">Интерактивное согласование</p>
+          <h2 id="interactive-title">Пройдите выставку до монтажа</h2>
+        </div>
+        <p>Рабочая сцена 10 × 17 × 4 м: план восстановлен по метровой сетке схемы, высота собрана по утверждённому разрезу. Выберите стену, переключайте контент и фиксируйте решение по каждому сюжету.</p>
+      </div>
+
+      <div class="viewer-shell" data-viewer-state="loading">
+        <div class="viewer-stage">
+          <canvas id="exhibitionCanvas" aria-label="Интерактивная трёхмерная модель выставочного павильона"></canvas>
+          <div class="viewer-loading" id="viewerLoading" role="status">Собираем пространство…</div>
+          <div class="viewer-badge">М 1:1 <span>·</span> 4 м</div>
+          <div class="viewer-cameras" role="group" aria-label="Точки обзора">
+            <button type="button" data-camera="overview" class="is-active">Общий вид</button>
+            <button type="button" data-camera="visitor">Посетитель</button>
+            <button type="button" data-camera="technology">Технологии</button>
+            <button type="button" data-camera="construction">Строительство</button>
+            <button type="button" data-camera="transport">Транспорт</button>
+          </div>
+        </div>
+
+        <aside class="viewer-panel" aria-label="Управление контентом и оценка">
+          <div class="viewer-zone-tabs" role="tablist" aria-label="Тематические стены">
+            <button type="button" role="tab" data-zone="technology" aria-selected="true">Технологии</button>
+            <button type="button" role="tab" data-zone="construction" aria-selected="false">Строительство</button>
+            <button type="button" role="tab" data-zone="transport" aria-selected="false">Транспорт</button>
+          </div>
+
+          <div class="viewer-content-card">
+            <div class="viewer-content-meta"><span id="screenPeriod">2000–2025</span><span id="screenIndex">01 / 14</span></div>
+            <h3 id="screenTitle">Атомный реактор и проект «Прорыв»</h3>
+            <p id="screenBody">Выберите сюжет — соответствующая медиастена обновится прямо в пространстве.</p>
+            <label class="viewer-select-label" for="screenSelect">Сюжет на экране</label>
+            <select id="screenSelect"></select>
+            <div class="viewer-stepper">
+              <button type="button" id="screenPrev">Предыдущий</button>
+              <button type="button" id="screenPlay" aria-pressed="false">Автопоказ</button>
+              <button type="button" id="screenNext">Следующий</button>
+            </div>
+          </div>
+
+          <div class="viewer-object-card">
+            <p class="viewer-kicker">Физический макет</p>
+            <h3 id="modelTitle">Промышленный робот</h3>
+            <dl>
+              <div><dt>Габарит</dt><dd id="modelSize">0,38 × 0,42 × 0,55 м</dd></div>
+              <div><dt>Размещение</dt><dd id="modelPlacement">левая ниша</dd></div>
+              <div><dt>Статус 3D</dt><dd id="modelStatus">Hi3D · пилот</dd></div>
+            </dl>
+          </div>
+
+          <form class="viewer-review" id="reviewForm">
+            <p class="viewer-kicker">Решение заказчика</p>
+            <div class="review-status" role="group" aria-label="Статус решения">
+              <button type="button" data-review="approved">Подходит</button>
+              <button type="button" data-review="changes">На доработку</button>
+            </div>
+            <label for="reviewNote">Комментарий к выбранному сюжету</label>
+            <textarea id="reviewNote" rows="3" placeholder="Например: увеличить макет и замедлить фон"></textarea>
+            <div class="review-actions">
+              <button type="button" id="copyReviewLink">Скопировать этот вид</button>
+              <button type="button" id="downloadReview">Скачать решения</button>
+            </div>
+            <p class="review-help">Решения сохраняются в этом браузере. Для передачи команде скачайте JSON-файл.</p>
+            <p class="review-saved" id="reviewSaved" aria-live="polite"></p>
+          </form>
+        </aside>
+      </div>
+
+      <div class="physical-register" aria-label="Выбранные физические макеты">
+        <article><span>Транспорт</span><strong>«Ангара»</strong><small>0,12 × 0,12 × 0,58 м</small></article>
+        <article><span>Транспорт</span><strong>Атомный ледокол</strong><small>0,85 × 0,18 × 0,28 м</small></article>
+        <article><span>Строительство</span><strong>Стадион</strong><small>0,58 × 0,45 × 0,18 м</small></article>
+        <article><span>Строительство</span><strong>Арочный мост</strong><small>1,60 × 0,22 × 0,32 м</small></article>
+        <article><span>Технологии</span><strong>Промышленный робот</strong><small>0,38 × 0,42 × 0,55 м</small></article>
+        <article><span>Технологии</span><strong>ГЛОНАСС</strong><small>0,55 × 0,55 × 0,42 м</small></article>
       </div>
     </section>
 

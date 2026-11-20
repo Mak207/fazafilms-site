@@ -48,6 +48,8 @@
     { zone: "technology", title: "Космические технологии", text: "Модели спутников, элементы дистанционного зондирования Земли и образцы космической связи." }
   ];
 
+  window.EXHIBITION_ITEMS = items;
+
   const zoneLabels = {
     transport: "Транспорт",
     construction: "Строительство",
