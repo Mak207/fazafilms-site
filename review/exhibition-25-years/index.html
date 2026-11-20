@@ -11,9 +11,10 @@
   <link rel="icon" href="/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css?v=5">
-  <script defer src="./page.js?v=1"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css?v=7">
+  <script defer src="./exhibit-data.js?v=1"></script>
+  <script defer src="./page.js?v=2"></script>
   <script type="importmap">
     {
       "imports": {
@@ -22,7 +23,7 @@
       }
     }
   </script>
-  <script type="module" src="./exhibition-3d.js?v=3"></script>
+  <script type="module" src="./exhibition-3d.js?v=8"></script>
 </head>
 <body>
   <a class="skip-link" href="#register">К списку экспонатов</a>
@@ -111,6 +112,12 @@
             <p id="screenBody">Выберите сюжет — соответствующая медиастена обновится прямо в пространстве.</p>
             <label class="viewer-select-label" for="screenSelect">Сюжет на экране</label>
             <select id="screenSelect"></select>
+            <label class="viewer-select-label" for="screenMode">Вид экранного контента</label>
+            <select id="screenMode">
+              <option value="plate">Плашка + живая графика</option>
+              <option value="frame">Пробный кадр ролика</option>
+              <option value="hybrid">Пробный кадр + плашка</option>
+            </select>
             <div class="viewer-stepper">
               <button type="button" id="screenPrev">Предыдущий</button>
               <button type="button" id="screenPlay" aria-pressed="false">Автопоказ</button>
@@ -126,6 +133,7 @@
               <div><dt>Размещение</dt><dd id="modelPlacement">левая ниша</dd></div>
               <div><dt>Статус 3D</dt><dd id="modelStatus">Hi3D · пилот</dd></div>
             </dl>
+            <a class="model-reference" id="modelReference" href="#" target="_blank" rel="noopener noreferrer">Открыть реальный вид</a>
           </div>
 
           <form class="viewer-review" id="reviewForm">
@@ -146,14 +154,15 @@
         </aside>
       </div>
 
-      <div class="physical-register" aria-label="Выбранные физические макеты">
-        <article><span>Транспорт</span><strong>«Ангара»</strong><small>0,12 × 0,12 × 0,58 м</small></article>
-        <article><span>Транспорт</span><strong>Атомный ледокол</strong><small>0,85 × 0,18 × 0,28 м</small></article>
-        <article><span>Строительство</span><strong>Стадион</strong><small>0,58 × 0,45 × 0,18 м</small></article>
-        <article><span>Строительство</span><strong>Арочный мост</strong><small>1,60 × 0,22 × 0,32 м</small></article>
-        <article><span>Технологии</span><strong>Промышленный робот</strong><small>0,38 × 0,42 × 0,55 м</small></article>
-        <article><span>Технологии</span><strong>ГЛОНАСС</strong><small>0,55 × 0,55 × 0,42 м</small></article>
-      </div>
+      <div class="physical-register" id="physicalRegister" aria-label="Все физические макеты"></div>
+
+      <section class="scenario-board" aria-labelledby="scenario-title">
+        <div class="section-heading">
+          <p class="eyebrow">Экранные ролики</p>
+          <h2 id="scenario-title">Три бесшовных цикла</h2>
+        </div>
+        <div class="scenario-grid" id="scenarioGrid"></div>
+      </section>
     </section>
 
     <section class="concept" id="concept" aria-labelledby="concept-title">
