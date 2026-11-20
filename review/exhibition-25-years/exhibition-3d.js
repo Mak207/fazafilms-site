@@ -117,23 +117,24 @@ function init() {
   renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.68;
+  renderer.toneMappingExposure = 0.55;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xaebfc7);
-  scene.fog = new THREE.FogExp2(0xb9c9cf, 0.0075);
+  scene.background = new THREE.Color(0x91a8b2);
+  scene.fog = new THREE.FogExp2(0xa7bbc2, 0.0065);
   const pmremGenerator = new THREE.PMREMGenerator(renderer);
   scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.035).texture;
   pmremGenerator.dispose();
 
   const camera = new THREE.PerspectiveCamera(42, 1, 0.05, 80);
-  camera.position.set(0, 4.25, 12.4);
+  const initialView = getCameraView("overview", isNarrowScene());
+  camera.position.set(...initialView.position);
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
   controls.dampingFactor = 0.065;
-  controls.target.set(0, 1.78, -2.35);
+  controls.target.set(...initialView.target);
   controls.minDistance = 2.2;
   controls.maxDistance = 44;
   controls.maxPolarAngle = Math.PI * 0.49;
@@ -195,15 +196,15 @@ function init() {
     const height = canvas.clientHeight;
     renderer.setSize(width, height, false);
     camera.aspect = width / Math.max(height, 1);
-    camera.fov = camera.aspect < 0.82 ? 56 : camera.aspect < 1.10 ? 48 : 42;
+    camera.fov = camera.aspect < 0.82 ? 44 : camera.aspect < 1.10 ? 46 : 42;
     camera.updateProjectionMatrix();
   }
 }
 
 function addExhibitionLighting(scene) {
-  scene.add(new THREE.HemisphereLight(0xf0f7fa, 0x56666c, 0.78));
+  scene.add(new THREE.HemisphereLight(0xe9f3f7, 0x4b5d64, 0.52));
 
-  const key = new THREE.DirectionalLight(0xffefd8, 1.18);
+  const key = new THREE.DirectionalLight(0xffefd8, 0.78);
   key.position.set(-3.5, 13.5, 9.5);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
@@ -226,16 +227,16 @@ function addExhibitionLighting(scene) {
     scene.add(spot);
   };
 
-  addSpot([0, 7.25, 0.45], [0, 1.95, 0.15], 34, 0xffe5c3, 0.48);
-  addSpot([-4.4, 6.9, 3.8], [-2.8, 1.45, 3.2], 18, 0xc7e8f3, 0.34);
-  addSpot([4.4, 6.9, 3.8], [2.8, 1.45, 3.2], 18, 0xffe4bd, 0.34);
-  addSpot([-3.4, 6.7, -4.8], [-4.5, 1.15, -4.8], 15, 0xcce9f1, 0.32);
-  addSpot([3.4, 6.7, -4.8], [4.5, 1.15, -4.8], 15, 0xffe8c9, 0.32);
+  addSpot([0, 7.25, 0.45], [0, 1.95, 0.15], 20, 0xffe5c3, 0.48);
+  addSpot([-4.4, 6.9, 3.8], [-2.8, 1.45, 3.2], 10, 0xc7e8f3, 0.34);
+  addSpot([4.4, 6.9, 3.8], [2.8, 1.45, 3.2], 10, 0xffe4bd, 0.34);
+  addSpot([-3.4, 6.7, -4.8], [-4.5, 1.15, -4.8], 8, 0xcce9f1, 0.32);
+  addSpot([3.4, 6.7, -4.8], [4.5, 1.15, -4.8], 8, 0xffe8c9, 0.32);
 
-  const technologyWash = new THREE.PointLight(0x52d5d7, 2.8, 14, 2);
+  const technologyWash = new THREE.PointLight(0x52d5d7, 1.45, 14, 2);
   technologyWash.position.set(-5.5, 2.4, -2.2);
   scene.add(technologyWash);
-  const transportWash = new THREE.PointLight(0x89a8ff, 2.8, 14, 2);
+  const transportWash = new THREE.PointLight(0x89a8ff, 1.45, 14, 2);
   transportWash.position.set(5.5, 2.4, -2.2);
   scene.add(transportWash);
 
@@ -244,30 +245,30 @@ function addExhibitionLighting(scene) {
     [0.88, 0.34, 0.72, 0xb7df78],
     [0, 0.34, -0.42, 0x89a8ff]
   ].forEach(([x, y, z, color]) => {
-    const glow = new THREE.PointLight(color, 2.6, 4.8, 2);
+    const glow = new THREE.PointLight(color, 1.55, 4.8, 2);
     glow.position.set(x, y, z);
     scene.add(glow);
   });
 }
 
 function buildAtriumShell(scene) {
-  const steel = new THREE.MeshStandardMaterial({ color: 0x89989e, roughness: 0.34, metalness: 0.62, envMapIntensity: 0.72 });
+  const steel = new THREE.MeshStandardMaterial({ color: 0x52666f, roughness: 0.38, metalness: 0.60, envMapIntensity: 0.66 });
   const white = new THREE.MeshPhysicalMaterial({ color: 0xd9ddda, roughness: 0.34, metalness: 0.10, clearcoat: 0.24, clearcoatRoughness: 0.30, envMapIntensity: 0.72 });
-  const glass = new THREE.MeshPhysicalMaterial({ color: 0x7ba4b6, roughness: 0.12, metalness: 0.02, transmission: 0.18, transparent: true, opacity: 0.27, depthWrite: false, side: THREE.DoubleSide });
+  const glass = new THREE.MeshPhysicalMaterial({ color: 0x668d9f, roughness: 0.14, metalness: 0.02, transmission: 0.14, transparent: true, opacity: 0.31, depthWrite: false, side: THREE.DoubleSide });
   const ceilingY = pavilion.atriumHeight;
   const halfW = pavilion.atriumWidth / 2;
   const halfD = pavilion.atriumDepth / 2;
 
-  const addMullion = (x, z, height = ceilingY) => addBox(scene, [0.07, height, 0.07], [x, height / 2, z], steel);
+  const addMullion = (x, z, height = ceilingY) => addBox(scene, [0.095, height, 0.095], [x, height / 2, z], steel);
   for (let z = -halfD; z <= halfD + 0.01; z += 2) {
     addMullion(-halfW, z);
     addMullion(halfW, z);
-    addBox(scene, [pavilion.atriumWidth, 0.07, 0.07], [0, ceilingY, z], steel);
+    addBox(scene, [pavilion.atriumWidth, 0.095, 0.095], [0, ceilingY, z], steel);
     addBox(scene, [pavilion.atriumWidth, 0.035, 0.035], [0, ceilingY - 0.32, z], white);
   }
   for (let x = -halfW; x <= halfW + 0.01; x += 1.9) {
     addMullion(x, -halfD);
-    addBox(scene, [0.07, 0.07, pavilion.atriumDepth], [x, ceilingY, 0], steel);
+    addBox(scene, [0.095, 0.095, pavilion.atriumDepth], [x, ceilingY, 0], steel);
   }
 
   const sideGlass = new THREE.Mesh(new THREE.PlaneGeometry(pavilion.atriumDepth, ceilingY), glass);
@@ -281,7 +282,7 @@ function buildAtriumShell(scene) {
   rearGlass.position.set(0, ceilingY / 2, -halfD);
   scene.add(rearGlass);
 
-  const trackMaterial = new THREE.MeshStandardMaterial({ color: 0x8f999c, roughness: 0.32, metalness: 0.70 });
+  const trackMaterial = new THREE.MeshStandardMaterial({ color: 0x5f7178, roughness: 0.36, metalness: 0.68 });
   const lampMaterial = new THREE.MeshBasicMaterial({ color: 0xfff0d4, toneMapped: false });
   [-5.7, 5.7].forEach((x) => {
     addBox(scene, [0.09, 0.09, pavilion.atriumDepth - 1.5], [x, ceilingY - 0.42, 0], trackMaterial);
@@ -321,7 +322,7 @@ function addNicheLighting(scene) {
     const target = new THREE.Object3D();
     target.position.set(...targetPosition);
     scene.add(target);
-    const light = new THREE.SpotLight(color, 13, 1.65, 0.72, 0.78, 1.5);
+    const light = new THREE.SpotLight(color, 5.5, 1.65, 0.72, 0.78, 1.5);
     light.position.set(...position);
     light.target = target;
     light.castShadow = false;
@@ -357,8 +358,10 @@ function buildPavilion(scene) {
   addBox(scene, [0.72, 0.10, 20.55], [6.02, 0.54, 0.12], shelfMaterial);
   addBox(scene, [12.25, 0.10, 0.72], [0, 0.54, -9.94], shelfMaterial);
 
-  addDimension(scene, [-7.05, 0, 10.25], [-7.05, 4, 10.25], "4 м");
-  addDimension(scene, [-6.5, 0.02, 11.15], [6.5, 0.02, 11.15], "13 м");
+  if (!isNarrowScene()) {
+    addDimension(scene, [-7.05, 0, 10.25], [-7.05, 4, 10.25], "4 м");
+    addDimension(scene, [-6.5, 0.02, 11.15], [6.5, 0.02, 11.15], "13 м");
+  }
 }
 
 function addSeamlessMediaWalls(scene) {
@@ -637,7 +640,7 @@ function fitToEnvelope(group, dims) {
   group.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(group);
   const size = box.getSize(new THREE.Vector3());
-  const scale = Math.min((dims[0] * 0.9) / Math.max(size.x, 0.001), (dims[2] * 0.9) / Math.max(size.y, 0.001), (dims[1] * 0.9) / Math.max(size.z, 0.001));
+  const scale = Math.min((dims[0] * 0.96) / Math.max(size.x, 0.001), (dims[2] * 0.96) / Math.max(size.y, 0.001), (dims[1] * 0.96) / Math.max(size.z, 0.001));
   group.scale.setScalar(scale);
   group.updateMatrixWorld(true);
   const fitted = new THREE.Box3().setFromObject(group);
@@ -934,6 +937,8 @@ function drawCubeFaces() {
     const media = video?.readyState >= 2 && video.videoWidth ? video : frame;
     ctx.clearRect(0, 0, layer.width, layer.height);
     paintScreenGround(ctx, layer.width, layer.height, zoneColors[zone]);
+    // The cube face is square, but the moving image remains a true horizontal
+    // 16:9 composition. It is letterboxed inside the face and never stretched.
     const viewport = { x: 48, y: 176, width: 928, height: 522 };
     ctx.fillStyle = "rgba(2,18,48,.84)";
     roundedRect(ctx, viewport.x, viewport.y, viewport.width, viewport.height, 22);
@@ -941,7 +946,7 @@ function drawCubeFaces() {
     ctx.save();
     roundedRect(ctx, viewport.x, viewport.y, viewport.width, viewport.height, 22);
     ctx.clip();
-    if (getMediaWidth(media)) drawImageCoverPan(ctx, media, viewport.x, viewport.y, viewport.width, viewport.height, Math.sin(programPhase * 0.10 + index) * 0.08, 0);
+    if (getMediaWidth(media)) drawImageContain(ctx, media, viewport.x, viewport.y, viewport.width, viewport.height);
     ctx.save();
     ctx.globalCompositeOperation = "screen";
     const wash = ctx.createLinearGradient(viewport.x, viewport.y, viewport.x + viewport.width, viewport.y + viewport.height);
@@ -1804,6 +1809,16 @@ function drawImageCover(ctx, image, x, y, width, height) {
   ctx.drawImage(image, x + (width - drawWidth) / 2, y + (height - drawHeight) / 2, drawWidth, drawHeight);
 }
 
+function drawImageContain(ctx, image, x, y, width, height) {
+  const sourceWidth = getMediaWidth(image);
+  const sourceHeight = getMediaHeight(image);
+  if (!sourceWidth || !sourceHeight) return;
+  const scale = Math.min(width / sourceWidth, height / sourceHeight);
+  const drawWidth = sourceWidth * scale;
+  const drawHeight = sourceHeight * scale;
+  ctx.drawImage(image, x + (width - drawWidth) / 2, y + (height - drawHeight) / 2, drawWidth, drawHeight);
+}
+
 function drawImageCoverPan(ctx, image, x, y, width, height, panX = 0, panY = 0) {
   const mediaWidth = getMediaWidth(image);
   const mediaHeight = getMediaHeight(image);
@@ -2034,16 +2049,28 @@ function selectModel(id) {
   reference.hidden = !meta.reference;
 }
 
-function focusCamera(name, camera, controls) {
+function isNarrowScene() {
+  return window.innerWidth <= 740;
+}
+
+function getCameraView(name, narrow = false) {
   const views = {
-    overview: { position: [0, 4.25, 12.4], target: [0, 1.78, -2.35] },
+    overview: narrow
+      ? { position: [0, 3.15, 8.65], target: [0, 1.58, -3.15] }
+      : { position: [0, 4.25, 12.4], target: [0, 1.78, -2.35] },
     visitor: { position: [0, 1.65, 10.6], target: [0, 1.72, -0.35] },
-    cube: { position: [4.8, 3.1, 5.4], target: [0, 1.92, -0.35] },
+    cube: narrow
+      ? { position: [3.65, 2.75, 4.3], target: [0, 1.92, -0.35] }
+      : { position: [4.8, 3.1, 5.4], target: [0, 1.92, -0.35] },
     technology: { position: [-2.25, 1.80, -0.2], target: [-6.15, 1.52, -0.2] },
     construction: { position: [0, 3.5, 0.8], target: [0, 1.72, -10.15] },
     transport: { position: [2.25, 1.80, -0.2], target: [6.15, 1.52, -0.2] }
   };
-  const view = views[name] || views.overview;
+  return views[name] || views.overview;
+}
+
+function focusCamera(name, camera, controls) {
+  const view = getCameraView(name, isNarrowScene());
   state.camera = name;
   cameraMotion = { startPosition: camera.position.clone(), startTarget: controls.target.clone(), endPosition: new THREE.Vector3(...view.position), endTarget: new THREE.Vector3(...view.target), started: performance.now(), duration: 850 };
   document.querySelectorAll(".viewer-cameras [data-camera]").forEach((button) => button.classList.toggle("is-active", button.dataset.camera === name));
