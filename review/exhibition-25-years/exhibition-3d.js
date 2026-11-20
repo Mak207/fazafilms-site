@@ -166,13 +166,17 @@ function init() {
   renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.46;
+  // Keep the review deterministic. Automatic exposure made the same scene
+  // look washed out on bright displays and grey on dark ones.
+  renderer.toneMappingExposure = 0.50;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x91a8b2);
-  scene.fog = new THREE.FogExp2(0xa7bbc2, 0.0065);
+  scene.background = new THREE.Color(0x667d87);
+  // A pale, dense fog was the main source of the previous "white veil".
+  // The atrium is only 28 m deep, so use a restrained cool haze instead.
+  scene.fog = new THREE.FogExp2(0x667d87, 0.0024);
   const pmremGenerator = new THREE.PMREMGenerator(renderer);
   scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.035).texture;
   pmremGenerator.dispose();
@@ -251,10 +255,13 @@ function init() {
 }
 
 function addExhibitionLighting(scene) {
-  scene.add(new THREE.HemisphereLight(0xe9f3f7, 0x4b5d64, 0.38));
+  // Controlled museum/exhibition rig: low base level, one motivated daylight
+  // key and local pools for the exhibits. Screens stay self-luminous and do
+  // not have to lift the exposure of the whole pavilion.
+  scene.add(new THREE.HemisphereLight(0xdcecf1, 0x26363c, 0.22));
 
-  const key = new THREE.DirectionalLight(0xffefd8, 0.56);
-  key.position.set(-3.5, 13.5, 9.5);
+  const key = new THREE.DirectionalLight(0xffedd7, 0.42);
+  key.position.set(-5.5, 13.5, 8.0);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
   key.shadow.camera.left = -16;
@@ -276,16 +283,16 @@ function addExhibitionLighting(scene) {
     scene.add(spot);
   };
 
-  addSpot([0, 7.25, 0.45], [0, 1.95, 0.15], 12, 0xffe5c3, 0.48);
-  addSpot([-4.4, 6.9, 3.8], [-2.8, 1.45, 3.2], 6, 0xc7e8f3, 0.34);
-  addSpot([4.4, 6.9, 3.8], [2.8, 1.45, 3.2], 6, 0xffe4bd, 0.34);
-  addSpot([-3.4, 6.7, -4.8], [-4.5, 1.15, -4.8], 5, 0xcce9f1, 0.32);
-  addSpot([3.4, 6.7, -4.8], [4.5, 1.15, -4.8], 5, 0xffe8c9, 0.32);
+  addSpot([0, 7.25, 1.15], [0, 1.72, -0.35], 7.2, 0xffe1ba, 0.43);
+  addSpot([-4.7, 6.9, 4.2], [-3.35, 1.18, 2.35], 3.6, 0xc6e6ef, 0.31);
+  addSpot([4.7, 6.9, 4.2], [3.35, 1.18, 2.35], 3.6, 0xffdfb5, 0.31);
+  addSpot([-3.6, 6.7, -5.4], [-4.85, 1.02, -4.8], 2.8, 0xc7e4ed, 0.29);
+  addSpot([3.6, 6.7, -5.4], [4.85, 1.02, -4.8], 2.8, 0xffe2bd, 0.29);
 
-  const technologyWash = new THREE.PointLight(0x52d5d7, 0.82, 14, 2);
+  const technologyWash = new THREE.PointLight(0x52d5d7, 0.34, 8, 2);
   technologyWash.position.set(-5.5, 2.4, -2.2);
   scene.add(technologyWash);
-  const transportWash = new THREE.PointLight(0x89a8ff, 0.82, 14, 2);
+  const transportWash = new THREE.PointLight(0x89a8ff, 0.34, 8, 2);
   transportWash.position.set(5.5, 2.4, -2.2);
   scene.add(transportWash);
 
@@ -294,7 +301,7 @@ function addExhibitionLighting(scene) {
     [0.88, 0.34, 0.72, 0xb7df78],
     [0, 0.34, -0.42, 0x89a8ff]
   ].forEach(([x, y, z, color]) => {
-    const glow = new THREE.PointLight(color, 0.90, 4.8, 2);
+    const glow = new THREE.PointLight(color, 0.42, 3.6, 2);
     glow.position.set(x, y, z);
     scene.add(glow);
   });
@@ -302,8 +309,8 @@ function addExhibitionLighting(scene) {
 
 function buildAtriumShell(scene) {
   const steel = new THREE.MeshStandardMaterial({ color: 0x52666f, roughness: 0.38, metalness: 0.60, envMapIntensity: 0.66 });
-  const white = new THREE.MeshPhysicalMaterial({ color: 0xd9ddda, roughness: 0.34, metalness: 0.10, clearcoat: 0.24, clearcoatRoughness: 0.30, envMapIntensity: 0.72 });
-  const glass = new THREE.MeshPhysicalMaterial({ color: 0x668d9f, roughness: 0.14, metalness: 0.02, transmission: 0.14, transparent: true, opacity: 0.31, depthWrite: false, side: THREE.DoubleSide });
+  const white = new THREE.MeshPhysicalMaterial({ color: 0xb9c2c0, roughness: 0.48, metalness: 0.08, clearcoat: 0.12, clearcoatRoughness: 0.42, envMapIntensity: 0.45 });
+  const glass = new THREE.MeshPhysicalMaterial({ color: 0x496b78, roughness: 0.20, metalness: 0.02, transmission: 0.10, transparent: true, opacity: 0.27, depthWrite: false, side: THREE.DoubleSide });
   const ceilingY = pavilion.atriumHeight;
   const halfW = pavilion.atriumWidth / 2;
   const halfD = pavilion.atriumDepth / 2;
@@ -332,7 +339,7 @@ function buildAtriumShell(scene) {
   scene.add(rearGlass);
 
   const trackMaterial = new THREE.MeshStandardMaterial({ color: 0x5f7178, roughness: 0.36, metalness: 0.68 });
-  const lampMaterial = new THREE.MeshBasicMaterial({ color: 0xfff0d4, toneMapped: false });
+  const lampMaterial = new THREE.MeshBasicMaterial({ color: 0xd9c7aa, toneMapped: true });
   [-5.7, 5.7].forEach((x) => {
     addBox(scene, [0.09, 0.09, pavilion.atriumDepth - 1.5], [x, ceilingY - 0.42, 0], trackMaterial);
     for (let z = -11.5; z <= 11.5; z += 1.55) {
@@ -353,11 +360,11 @@ function buildAtriumShell(scene) {
 
 function addNicheLighting(scene) {
   const warm = 0xffe8c5;
-  const ledMaterial = new THREE.MeshBasicMaterial({ color: warm, transparent: true, opacity: 0.88, toneMapped: false });
+  const ledMaterial = new THREE.MeshBasicMaterial({ color: warm, transparent: true, opacity: 0.68, toneMapped: true });
   const accentMaterials = {
-    technology: new THREE.MeshBasicMaterial({ color: zoneColors.technology, transparent: true, opacity: 0.72, toneMapped: false }),
-    construction: new THREE.MeshBasicMaterial({ color: zoneColors.construction, transparent: true, opacity: 0.72, toneMapped: false }),
-    transport: new THREE.MeshBasicMaterial({ color: zoneColors.transport, transparent: true, opacity: 0.72, toneMapped: false })
+    technology: new THREE.MeshBasicMaterial({ color: zoneColors.technology, transparent: true, opacity: 0.52, toneMapped: true }),
+    construction: new THREE.MeshBasicMaterial({ color: zoneColors.construction, transparent: true, opacity: 0.52, toneMapped: true }),
+    transport: new THREE.MeshBasicMaterial({ color: zoneColors.transport, transparent: true, opacity: 0.52, toneMapped: true })
   };
 
   addBox(scene, [0.035, 0.045, 20.15], [-5.80, 1.465, 0.18], ledMaterial);
@@ -371,7 +378,7 @@ function addNicheLighting(scene) {
     const target = new THREE.Object3D();
     target.position.set(...targetPosition);
     scene.add(target);
-    const light = new THREE.SpotLight(color, 3.15, 1.65, 0.72, 0.78, 1.5);
+    const light = new THREE.SpotLight(color, 1.55, 1.58, 0.64, 0.84, 1.7);
     light.position.set(...position);
     light.target = target;
     light.castShadow = false;
@@ -388,21 +395,21 @@ function addNicheLighting(scene) {
 }
 
 function buildPavilion(scene) {
-  const floorMaterial = new THREE.MeshPhysicalMaterial({ color: 0xb8c1c2, roughness: 0.34, metalness: 0.10, clearcoat: 0.22, clearcoatRoughness: 0.30, envMapIntensity: 0.72 });
+  const floorMaterial = new THREE.MeshPhysicalMaterial({ color: 0x8f9b9c, roughness: 0.52, metalness: 0.07, clearcoat: 0.10, clearcoatRoughness: 0.46, envMapIntensity: 0.46 });
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(pavilion.atriumWidth - 0.8, pavilion.atriumDepth - 0.8), floorMaterial);
   floor.rotation.x = -Math.PI / 2;
   floor.position.z = 0;
   floor.receiveShadow = true;
   scene.add(floor);
 
-  const wallMaterial = new THREE.MeshPhysicalMaterial({ color: 0xc5ceca, roughness: 0.40, metalness: 0.08, clearcoat: 0.18, envMapIntensity: 0.68 });
+  const wallMaterial = new THREE.MeshPhysicalMaterial({ color: 0xa8b2ae, roughness: 0.54, metalness: 0.05, clearcoat: 0.10, envMapIntensity: 0.42 });
   addBox(scene, [0.36, pavilion.height, pavilion.depth + 0.6], [-6.68, 2, 0], wallMaterial);
   addBox(scene, [0.36, pavilion.height, pavilion.depth + 0.6], [6.68, 2, 0], wallMaterial);
   addBox(scene, [pavilion.width + 0.1, pavilion.height, 0.36], [0, 2, -10.48], wallMaterial);
 
   addSeamlessMediaWalls(scene);
 
-  const shelfMaterial = new THREE.MeshPhysicalMaterial({ color: 0xd9ded9, roughness: 0.34, metalness: 0.10, clearcoat: 0.20, clearcoatRoughness: 0.28, envMapIntensity: 0.72 });
+  const shelfMaterial = new THREE.MeshPhysicalMaterial({ color: 0xc3cac5, roughness: 0.48, metalness: 0.07, clearcoat: 0.12, clearcoatRoughness: 0.40, envMapIntensity: 0.46 });
   addBox(scene, [0.72, 0.10, 20.55], [-6.02, 0.54, 0.12], shelfMaterial);
   addBox(scene, [0.72, 0.10, 20.55], [6.02, 0.54, 0.12], shelfMaterial);
   addBox(scene, [12.25, 0.10, 0.72], [0, 0.54, -9.94], shelfMaterial);
@@ -486,11 +493,11 @@ function addSeamlessMediaWalls(scene) {
 
   buildStrip(0, 0.5, screenMaterials.lower);
   buildStrip(1.5, 4, screenMaterials.upper);
-  const niche = new THREE.MeshPhysicalMaterial({ color: 0xc5ceca, roughness: 0.46, metalness: 0.06, clearcoat: 0.10, envMapIntensity: 0.62 });
+  const niche = new THREE.MeshPhysicalMaterial({ color: 0x9daaa7, roughness: 0.58, metalness: 0.04, clearcoat: 0.06, envMapIntensity: 0.38 });
   buildStrip(0.5, 1.5, niche);
 
-  const portalMaterial = new THREE.MeshPhysicalMaterial({ color: 0xdce0dc, roughness: 0.30, metalness: 0.08, clearcoat: 0.24, envMapIntensity: 0.76 });
-  const portalGlow = new THREE.MeshBasicMaterial({ color: 0xe9fbff, transparent: true, opacity: 0.86, toneMapped: false });
+  const portalMaterial = new THREE.MeshPhysicalMaterial({ color: 0xc6ccc8, roughness: 0.42, metalness: 0.06, clearcoat: 0.14, envMapIntensity: 0.46 });
+  const portalGlow = new THREE.MeshBasicMaterial({ color: 0xbcecf2, transparent: true, opacity: 0.58, toneMapped: true });
   const curve = new THREE.CurvePath();
   for (let i = 0; i < path.length - 1; i += 1) {
     curve.add(new THREE.LineCurve3(new THREE.Vector3(path[i].x, 4.08, path[i].z), new THREE.Vector3(path[i + 1].x, 4.08, path[i + 1].z)));
