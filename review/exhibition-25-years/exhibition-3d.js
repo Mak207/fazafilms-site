@@ -117,13 +117,13 @@ function init() {
   renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.88;
+  renderer.toneMappingExposure = 0.68;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xdce7ec);
-  scene.fog = new THREE.FogExp2(0xdce7ec, 0.0085);
+  scene.background = new THREE.Color(0xaebfc7);
+  scene.fog = new THREE.FogExp2(0xb9c9cf, 0.0075);
   const pmremGenerator = new THREE.PMREMGenerator(renderer);
   scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.035).texture;
   pmremGenerator.dispose();
@@ -195,14 +195,15 @@ function init() {
     const height = canvas.clientHeight;
     renderer.setSize(width, height, false);
     camera.aspect = width / Math.max(height, 1);
+    camera.fov = camera.aspect < 0.82 ? 56 : camera.aspect < 1.10 ? 48 : 42;
     camera.updateProjectionMatrix();
   }
 }
 
 function addExhibitionLighting(scene) {
-  scene.add(new THREE.HemisphereLight(0xf7fbff, 0x8c9c9d, 1.32));
+  scene.add(new THREE.HemisphereLight(0xf0f7fa, 0x56666c, 0.78));
 
-  const key = new THREE.DirectionalLight(0xfff6e7, 1.58);
+  const key = new THREE.DirectionalLight(0xffefd8, 1.18);
   key.position.set(-3.5, 13.5, 9.5);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
@@ -225,16 +226,16 @@ function addExhibitionLighting(scene) {
     scene.add(spot);
   };
 
-  addSpot([0, 7.25, 0.45], [0, 1.95, 0.15], 64, 0xffeed5, 0.48);
-  addSpot([-4.4, 6.9, 3.8], [-2.8, 1.45, 3.2], 34, 0xd9f7ff, 0.34);
-  addSpot([4.4, 6.9, 3.8], [2.8, 1.45, 3.2], 34, 0xfff1dc, 0.34);
-  addSpot([-3.4, 6.7, -4.8], [-4.5, 1.15, -4.8], 28, 0xe9f9ff, 0.32);
-  addSpot([3.4, 6.7, -4.8], [4.5, 1.15, -4.8], 28, 0xfff4df, 0.32);
+  addSpot([0, 7.25, 0.45], [0, 1.95, 0.15], 34, 0xffe5c3, 0.48);
+  addSpot([-4.4, 6.9, 3.8], [-2.8, 1.45, 3.2], 18, 0xc7e8f3, 0.34);
+  addSpot([4.4, 6.9, 3.8], [2.8, 1.45, 3.2], 18, 0xffe4bd, 0.34);
+  addSpot([-3.4, 6.7, -4.8], [-4.5, 1.15, -4.8], 15, 0xcce9f1, 0.32);
+  addSpot([3.4, 6.7, -4.8], [4.5, 1.15, -4.8], 15, 0xffe8c9, 0.32);
 
-  const technologyWash = new THREE.PointLight(0x52d5d7, 5.5, 14, 2);
+  const technologyWash = new THREE.PointLight(0x52d5d7, 2.8, 14, 2);
   technologyWash.position.set(-5.5, 2.4, -2.2);
   scene.add(technologyWash);
-  const transportWash = new THREE.PointLight(0x89a8ff, 5.5, 14, 2);
+  const transportWash = new THREE.PointLight(0x89a8ff, 2.8, 14, 2);
   transportWash.position.set(5.5, 2.4, -2.2);
   scene.add(transportWash);
 
@@ -243,16 +244,16 @@ function addExhibitionLighting(scene) {
     [0.88, 0.34, 0.72, 0xb7df78],
     [0, 0.34, -0.42, 0x89a8ff]
   ].forEach(([x, y, z, color]) => {
-    const glow = new THREE.PointLight(color, 5, 4.8, 2);
+    const glow = new THREE.PointLight(color, 2.6, 4.8, 2);
     glow.position.set(x, y, z);
     scene.add(glow);
   });
 }
 
 function buildAtriumShell(scene) {
-  const steel = new THREE.MeshStandardMaterial({ color: 0xdbe1e3, roughness: 0.34, metalness: 0.56, envMapIntensity: 0.9 });
-  const white = new THREE.MeshPhysicalMaterial({ color: 0xf0f2ef, roughness: 0.30, metalness: 0.10, clearcoat: 0.34, clearcoatRoughness: 0.26, envMapIntensity: 0.95 });
-  const glass = new THREE.MeshPhysicalMaterial({ color: 0xbad7e3, roughness: 0.08, metalness: 0.02, transmission: 0.28, transparent: true, opacity: 0.20, depthWrite: false, side: THREE.DoubleSide });
+  const steel = new THREE.MeshStandardMaterial({ color: 0x89989e, roughness: 0.34, metalness: 0.62, envMapIntensity: 0.72 });
+  const white = new THREE.MeshPhysicalMaterial({ color: 0xd9ddda, roughness: 0.34, metalness: 0.10, clearcoat: 0.24, clearcoatRoughness: 0.30, envMapIntensity: 0.72 });
+  const glass = new THREE.MeshPhysicalMaterial({ color: 0x7ba4b6, roughness: 0.12, metalness: 0.02, transmission: 0.18, transparent: true, opacity: 0.27, depthWrite: false, side: THREE.DoubleSide });
   const ceilingY = pavilion.atriumHeight;
   const halfW = pavilion.atriumWidth / 2;
   const halfD = pavilion.atriumDepth / 2;
@@ -337,21 +338,21 @@ function addNicheLighting(scene) {
 }
 
 function buildPavilion(scene) {
-  const floorMaterial = new THREE.MeshPhysicalMaterial({ color: 0xd9dfdf, roughness: 0.24, metalness: 0.12, clearcoat: 0.36, clearcoatRoughness: 0.22, envMapIntensity: 1.05 });
+  const floorMaterial = new THREE.MeshPhysicalMaterial({ color: 0xb8c1c2, roughness: 0.34, metalness: 0.10, clearcoat: 0.22, clearcoatRoughness: 0.30, envMapIntensity: 0.72 });
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(pavilion.atriumWidth - 0.8, pavilion.atriumDepth - 0.8), floorMaterial);
   floor.rotation.x = -Math.PI / 2;
   floor.position.z = 0;
   floor.receiveShadow = true;
   scene.add(floor);
 
-  const wallMaterial = new THREE.MeshPhysicalMaterial({ color: 0xe8ece9, roughness: 0.34, metalness: 0.10, clearcoat: 0.28, envMapIntensity: 0.82 });
+  const wallMaterial = new THREE.MeshPhysicalMaterial({ color: 0xc5ceca, roughness: 0.40, metalness: 0.08, clearcoat: 0.18, envMapIntensity: 0.68 });
   addBox(scene, [0.36, pavilion.height, pavilion.depth + 0.6], [-6.68, 2, 0], wallMaterial);
   addBox(scene, [0.36, pavilion.height, pavilion.depth + 0.6], [6.68, 2, 0], wallMaterial);
   addBox(scene, [pavilion.width + 0.1, pavilion.height, 0.36], [0, 2, -10.48], wallMaterial);
 
   addSeamlessMediaWalls(scene);
 
-  const shelfMaterial = new THREE.MeshPhysicalMaterial({ color: 0xf1f2ef, roughness: 0.28, metalness: 0.12, clearcoat: 0.30, clearcoatRoughness: 0.23, envMapIntensity: 0.95 });
+  const shelfMaterial = new THREE.MeshPhysicalMaterial({ color: 0xd9ded9, roughness: 0.34, metalness: 0.10, clearcoat: 0.20, clearcoatRoughness: 0.28, envMapIntensity: 0.72 });
   addBox(scene, [0.72, 0.10, 20.55], [-6.02, 0.54, 0.12], shelfMaterial);
   addBox(scene, [0.72, 0.10, 20.55], [6.02, 0.54, 0.12], shelfMaterial);
   addBox(scene, [12.25, 0.10, 0.72], [0, 0.54, -9.94], shelfMaterial);
@@ -433,10 +434,10 @@ function addSeamlessMediaWalls(scene) {
 
   buildStrip(0, 0.5, screenMaterials.lower);
   buildStrip(1.5, 4, screenMaterials.upper);
-  const niche = new THREE.MeshPhysicalMaterial({ color: 0xe7ece8, roughness: 0.38, metalness: 0.08, clearcoat: 0.16, envMapIntensity: 0.75 });
+  const niche = new THREE.MeshPhysicalMaterial({ color: 0xc5ceca, roughness: 0.46, metalness: 0.06, clearcoat: 0.10, envMapIntensity: 0.62 });
   buildStrip(0.5, 1.5, niche);
 
-  const portalMaterial = new THREE.MeshPhysicalMaterial({ color: 0xf3f2ee, roughness: 0.23, metalness: 0.08, clearcoat: 0.40, envMapIntensity: 1.1 });
+  const portalMaterial = new THREE.MeshPhysicalMaterial({ color: 0xdce0dc, roughness: 0.30, metalness: 0.08, clearcoat: 0.24, envMapIntensity: 0.76 });
   const portalGlow = new THREE.MeshBasicMaterial({ color: 0xe9fbff, transparent: true, opacity: 0.86, toneMapped: false });
   const curve = new THREE.CurvePath();
   for (let i = 0; i < path.length - 1; i += 1) {
@@ -500,12 +501,22 @@ function buildPhysicalModels(scene) {
 
 function createProxy(meta) {
   const group = new THREE.Group();
-  const color = new THREE.Color(zoneColors[meta.zone]);
-  const body = new THREE.MeshStandardMaterial({ color, roughness: 0.38, metalness: 0.34 });
-  const dark = new THREE.MeshStandardMaterial({ color: 0x18201c, roughness: 0.5, metalness: 0.42 });
-  const pale = new THREE.MeshStandardMaterial({ color: 0xd8ded8, roughness: 0.42, metalness: 0.18 });
-  const glass = new THREE.MeshStandardMaterial({ color, roughness: 0.12, metalness: 0.12, transparent: true, opacity: 0.62 });
   const kind = meta.kind;
+  const isShip = ["ship", "iceShip", "icebreaker", "hydrofoil"].includes(kind);
+  const isRail = ["doubleTrain", "locomotive", "fastTrain", "bus"].includes(kind);
+  const isAir = ["airliner", "rocket", "spacecraft", "helicopter"].includes(kind);
+  const primary = meta.zone === "transport"
+    ? isShip ? 0xc9434b : isRail ? 0x2e75b7 : isAir ? 0xe4e8e5 : 0x315c83
+    : meta.zone === "construction"
+      ? 0xb7aa87
+      : kind === "robot" ? 0xf2a51a : 0xb9c8c7;
+  const secondary = meta.zone === "transport"
+    ? isShip ? 0xf1f1eb : isRail ? 0xe9ece8 : 0x2a6092
+    : meta.zone === "construction" ? 0xd8d2c2 : 0x2b638d;
+  const body = new THREE.MeshPhysicalMaterial({ color: primary, roughness: 0.30, metalness: 0.22, clearcoat: 0.30, clearcoatRoughness: 0.24, envMapIntensity: 0.84 });
+  const dark = new THREE.MeshStandardMaterial({ color: meta.zone === "transport" ? 0x172c42 : 0x29353a, roughness: 0.42, metalness: 0.48, envMapIntensity: 0.74 });
+  const pale = new THREE.MeshPhysicalMaterial({ color: secondary, roughness: 0.34, metalness: 0.12, clearcoat: 0.20, clearcoatRoughness: 0.26, envMapIntensity: 0.76 });
+  const glass = new THREE.MeshPhysicalMaterial({ color: 0x17486c, roughness: 0.10, metalness: 0.10, clearcoat: 0.46, transparent: true, opacity: 0.76, envMapIntensity: 0.92 });
 
   if (kind === "robot") {
     const joints = [[0, 0.06, 0], [0.02, 0.20, 0], [0.13, 0.35, 0], [0.24, 0.47, 0]];
@@ -729,24 +740,28 @@ function buildMediaCube(scene) {
   group.position.set(0, 0, -0.35);
   group.userData.modelId = id;
 
-  const graphite = new THREE.MeshPhysicalMaterial({ color: 0xe8ecea, roughness: 0.26, metalness: 0.16, clearcoat: 0.36, clearcoatRoughness: 0.22, envMapIntensity: 1.0 });
+  const graphite = new THREE.MeshPhysicalMaterial({ color: 0xe2e4e0, roughness: 0.29, metalness: 0.12, clearcoat: 0.30, clearcoatRoughness: 0.24, envMapIntensity: 0.78 });
   const blackMetal = new THREE.MeshStandardMaterial({ color: 0x070b09, roughness: 0.28, metalness: 0.78, envMapIntensity: 0.9 });
-  const base = meshOf(new RoundedBoxGeometry(2.18, 0.18, 2.18, 8, 0.08), graphite, [0, 0.09, 0]);
+  const base = meshOf(new RoundedBoxGeometry(3.05, 0.22, 2.72, 8, 0.11), graphite, [0, 0.11, 0]);
   base.castShadow = true;
   base.receiveShadow = true;
   group.add(base);
 
   const underlight = new THREE.Mesh(
-    new RoundedBoxGeometry(2.30, 0.045, 2.30, 8, 0.08),
-    new THREE.MeshBasicMaterial({ color: 0xe8fbff, transparent: true, opacity: 0.96, toneMapped: false })
+    new RoundedBoxGeometry(3.18, 0.045, 2.85, 8, 0.12),
+    new THREE.MeshBasicMaterial({ color: 0xc9f5ff, transparent: true, opacity: 0.92, toneMapped: false })
   );
   underlight.position.y = 0.026;
   group.add(underlight);
 
-  const post = meshOf(new THREE.CylinderGeometry(0.12, 0.19, 0.61, 32), blackMetal, [0, 0.49, 0]);
+  const inset = meshOf(new RoundedBoxGeometry(1.86, 0.085, 1.62, 7, 0.08), blackMetal, [0, 0.255, 0]);
+  inset.receiveShadow = true;
+  group.add(inset);
+
+  const post = meshOf(new THREE.CylinderGeometry(0.13, 0.21, 0.62, 32), blackMetal, [0, 0.58, 0]);
   post.castShadow = true;
   group.add(post);
-  const collar = meshOf(new THREE.CylinderGeometry(0.24, 0.24, 0.08, 32), graphite, [0, 0.76, 0]);
+  const collar = meshOf(new THREE.CylinderGeometry(0.25, 0.25, 0.08, 32), graphite, [0, 0.88, 0]);
   group.add(collar);
 
   zones.forEach((zone) => {
@@ -768,7 +783,7 @@ function buildMediaCube(scene) {
     videoMaterial("transport"), videoMaterial("technology"),
     videoMaterial("construction"), videoMaterial("transport")
   ]);
-  const bottomVertex = 0.80;
+  const bottomVertex = 0.96;
   cube.position.y = bottomVertex + Math.sqrt(3) * 0.75;
   cube.quaternion.setFromUnitVectors(new THREE.Vector3(1, 1, 1).normalize(), new THREE.Vector3(0, 1, 0));
   cube.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), Math.PI * 0.14);
@@ -786,13 +801,6 @@ function buildMediaCube(scene) {
   edges.userData.modelId = id;
   group.add(edges);
 
-  const label = createStationLabel("ВИДЕОКУБ · 1,50 М", "03", 0xff8a4d);
-  label.position.set(0, 0.19, 1.105);
-  label.rotation.x = -Math.PI / 2;
-  label.scale.set(0.88, 0.88, 0.88);
-  label.userData.modelId = id;
-  group.add(label);
-
   group.traverse((child) => { child.userData.modelId = id; });
   scene.add(group);
   modelObjects[id] = group;
@@ -804,8 +812,8 @@ function buildFeatureIslands(scene) {
   const glow = new THREE.MeshBasicMaterial({ color: 0xe7fbff, transparent: true, opacity: 0.88, toneMapped: false });
   const tabletGlass = new THREE.MeshPhysicalMaterial({ color: 0x143f62, roughness: 0.14, metalness: 0.18, clearcoat: 0.46, envMapIntensity: 1.0 });
   const islandSpecs = [
-    { position: [-3.85, 0, 4.65], model: "technology-02", rotation: 0.28, accent: zoneColors.technology },
-    { position: [3.85, 0, 4.65], model: "transport-11", rotation: -0.20, accent: zoneColors.transport }
+    { position: [-3.45, 0, 2.35], model: "technology-02", rotation: 0.28, accent: zoneColors.technology },
+    { position: [3.45, 0, 2.35], model: "transport-11", rotation: -0.20, accent: zoneColors.transport }
   ];
 
   islandSpecs.forEach((spec) => {
@@ -820,7 +828,7 @@ function buildFeatureIslands(scene) {
     const meta = physicalModels[spec.model];
     if (meta) {
       const model = createProxy(meta);
-      model.scale.multiplyScalar(1.28);
+      model.scale.multiplyScalar(1.48);
       model.position.set(-0.18, 0.24, 0);
       model.rotation.y = spec.rotation;
       group.add(model);
@@ -926,30 +934,50 @@ function drawCubeFaces() {
     const media = video?.readyState >= 2 && video.videoWidth ? video : frame;
     ctx.clearRect(0, 0, layer.width, layer.height);
     paintScreenGround(ctx, layer.width, layer.height, zoneColors[zone]);
-    if (getMediaWidth(media)) drawImageCover(ctx, media, 0, 0, layer.width, layer.height);
+    const viewport = { x: 48, y: 176, width: 928, height: 522 };
+    ctx.fillStyle = "rgba(2,18,48,.84)";
+    roundedRect(ctx, viewport.x, viewport.y, viewport.width, viewport.height, 22);
+    ctx.fill();
+    ctx.save();
+    roundedRect(ctx, viewport.x, viewport.y, viewport.width, viewport.height, 22);
+    ctx.clip();
+    if (getMediaWidth(media)) drawImageCoverPan(ctx, media, viewport.x, viewport.y, viewport.width, viewport.height, Math.sin(programPhase * 0.10 + index) * 0.08, 0);
     ctx.save();
     ctx.globalCompositeOperation = "screen";
-    const wash = ctx.createLinearGradient(0, 0, layer.width, layer.height);
+    const wash = ctx.createLinearGradient(viewport.x, viewport.y, viewport.x + viewport.width, viewport.y + viewport.height);
     wash.addColorStop(0, "rgba(0,88,220,.34)");
     wash.addColorStop(0.55, hexToRgba(zoneColors[zone], 0.24));
     wash.addColorStop(1, "rgba(0,52,150,.42)");
     ctx.fillStyle = wash;
-    ctx.fillRect(0, 0, layer.width, layer.height);
+    ctx.fillRect(viewport.x, viewport.y, viewport.width, viewport.height);
     ctx.restore();
-    drawLivingScreenBackground(ctx, layer.width, layer.height, zoneColors[zone], programPhase + index, zone, true);
+    ctx.save();
+    ctx.translate(viewport.x, viewport.y);
+    drawLivingScreenBackground(ctx, viewport.width, viewport.height, zoneColors[zone], programPhase + index, zone, true);
+    ctx.restore();
+    ctx.restore();
+    ctx.strokeStyle = "rgba(236,248,255,.72)";
+    ctx.lineWidth = 5;
+    roundedRect(ctx, viewport.x, viewport.y, viewport.width, viewport.height, 22);
+    ctx.stroke();
     const shade = ctx.createLinearGradient(0, 0, 0, layer.height);
-    shade.addColorStop(0, "rgba(3,8,7,.08)");
-    shade.addColorStop(0.58, "rgba(3,8,7,.18)");
-    shade.addColorStop(1, "rgba(2,21,58,.76)");
+    shade.addColorStop(0, "rgba(3,8,7,.05)");
+    shade.addColorStop(0.72, "rgba(3,8,7,.04)");
+    shade.addColorStop(1, "rgba(2,21,58,.58)");
     ctx.fillStyle = shade;
     ctx.fillRect(0, 0, layer.width, layer.height);
-    ctx.fillStyle = zoneColors[zone];
-    ctx.fillRect(54, 716, 140 + index * 36, 10);
-    ctx.font = "700 38px 'IBM Plex Mono', Consolas, monospace";
-    ctx.fillText(`${exhibitionPeriod}  /  0${index + 1}`, 54, 790);
     ctx.fillStyle = "#f3f0e7";
-    ctx.font = "600 92px Oswald, Arial";
-    ctx.fillText(zoneLabels[zone].toUpperCase(), 54, 902);
+    ctx.font = "700 60px Oswald, Arial";
+    ctx.fillText(zoneLabels[zone].toUpperCase(), 52, 105);
+    ctx.fillStyle = zoneColors[zone];
+    ctx.font = "700 32px 'IBM Plex Mono', Consolas, monospace";
+    ctx.fillText(exhibitionPeriod, 52, 148);
+    ctx.fillRect(52, 770, 142 + index * 34, 9);
+    ctx.font = "700 34px 'IBM Plex Mono', Consolas, monospace";
+    ctx.fillText(`ГРАНЬ 0${index + 1}  /  СИНХРОННЫЙ ЭФИР`, 52, 836);
+    ctx.fillStyle = "#f3f0e7";
+    ctx.font = "600 58px Oswald, Arial";
+    ctx.fillText("25 ЛЕТ ДОСТИЖЕНИЙ", 52, 922);
     cubeFaceTextures[zone].needsUpdate = true;
   });
 }
@@ -2091,8 +2119,8 @@ function updateWalk(camera, controls, delta) {
   candidate.y = 1.65;
   const canStand = (point) => {
     const outsideCube = Math.hypot(point.x, point.z + 0.35) > 1.45;
-    const outsideLeftIsland = Math.hypot((point.x + 3.85) / 1.55, (point.z - 4.65) / 0.95) > 1;
-    const outsideRightIsland = Math.hypot((point.x - 3.85) / 1.55, (point.z - 4.65) / 0.95) > 1;
+    const outsideLeftIsland = Math.hypot((point.x + 3.45) / 1.55, (point.z - 2.35) / 0.95) > 1;
+    const outsideRightIsland = Math.hypot((point.x - 3.45) / 1.55, (point.z - 2.35) / 0.95) > 1;
     return point.x >= -5.65 && point.x <= 5.65 && point.z >= -9.45 && point.z <= 10.45 && outsideCube && outsideLeftIsland && outsideRightIsland;
   };
   let next = candidate;
