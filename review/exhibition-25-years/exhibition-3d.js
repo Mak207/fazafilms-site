@@ -31,7 +31,10 @@ const pavilion = {
   screenBackZ: -10.30,
   screenBackHalf: 5.35
 };
-const showRawHi3DCandidates = new URLSearchParams(window.location.search).get("quality") === "raw";
+// Detailed Hi3D assets are the production view. The clean procedural model is
+// kept only as a loading/failure fallback and can be forced with
+// `?quality=parametric` for diagnostics.
+const useHi3DModels = new URLSearchParams(window.location.search).get("quality") !== "parametric";
 
 const content = Object.fromEntries(zones.map((zone) => [zone, allItems.filter((item) => item.zone === zone)]));
 const metricGroups = window.EXHIBIT_METRICS || {};
@@ -494,7 +497,7 @@ function buildPhysicalModels(scene) {
     modelObjects[id] = anchor;
     anchor.traverse((child) => { child.userData.modelId = id; });
     clickTargets.push(anchor);
-    if (showRawHi3DCandidates) {
+    if (useHi3DModels) {
       loadHi3D(id, meta, anchor, proxy);
     } else {
       meta.status = "Параметрический выставочный макет · очищенная форма по реальному прототипу";
@@ -648,47 +651,35 @@ function fitToEnvelope(group, dims) {
 }
 
 function applyMuseumFinish(model, meta, id) {
-  const finish = id === "center-01"
-    ? { primary: 0xd9ddd8, secondary: 0xaeb9b4, accent: 0xffb26f }
-    : id === "center-02"
-      ? { primary: 0xd7d3c8, secondary: 0x7d8780, accent: 0xb7df78 }
-      : id === "center-03"
-        ? { primary: 0xe1e5e2, secondary: 0x526a82, accent: 0x89a8ff }
-        : meta.zone === "technology"
-          ? { primary: 0xc9d8d4, secondary: 0x607d79, accent: 0x52d5d7 }
-          : meta.zone === "construction"
-            ? { primary: 0xd8d4c7, secondary: 0x7f8775, accent: 0xb7df78 }
-            : { primary: 0xd6dce4, secondary: 0x65758b, accent: 0x89a8ff };
-
-  const makeMaterial = (color, metalness, roughness, clearcoat = 0.18) => new THREE.MeshPhysicalMaterial({
-    color,
-    metalness,
-    roughness,
-    clearcoat,
-    clearcoatRoughness: 0.32,
-    envMapIntensity: 0.82,
-    side: THREE.FrontSide
-  });
-  const materials = [
-    makeMaterial(finish.primary, 0.08, 0.34, 0.24),
-    makeMaterial(finish.secondary, 0.18, 0.30, 0.16),
-    makeMaterial(finish.accent, 0.12, 0.28, 0.22)
-  ];
-
-  let meshIndex = 0;
   model.traverse((child) => {
     if (!child.isMesh) return;
     if (child.geometry?.attributes?.position && !child.geometry.morphAttributes?.position?.length) {
       child.geometry.computeVertexNormals();
     }
-    const materialIndex = meshIndex > 0 && meshIndex % 7 === 0 ? 2 : meshIndex % 3 === 0 ? 1 : 0;
-    child.material = materials[materialIndex];
+    const prepareMaterial = (source) => {
+      const material = source?.clone ? source.clone() : new THREE.MeshStandardMaterial({ color: 0xffffff });
+      // Hi3D generated every object from its photographic prototype. Preserve
+      // that baked colour map instead of replacing it with a flat zone colour.
+      if (material.map) {
+        material.map.colorSpace = THREE.SRGBColorSpace;
+        material.map.needsUpdate = true;
+      }
+      if (material.color) material.color.set(0xffffff);
+      material.roughness = 0.44;
+      material.metalness = 0.05;
+      material.envMapIntensity = 0.68;
+      material.side = THREE.FrontSide;
+      material.needsUpdate = true;
+      return material;
+    };
+    child.material = Array.isArray(child.material)
+      ? child.material.map(prepareMaterial)
+      : prepareMaterial(child.material);
     child.castShadow = true;
     child.receiveShadow = true;
     child.userData.modelId = id;
-    meshIndex += 1;
   });
-  model.userData.finish = "museum-maquette-v1";
+  model.userData.finish = `Hi3D photographic prototype · ${meta.zone}`;
 }
 
 function loadHi3D(id, meta, anchor, proxy) {
@@ -725,7 +716,7 @@ function loadHi3D(id, meta, anchor, proxy) {
       ["глубина", meta.occupancy.depth]
     ];
     const limitingAxis = axisOccupancy.reduce((best, entry) => entry[1] > best[1] ? entry : best, axisOccupancy[0]);
-    meta.status = `Hi3D · музейная отделка · максимум: ${meta.occupancy.width}% ш / ${meta.occupancy.height}% в / ${meta.occupancy.depth}% гл · ограничитель — ${limitingAxis[0]}`;
+    meta.status = `Hi3D · фототекстура прототипа · максимум: ${meta.occupancy.width}% ш / ${meta.occupancy.height}% в / ${meta.occupancy.depth}% гл · ограничитель — ${limitingAxis[0]}`;
     if (selectedModelId === id) selectModel(id);
   }, undefined, () => {
     meta.status = "Размерный прокси";
