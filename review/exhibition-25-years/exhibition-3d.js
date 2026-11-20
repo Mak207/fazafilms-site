@@ -168,15 +168,15 @@ function init() {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   // Keep the review deterministic. Automatic exposure made the same scene
   // look washed out on bright displays and grey on dark ones.
-  renderer.toneMappingExposure = 0.64;
+  renderer.toneMappingExposure = 0.92;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x8b9fa7);
+  scene.background = new THREE.Color(0xdce8eb);
   // A pale, dense fog was the main source of the previous "white veil".
   // The atrium is only 28 m deep, so use a restrained cool haze instead.
-  scene.fog = new THREE.FogExp2(0x8b9fa7, 0.00115);
+  scene.fog = new THREE.FogExp2(0xdce8eb, 0.00055);
   const pmremGenerator = new THREE.PMREMGenerator(renderer);
   scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.035).texture;
   pmremGenerator.dispose();
@@ -258,14 +258,16 @@ function addExhibitionLighting(scene) {
   // Exhibition-lighting hierarchy.  The atrium is lit by a cool daylight
   // key plus a restrained sky/ground fill.  Every other source owns one
   // object group; there are no broad coloured point lights washing the room.
-  const ambient = new THREE.HemisphereLight(0xf0f7f8, 0x344348, 0.34);
+  const ambient = new THREE.HemisphereLight(0xffffff, 0x9eaaa7, 1.18);
   ambient.name = "LGT_BASE_ATRIUM";
   scene.add(ambient);
 
-  const key = new THREE.DirectionalLight(0xf5fbff, 0.72);
+  const key = new THREE.DirectionalLight(0xffffff, 1.55);
   key.name = "LGT_KEY_DAYLIGHT";
   key.position.set(-7.5, 14.5, 7.0);
-  key.castShadow = true;
+  // The reference atrium is filled by diffuse daylight. Hard shadows from the
+  // roof truss produced the black grid that made the pavilion look unfinished.
+  key.castShadow = false;
   key.shadow.mapSize.set(2048, 2048);
   key.shadow.camera.left = -16;
   key.shadow.camera.right = 16;
@@ -290,9 +292,10 @@ function addExhibitionLighting(scene) {
   };
 
   // Warm centre pool reads against the cool atrium without lifting the set.
-  addSpot("LGT_HERO_CUBE", [0, 7.35, 1.0], [0, 1.58, -0.30], 4.8, 0xffd4a0, 0.39, 9.5);
-  addSpot("LGT_ISLAND_TECH", [-4.8, 6.9, 4.1], [-3.35, 1.10, 2.35], 2.15, 0xd9f2f4, 0.28, 8.5);
-  addSpot("LGT_ISLAND_TRANSPORT", [4.8, 6.9, 4.1], [3.35, 1.10, 2.35], 2.15, 0xffdfb7, 0.28, 8.5);
+  addSpot("LGT_HERO_CUBE", [0, 7.35, 1.0], [0, 1.58, -0.30], 3.6, 0xffe2ba, 0.42, 9.5);
+  addSpot("LGT_ISLAND_TECH", [-4.8, 6.9, 4.1], [-3.35, 1.10, 2.35], 2.8, 0xe8fbff, 0.32, 8.5);
+  addSpot("LGT_ISLAND_TRANSPORT", [4.8, 6.9, 4.1], [3.35, 1.10, 2.35], 2.8, 0xffecd1, 0.32, 8.5);
+  addSpot("LGT_FRONT_CITY", [0, 7.0, 5.9], [0, 0.9, 5.15], 2.4, 0xfff0d7, 0.34, 8.0);
   addSpot("LGT_REAR_TECH", [-3.8, 6.8, -5.6], [-4.85, 1.00, -4.8], 1.65, 0xd6eef1, 0.27, 8.0);
   addSpot("LGT_REAR_TRANSPORT", [3.8, 6.8, -5.6], [4.85, 1.00, -4.8], 1.65, 0xffe1bd, 0.27, 8.0);
 
@@ -309,9 +312,9 @@ function addExhibitionLighting(scene) {
 }
 
 function buildAtriumShell(scene) {
-  const steel = new THREE.MeshStandardMaterial({ color: 0x61737a, roughness: 0.46, metalness: 0.52, envMapIntensity: 0.48 });
-  const white = new THREE.MeshPhysicalMaterial({ color: 0xd1d7d5, roughness: 0.60, metalness: 0.04, clearcoat: 0.06, clearcoatRoughness: 0.58, envMapIntensity: 0.30 });
-  const glass = new THREE.MeshPhysicalMaterial({ color: 0x67818b, roughness: 0.26, metalness: 0.01, transmission: 0.08, transparent: true, opacity: 0.20, depthWrite: false, side: THREE.DoubleSide });
+  const steel = new THREE.MeshStandardMaterial({ color: 0xaab8bd, roughness: 0.38, metalness: 0.48, envMapIntensity: 0.62 });
+  const white = new THREE.MeshPhysicalMaterial({ color: 0xf4f5f1, roughness: 0.44, metalness: 0.03, clearcoat: 0.12, clearcoatRoughness: 0.42, envMapIntensity: 0.55 });
+  const glass = new THREE.MeshPhysicalMaterial({ color: 0xbfd8e1, roughness: 0.18, metalness: 0.01, transmission: 0.12, transparent: true, opacity: 0.16, depthWrite: false, side: THREE.DoubleSide });
   const ceilingY = pavilion.atriumHeight;
   const halfW = pavilion.atriumWidth / 2;
   const halfD = pavilion.atriumDepth / 2;
@@ -339,8 +342,8 @@ function buildAtriumShell(scene) {
   rearGlass.position.set(0, ceilingY / 2, -halfD);
   scene.add(rearGlass);
 
-  const trackMaterial = new THREE.MeshStandardMaterial({ color: 0x5f7178, roughness: 0.36, metalness: 0.68 });
-  const lampMaterial = new THREE.MeshBasicMaterial({ color: 0xd9c7aa, toneMapped: true });
+  const trackMaterial = new THREE.MeshStandardMaterial({ color: 0x859399, roughness: 0.34, metalness: 0.68 });
+  const lampMaterial = new THREE.MeshBasicMaterial({ color: 0xfff1d8, toneMapped: false });
   [-5.7, 5.7].forEach((x) => {
     addBox(scene, [0.09, 0.09, pavilion.atriumDepth - 1.5], [x, ceilingY - 0.42, 0], trackMaterial);
     for (let z = -11.5; z <= 11.5; z += 1.55) {
@@ -379,7 +382,7 @@ function addNicheLighting(scene) {
     const target = new THREE.Object3D();
     target.position.set(...targetPosition);
     scene.add(target);
-    const light = new THREE.SpotLight(color, 0.92, 1.36, 0.58, 0.88, 1.9);
+    const light = new THREE.SpotLight(color, 2.25, 1.75, 0.66, 0.90, 1.65);
     light.name = "LGT_NICHE_OBJECT";
     light.position.set(...position);
     light.target = target;
@@ -397,21 +400,21 @@ function addNicheLighting(scene) {
 }
 
 function buildPavilion(scene) {
-  const floorMaterial = new THREE.MeshPhysicalMaterial({ color: 0x78878a, roughness: 0.66, metalness: 0.03, clearcoat: 0.05, clearcoatRoughness: 0.62, envMapIntensity: 0.30 });
+  const floorMaterial = new THREE.MeshPhysicalMaterial({ color: 0xd9dfdc, roughness: 0.38, metalness: 0.02, clearcoat: 0.24, clearcoatRoughness: 0.34, envMapIntensity: 0.72 });
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(pavilion.atriumWidth - 0.8, pavilion.atriumDepth - 0.8), floorMaterial);
   floor.rotation.x = -Math.PI / 2;
   floor.position.z = 0;
   floor.receiveShadow = true;
   scene.add(floor);
 
-  const wallMaterial = new THREE.MeshPhysicalMaterial({ color: 0xb9c2bf, roughness: 0.66, metalness: 0.03, clearcoat: 0.04, envMapIntensity: 0.28 });
+  const wallMaterial = new THREE.MeshPhysicalMaterial({ color: 0xf2f3ef, roughness: 0.42, metalness: 0.03, clearcoat: 0.12, envMapIntensity: 0.58 });
   addBox(scene, [0.36, pavilion.height, pavilion.depth + 0.6], [-6.68, 2, 0], wallMaterial);
   addBox(scene, [0.36, pavilion.height, pavilion.depth + 0.6], [6.68, 2, 0], wallMaterial);
   addBox(scene, [pavilion.width + 0.1, pavilion.height, 0.36], [0, 2, -10.48], wallMaterial);
 
   addSeamlessMediaWalls(scene);
 
-  const shelfMaterial = new THREE.MeshPhysicalMaterial({ color: 0xd1d5d0, roughness: 0.58, metalness: 0.04, clearcoat: 0.07, clearcoatRoughness: 0.55, envMapIntensity: 0.30 });
+  const shelfMaterial = new THREE.MeshPhysicalMaterial({ color: 0xf7f7f3, roughness: 0.34, metalness: 0.03, clearcoat: 0.22, clearcoatRoughness: 0.36, envMapIntensity: 0.68 });
   addBox(scene, [0.72, 0.10, 20.55], [-6.02, 0.54, 0.12], shelfMaterial);
   addBox(scene, [0.72, 0.10, 20.55], [6.02, 0.54, 0.12], shelfMaterial);
   addBox(scene, [12.25, 0.10, 0.72], [0, 0.54, -9.94], shelfMaterial);
@@ -495,17 +498,17 @@ function addSeamlessMediaWalls(scene) {
 
   buildStrip(0, 0.5, screenMaterials.lower);
   buildStrip(1.5, 4, screenMaterials.upper);
-  const niche = new THREE.MeshPhysicalMaterial({ color: 0x9daaa7, roughness: 0.58, metalness: 0.04, clearcoat: 0.06, envMapIntensity: 0.38 });
+  const niche = new THREE.MeshPhysicalMaterial({ color: 0xf1f2ed, roughness: 0.46, metalness: 0.02, clearcoat: 0.16, envMapIntensity: 0.62 });
   buildStrip(0.5, 1.5, niche);
 
-  const portalMaterial = new THREE.MeshPhysicalMaterial({ color: 0xc6ccc8, roughness: 0.42, metalness: 0.06, clearcoat: 0.14, envMapIntensity: 0.46 });
-  const portalGlow = new THREE.MeshBasicMaterial({ color: 0xbcecf2, transparent: true, opacity: 0.58, toneMapped: true });
+  const portalMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.24, metalness: 0.04, clearcoat: 0.32, envMapIntensity: 0.86 });
+  const portalGlow = new THREE.MeshBasicMaterial({ color: 0xe8fdff, transparent: true, opacity: 0.92, toneMapped: false });
   const curve = new THREE.CurvePath();
   for (let i = 0; i < path.length - 1; i += 1) {
     curve.add(new THREE.LineCurve3(new THREE.Vector3(path[i].x, 4.08, path[i].z), new THREE.Vector3(path[i + 1].x, 4.08, path[i + 1].z)));
   }
-  scene.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 320, 0.105, 10, false), portalMaterial));
-  scene.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 320, 0.026, 8, false), portalGlow));
+  scene.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 320, 0.145, 12, false), portalMaterial));
+  scene.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 320, 0.036, 8, false), portalGlow));
   [path[0], path[path.length - 1]].forEach((point) => {
     const post = new THREE.Mesh(new RoundedBoxGeometry(0.25, 4.14, 0.25, 6, 0.11), portalMaterial);
     post.position.set(point.x, 2.04, point.z);
@@ -587,21 +590,29 @@ function createProxy(meta) {
     joints.forEach((p, index) => group.add(meshOf(new THREE.SphereGeometry(index === 3 ? 0.035 : 0.052, 20, 12), dark, p)));
     for (let i = 0; i < joints.length - 1; i += 1) group.add(cylinderBetween(joints[i], joints[i + 1], i < 2 ? 0.038 : 0.027, body));
   } else if (["satellite", "earthSatellite"].includes(kind)) {
-    group.add(meshOf(new THREE.BoxGeometry(0.17, 0.18, 0.17), body, [0, 0.22, 0]));
-    group.add(meshOf(new THREE.BoxGeometry(0.52, 0.018, 0.15), dark, [0, 0.22, 0]));
-    group.add(meshOf(new THREE.SphereGeometry(0.08, 24, 12), body, [0, 0.40, 0]));
+    group.add(meshOf(new RoundedBoxGeometry(0.22, 0.24, 0.22, 4, 0.025), body, [0, 0.25, 0]));
+    group.add(meshOf(new THREE.CylinderGeometry(0.075, 0.10, 0.18, 24), pale, [0, 0.46, 0]));
+    group.add(meshOf(new THREE.SphereGeometry(0.055, 24, 12), dark, [0, 0.58, 0]));
+    [-1, 1].forEach((side) => {
+      group.add(meshOf(new RoundedBoxGeometry(0.42, 0.022, 0.22, 3, 0.015), dark, [side * 0.34, 0.27, 0]));
+      [-0.08, 0, 0.08].forEach((z) => group.add(meshOf(new THREE.BoxGeometry(0.38, 0.024, 0.008), body, [side * 0.34, 0.282, z])));
+    });
   } else if (kind === "rocket") {
     group.add(meshOf(new THREE.CylinderGeometry(0.031, 0.031, 0.43, 28), body, [0, 0.26, 0]));
     const cone = meshOf(new THREE.ConeGeometry(0.031, 0.11, 28), body, [0, 0.53, 0]); group.add(cone);
     [-1, 1].forEach((sign) => group.add(meshOf(new THREE.CylinderGeometry(0.015, 0.015, 0.36, 20), dark, [sign * 0.043, 0.23, 0])));
   } else if (["ship", "iceShip", "icebreaker", "hydrofoil"].includes(kind)) {
-    const hull = meshOf(new THREE.ConeGeometry(0.18, 0.92, 4), body, [0, 0.14, 0], [0, 0, Math.PI / 2]);
-    hull.scale.z = 0.55;
+    const hull = meshOf(new THREE.CapsuleGeometry(0.15, 0.58, 8, 24), body, [-0.04, 0.14, 0], [0, 0, Math.PI / 2]);
+    hull.scale.set(1, 0.72, 0.82);
     group.add(hull);
-    group.add(meshOf(new THREE.BoxGeometry(0.38, 0.13, 0.14), dark, [-0.08, 0.23, 0]));
+    group.add(meshOf(new THREE.ConeGeometry(0.15, 0.25, 24), body, [0.48, 0.14, 0], [0, 0, -Math.PI / 2]));
+    group.add(meshOf(new RoundedBoxGeometry(0.40, 0.14, 0.19, 3, 0.025), pale, [-0.10, 0.27, 0]));
+    group.add(meshOf(new RoundedBoxGeometry(0.23, 0.09, 0.205, 3, 0.018), glass, [0.04, 0.36, 0]));
+    group.add(meshOf(new THREE.CylinderGeometry(0.018, 0.023, 0.20, 12), dark, [-0.18, 0.47, 0]));
+    group.add(meshOf(new THREE.BoxGeometry(0.70, 0.018, 0.24), pale, [-0.03, 0.21, 0]));
     if (kind === "hydrofoil") {
-      group.add(meshOf(new THREE.BoxGeometry(0.48, 0.018, 0.38), pale, [0.04, 0.04, 0]));
-      group.add(meshOf(new THREE.BoxGeometry(0.04, 0.16, 0.02), dark, [-0.18, 0.02, 0]));
+      group.add(meshOf(new THREE.BoxGeometry(0.52, 0.018, 0.40), dark, [0.04, 0.045, 0]));
+      [-0.20, 0.22].forEach((x) => group.add(meshOf(new THREE.BoxGeometry(0.025, 0.15, 0.025), dark, [x, 0.03, 0])));
     }
   } else if (kind === "stadium") {
     const ring = meshOf(new THREE.TorusGeometry(0.20, 0.055, 12, 48), body, [0, 0.10, 0], [Math.PI / 2, 0, 0]);
@@ -615,10 +626,15 @@ function createProxy(meta) {
   } else if (["car", "autocar", "bus", "doubleTrain", "locomotive", "fastTrain"].includes(kind)) {
     const long = ["bus", "doubleTrain", "locomotive", "fastTrain"].includes(kind);
     const h = kind === "doubleTrain" ? 0.34 : long ? 0.25 : 0.18;
-    group.add(meshOf(new THREE.BoxGeometry(long ? 0.9 : 0.62, h, long ? 0.24 : 0.3), body, [0, h * 0.65 + 0.08, 0]));
-    if (kind === "fastTrain") group.add(meshOf(new THREE.ConeGeometry(0.17, 0.34, 4), body, [0.55, 0.20, 0], [0, 0, -Math.PI / 2]));
+    group.add(meshOf(new RoundedBoxGeometry(long ? 0.86 : 0.58, h, long ? 0.24 : 0.3, 5, 0.055), body, [0, h * 0.65 + 0.08, 0]));
+    if (kind === "fastTrain") group.add(meshOf(new THREE.ConeGeometry(0.16, 0.30, 20), body, [0.56, 0.20, 0], [0, 0, -Math.PI / 2]));
     [-0.28, 0.28].forEach((x) => [-1, 1].forEach((z) => group.add(meshOf(new THREE.CylinderGeometry(0.055, 0.055, 0.025, 16), dark, [x, 0.055, z * (long ? 0.105 : 0.13)], [Math.PI / 2, 0, 0]))));
-    group.add(meshOf(new THREE.BoxGeometry(long ? 0.62 : 0.34, h * 0.34, 0.012), glass, [0.04, h * 0.78 + 0.08, 0.126]));
+    [-1, 1].forEach((side) => {
+      const z = side * (long ? 0.126 : 0.156);
+      for (let i = 0; i < (long ? 5 : 3); i += 1) {
+        group.add(meshOf(new RoundedBoxGeometry(long ? 0.105 : 0.12, h * 0.34, 0.012, 2, 0.015), glass, [-0.30 + i * (long ? 0.15 : 0.20), h * 0.78 + 0.08, z]));
+      }
+    });
   } else if (kind === "airliner") {
     group.add(meshOf(new THREE.CylinderGeometry(0.085, 0.085, 0.86, 20), pale, [0, 0.24, 0], [0, 0, Math.PI / 2]));
     group.add(meshOf(new THREE.ConeGeometry(0.085, 0.18, 20), pale, [0.52, 0.24, 0], [0, 0, -Math.PI / 2]));
@@ -690,7 +706,8 @@ function createProxy(meta) {
     group.add(meshOf(new THREE.BoxGeometry(0.62, 0.32, 0.38), body, [0, 0.18, 0]));
   }
   fitToEnvelope(group, meta.dims);
-  const base = meshOf(new THREE.BoxGeometry(meta.dims[0] * 0.92, 0.025, meta.dims[1] * 0.82), dark, [0, -0.012, 0]);
+  const modelBase = new THREE.MeshPhysicalMaterial({ color: 0xe9ebe7, roughness: 0.34, metalness: 0.03, clearcoat: 0.18, envMapIntensity: 0.68 });
+  const base = meshOf(new RoundedBoxGeometry(meta.dims[0] * 0.92, 0.025, meta.dims[1] * 0.82, 3, 0.015), modelBase, [0, -0.012, 0]);
   group.add(base);
   group.traverse((child) => { if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; } });
   return group;
@@ -793,26 +810,26 @@ function buildMediaCube(scene) {
 
   const graphite = new THREE.MeshPhysicalMaterial({ color: 0xe2e4e0, roughness: 0.29, metalness: 0.12, clearcoat: 0.30, clearcoatRoughness: 0.24, envMapIntensity: 0.78 });
   const blackMetal = new THREE.MeshStandardMaterial({ color: 0x070b09, roughness: 0.28, metalness: 0.78, envMapIntensity: 0.9 });
-  const base = meshOf(new RoundedBoxGeometry(3.05, 0.22, 2.72, 8, 0.11), graphite, [0, 0.11, 0]);
+  const base = meshOf(new RoundedBoxGeometry(2.28, 0.20, 2.28, 8, 0.12), graphite, [0, 0.10, 0]);
   base.castShadow = true;
   base.receiveShadow = true;
   group.add(base);
 
   const underlight = new THREE.Mesh(
-    new RoundedBoxGeometry(3.18, 0.045, 2.85, 8, 0.12),
+    new RoundedBoxGeometry(2.42, 0.045, 2.42, 8, 0.14),
     new THREE.MeshBasicMaterial({ color: 0xc9f5ff, transparent: true, opacity: 0.92, toneMapped: false })
   );
   underlight.position.y = 0.026;
   group.add(underlight);
 
-  const inset = meshOf(new RoundedBoxGeometry(1.86, 0.085, 1.62, 7, 0.08), blackMetal, [0, 0.255, 0]);
+  const inset = meshOf(new RoundedBoxGeometry(1.12, 0.09, 1.12, 7, 0.08), blackMetal, [0, 0.245, 0]);
   inset.receiveShadow = true;
   group.add(inset);
 
-  const post = meshOf(new THREE.CylinderGeometry(0.13, 0.21, 0.62, 32), blackMetal, [0, 0.58, 0]);
+  const post = meshOf(new THREE.CylinderGeometry(0.18, 0.42, 0.58, 4), blackMetal, [0, 0.56, 0], [0, Math.PI / 4, 0]);
   post.castShadow = true;
   group.add(post);
-  const collar = meshOf(new THREE.CylinderGeometry(0.25, 0.25, 0.08, 32), graphite, [0, 0.88, 0]);
+  const collar = meshOf(new THREE.CylinderGeometry(0.22, 0.22, 0.07, 24), graphite, [0, 0.86, 0]);
   group.add(collar);
 
   zones.forEach((zone) => {
@@ -834,7 +851,7 @@ function buildMediaCube(scene) {
     videoMaterial("transport"), videoMaterial("technology"),
     videoMaterial("construction"), videoMaterial("transport")
   ]);
-  const bottomVertex = 0.96;
+  const bottomVertex = 0.92;
   cube.position.y = bottomVertex + Math.sqrt(3) * 0.75;
   cube.quaternion.setFromUnitVectors(new THREE.Vector3(1, 1, 1).normalize(), new THREE.Vector3(0, 1, 0));
   cube.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), Math.PI * 0.14);
@@ -863,35 +880,99 @@ function buildFeatureIslands(scene) {
   const glow = new THREE.MeshBasicMaterial({ color: 0xe7fbff, transparent: true, opacity: 0.88, toneMapped: false });
   const tabletGlass = new THREE.MeshPhysicalMaterial({ color: 0x143f62, roughness: 0.14, metalness: 0.18, clearcoat: 0.46, envMapIntensity: 1.0 });
   const islandSpecs = [
-    { position: [-3.45, 0, 2.35], model: "technology-02", rotation: 0.28, accent: zoneColors.technology },
-    { position: [3.45, 0, 2.35], model: "transport-11", rotation: -0.20, accent: zoneColors.transport }
+    { position: [-3.60, 0, 2.65], model: "technology-02", companion: "technology-01", rotation: 0.22, accent: zoneColors.technology, scale: 1.72 },
+    { position: [3.60, 0, 2.65], model: "transport-11", rotation: -0.14, accent: zoneColors.transport, scale: 1.82 },
+    { position: [-3.35, 0, -3.55], model: "construction-12", rotation: 0.08, accent: zoneColors.construction, scale: 1.92 },
+    { position: [3.35, 0, -3.55], model: "construction-02", rotation: -0.08, accent: zoneColors.construction, scale: 2.08 }
   ];
 
   islandSpecs.forEach((spec) => {
     const group = new THREE.Group();
     group.position.set(...spec.position);
-    const base = meshOf(new RoundedBoxGeometry(2.75, 0.22, 1.48, 8, 0.13), plinth, [0, 0.11, 0]);
+    const rear = spec.position[2] < 0;
+    const baseSize = rear ? [2.40, 0.20, 1.42] : [3.05, 0.22, 1.64];
+    const base = meshOf(new RoundedBoxGeometry(...baseSize, 8, 0.13), plinth, [0, baseSize[1] / 2, 0]);
     base.castShadow = true;
     base.receiveShadow = true;
     group.add(base);
-    group.add(meshOf(new RoundedBoxGeometry(2.84, 0.035, 1.57, 8, 0.14), glow, [0, 0.025, 0]));
+    group.add(meshOf(new RoundedBoxGeometry(baseSize[0] + 0.10, 0.035, baseSize[2] + 0.10, 8, 0.14), glow, [0, 0.025, 0]));
 
     const meta = physicalModels[spec.model];
     if (meta) {
       const model = createProxy(meta);
-      model.scale.multiplyScalar(1.48);
-      model.position.set(-0.18, 0.24, 0);
+      model.scale.multiplyScalar(spec.scale || 1.65);
+      model.position.set(spec.companion ? 0.25 : -0.12, 0.24, 0);
       model.rotation.y = spec.rotation;
       group.add(model);
     }
 
+    const companionMeta = spec.companion && physicalModels[spec.companion];
+    if (companionMeta) {
+      const companion = createProxy(companionMeta);
+      companion.scale.multiplyScalar(1.22);
+      companion.position.set(-0.92, 0.24, 0.04);
+      companion.rotation.y = -0.18;
+      group.add(companion);
+    }
+
     const tablet = new THREE.Group();
-    tablet.position.set(0.94, 0.48, 0.34);
+    tablet.position.set(baseSize[0] * 0.34, 0.48, baseSize[2] * 0.27);
     tablet.rotation.set(-0.42, -0.22, 0);
     tablet.add(meshOf(new RoundedBoxGeometry(0.48, 0.035, 0.34, 5, 0.045), tabletGlass, [0, 0, 0]));
     group.add(tablet);
     scene.add(group);
   });
+
+  buildFrontCityIsland(scene, plinth, glow);
+}
+
+function buildFrontCityIsland(scene, plinth, glow) {
+  const group = new THREE.Group();
+  group.position.set(0, 0, 4.55);
+  const base = meshOf(new RoundedBoxGeometry(5.15, 0.24, 1.62, 10, 0.16), plinth, [0, 0.12, 0]);
+  base.castShadow = true;
+  base.receiveShadow = true;
+  group.add(base);
+  group.add(meshOf(new RoundedBoxGeometry(5.27, 0.035, 1.74, 10, 0.17), glow, [0, 0.025, 0]));
+
+  const lawn = new THREE.MeshStandardMaterial({ color: 0x5f8c5d, roughness: 0.78 });
+  const ivory = new THREE.MeshPhysicalMaterial({ color: 0xf0eee5, roughness: 0.33, metalness: 0.04, clearcoat: 0.14 });
+  const brick = new THREE.MeshPhysicalMaterial({ color: 0xa94736, roughness: 0.48, metalness: 0.02, clearcoat: 0.08 });
+  const gold = new THREE.MeshStandardMaterial({ color: 0xd7ad45, roughness: 0.32, metalness: 0.46 });
+  group.add(meshOf(new RoundedBoxGeometry(4.70, 0.045, 1.22, 5, 0.06), lawn, [0, 0.27, 0]));
+  for (let i = 0; i < 9; i += 1) {
+    const x = -2.00 + i * 0.50;
+    const height = 0.28 + (i % 4) * 0.09;
+    const material = i < 4 ? brick : ivory;
+    group.add(meshOf(new RoundedBoxGeometry(0.28, height, 0.25, 4, 0.025), material, [x, 0.29 + height / 2, -0.10 + (i % 2) * 0.18]));
+    if (i < 4) group.add(meshOf(new THREE.ConeGeometry(0.11, 0.20, 12), gold, [x, 0.29 + height + 0.10, -0.10 + (i % 2) * 0.18]));
+  }
+  for (let i = 0; i < 16; i += 1) {
+    const x = -2.20 + i * 0.29;
+    const z = i % 2 ? 0.48 : -0.48;
+    group.add(meshOf(new THREE.ConeGeometry(0.055, 0.18, 10), lawn, [x, 0.38, z]));
+  }
+  group.traverse((child) => { if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; } });
+  const label = createIslandFaceLabel("ДОСТИЖЕНИЯ РОССИИ");
+  label.position.set(0, 0.47, 0.825);
+  group.add(label);
+  scene.add(group);
+}
+
+function createIslandFaceLabel(text) {
+  const layer = document.createElement("canvas");
+  layer.width = 1200;
+  layer.height = 180;
+  const ctx = layer.getContext("2d");
+  ctx.clearRect(0, 0, layer.width, layer.height);
+  ctx.fillStyle = "#f4f3ec";
+  ctx.font = "600 66px 'IBM Plex Mono', Consolas, monospace";
+  ctx.textAlign = "center";
+  ctx.letterSpacing = "9px";
+  ctx.fillText(text, layer.width / 2, 116);
+  const texture = new THREE.CanvasTexture(layer);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return new THREE.Mesh(new THREE.PlaneGeometry(3.30, 0.50), new THREE.MeshBasicMaterial({ map: texture, transparent: true, toneMapped: false, side: THREE.DoubleSide }));
 }
 
 function addSuspendedHeroModels(scene) {
@@ -903,7 +984,7 @@ function addSuspendedHeroModels(scene) {
 
   const satellite = new THREE.Group();
   satellite.position.set(-3.85, 5.75, 0.45);
-  satellite.rotation.set(0.10, -0.24, -0.10);
+  satellite.rotation.set(-0.34, -0.18, -0.06);
   satellite.add(meshOf(new THREE.CylinderGeometry(0.28, 0.33, 0.72, 28), white, [0, 0, 0], [0, 0, Math.PI / 2]));
   satellite.add(meshOf(new THREE.CylinderGeometry(0.16, 0.22, 0.30, 24), dark, [0.46, 0, 0], [0, 0, Math.PI / 2]));
   [-1, 1].forEach((side) => {
@@ -2097,15 +2178,15 @@ function isNarrowScene() {
 function getCameraView(name, narrow = false) {
   const views = {
     overview: narrow
-      ? { position: [0, 3.15, 8.65], target: [0, 1.58, -3.15] }
-      : { position: [0, 4.25, 12.4], target: [0, 1.78, -2.35] },
-    visitor: { position: [0, 1.65, 10.6], target: [0, 1.72, -0.35] },
+      ? { position: [0, 3.30, 11.0], target: [0, 1.58, -2.25] }
+      : { position: [0, 5.05, 14.7], target: [0, 1.62, -1.75] },
+    visitor: { position: [0, 1.65, 10.9], target: [0, 1.72, -1.25] },
     cube: narrow
       ? { position: [3.65, 2.75, 4.3], target: [0, 1.92, -0.35] }
       : { position: [4.8, 3.1, 5.4], target: [0, 1.92, -0.35] },
-    technology: { position: [-2.25, 1.80, -0.2], target: [-6.15, 1.52, -0.2] },
-    construction: { position: [0, 3.5, 0.8], target: [0, 1.72, -10.15] },
-    transport: { position: [2.25, 1.80, -0.2], target: [6.15, 1.52, -0.2] }
+    technology: { position: [-3.15, 2.05, 3.25], target: [-6.12, 1.48, -1.4] },
+    construction: { position: [-3.05, 2.35, -0.15], target: [0.35, 1.55, -10.05] },
+    transport: { position: [3.15, 2.05, 3.25], target: [6.12, 1.48, -1.4] }
   };
   return views[name] || views.overview;
 }
@@ -2311,7 +2392,7 @@ function writeUrlState() {
 function addBox(scene, size, position, material) {
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size), material);
   mesh.position.set(...position);
-  mesh.castShadow = true;
+  mesh.castShadow = false;
   mesh.receiveShadow = true;
   scene.add(mesh);
   return mesh;

@@ -90,10 +90,13 @@
     ]
   };
 
+  // One object owns one 1.43 m bay on the long walls and one 0.86 m bay on
+  // the rear wall. These envelopes use the largest safe uniform scale while
+  // preserving 8–10 cm between neighbouring maquettes and the niche shell.
   const dimensions = {
-    transport: [1.08, 0.54, 0.88],
-    construction: [0.64, 0.54, 0.88],
-    technology: [1.08, 0.54, 0.88]
+    transport: [1.25, 0.62, 0.90],
+    construction: [0.78, 0.62, 0.90],
+    technology: [1.25, 0.62, 0.90]
   };
 
   const catalog = [];
