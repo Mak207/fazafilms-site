@@ -807,6 +807,57 @@ function drawUpperScreen(layer, zone, item, accent, frame, phase) {
 
   drawScreenPattern(ctx, zone, accent, w, h, phase);
 
+  const exhibit = exhibitCatalog.find((entry) => entry.id === item.id);
+  if (!hasFrame && exhibit) {
+    const fieldGradient = ctx.createLinearGradient(heroX, heroY, heroX + heroW, heroY + heroH);
+    fieldGradient.addColorStop(0, `${accent}12`);
+    fieldGradient.addColorStop(0.62, "rgba(7,14,12,.18)");
+    fieldGradient.addColorStop(1, `${accent}08`);
+    ctx.fillStyle = fieldGradient;
+    roundedRect(ctx, heroX, heroY, heroW, heroH, h * 0.055);
+    ctx.fill();
+    ctx.strokeStyle = `${accent}44`;
+    ctx.lineWidth = Math.max(1, h * 0.004);
+    roundedRect(ctx, heroX, heroY, heroW, heroH, h * 0.055);
+    ctx.stroke();
+
+    ctx.save();
+    ctx.globalAlpha = 0.98;
+    drawObjectAction(
+      ctx,
+      exhibit.kind,
+      heroX + heroW * 0.50,
+      heroY + heroH * 0.43,
+      heroW * 0.58,
+      heroH * 0.48,
+      phase + exhibit.index * 0.41,
+      accent
+    );
+    ctx.restore();
+
+    ctx.fillStyle = `${accent}cc`;
+    ctx.font = `700 ${Math.round(h * 0.046)}px 'IBM Plex Mono', Consolas, monospace`;
+    ctx.fillText(
+      `${String(exhibit.index + 1).padStart(2, "0")} · ${getObjectActionLabel(exhibit.kind)}`,
+      heroX + heroW * 0.08,
+      heroY + heroH * 0.76
+    );
+    ctx.fillStyle = "rgba(229,235,228,.84)";
+    drawFittedWrappedText(
+      ctx,
+      exhibit.objectTitle.toUpperCase(),
+      heroX + heroW * 0.08,
+      heroY + heroH * 0.84,
+      heroW * 0.84,
+      heroH * 0.12,
+      Math.round(h * 0.058),
+      Math.round(h * 0.038),
+      1,
+      "600",
+      "Oswald, Arial"
+    );
+  }
+
   const textX = reverse ? w * 0.52 : w * 0.055;
   const textW = w * 0.41;
   const safeTop = h * 0.13;
@@ -860,30 +911,144 @@ function drawLowerScreen(layer, zone, item, accent, phase) {
   ctx.fillStyle = accent;
   ctx.fillRect(0, 0, w, Math.max(2, h * 0.045));
 
-  const repeat = Math.max(2, Math.round(w / (h * 8.4)));
-  const cellW = w / repeat;
-  for (let i = 0; i < repeat; i += 1) {
-    const x = i * cellW + h * 0.34;
-    ctx.fillStyle = "rgba(205,214,207,.52)";
-    ctx.font = `700 ${Math.round(h * 0.18)}px 'IBM Plex Mono', Consolas, monospace`;
-    ctx.fillText(`${zoneLabels[zone].toUpperCase()} · ${exhibitionPeriod}`, x, h * 0.35);
-    ctx.fillStyle = "#e5e2da";
-    ctx.font = `600 ${Math.round(h * 0.29)}px Oswald, Arial`;
-    drawFittedSingleLine(ctx, item.title.toUpperCase(), x, h * 0.76, cellW - h * 1.55, Math.round(h * 0.29), Math.round(h * 0.18), "600", "Oswald, Arial");
-    ctx.fillStyle = accent;
-    ctx.font = `700 ${Math.round(h * 0.24)}px 'IBM Plex Mono', Consolas, monospace`;
-    ctx.fillText(String(state.indices[zone] + 1).padStart(2, "0"), (i + 1) * cellW - h * 0.78, h * 0.68);
-    ctx.strokeStyle = "rgba(229,238,232,.12)";
-    ctx.lineWidth = 1;
+  const spatialOrder = exhibitCatalog
+    .filter((entry) => entry.zone === zone)
+    .sort((a, b) => a.index - b.index);
+  if (zone === "technology") spatialOrder.reverse();
+  const cellW = w / Math.max(spatialOrder.length, 1);
+  spatialOrder.forEach((exhibit, displayIndex) => {
+    const x = displayIndex * cellW;
+    const selected = exhibit.id === item.id;
+    ctx.save();
     ctx.beginPath();
-    ctx.moveTo((i + 1) * cellW - h * 0.18, h * 0.20);
-    ctx.lineTo((i + 1) * cellW - h * 0.18, h * 0.82);
+    ctx.rect(x, 0, cellW, h);
+    ctx.clip();
+
+    if (selected) {
+      const selectedWash = ctx.createLinearGradient(x, 0, x + cellW, h);
+      selectedWash.addColorStop(0, `${accent}24`);
+      selectedWash.addColorStop(1, `${accent}08`);
+      ctx.fillStyle = selectedWash;
+      ctx.fillRect(x, 0, cellW, h);
+      ctx.fillStyle = accent;
+      ctx.fillRect(x, 0, Math.max(2, h * 0.025), h);
+    }
+
+    const inset = Math.max(5, h * 0.09);
+    const iconW = Math.min(cellW * 0.34, h * 0.58);
+    drawObjectAction(ctx, exhibit.kind, x + inset + iconW * 0.5, h * 0.47, iconW, h * 0.50, phase + exhibit.index * 0.41, accent);
+
+    const textX = x + inset + iconW + h * 0.07;
+    const textW = Math.max(cellW - (textX - x) - inset, cellW * 0.36);
+    ctx.fillStyle = selected ? accent : "rgba(205,214,207,.58)";
+    ctx.font = `700 ${Math.round(h * 0.105)}px 'IBM Plex Mono', Consolas, monospace`;
+    ctx.fillText(`${String(exhibit.index + 1).padStart(2, "0")} · ${getObjectActionLabel(exhibit.kind)}`, textX, h * 0.29);
+    ctx.fillStyle = "#dfe4dc";
+    drawFittedWrappedText(ctx, exhibit.objectTitle.toUpperCase(), textX, h * 0.49, textW, h * 0.39, Math.round(h * 0.17), Math.round(h * 0.095), 2, "600", "Oswald, Arial");
+
+    ctx.strokeStyle = selected ? `${accent}88` : "rgba(229,238,232,.12)";
+    ctx.lineWidth = selected ? Math.max(1, h * 0.012) : 1;
+    ctx.beginPath();
+    ctx.moveTo(x + cellW - 1, h * 0.16);
+    ctx.lineTo(x + cellW - 1, h * 0.84);
     ctx.stroke();
+    ctx.restore();
+  });
+
+  const pulse = (phase * 0.055) % 1;
+  for (let i = 0; i < spatialOrder.length; i += 1) {
+    const cellX = i * cellW;
+    ctx.fillStyle = `${accent}${i % 2 ? "72" : "a8"}`;
+    ctx.fillRect(cellX + pulse * Math.max(cellW - h * 0.38, 0), h * 0.92, h * 0.38, Math.max(2, h * 0.026));
   }
-  const pulse = (phase * 0.035) % 1;
-  ctx.fillStyle = `${accent}aa`;
-  ctx.fillRect(pulse * w, h * 0.93, Math.max(h * 0.65, w * 0.015), Math.max(2, h * 0.025));
   addScreenGrain(ctx, w, h, accent, 0.035);
+}
+
+function getObjectActionLabel(kind) {
+  if (["doubleTrain", "locomotive", "fastTrain", "car", "autocar", "bus", "combine", "rover"].includes(kind)) return "ДВИЖЕНИЕ";
+  if (["ship", "iceShip", "icebreaker", "hydrofoil"].includes(kind)) return "МАРШРУТ";
+  if (["rocket", "airliner", "helicopter", "drone", "spacecraft"].includes(kind)) return "ПОЛЁТ";
+  if (["satellite", "earthSatellite"].includes(kind)) return "ОРБИТА";
+  if (["bridge", "highway", "railway", "pipeline", "utilities", "port"].includes(kind)) return "ПОТОК";
+  if (["airport", "hospital", "school", "technopark", "district", "social", "stadium", "cosmodrome"].includes(kind)) return "СБОРКА";
+  if (kind === "robot") return "МАНИПУЛЯЦИЯ";
+  if (["server", "terminal", "aiCore"].includes(kind)) return "ДАННЫЕ";
+  if (["reactor", "quantum", "biotech", "coin", "materials"].includes(kind)) return "ПРОЦЕСС";
+  return "В РАБОТЕ";
+}
+
+function drawObjectAction(ctx, kind, centerX, centerY, width, height, phase, accent) {
+  const oscillation = Math.sin(phase * 1.65);
+  const travel = (phase * 0.19) % 1;
+  ctx.save();
+  ctx.translate(centerX, centerY);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.strokeStyle = accent;
+  ctx.fillStyle = "rgba(223,228,220,.86)";
+  ctx.lineWidth = Math.max(1.5, height * 0.035);
+
+  if (["doubleTrain", "locomotive", "fastTrain", "car", "autocar", "bus", "combine", "rover"].includes(kind)) {
+    const shift = oscillation * width * 0.055;
+    roundedRect(ctx, -width * 0.38 + shift, -height * 0.19, width * 0.72, height * 0.31, height * 0.08);
+    ctx.fill();
+    ctx.fillStyle = accent;
+    ctx.fillRect(-width * 0.25 + shift, -height * 0.12, width * 0.34, height * 0.08);
+    ctx.beginPath(); ctx.arc(-width * 0.23 + shift, height * 0.14, height * 0.075, 0, Math.PI * 2); ctx.arc(width * 0.21 + shift, height * 0.14, height * 0.075, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 0.45;
+    for (let i = 0; i < 3; i += 1) { ctx.beginPath(); ctx.moveTo(-width * (0.48 + i * 0.12), -height * (0.08 - i * 0.06)); ctx.lineTo(-width * (0.36 + i * 0.12), -height * (0.08 - i * 0.06)); ctx.stroke(); }
+  } else if (["ship", "iceShip", "icebreaker", "hydrofoil"].includes(kind)) {
+    ctx.translate(0, oscillation * height * 0.035);
+    ctx.beginPath(); ctx.moveTo(-width * 0.42, -height * 0.02); ctx.lineTo(width * 0.38, -height * 0.02); ctx.lineTo(width * 0.24, height * 0.18); ctx.lineTo(-width * 0.28, height * 0.18); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = accent; ctx.fillRect(-width * 0.12, -height * 0.20, width * 0.28, height * 0.16);
+    ctx.globalAlpha = 0.55;
+    for (let i = 0; i < 2; i += 1) { const y = height * (0.25 + i * 0.12); ctx.beginPath(); ctx.moveTo(-width * 0.46 + travel * width * 0.12, y); ctx.quadraticCurveTo(0, y - height * 0.08, width * 0.46, y); ctx.stroke(); }
+  } else if (["rocket", "spacecraft"].includes(kind)) {
+    const lift = Math.sin(phase * 1.2) * height * 0.06;
+    ctx.translate(0, lift);
+    ctx.fillRect(-width * 0.08, -height * 0.34, width * 0.16, height * 0.48);
+    ctx.beginPath(); ctx.moveTo(-width * 0.08, -height * 0.34); ctx.lineTo(0, -height * 0.49); ctx.lineTo(width * 0.08, -height * 0.34); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = accent; ctx.beginPath(); ctx.moveTo(-width * 0.07, height * 0.15); ctx.lineTo(0, height * (0.42 + travel * 0.08)); ctx.lineTo(width * 0.07, height * 0.15); ctx.closePath(); ctx.fill();
+  } else if (["airliner", "helicopter", "drone"].includes(kind)) {
+    const shift = oscillation * width * 0.05;
+    ctx.translate(shift, 0);
+    ctx.beginPath(); ctx.moveTo(-width * 0.42, 0); ctx.lineTo(width * 0.38, -height * 0.08); ctx.lineTo(width * 0.45, 0); ctx.lineTo(width * 0.10, height * 0.07); ctx.lineTo(width * 0.02, height * 0.28); ctx.lineTo(-width * 0.08, height * 0.27); ctx.lineTo(-width * 0.12, height * 0.08); ctx.closePath(); ctx.fill();
+    ctx.globalAlpha = 0.45; ctx.beginPath(); ctx.moveTo(-width * 0.48, height * 0.28); ctx.lineTo(width * 0.30, height * 0.28); ctx.stroke();
+  } else if (["satellite", "earthSatellite", "reactor", "quantum", "aiCore", "biotech", "coin"].includes(kind)) {
+    const radius = Math.min(width, height) * 0.24;
+    ctx.globalAlpha = 0.92;
+    ctx.beginPath(); ctx.arc(0, 0, radius * (1 + oscillation * 0.06), 0, Math.PI * 2); ctx.stroke();
+    ctx.globalAlpha = 0.48;
+    ctx.beginPath(); ctx.ellipse(0, 0, radius * 1.65, radius * 0.62, phase * 0.28, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = accent; ctx.beginPath(); ctx.arc(Math.cos(phase) * radius * 1.3, Math.sin(phase) * radius * 0.48, radius * 0.18, 0, Math.PI * 2); ctx.fill();
+  } else if (kind === "robot") {
+    const a = -0.8 + oscillation * 0.28;
+    const b = 0.65 + Math.sin(phase * 1.3) * 0.25;
+    const p1 = [Math.cos(a) * width * 0.24, -Math.sin(a) * height * 0.24];
+    const p2 = [p1[0] + Math.cos(a + b) * width * 0.22, p1[1] - Math.sin(a + b) * height * 0.22];
+    ctx.beginPath(); ctx.moveTo(-width * 0.28, height * 0.30); ctx.lineTo(0, 0); ctx.lineTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
+    [[-width * 0.28, height * 0.30],[0,0],p1,p2].forEach(([x,y])=>{ctx.beginPath();ctx.arc(x,y,height*0.07,0,Math.PI*2);ctx.fill();});
+  } else if (["bridge", "highway", "railway", "pipeline", "utilities", "port"].includes(kind)) {
+    ctx.beginPath(); ctx.moveTo(-width * 0.44, height * 0.18); ctx.bezierCurveTo(-width * 0.15, -height * 0.20, width * 0.18, height * 0.25, width * 0.44, -height * 0.12); ctx.stroke();
+    ctx.fillStyle = accent; ctx.beginPath(); ctx.arc(-width * 0.44 + travel * width * 0.88, Math.sin(travel * Math.PI * 2) * height * 0.10, height * 0.075, 0, Math.PI * 2); ctx.fill();
+  } else if (["airport", "hospital", "school", "technopark", "district", "social", "stadium", "cosmodrome"].includes(kind)) {
+    const heights = [0.38, 0.72, 0.52, 0.88];
+    heights.forEach((value, index) => {
+      const reveal = Math.max(0.15, Math.min(1, travel * 1.7 - index * 0.16));
+      const bh = height * value * reveal;
+      ctx.fillStyle = index === 2 ? accent : "rgba(223,228,220,.86)";
+      ctx.fillRect(-width * 0.40 + index * width * 0.21, height * 0.34 - bh, width * 0.15, bh);
+    });
+  } else if (["server", "terminal", "materials"].includes(kind)) {
+    ctx.strokeRect(-width * 0.34, -height * 0.34, width * 0.68, height * 0.68);
+    for (let i = 0; i < 4; i += 1) {
+      ctx.fillStyle = i === Math.floor(travel * 4) ? accent : "rgba(223,228,220,.72)";
+      ctx.fillRect(-width * 0.24, -height * 0.23 + i * height * 0.15, width * 0.48, height * 0.055);
+    }
+  } else {
+    ctx.beginPath(); ctx.arc(0, 0, Math.min(width, height) * 0.25, 0, Math.PI * 2); ctx.stroke();
+  }
+  ctx.restore();
 }
 
 function paintScreenGround(ctx, width, height, accent) {
