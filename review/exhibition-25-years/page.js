@@ -48,6 +48,14 @@
     { zone: "technology", title: "Космические технологии", text: "Модели спутников, элементы дистанционного зондирования Земли и образцы космической связи." }
   ];
 
+  const catalog = window.EXHIBIT_CATALOG || [];
+  const zoneOffsets = { transport: 0, construction: 0, technology: 0 };
+  items.forEach(function (item) {
+    const meta = catalog.find(function (entry) { return entry.zone === item.zone && entry.index === zoneOffsets[item.zone]; });
+    zoneOffsets[item.zone] += 1;
+    if (meta) Object.assign(item, meta);
+  });
+
   window.EXHIBITION_ITEMS = items;
 
   const zoneLabels = {
@@ -78,8 +86,34 @@
   grid.innerHTML = items.map(function (item, index) {
     return '<article class="exhibit-card" data-zone="' + item.zone + '" style="--zone:' + zoneColors[item.zone] + '">' +
       '<div class="exhibit-top"><span>' + zoneLabels[item.zone] + '</span><span class="exhibit-number">' + String(index + 1).padStart(2, "0") + '</span></div>' +
-      '<h3>' + escapeHTML(item.title) + '</h3><p>' + escapeHTML(item.text) + '</p></article>';
+      '<h3>' + escapeHTML(item.title) + '</h3><p>' + escapeHTML(item.text) + '</p>' +
+      (item.reference ? '<a class="source-link" href="' + item.reference + '" target="_blank" rel="noopener noreferrer">Официальный визуальный референс</a>' : '') + '</article>';
   }).join("");
+
+  const physicalRegister = document.getElementById("physicalRegister");
+  if (physicalRegister) {
+    const nicheCards = items.map(function (item) {
+      return '<article style="--zone:' + zoneColors[item.zone] + '"><span>' + zoneLabels[item.zone] + '</span>' +
+        '<strong>' + escapeHTML(item.objectTitle || item.title) + '</strong><small>' + escapeHTML(item.size || "Габарит уточняется") + '</small>' +
+        (item.reference ? '<a href="' + item.reference + '" target="_blank" rel="noopener noreferrer">Реальный вид</a>' : '') + '</article>';
+    });
+    const centerCards = (window.CENTER_PROPOSAL || []).map(function (item) {
+      return '<article class="is-center" style="--zone:#ff8a45"><span>Центр · Москва · предложение</span><strong>' + escapeHTML(item.objectTitle) + '</strong><small>' + escapeHTML(item.size) + '</small><a href="' + item.reference + '" target="_blank" rel="noopener noreferrer">Реальный вид</a></article>';
+    });
+    physicalRegister.innerHTML = nicheCards.concat(centerCards).join("");
+  }
+
+  const scenarioGrid = document.getElementById("scenarioGrid");
+  const scenarios = window.EXHIBIT_SCENARIOS || {};
+  if (scenarioGrid) {
+    scenarioGrid.innerHTML = Object.keys(scenarios).map(function (zone) {
+      const scenario = scenarios[zone];
+      return '<article style="--zone:' + zoneColors[zone] + '"><div class="scenario-head"><span>' + zoneLabels[zone] + '</span><strong>' + scenario.runtime + '</strong></div>' +
+        '<h3>' + escapeHTML(scenario.title) + '</h3><ol>' + scenario.beats.map(function (beat) {
+          return '<li class="' + beat[1].toLowerCase() + '"><time>' + beat[0] + '</time><span>' + escapeHTML(beat[2]) + '</span></li>';
+        }).join("") + '</ol></article>';
+    }).join("");
+  }
 
   const cards = Array.from(grid.querySelectorAll(".exhibit-card"));
 
