@@ -18,6 +18,19 @@ const zones = ["technology", "construction", "transport"];
 const zoneLabels = { technology: "Технологии", construction: "Строительство", transport: "Транспорт" };
 const zoneColors = { technology: "#52d5d7", construction: "#b7df78", transport: "#89a8ff" };
 const exhibitionPeriod = "2000–2025";
+const pavilion = {
+  width: 13,
+  depth: 21,
+  height: 4,
+  atriumWidth: 19,
+  atriumDepth: 28,
+  atriumHeight: 8,
+  screenX: 6.45,
+  screenFrontZ: 10.35,
+  screenCornerZ: -9.20,
+  screenBackZ: -10.30,
+  screenBackHalf: 5.35
+};
 const showRawHi3DCandidates = new URLSearchParams(window.location.search).get("quality") === "raw";
 
 const content = Object.fromEntries(zones.map((zone) => [zone, allItems.filter((item) => item.zone === zone)]));
@@ -104,33 +117,37 @@ function init() {
   renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.08;
+  renderer.toneMappingExposure = 0.88;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x080b0a);
-  scene.fog = new THREE.FogExp2(0x080b0a, 0.014);
+  scene.background = new THREE.Color(0xdce7ec);
+  scene.fog = new THREE.FogExp2(0xdce7ec, 0.0085);
   const pmremGenerator = new THREE.PMREMGenerator(renderer);
   scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.035).texture;
   pmremGenerator.dispose();
 
   const camera = new THREE.PerspectiveCamera(42, 1, 0.05, 80);
-  camera.position.set(4.35, 5.4, 7.8);
+  camera.position.set(0, 4.25, 12.4);
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
   controls.dampingFactor = 0.065;
-  controls.target.set(0, 0.95, -2.0);
+  controls.target.set(0, 1.78, -2.35);
   controls.minDistance = 2.2;
-  controls.maxDistance = 34;
+  controls.maxDistance = 44;
   controls.maxPolarAngle = Math.PI * 0.49;
 
   addExhibitionLighting(scene);
 
+  buildAtriumShell(scene);
   buildPavilion(scene);
   addNicheLighting(scene);
   buildPhysicalModels(scene);
   buildMediaCube(scene);
+  buildFeatureIslands(scene);
+  addSuspendedHeroModels(scene);
+  addVisitorFigures(scene);
 
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
@@ -183,16 +200,16 @@ function init() {
 }
 
 function addExhibitionLighting(scene) {
-  scene.add(new THREE.HemisphereLight(0xe2ebe5, 0x151a16, 0.92));
+  scene.add(new THREE.HemisphereLight(0xf7fbff, 0x8c9c9d, 1.32));
 
-  const key = new THREE.DirectionalLight(0xfff4e5, 1.42);
-  key.position.set(4.5, 10.5, 8.5);
+  const key = new THREE.DirectionalLight(0xfff6e7, 1.58);
+  key.position.set(-3.5, 13.5, 9.5);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
-  key.shadow.camera.left = -11;
-  key.shadow.camera.right = 11;
-  key.shadow.camera.top = 14;
-  key.shadow.camera.bottom = -14;
+  key.shadow.camera.left = -16;
+  key.shadow.camera.right = 16;
+  key.shadow.camera.top = 18;
+  key.shadow.camera.bottom = -18;
   key.shadow.bias = -0.00012;
   scene.add(key);
 
@@ -208,15 +225,17 @@ function addExhibitionLighting(scene) {
     scene.add(spot);
   };
 
-  addSpot([0, 5.35, 0.45], [0, 1.95, 0.45], 42, 0xffead0, 0.46);
-  addSpot([-3.2, 3.4, 2.8], [0, 1.85, 0.45], 18, 0xcffeff, 0.38);
-  addSpot([3.2, 3.2, 2.2], [0, 1.80, 0.45], 16, 0xd8ffc0, 0.38);
+  addSpot([0, 7.25, 0.45], [0, 1.95, 0.15], 64, 0xffeed5, 0.48);
+  addSpot([-4.4, 6.9, 3.8], [-2.8, 1.45, 3.2], 34, 0xd9f7ff, 0.34);
+  addSpot([4.4, 6.9, 3.8], [2.8, 1.45, 3.2], 34, 0xfff1dc, 0.34);
+  addSpot([-3.4, 6.7, -4.8], [-4.5, 1.15, -4.8], 28, 0xe9f9ff, 0.32);
+  addSpot([3.4, 6.7, -4.8], [4.5, 1.15, -4.8], 28, 0xfff4df, 0.32);
 
-  const technologyWash = new THREE.PointLight(0x52d5d7, 7, 10, 2);
-  technologyWash.position.set(-4.0, 2.25, -2.2);
+  const technologyWash = new THREE.PointLight(0x52d5d7, 5.5, 14, 2);
+  technologyWash.position.set(-5.5, 2.4, -2.2);
   scene.add(technologyWash);
-  const transportWash = new THREE.PointLight(0x89a8ff, 6, 10, 2);
-  transportWash.position.set(4.0, 2.25, -2.2);
+  const transportWash = new THREE.PointLight(0x89a8ff, 5.5, 14, 2);
+  transportWash.position.set(5.5, 2.4, -2.2);
   scene.add(transportWash);
 
   [
@@ -224,10 +243,61 @@ function addExhibitionLighting(scene) {
     [0.88, 0.34, 0.72, 0xb7df78],
     [0, 0.34, -0.42, 0x89a8ff]
   ].forEach(([x, y, z, color]) => {
-    const glow = new THREE.PointLight(color, 7, 3.4, 2);
+    const glow = new THREE.PointLight(color, 5, 4.8, 2);
     glow.position.set(x, y, z);
     scene.add(glow);
   });
+}
+
+function buildAtriumShell(scene) {
+  const steel = new THREE.MeshStandardMaterial({ color: 0xdbe1e3, roughness: 0.34, metalness: 0.56, envMapIntensity: 0.9 });
+  const white = new THREE.MeshPhysicalMaterial({ color: 0xf0f2ef, roughness: 0.30, metalness: 0.10, clearcoat: 0.34, clearcoatRoughness: 0.26, envMapIntensity: 0.95 });
+  const glass = new THREE.MeshPhysicalMaterial({ color: 0xbad7e3, roughness: 0.08, metalness: 0.02, transmission: 0.28, transparent: true, opacity: 0.20, depthWrite: false, side: THREE.DoubleSide });
+  const ceilingY = pavilion.atriumHeight;
+  const halfW = pavilion.atriumWidth / 2;
+  const halfD = pavilion.atriumDepth / 2;
+
+  const addMullion = (x, z, height = ceilingY) => addBox(scene, [0.07, height, 0.07], [x, height / 2, z], steel);
+  for (let z = -halfD; z <= halfD + 0.01; z += 2) {
+    addMullion(-halfW, z);
+    addMullion(halfW, z);
+    addBox(scene, [pavilion.atriumWidth, 0.07, 0.07], [0, ceilingY, z], steel);
+    addBox(scene, [pavilion.atriumWidth, 0.035, 0.035], [0, ceilingY - 0.32, z], white);
+  }
+  for (let x = -halfW; x <= halfW + 0.01; x += 1.9) {
+    addMullion(x, -halfD);
+    addBox(scene, [0.07, 0.07, pavilion.atriumDepth], [x, ceilingY, 0], steel);
+  }
+
+  const sideGlass = new THREE.Mesh(new THREE.PlaneGeometry(pavilion.atriumDepth, ceilingY), glass);
+  sideGlass.rotation.y = Math.PI / 2;
+  sideGlass.position.set(-halfW, ceilingY / 2, 0);
+  scene.add(sideGlass);
+  const sideGlassRight = sideGlass.clone();
+  sideGlassRight.position.x = halfW;
+  scene.add(sideGlassRight);
+  const rearGlass = new THREE.Mesh(new THREE.PlaneGeometry(pavilion.atriumWidth, ceilingY), glass);
+  rearGlass.position.set(0, ceilingY / 2, -halfD);
+  scene.add(rearGlass);
+
+  const trackMaterial = new THREE.MeshStandardMaterial({ color: 0x8f999c, roughness: 0.32, metalness: 0.70 });
+  const lampMaterial = new THREE.MeshBasicMaterial({ color: 0xfff0d4, toneMapped: false });
+  [-5.7, 5.7].forEach((x) => {
+    addBox(scene, [0.09, 0.09, pavilion.atriumDepth - 1.5], [x, ceilingY - 0.42, 0], trackMaterial);
+    for (let z = -11.5; z <= 11.5; z += 1.55) {
+      const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.085, 12, 8), lampMaterial);
+      lamp.position.set(x, ceilingY - 0.51, z);
+      scene.add(lamp);
+    }
+  });
+
+  for (let z = -12; z <= 12; z += 4) {
+    const left = [-halfW + 0.4, ceilingY - 0.15, z];
+    const right = [halfW - 0.4, ceilingY - 0.15, z];
+    scene.add(cylinderBetween(left, right, 0.035, steel));
+    scene.add(cylinderBetween([-halfW + 0.4, ceilingY - 0.15, z], [0, ceilingY - 0.85, z], 0.028, steel));
+    scene.add(cylinderBetween([halfW - 0.4, ceilingY - 0.15, z], [0, ceilingY - 0.85, z], 0.028, steel));
+  }
 }
 
 function addNicheLighting(scene) {
@@ -239,12 +309,12 @@ function addNicheLighting(scene) {
     transport: new THREE.MeshBasicMaterial({ color: zoneColors.transport, transparent: true, opacity: 0.72, toneMapped: false })
   };
 
-  addBox(scene, [0.025, 0.028, 16.0], [-4.39, 1.465, 0], ledMaterial);
-  addBox(scene, [0.025, 0.028, 16.0], [4.39, 1.465, 0], ledMaterial);
-  addBox(scene, [9.35, 0.028, 0.025], [0, 1.465, -7.89], ledMaterial);
-  addBox(scene, [0.025, 0.018, 16.0], [-4.37, 0.595, 0], accentMaterials.technology);
-  addBox(scene, [0.025, 0.018, 16.0], [4.37, 0.595, 0], accentMaterials.transport);
-  addBox(scene, [9.35, 0.018, 0.025], [0, 0.595, -7.87], accentMaterials.construction);
+  addBox(scene, [0.035, 0.045, 20.15], [-5.80, 1.465, 0.18], ledMaterial);
+  addBox(scene, [0.035, 0.045, 20.15], [5.80, 1.465, 0.18], ledMaterial);
+  addBox(scene, [12.0, 0.045, 0.035], [0, 1.465, -9.67], ledMaterial);
+  addBox(scene, [0.035, 0.025, 20.15], [-5.78, 0.595, 0.18], accentMaterials.technology);
+  addBox(scene, [0.035, 0.025, 20.15], [5.78, 0.595, 0.18], accentMaterials.transport);
+  addBox(scene, [12.0, 0.025, 0.035], [0, 0.595, -9.65], accentMaterials.construction);
 
   const addNicheSpot = (position, targetPosition, color = warm) => {
     const target = new THREE.Object3D();
@@ -257,54 +327,54 @@ function addNicheLighting(scene) {
     scene.add(light);
   };
 
-  for (let i = 0; i < 7; i += 1) {
-    const z = THREE.MathUtils.lerp(-6.85, 6.85, i / 6);
-    addNicheSpot([-4.08, 1.40, z], [-4.60, 0.91, z]);
-    addNicheSpot([4.08, 1.40, z], [4.60, 0.91, z]);
-    const x = THREE.MathUtils.lerp(-4.15, 4.15, i / 6);
-    addNicheSpot([x, 1.40, -7.60], [x, 0.91, -8.10]);
+  for (let i = 0; i < 8; i += 1) {
+    const z = THREE.MathUtils.lerp(-8.75, 8.75, i / 7);
+    addNicheSpot([-5.48, 1.40, z], [-6.02, 0.91, z]);
+    addNicheSpot([5.48, 1.40, z], [6.02, 0.91, z]);
+    const x = THREE.MathUtils.lerp(-5.15, 5.15, i / 7);
+    addNicheSpot([x, 1.40, -9.35], [x, 0.91, -9.95]);
   }
 }
 
 function buildPavilion(scene) {
-  const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x151b18, roughness: 0.78, metalness: 0.06, envMapIntensity: 0.16 });
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(12.5, 20), floorMaterial);
+  const floorMaterial = new THREE.MeshPhysicalMaterial({ color: 0xd9dfdf, roughness: 0.24, metalness: 0.12, clearcoat: 0.36, clearcoatRoughness: 0.22, envMapIntensity: 1.05 });
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(pavilion.atriumWidth - 0.8, pavilion.atriumDepth - 0.8), floorMaterial);
   floor.rotation.x = -Math.PI / 2;
-  floor.position.z = 0.4;
+  floor.position.z = 0;
   floor.receiveShadow = true;
   scene.add(floor);
 
-  const wallMaterial = new THREE.MeshStandardMaterial({ color: 0x202622, roughness: 0.82, metalness: 0.08, envMapIntensity: 0.12 });
-  addBox(scene, [0.32, 4, 17], [-5.16, 2, 0], wallMaterial);
-  addBox(scene, [0.32, 4, 17], [5.16, 2, 0], wallMaterial);
-  addBox(scene, [10.0, 4, 0.32], [0, 2, -8.66], wallMaterial);
+  const wallMaterial = new THREE.MeshPhysicalMaterial({ color: 0xe8ece9, roughness: 0.34, metalness: 0.10, clearcoat: 0.28, envMapIntensity: 0.82 });
+  addBox(scene, [0.36, pavilion.height, pavilion.depth + 0.6], [-6.68, 2, 0], wallMaterial);
+  addBox(scene, [0.36, pavilion.height, pavilion.depth + 0.6], [6.68, 2, 0], wallMaterial);
+  addBox(scene, [pavilion.width + 0.1, pavilion.height, 0.36], [0, 2, -10.48], wallMaterial);
 
   addSeamlessMediaWalls(scene);
 
-  const shelfMaterial = new THREE.MeshStandardMaterial({ color: 0x2b332e, roughness: 0.58, metalness: 0.22, envMapIntensity: 0.24 });
-  addBox(scene, [0.62, 0.08, 16.6], [-4.72, 0.54, 0], shelfMaterial);
-  addBox(scene, [0.62, 0.08, 16.6], [4.72, 0.54, 0], shelfMaterial);
-  addBox(scene, [9.6, 0.08, 0.62], [0, 0.54, -8.22], shelfMaterial);
+  const shelfMaterial = new THREE.MeshPhysicalMaterial({ color: 0xf1f2ef, roughness: 0.28, metalness: 0.12, clearcoat: 0.30, clearcoatRoughness: 0.23, envMapIntensity: 0.95 });
+  addBox(scene, [0.72, 0.10, 20.55], [-6.02, 0.54, 0.12], shelfMaterial);
+  addBox(scene, [0.72, 0.10, 20.55], [6.02, 0.54, 0.12], shelfMaterial);
+  addBox(scene, [12.25, 0.10, 0.72], [0, 0.54, -9.94], shelfMaterial);
 
-  addDimension(scene, [-5.55, 0, 8.2], [-5.55, 4, 8.2], "4 м");
-  addDimension(scene, [-5, 0.02, 9.1], [5, 0.02, 9.1], "10 м");
+  addDimension(scene, [-7.05, 0, 10.25], [-7.05, 4, 10.25], "4 м");
+  addDimension(scene, [-6.5, 0.02, 11.15], [6.5, 0.02, 11.15], "13 м");
 }
 
 function addSeamlessMediaWalls(scene) {
   const path = [];
   const add = (x, z) => path.push({ x, z });
-  add(-4.985, 8.35);
-  add(-4.985, -7.6);
+  add(-pavilion.screenX, pavilion.screenFrontZ);
+  add(-pavilion.screenX, pavilion.screenCornerZ);
   for (let i = 1; i <= 8; i += 1) {
     const a = Math.PI + (Math.PI / 2) * (i / 8);
-    add(-4.085 + Math.cos(a) * 0.9, -7.6 + Math.sin(a) * 0.9);
+    add(-pavilion.screenBackHalf + Math.cos(a) * 1.10, pavilion.screenCornerZ + Math.sin(a) * 1.10);
   }
-  add(4.085, -8.5);
+  add(pavilion.screenBackHalf, pavilion.screenBackZ);
   for (let i = 1; i <= 8; i += 1) {
     const a = -Math.PI / 2 + (Math.PI / 2) * (i / 8);
-    add(4.085 + Math.cos(a) * 0.9, -7.6 + Math.sin(a) * 0.9);
+    add(pavilion.screenBackHalf + Math.cos(a) * 1.10, pavilion.screenCornerZ + Math.sin(a) * 1.10);
   }
-  add(4.985, 8.35);
+  add(pavilion.screenX, pavilion.screenFrontZ);
 
   const segments = [];
   let totalLength = 0;
@@ -363,8 +433,22 @@ function addSeamlessMediaWalls(scene) {
 
   buildStrip(0, 0.5, screenMaterials.lower);
   buildStrip(1.5, 4, screenMaterials.upper);
-  const niche = new THREE.MeshStandardMaterial({ color: 0x070a08, roughness: 0.92, metalness: 0.06 });
+  const niche = new THREE.MeshPhysicalMaterial({ color: 0xe7ece8, roughness: 0.38, metalness: 0.08, clearcoat: 0.16, envMapIntensity: 0.75 });
   buildStrip(0.5, 1.5, niche);
+
+  const portalMaterial = new THREE.MeshPhysicalMaterial({ color: 0xf3f2ee, roughness: 0.23, metalness: 0.08, clearcoat: 0.40, envMapIntensity: 1.1 });
+  const portalGlow = new THREE.MeshBasicMaterial({ color: 0xe9fbff, transparent: true, opacity: 0.86, toneMapped: false });
+  const curve = new THREE.CurvePath();
+  for (let i = 0; i < path.length - 1; i += 1) {
+    curve.add(new THREE.LineCurve3(new THREE.Vector3(path[i].x, 4.08, path[i].z), new THREE.Vector3(path[i + 1].x, 4.08, path[i + 1].z)));
+  }
+  scene.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 320, 0.105, 10, false), portalMaterial));
+  scene.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 320, 0.026, 8, false), portalGlow));
+  [path[0], path[path.length - 1]].forEach((point) => {
+    const post = new THREE.Mesh(new RoundedBoxGeometry(0.25, 4.14, 0.25, 6, 0.11), portalMaterial);
+    post.position.set(point.x, 2.04, point.z);
+    scene.add(post);
+  });
 }
 
 function createScreenLayers(lengthMeters) {
@@ -390,10 +474,10 @@ function buildPhysicalModels(scene) {
     if (id === "media-cube") return;
     const t = meta.index / 13;
     const slot = meta.zone === "technology"
-      ? { position: [-4.58, 0.58, THREE.MathUtils.lerp(-7.42, 7.42, t)], rotation: [0, Math.PI / 2, 0] }
+      ? { position: [-5.88, 0.58, THREE.MathUtils.lerp(-8.88, 8.88, t)], rotation: [0, Math.PI / 2, 0] }
       : meta.zone === "transport"
-        ? { position: [4.58, 0.58, THREE.MathUtils.lerp(-7.42, 7.42, t)], rotation: [0, -Math.PI / 2, 0] }
-        : { position: [THREE.MathUtils.lerp(-4.45, 4.45, t), 0.58, -8.08], rotation: [0, 0, 0] };
+        ? { position: [5.88, 0.58, THREE.MathUtils.lerp(-8.88, 8.88, t)], rotation: [0, -Math.PI / 2, 0] }
+        : { position: [THREE.MathUtils.lerp(-5.70, 5.70, t), 0.58, -9.80], rotation: [0, 0, 0] };
     const anchor = new THREE.Group();
     anchor.name = id;
     anchor.position.set(...slot.position);
@@ -642,10 +726,10 @@ function buildMediaCube(scene) {
 
   const group = new THREE.Group();
   group.name = id;
-  group.position.set(0, 0, 0.42);
+  group.position.set(0, 0, -0.35);
   group.userData.modelId = id;
 
-  const graphite = new THREE.MeshStandardMaterial({ color: 0x111713, roughness: 0.34, metalness: 0.62, envMapIntensity: 0.72 });
+  const graphite = new THREE.MeshPhysicalMaterial({ color: 0xe8ecea, roughness: 0.26, metalness: 0.16, clearcoat: 0.36, clearcoatRoughness: 0.22, envMapIntensity: 1.0 });
   const blackMetal = new THREE.MeshStandardMaterial({ color: 0x070b09, roughness: 0.28, metalness: 0.78, envMapIntensity: 0.9 });
   const base = meshOf(new RoundedBoxGeometry(2.18, 0.18, 2.18, 8, 0.08), graphite, [0, 0.09, 0]);
   base.castShadow = true;
@@ -654,7 +738,7 @@ function buildMediaCube(scene) {
 
   const underlight = new THREE.Mesh(
     new RoundedBoxGeometry(2.30, 0.045, 2.30, 8, 0.08),
-    new THREE.MeshBasicMaterial({ color: 0xe9efe8, transparent: true, opacity: 0.82, toneMapped: false })
+    new THREE.MeshBasicMaterial({ color: 0xe8fbff, transparent: true, opacity: 0.96, toneMapped: false })
   );
   underlight.position.y = 0.026;
   group.add(underlight);
@@ -715,6 +799,123 @@ function buildMediaCube(scene) {
   clickTargets.push(group);
 }
 
+function buildFeatureIslands(scene) {
+  const plinth = new THREE.MeshPhysicalMaterial({ color: 0xf0f1ee, roughness: 0.25, metalness: 0.12, clearcoat: 0.42, clearcoatRoughness: 0.22, envMapIntensity: 1.05 });
+  const glow = new THREE.MeshBasicMaterial({ color: 0xe7fbff, transparent: true, opacity: 0.88, toneMapped: false });
+  const tabletGlass = new THREE.MeshPhysicalMaterial({ color: 0x143f62, roughness: 0.14, metalness: 0.18, clearcoat: 0.46, envMapIntensity: 1.0 });
+  const islandSpecs = [
+    { position: [-3.85, 0, 4.65], model: "technology-02", rotation: 0.28, accent: zoneColors.technology },
+    { position: [3.85, 0, 4.65], model: "transport-11", rotation: -0.20, accent: zoneColors.transport }
+  ];
+
+  islandSpecs.forEach((spec) => {
+    const group = new THREE.Group();
+    group.position.set(...spec.position);
+    const base = meshOf(new RoundedBoxGeometry(2.75, 0.22, 1.48, 8, 0.13), plinth, [0, 0.11, 0]);
+    base.castShadow = true;
+    base.receiveShadow = true;
+    group.add(base);
+    group.add(meshOf(new RoundedBoxGeometry(2.84, 0.035, 1.57, 8, 0.14), glow, [0, 0.025, 0]));
+
+    const meta = physicalModels[spec.model];
+    if (meta) {
+      const model = createProxy(meta);
+      model.scale.multiplyScalar(1.28);
+      model.position.set(-0.18, 0.24, 0);
+      model.rotation.y = spec.rotation;
+      group.add(model);
+    }
+
+    const tablet = new THREE.Group();
+    tablet.position.set(0.94, 0.48, 0.34);
+    tablet.rotation.set(-0.42, -0.22, 0);
+    tablet.add(meshOf(new RoundedBoxGeometry(0.48, 0.035, 0.34, 5, 0.045), tabletGlass, [0, 0, 0]));
+    group.add(tablet);
+    scene.add(group);
+  });
+}
+
+function addSuspendedHeroModels(scene) {
+  const white = new THREE.MeshPhysicalMaterial({ color: 0xf2f3f0, roughness: 0.23, metalness: 0.18, clearcoat: 0.34, envMapIntensity: 1.0 });
+  const blue = new THREE.MeshPhysicalMaterial({ color: 0x18589b, roughness: 0.26, metalness: 0.34, clearcoat: 0.28, envMapIntensity: 0.95 });
+  const red = new THREE.MeshPhysicalMaterial({ color: 0xcf3340, roughness: 0.28, metalness: 0.24, clearcoat: 0.30, envMapIntensity: 0.92 });
+  const dark = new THREE.MeshStandardMaterial({ color: 0x20313b, roughness: 0.32, metalness: 0.54 });
+  const cable = new THREE.MeshStandardMaterial({ color: 0x7a8589, roughness: 0.38, metalness: 0.66 });
+
+  const satellite = new THREE.Group();
+  satellite.position.set(-3.85, 5.75, 0.45);
+  satellite.rotation.set(0.10, -0.24, -0.10);
+  satellite.add(meshOf(new THREE.CylinderGeometry(0.28, 0.33, 0.72, 28), white, [0, 0, 0], [0, 0, Math.PI / 2]));
+  satellite.add(meshOf(new THREE.CylinderGeometry(0.16, 0.22, 0.30, 24), dark, [0.46, 0, 0], [0, 0, Math.PI / 2]));
+  [-1, 1].forEach((side) => {
+    const panel = meshOf(new RoundedBoxGeometry(1.28, 0.06, 0.70, 3, 0.035), blue, [side * 1.00, 0, 0]);
+    satellite.add(panel);
+    for (let i = -2; i <= 2; i += 1) satellite.add(meshOf(new THREE.BoxGeometry(0.012, 0.065, 0.68), white, [side * (1.00 + i * 0.12), 0.035, 0]));
+  });
+  scene.add(satellite);
+  scene.add(cylinderBetween([-4.35, pavilion.atriumHeight - 0.10, 0.45], [-4.35, 6.02, 0.45], 0.008, cable));
+  scene.add(cylinderBetween([-3.35, pavilion.atriumHeight - 0.10, 0.45], [-3.35, 6.02, 0.45], 0.008, cable));
+
+  const plane = new THREE.Group();
+  plane.position.set(4.0, 5.9, -1.0);
+  plane.rotation.set(0.02, -0.34, -0.05);
+  plane.add(meshOf(new THREE.CylinderGeometry(0.18, 0.20, 2.1, 28), white, [0, 0, 0], [0, 0, Math.PI / 2]));
+  plane.add(meshOf(new THREE.ConeGeometry(0.19, 0.55, 28), white, [1.30, 0, 0], [0, 0, -Math.PI / 2]));
+  plane.add(meshOf(new THREE.BoxGeometry(0.55, 0.055, 2.45), blue, [0.0, 0, 0]));
+  plane.add(meshOf(new THREE.BoxGeometry(0.45, 0.045, 0.92), blue, [-0.86, 0.08, 0]));
+  plane.add(meshOf(new THREE.BoxGeometry(0.14, 0.70, 0.055), blue, [-0.91, 0.26, 0]));
+  [-1, 1].forEach((side) => {
+    plane.add(meshOf(new THREE.BoxGeometry(1.34, 0.025, 0.018), red, [0.13, -0.05, side * 0.195]));
+    for (let i = 0; i < 7; i += 1) plane.add(meshOf(new RoundedBoxGeometry(0.09, 0.055, 0.016, 2, 0.012), dark, [-0.52 + i * 0.20, 0.075, side * 0.202]));
+  });
+  scene.add(plane);
+  scene.add(cylinderBetween([3.15, pavilion.atriumHeight - 0.10, -1.0], [3.15, 6.15, -1.0], 0.008, cable));
+  scene.add(cylinderBetween([4.85, pavilion.atriumHeight - 0.10, -1.0], [4.85, 6.15, -1.0], 0.008, cable));
+}
+
+function addVisitorFigures(scene) {
+  const skin = new THREE.MeshStandardMaterial({ color: 0xd1aa91, roughness: 0.68, metalness: 0 });
+  const palette = [0x263746, 0xc5b59f, 0x617481, 0xd7d8d2, 0x425263, 0xb8a48d];
+  const placements = [
+    [-2.3, 2.8, 0.04], [-1.45, 1.95, -0.10], [2.25, 1.2, 0.18],
+    [3.2, -3.2, -0.16], [-3.35, -4.15, 0.24], [1.25, -6.15, -0.06]
+  ];
+  placements.forEach(([x, z, rotation], index) => {
+    const cloth = new THREE.MeshStandardMaterial({ color: palette[index % palette.length], roughness: 0.62, metalness: 0.02 });
+    const figure = new THREE.Group();
+    figure.position.set(x, 0, z);
+    figure.rotation.y = rotation;
+    figure.add(meshOf(new THREE.SphereGeometry(0.105, 18, 12), skin, [0, 1.66, 0]));
+    const torso = meshOf(new THREE.CylinderGeometry(0.18, 0.24, 0.72, 18), cloth, [0, 1.18, 0]);
+    figure.add(torso);
+    [-0.10, 0.10].forEach((legX) => figure.add(meshOf(new THREE.CylinderGeometry(0.055, 0.065, 0.78, 14), cloth, [legX, 0.48, 0])));
+    [-1, 1].forEach((side) => {
+      const arm = meshOf(new THREE.CylinderGeometry(0.045, 0.05, 0.64, 14), cloth, [side * 0.22, 1.14, 0], [0, 0, side * 0.14]);
+      figure.add(arm);
+    });
+    figure.scale.setScalar(0.96 + (index % 3) * 0.035);
+    figure.traverse((child) => { if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; } });
+    scene.add(figure);
+  });
+
+  const planter = new THREE.MeshPhysicalMaterial({ color: 0xf0f1ee, roughness: 0.28, metalness: 0.08, clearcoat: 0.24 });
+  const trunk = new THREE.MeshStandardMaterial({ color: 0x765e45, roughness: 0.86 });
+  const leaf = new THREE.MeshStandardMaterial({ color: 0x3d714f, roughness: 0.72 });
+  [-8.0, 8.0].forEach((x) => {
+    const plant = new THREE.Group();
+    plant.position.set(x, 0, 8.4);
+    plant.add(meshOf(new RoundedBoxGeometry(0.78, 0.88, 0.78, 5, 0.08), planter, [0, 0.44, 0]));
+    plant.add(meshOf(new THREE.CylinderGeometry(0.055, 0.08, 1.22, 12), trunk, [0, 1.42, 0]));
+    for (let i = 0; i < 9; i += 1) {
+      const angle = i * Math.PI * 2 / 9;
+      const crown = meshOf(new THREE.SphereGeometry(0.34, 16, 12), leaf, [Math.cos(angle) * 0.25, 2.0 + (i % 3) * 0.16, Math.sin(angle) * 0.25]);
+      crown.scale.set(1.15, 0.82, 1.15);
+      plant.add(crown);
+    }
+    scene.add(plant);
+  });
+}
+
 function drawCubeFaces() {
   zones.forEach((zone, index) => {
     const layer = cubeFaceCanvases[zone];
@@ -726,10 +927,20 @@ function drawCubeFaces() {
     ctx.clearRect(0, 0, layer.width, layer.height);
     paintScreenGround(ctx, layer.width, layer.height, zoneColors[zone]);
     if (getMediaWidth(media)) drawImageCover(ctx, media, 0, 0, layer.width, layer.height);
+    ctx.save();
+    ctx.globalCompositeOperation = "screen";
+    const wash = ctx.createLinearGradient(0, 0, layer.width, layer.height);
+    wash.addColorStop(0, "rgba(0,88,220,.34)");
+    wash.addColorStop(0.55, hexToRgba(zoneColors[zone], 0.24));
+    wash.addColorStop(1, "rgba(0,52,150,.42)");
+    ctx.fillStyle = wash;
+    ctx.fillRect(0, 0, layer.width, layer.height);
+    ctx.restore();
+    drawLivingScreenBackground(ctx, layer.width, layer.height, zoneColors[zone], programPhase + index, zone, true);
     const shade = ctx.createLinearGradient(0, 0, 0, layer.height);
     shade.addColorStop(0, "rgba(3,8,7,.08)");
     shade.addColorStop(0.58, "rgba(3,8,7,.18)");
-    shade.addColorStop(1, "rgba(3,8,7,.84)");
+    shade.addColorStop(1, "rgba(2,21,58,.76)");
     ctx.fillStyle = shade;
     ctx.fillRect(0, 0, layer.width, layer.height);
     ctx.fillStyle = zoneColors[zone];
@@ -924,99 +1135,215 @@ function drawUnifiedUpper(layer, topic, accent, media, phase, metricWindow) {
   const ctx = layer.getContext("2d");
   const { width: w, height: h } = layer;
   ctx.clearRect(0, 0, w, h);
-  paintScreenGround(ctx, w, h, accent);
+  const ground = ctx.createLinearGradient(0, 0, w, h);
+  ground.addColorStop(0, "#03275b");
+  ground.addColorStop(0.46, "#075f9f");
+  ground.addColorStop(1, "#031f57");
+  ctx.fillStyle = ground;
+  ctx.fillRect(0, 0, w, h);
 
   if (getMediaWidth(media)) {
-    const panels = 3;
-    const overlap = w * 0.025;
-    for (let panel = 0; panel < panels; panel += 1) {
-      const x = panel * w / panels - (panel ? overlap : 0);
-      const width = w / panels + (panel ? overlap : 0) + (panel < panels - 1 ? overlap : 0);
-      drawImageCover(ctx, media, x, 0, width, h);
-    }
+    ctx.save();
+    ctx.globalAlpha = 0.68;
+    drawImageCoverPan(ctx, media, 0, 0, w, h, Math.sin(phase * 0.12) * 0.10, Math.cos(phase * 0.09) * 0.035);
+    ctx.restore();
   }
 
+  ctx.save();
+  ctx.globalCompositeOperation = "screen";
+  const blueWash = ctx.createLinearGradient(0, 0, w, h);
+  blueWash.addColorStop(0, "rgba(0,118,255,.34)");
+  blueWash.addColorStop(0.48, hexToRgba(accent, 0.20));
+  blueWash.addColorStop(1, "rgba(0,58,168,.42)");
+  ctx.fillStyle = blueWash;
+  ctx.fillRect(0, 0, w, h);
+  ctx.restore();
+
   const shade = ctx.createLinearGradient(0, 0, 0, h);
-  shade.addColorStop(0, "rgba(2,7,6,.12)");
-  shade.addColorStop(0.66, "rgba(2,7,6,.16)");
-  shade.addColorStop(1, "rgba(2,7,6,.72)");
+  shade.addColorStop(0, "rgba(2,22,55,.18)");
+  shade.addColorStop(0.55, "rgba(2,30,68,.20)");
+  shade.addColorStop(1, "rgba(1,18,46,.72)");
   ctx.fillStyle = shade;
   ctx.fillRect(0, 0, w, h);
 
+  drawLivingScreenBackground(ctx, w, h, accent, phase, topic.zone);
+
+  ctx.fillStyle = "rgba(239,248,255,.96)";
+  ctx.font = `600 ${Math.round(h * 0.078)}px Oswald, Arial`;
+  ctx.fillText(`${(topic.title || zoneLabels[topic.zone]).toUpperCase()} РОССИИ`, w * 0.045, h * 0.115);
+  ctx.fillStyle = accent;
+  ctx.font = `700 ${Math.round(h * 0.040)}px 'IBM Plex Mono', Consolas, monospace`;
+  ctx.fillText(`${exhibitionPeriod}  ·  ДОСТИЖЕНИЯ ЗА 25 ЛЕТ`, w * 0.045, h * 0.175);
+  ctx.fillStyle = "rgba(235,247,255,.72)";
+  ctx.textAlign = "right";
+  ctx.fillText(`ТАКТ ${metricWindow.page + 1} / ${metricWindow.pageCount}`, w * 0.955, h * 0.145);
+  ctx.textAlign = "left";
+
   const pulse = 0.72 + Math.sin(phase * 0.72) * 0.10;
   const transition = Math.min(1, metricWindow.localProgress * 5, (1 - metricWindow.localProgress) * 5);
-  const blocks = [0.045, 0.375, 0.705];
-  blocks.forEach((fraction, index) => {
-    const metric = metricWindow.metrics[index];
-    if (!metric) return;
+  const displayedMetrics = topic.metrics || metricWindow.metrics;
+  displayedMetrics.forEach((metric, index) => {
+    const fraction = 0.017 + index * 0.108;
     const x = w * fraction;
-    const cardW = w * 0.245;
-    const cardY = h * (0.12 + (1 - transition) * 0.025);
-    const metricNumber = metricWindow.page * 3 + index + 1;
+    const cardW = w * 0.097;
+    const cardY = h * (0.22 + (1 - transition) * 0.025);
+    const cardH = h * 0.62;
+    const metricNumber = index + 1;
     ctx.save();
-    ctx.globalAlpha = 0.74 + transition * 0.26;
-    roundedRect(ctx, x, cardY, cardW, h * 0.74, h * 0.055);
-    ctx.fillStyle = "rgba(4,9,8,.72)";
+    ctx.globalAlpha = 0.78 + transition * 0.16 + Math.sin(phase * 0.55 + index * 0.64) * 0.035;
+    roundedRect(ctx, x, cardY, cardW, cardH, h * 0.026);
+    const cardGround = ctx.createLinearGradient(x, cardY, x + cardW, cardY + cardH);
+    cardGround.addColorStop(0, "rgba(4,61,125,.80)");
+    cardGround.addColorStop(0.54, "rgba(6,103,163,.67)");
+    cardGround.addColorStop(1, "rgba(3,38,96,.82)");
+    ctx.fillStyle = cardGround;
     ctx.fill();
-    ctx.strokeStyle = hexToRgba(accent, 0.20 + pulse * 0.16);
-    ctx.lineWidth = Math.max(2, h * 0.004);
+    ctx.strokeStyle = `rgba(211,241,255,${0.42 + pulse * 0.16})`;
+    ctx.lineWidth = Math.max(2, h * 0.0035);
     ctx.stroke();
+
+    ctx.save();
+    roundedRect(ctx, x, cardY, cardW, cardH, h * 0.026);
+    ctx.clip();
+    const sweepX = x - h * 0.25 + ((phase * 0.13 + index * 0.31) % 1.25) * (cardW + h * 0.50);
+    const sweep = ctx.createLinearGradient(sweepX - h * 0.18, 0, sweepX + h * 0.18, 0);
+    sweep.addColorStop(0, "rgba(255,255,255,0)");
+    sweep.addColorStop(0.5, "rgba(219,249,255,.20)");
+    sweep.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = sweep;
+    ctx.fillRect(x, cardY, cardW, cardH);
+    ctx.restore();
+
+    const inset = h * 0.045;
+    ctx.fillStyle = "rgba(228,247,255,.82)";
+    ctx.font = `700 ${Math.round(h * 0.027)}px 'IBM Plex Mono', Consolas, monospace`;
+    ctx.fillText(`${String(metricNumber).padStart(2, "0")} / ${String(displayedMetrics.length).padStart(2, "0")}`, x + inset, cardY + h * 0.07);
+    drawMetricGlyph(ctx, topic.zone, x + cardW - inset * 1.05, cardY + h * 0.066, h * 0.052, accent, phase + index * 0.8);
+    ctx.fillStyle = "#f1f8fb";
+    drawFittedWrappedText(ctx, metric.value, x + inset, cardY + h * 0.15, cardW - inset * 2, h * 0.13, Math.round(h * 0.098), Math.round(h * 0.047), 1, "600", "Oswald, Arial");
+    ctx.fillStyle = "rgba(241,249,252,.97)";
+    drawFittedWrappedText(ctx, metric.label.toUpperCase(), x + inset, cardY + h * 0.32, cardW - inset * 2, h * 0.16, Math.round(h * 0.044), Math.round(h * 0.027), 3, "700", "Inter, Arial");
+    ctx.fillStyle = "rgba(220,238,246,.78)";
+    ctx.font = `500 ${Math.round(h * 0.027)}px Inter, Arial`;
+    drawWrappedLines(ctx, metric.detail || exhibitionPeriod, x + inset, cardY + h * 0.51, cardW - inset * 2, h * 0.034, 3);
+    ctx.fillStyle = "rgba(255,255,255,.20)";
+    ctx.fillRect(x + inset, cardY + cardH - h * 0.045, cardW - inset * 2, Math.max(3, h * 0.008));
     ctx.fillStyle = accent;
-    ctx.font = `700 ${Math.round(h * 0.046)}px 'IBM Plex Mono', Consolas, monospace`;
-    ctx.fillText(`${(topic.title || zoneLabels[topic.zone]).toUpperCase()}  /  ${String(metricNumber).padStart(2, "0")}—${String((topic.metrics || []).length).padStart(2, "0")}`, x + h * 0.10, cardY + h * 0.12);
-    ctx.fillStyle = "#f4f1e8";
-    drawFittedWrappedText(ctx, metric.value, x + h * 0.10, cardY + h * 0.24, cardW - h * 0.20, h * 0.18, Math.round(h * 0.15), Math.round(h * 0.07), 1, "500", "Oswald, Arial");
-    ctx.fillStyle = "rgba(241,242,235,.96)";
-    drawFittedWrappedText(ctx, metric.label.toUpperCase(), x + h * 0.10, cardY + h * 0.45, cardW - h * 0.20, h * 0.16, Math.round(h * 0.072), Math.round(h * 0.045), 2, "700", "Inter, Arial");
-    ctx.fillStyle = "rgba(230,235,229,.82)";
-    ctx.font = `500 ${Math.round(h * 0.041)}px Inter, Arial`;
-    drawWrappedLines(ctx, metric.detail || exhibitionPeriod, x + h * 0.10, cardY + h * 0.67, cardW - h * 0.20, h * 0.052, 2);
-    ctx.fillStyle = "rgba(255,255,255,.16)";
-    ctx.fillRect(x + h * 0.10, cardY + h * 0.685, cardW - h * 0.20, Math.max(3, h * 0.009));
-    ctx.fillStyle = accent;
-    ctx.fillRect(x + h * 0.10, cardY + h * 0.685, (cardW - h * 0.20) * ((metricWindow.page + metricWindow.localProgress) / metricWindow.pageCount), Math.max(3, h * 0.009));
+    ctx.fillRect(x + inset, cardY + cardH - h * 0.045, (cardW - inset * 2) * ((programAdvance % programDwell) / programDwell), Math.max(3, h * 0.008));
     ctx.restore();
   });
-  addScreenGrain(ctx, w, h, accent, 0.018);
+  addScreenGrain(ctx, w, h, accent, 0.024);
 }
 
 function drawUnifiedLower(layer, topic, accent, phase, metricWindow) {
   const ctx = layer.getContext("2d");
   const { width: w, height: h } = layer;
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = "#08100d";
-  ctx.fillRect(0, 0, w, h);
   const glow = ctx.createLinearGradient(0, 0, w, 0);
-  glow.addColorStop(0, hexToRgba(accent, 0.04));
-  glow.addColorStop(0.5, hexToRgba(accent, 0.18));
-  glow.addColorStop(1, hexToRgba(accent, 0.04));
+  glow.addColorStop(0, "#032e69");
+  glow.addColorStop(0.48, "#087bb7");
+  glow.addColorStop(1, "#03275f");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, w, h);
-  ctx.fillStyle = accent;
-  ctx.fillRect(0, 0, w, Math.max(4, h * 0.035));
+  drawLivingScreenBackground(ctx, w, h, accent, phase * 1.35, topic.zone, true);
+  ctx.fillStyle = "rgba(231,249,255,.72)";
+  ctx.fillRect(0, 0, w, Math.max(4, h * 0.025));
 
   metricWindow.metrics.forEach((metric, index) => {
     const x0 = index * w / 3;
     const inset = h * 0.18;
     if (index) {
-      ctx.fillStyle = "rgba(255,255,255,.12)";
+      ctx.fillStyle = "rgba(232,248,255,.28)";
       ctx.fillRect(x0, h * 0.20, 2, h * 0.62);
     }
-    ctx.fillStyle = accent;
+    ctx.fillStyle = "#eefaff";
     ctx.font = `500 ${Math.round(h * 0.35)}px Oswald, Arial`;
     ctx.fillText(metric.value, x0 + inset, h * 0.52);
-    ctx.fillStyle = "#ecede7";
+    ctx.fillStyle = "rgba(238,249,253,.92)";
     ctx.font = `700 ${Math.round(h * 0.125)}px Inter, Arial`;
     drawWrappedLines(ctx, metric.label.toUpperCase(), x0 + inset, h * 0.72, w / 3 - inset * 2, h * 0.15, 2);
-    ctx.fillStyle = "rgba(224,230,223,.60)";
+    ctx.fillStyle = "rgba(218,240,248,.72)";
     ctx.font = `500 ${Math.round(h * 0.092)}px 'IBM Plex Mono', Consolas, monospace`;
     const metricNumber = metricWindow.page * 3 + index + 1;
     ctx.fillText(`${String(metricNumber).padStart(2, "0")} / ${String((topic.metrics || []).length).padStart(2, "0")}  ·  ${metric.detail || exhibitionPeriod}`, x0 + inset, h * 0.92);
   });
   ctx.globalAlpha = 0.08 + Math.sin(phase * 0.9) * 0.025;
-  ctx.fillStyle = accent;
+  ctx.fillStyle = "#dffaff";
   ctx.fillRect((phase * 96) % w, 0, Math.max(8, w * 0.002), h);
   ctx.globalAlpha = 1;
+}
+
+function drawLivingScreenBackground(ctx, width, height, accent, phase, zone, compact = false) {
+  ctx.save();
+  const horizon = compact ? height * 0.68 : height * 0.78;
+  const step = compact ? height * 0.34 : height * 0.15;
+  ctx.globalAlpha = compact ? 0.20 : 0.26;
+  for (let x = -step; x < width + step; x += step) {
+    const seed = Math.abs(Math.sin(x * 0.0037 + zone.length * 1.7));
+    const buildingH = height * (compact ? 0.20 : 0.13 + seed * 0.17);
+    ctx.fillStyle = x % (step * 2) < step ? "rgba(160,224,255,.52)" : hexToRgba(accent, 0.42);
+    ctx.fillRect(x, horizon - buildingH, step * 0.64, buildingH);
+  }
+
+  ctx.lineWidth = Math.max(1.5, height * 0.006);
+  for (let lane = 0; lane < 3; lane += 1) {
+    const y = height * (0.72 + lane * 0.085);
+    const offset = ((phase * (42 + lane * 18)) % (width * 0.22));
+    const trail = ctx.createLinearGradient(0, 0, width, 0);
+    trail.addColorStop(0, "rgba(105,231,255,.10)");
+    trail.addColorStop(0.5, lane === 1 ? hexToRgba(accent, 0.82) : "rgba(139,222,255,.64)");
+    trail.addColorStop(1, "rgba(105,231,255,.10)");
+    ctx.strokeStyle = trail;
+    ctx.beginPath();
+    ctx.moveTo(-width * 0.05 + offset, y);
+    ctx.bezierCurveTo(width * 0.28, y - height * (0.12 + lane * 0.025), width * 0.62, y + height * 0.08, width * 1.05 + offset, y - height * 0.04);
+    ctx.stroke();
+  }
+
+  if (!compact) {
+    ctx.globalAlpha = 0.34;
+    ctx.strokeStyle = "rgba(184,239,255,.72)";
+    ctx.lineWidth = Math.max(1, height * 0.003);
+    const nodeCount = 18;
+    const nodes = [];
+    for (let i = 0; i < nodeCount; i += 1) {
+      const x = width * (i / (nodeCount - 1));
+      const y = height * (0.13 + 0.07 * Math.sin(i * 1.37 + phase * 0.28));
+      nodes.push([x, y]);
+    }
+    ctx.beginPath();
+    nodes.forEach(([x, y], index) => index ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+    ctx.stroke();
+    nodes.forEach(([x, y], index) => {
+      const radius = height * (0.006 + 0.003 * Math.sin(phase * 1.2 + index));
+      ctx.fillStyle = index % 3 ? "rgba(218,249,255,.82)" : accent;
+      ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
+    });
+  }
+  ctx.restore();
+}
+
+function drawMetricGlyph(ctx, zone, x, y, size, accent, phase) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.strokeStyle = "rgba(224,248,255,.86)";
+  ctx.fillStyle = hexToRgba(accent, 0.82);
+  ctx.lineWidth = Math.max(2, size * 0.07);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  if (zone === "technology") {
+    ctx.beginPath(); ctx.arc(0, 0, size * 0.20, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(0, 0, size * 0.52, size * 0.22, phase * 0.22, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(Math.cos(phase) * size * 0.42, Math.sin(phase) * size * 0.18, size * 0.08, 0, Math.PI * 2); ctx.fill();
+  } else if (zone === "construction") {
+    [0.34, 0.62, 0.46].forEach((height, index) => ctx.strokeRect(-size * 0.48 + index * size * 0.34, size * (0.32 - height), size * 0.25, size * height));
+    ctx.beginPath(); ctx.moveTo(-size * 0.56, size * 0.34); ctx.lineTo(size * 0.54, size * 0.34); ctx.stroke();
+  } else {
+    ctx.beginPath(); ctx.moveTo(-size * 0.52, size * 0.18); ctx.bezierCurveTo(-size * 0.12, -size * 0.35, size * 0.18, size * 0.30, size * 0.52, -size * 0.20); ctx.stroke();
+    const t = (phase * 0.18) % 1;
+    ctx.beginPath(); ctx.arc(-size * 0.52 + t * size * 1.04, Math.sin(t * Math.PI * 2) * size * 0.12, size * 0.09, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
 }
 
 function drawScreen(zone, phase) {
@@ -1449,6 +1776,21 @@ function drawImageCover(ctx, image, x, y, width, height) {
   ctx.drawImage(image, x + (width - drawWidth) / 2, y + (height - drawHeight) / 2, drawWidth, drawHeight);
 }
 
+function drawImageCoverPan(ctx, image, x, y, width, height, panX = 0, panY = 0) {
+  const mediaWidth = getMediaWidth(image);
+  const mediaHeight = getMediaHeight(image);
+  if (!mediaWidth || !mediaHeight) return;
+  const overscan = 1.12;
+  const scale = Math.max(width / mediaWidth, height / mediaHeight) * overscan;
+  const drawWidth = mediaWidth * scale;
+  const drawHeight = mediaHeight * scale;
+  const travelX = Math.max(0, drawWidth - width);
+  const travelY = Math.max(0, drawHeight - height);
+  const offsetX = (width - drawWidth) / 2 + travelX * panX;
+  const offsetY = (height - drawHeight) / 2 + travelY * panY;
+  ctx.drawImage(image, x + offsetX, y + offsetY, drawWidth, drawHeight);
+}
+
 function getMediaWidth(media) {
   return media?.videoWidth || media?.naturalWidth || 0;
 }
@@ -1666,12 +2008,12 @@ function selectModel(id) {
 
 function focusCamera(name, camera, controls) {
   const views = {
-    overview: { position: [4.8, 4.7, 7.9], target: [0, 1.35, 0.25] },
-    visitor: { position: [0, 1.65, 7.7], target: [0, 1.75, 0.42] },
-    cube: { position: [3.75, 2.75, 4.55], target: [0, 1.92, 0.42] },
-    technology: { position: [-1.55, 1.75, -0.4], target: [-4.75, 1.42, -0.4] },
-    construction: { position: [0, 3.2, 0.2], target: [0, 1.65, -8.25] },
-    transport: { position: [1.55, 1.75, -0.4], target: [4.75, 1.42, -0.4] }
+    overview: { position: [0, 4.25, 12.4], target: [0, 1.78, -2.35] },
+    visitor: { position: [0, 1.65, 10.6], target: [0, 1.72, -0.35] },
+    cube: { position: [4.8, 3.1, 5.4], target: [0, 1.92, -0.35] },
+    technology: { position: [-2.25, 1.80, -0.2], target: [-6.15, 1.52, -0.2] },
+    construction: { position: [0, 3.5, 0.8], target: [0, 1.72, -10.15] },
+    transport: { position: [2.25, 1.80, -0.2], target: [6.15, 1.52, -0.2] }
   };
   const view = views[name] || views.overview;
   state.camera = name;
@@ -1695,8 +2037,8 @@ function setWalkMode(enabled, camera, controls, moveToStart) {
   controls.maxPolarAngle = enabled ? Math.PI * 0.66 : Math.PI * 0.49;
   if (enabled && moveToStart) {
     cameraMotion = null;
-    camera.position.set(0, 1.65, 7.2);
-    controls.target.set(0, 1.65, 6.2);
+    camera.position.set(0, 1.65, 10.2);
+    controls.target.set(0, 1.65, 9.2);
     state.camera = "visitor";
     writeUrlState();
   }
@@ -1747,7 +2089,12 @@ function updateWalk(camera, controls, delta) {
   const current = camera.position.clone();
   const candidate = current.clone().add(movement);
   candidate.y = 1.65;
-  const canStand = (point) => point.x >= -4.45 && point.x <= 4.45 && point.z >= -7.85 && point.z <= 8.45 && Math.hypot(point.x, point.z - 0.42) > 1.45;
+  const canStand = (point) => {
+    const outsideCube = Math.hypot(point.x, point.z + 0.35) > 1.45;
+    const outsideLeftIsland = Math.hypot((point.x + 3.85) / 1.55, (point.z - 4.65) / 0.95) > 1;
+    const outsideRightIsland = Math.hypot((point.x - 3.85) / 1.55, (point.z - 4.65) / 0.95) > 1;
+    return point.x >= -5.65 && point.x <= 5.65 && point.z >= -9.45 && point.z <= 10.45 && outsideCube && outsideLeftIsland && outsideRightIsland;
+  };
   let next = candidate;
   if (!canStand(next)) {
     const slideX = current.clone(); slideX.x = candidate.x;
