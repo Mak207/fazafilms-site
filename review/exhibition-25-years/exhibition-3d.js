@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 
 const root = document.querySelector(".viewer-shell");
 const canvas = document.getElementById("exhibitionCanvas");
@@ -10,6 +11,7 @@ if (!root || !canvas) {
 }
 
 const allItems = window.EXHIBITION_ITEMS || [];
+const exhibitCatalog = window.EXHIBIT_CATALOG || [];
 const zones = ["technology", "construction", "transport"];
 const zoneLabels = { technology: "Технологии", construction: "Строительство", transport: "Транспорт" };
 const zoneColors = { technology: "#52d5d7", construction: "#b7df78", transport: "#89a8ff" };
@@ -20,39 +22,53 @@ const state = {
   zone: "technology",
   indices: { technology: 0, construction: 0, transport: 0 },
   playing: false,
+  mode: "plate",
   walking: false,
   camera: "overview",
   reviews: loadReviews()
 };
 
-const physicalModels = {
-  "technology-robot-arm": { title: "Промышленный робот", size: "0,38 × 0,42 × 0,55 м", dims: [0.38, 0.42, 0.55], placement: "левая ниша", status: "Hi3D · загрузка", zone: "technology" },
-  "technology-glonass": { title: "Спутник ГЛОНАСС", size: "0,55 × 0,55 × 0,42 м", dims: [0.55, 0.55, 0.42], placement: "левая ниша", status: "Hi3D · загрузка", zone: "technology" },
-  "construction-stadium": { title: "Современный стадион", size: "0,58 × 0,45 × 0,18 м", dims: [0.58, 0.45, 0.18], placement: "торцевая ниша", status: "Hi3D · загрузка", zone: "construction" },
-  "construction-bridge": { title: "Арочный мост", size: "1,60 × 0,22 × 0,32 м", dims: [1.60, 0.22, 0.32], placement: "торцевая ниша", status: "Hi3D · загрузка", zone: "construction" },
-  "transport-angara": { title: "Ракета-носитель «Ангара»", size: "0,12 × 0,12 × 0,58 м", dims: [0.12, 0.12, 0.58], placement: "правая ниша", status: "Hi3D · загрузка", zone: "transport" },
-  "transport-icebreaker": { title: "Атомный ледокол", size: "0,85 × 0,18 × 0,28 м", dims: [0.85, 0.18, 0.28], placement: "правая ниша", status: "Hi3D · загрузка", zone: "transport" }
-};
+const physicalModels = Object.fromEntries(exhibitCatalog.map((item) => [item.id, {
+  ...item,
+  title: item.objectTitle,
+  placement: item.zone === "technology" ? "левая ниша" : item.zone === "transport" ? "правая ниша" : "торцевая ниша"
+}]));
+const centerEnvelopes = [
+  { id: "center-01", dims: [1.90, 1.35, 1.65], position: [0, 0.19, -1.55], placement: "центральный подиум" },
+  { id: "center-02", dims: [3.20, 0.75, 0.55], position: [0, 0.19, 0.52], placement: "центральный подиум" },
+  { id: "center-03", dims: [2.80, 0.60, 0.52], position: [0, 0.19, 2.15], placement: "центральный подиум" }
+];
+(window.CENTER_PROPOSAL || []).forEach((item, index) => {
+  const envelope = centerEnvelopes[index];
+  if (!envelope) return;
+  physicalModels[envelope.id] = {
+    ...item,
+    ...envelope,
+    title: item.objectTitle,
+    status: "Hi3D · модель из референсной фотографии"
+  };
+});
 
-const modelSlots = {
-  "technology-robot-arm": { position: [-4.58, 0.56, -3.4], rotation: [0, Math.PI / 2, 0] },
-  "technology-glonass": { position: [-4.58, 0.56, 2.2], rotation: [0, Math.PI / 2, 0] },
-  "construction-stadium": { position: [-2.7, 0.56, -8.08], rotation: [0, 0, 0] },
-  "construction-bridge": { position: [2.4, 0.56, -8.08], rotation: [0, 0, 0] },
-  "transport-angara": { position: [4.58, 0.56, -3.4], rotation: [0, -Math.PI / 2, 0] },
-  "transport-icebreaker": { position: [4.58, 0.56, 2.2], rotation: [0, -Math.PI / 2, 0] }
-};
+const gltfLoader = new GLTFLoader();
+gltfLoader.setMeshoptDecoder(MeshoptDecoder);
 
 const screenCanvases = {};
 const screenTextures = {};
 const screenMaterials = {};
 const clickTargets = [];
 const modelObjects = {};
-let selectedModelId = "technology-robot-arm";
+let selectedModelId = "technology-01";
 let autoTimer = 0;
 let lastScreenDraw = 0;
 let cameraMotion = null;
 const activeMoves = new Set();
+const screenFrames = {};
+zones.forEach((zone) => {
+  const image = new Image();
+  image.src = `./assets/frames/${zone}-anchor.webp`;
+  image.onload = () => drawScreen(zone, performance.now() / 1000);
+  screenFrames[zone] = image;
+});
 
 try {
   if (!allItems.length) throw new Error("Не загрузился список из 42 позиций");
@@ -181,9 +197,7 @@ function buildPavilion(scene) {
     screenMaterials[zone] = new THREE.MeshBasicMaterial({ map: texture, toneMapped: false });
   });
 
-  addWallLayers(scene, "technology", "left");
-  addWallLayers(scene, "transport", "right");
-  addWallLayers(scene, "construction", "back");
+  addSeamlessMediaWalls(scene);
 
   const shelfMaterial = new THREE.MeshStandardMaterial({ color: 0x303933, roughness: 0.52, metalness: 0.34 });
   addBox(scene, [0.62, 0.08, 16.6], [-4.72, 0.54, 0], shelfMaterial);
@@ -194,40 +208,100 @@ function buildPavilion(scene) {
   addDimension(scene, [-5, 0.02, 9.1], [5, 0.02, 9.1], "10 м");
 }
 
-function addWallLayers(scene, zone, side) {
-  const material = screenMaterials[zone];
-  const nicheMaterial = new THREE.MeshStandardMaterial({ color: 0x070a08, roughness: 0.92, metalness: 0.06 });
-  let upper, lower, niche;
-  if (side === "left" || side === "right") {
-    upper = new THREE.Mesh(new THREE.PlaneGeometry(17, 2.5), material);
-    lower = new THREE.Mesh(new THREE.PlaneGeometry(17, 0.5), material);
-    niche = new THREE.Mesh(new THREE.PlaneGeometry(17, 1), nicheMaterial);
-    const x = side === "left" ? -4.985 : 4.985;
-    const rotation = side === "left" ? Math.PI / 2 : -Math.PI / 2;
-    [upper, lower, niche].forEach((mesh) => { mesh.rotation.y = rotation; mesh.position.x = x; scene.add(mesh); });
-    upper.position.set(x, 2.75, 0);
-    lower.position.set(x, 0.25, 0);
-    niche.position.set(side === "left" ? -5.02 : 5.02, 1, 0);
-  } else {
-    upper = new THREE.Mesh(new THREE.PlaneGeometry(10, 2.5), material);
-    lower = new THREE.Mesh(new THREE.PlaneGeometry(10, 0.5), material);
-    niche = new THREE.Mesh(new THREE.PlaneGeometry(10, 1), nicheMaterial);
-    upper.position.set(0, 2.75, -8.485);
-    lower.position.set(0, 0.25, -8.485);
-    niche.position.set(0, 1, -8.52);
-    scene.add(upper, lower, niche);
+function addSeamlessMediaWalls(scene) {
+  const path = [];
+  const add = (x, z, zone) => path.push({ x, z, zone });
+  add(-4.985, 8.35, "technology");
+  add(-4.985, -7.6, "technology");
+  for (let i = 1; i <= 8; i += 1) {
+    const a = Math.PI + (Math.PI / 2) * (i / 8);
+    add(-4.085 + Math.cos(a) * 0.9, -7.6 + Math.sin(a) * 0.9, i <= 4 ? "technology" : "construction");
   }
+  add(4.085, -8.5, "construction");
+  for (let i = 1; i <= 8; i += 1) {
+    const a = -Math.PI / 2 + (Math.PI / 2) * (i / 8);
+    add(4.085 + Math.cos(a) * 0.9, -7.6 + Math.sin(a) * 0.9, i <= 4 ? "construction" : "transport");
+  }
+  add(4.985, 8.35, "transport");
+
+  const zoneLengths = { technology: 0, construction: 0, transport: 0 };
+  const segments = [];
+  for (let i = 0; i < path.length - 1; i += 1) {
+    const a = path[i];
+    const b = path[i + 1];
+    const zone = b.zone || a.zone;
+    const length = Math.hypot(b.x - a.x, b.z - a.z);
+    segments.push({ a, b, zone, start: zoneLengths[zone], length, index: i });
+    zoneLengths[zone] += length;
+  }
+
+  const pathOffsets = path.map((point, index) => {
+    const normalFor = (from, to) => {
+      const dx = to.x - from.x;
+      const dz = to.z - from.z;
+      const inv = 1 / Math.max(Math.hypot(dx, dz), 0.0001);
+      return new THREE.Vector2(-dz * inv, dx * inv);
+    };
+    const previous = index > 0 ? normalFor(path[index - 1], point) : null;
+    const next = index < path.length - 1 ? normalFor(point, path[index + 1]) : null;
+    if (!previous) return next.multiplyScalar(0.012);
+    if (!next) return previous.multiplyScalar(0.012);
+    const miter = previous.clone().add(next).normalize();
+    return miter.multiplyScalar(0.012 / Math.max(miter.dot(next), 0.25));
+  });
+
+  const buildStrip = (y0, y1, materials) => {
+    const positions = [];
+    const uvs = [];
+    const indices = [];
+    const groups = [];
+    let vertex = 0;
+    segments.forEach((segment) => {
+      const offsetA = pathOffsets[segment.index];
+      const offsetB = pathOffsets[segment.index + 1];
+      const u0 = segment.start / zoneLengths[segment.zone];
+      const u1 = (segment.start + segment.length) / zoneLengths[segment.zone];
+      positions.push(
+        segment.a.x + offsetA.x, y0, segment.a.z + offsetA.y,
+        segment.b.x + offsetB.x, y0, segment.b.z + offsetB.y,
+        segment.b.x + offsetB.x, y1, segment.b.z + offsetB.y,
+        segment.a.x + offsetA.x, y1, segment.a.z + offsetA.y
+      );
+      uvs.push(u0, 0, u1, 0, u1, 1, u0, 1);
+      indices.push(vertex, vertex + 1, vertex + 2, vertex, vertex + 2, vertex + 3);
+      groups.push({ start: indices.length - 6, count: 6, materialIndex: zones.indexOf(segment.zone) });
+      vertex += 4;
+    });
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
+    geometry.setIndex(indices);
+    geometry.computeVertexNormals();
+    groups.forEach((group) => geometry.addGroup(group.start, group.count, group.materialIndex));
+    scene.add(new THREE.Mesh(geometry, materials));
+  };
+
+  const mediaMaterials = zones.map((zone) => screenMaterials[zone]);
+  buildStrip(0, 0.5, mediaMaterials);
+  buildStrip(1.5, 4, mediaMaterials);
+  const niche = new THREE.MeshStandardMaterial({ color: 0x070a08, roughness: 0.92, metalness: 0.06 });
+  buildStrip(0.5, 1.5, [niche, niche, niche]);
 }
 
 function buildPhysicalModels(scene) {
   Object.entries(physicalModels).forEach(([id, meta]) => {
-    const slot = modelSlots[id];
+    const t = meta.index / 13;
+    const slot = meta.zone === "technology"
+      ? { position: [-4.58, 0.58, THREE.MathUtils.lerp(-7.42, 7.42, t)], rotation: [0, Math.PI / 2, 0] }
+      : meta.zone === "transport"
+        ? { position: [4.58, 0.58, THREE.MathUtils.lerp(-7.42, 7.42, t)], rotation: [0, -Math.PI / 2, 0] }
+        : { position: [THREE.MathUtils.lerp(-4.45, 4.45, t), 0.58, -8.08], rotation: [0, 0, 0] };
     const anchor = new THREE.Group();
     anchor.name = id;
     anchor.position.set(...slot.position);
     anchor.rotation.set(...slot.rotation);
     anchor.userData.modelId = id;
-    const proxy = createProxy(id, meta);
+    const proxy = createProxy(meta);
     proxy.userData.modelId = id;
     anchor.add(proxy);
     scene.add(anchor);
@@ -238,46 +312,153 @@ function buildPhysicalModels(scene) {
   });
 }
 
-function createProxy(id, meta) {
+function createProxy(meta) {
   const group = new THREE.Group();
   const color = new THREE.Color(zoneColors[meta.zone]);
   const body = new THREE.MeshStandardMaterial({ color, roughness: 0.38, metalness: 0.34 });
   const dark = new THREE.MeshStandardMaterial({ color: 0x18201c, roughness: 0.5, metalness: 0.42 });
-  if (id.includes("robot")) {
+  const pale = new THREE.MeshStandardMaterial({ color: 0xd8ded8, roughness: 0.42, metalness: 0.18 });
+  const glass = new THREE.MeshStandardMaterial({ color, roughness: 0.12, metalness: 0.12, transparent: true, opacity: 0.62 });
+  const kind = meta.kind;
+
+  if (kind === "robot") {
     const joints = [[0, 0.06, 0], [0.02, 0.20, 0], [0.13, 0.35, 0], [0.24, 0.47, 0]];
     group.add(meshOf(new THREE.CylinderGeometry(0.10, 0.12, 0.08, 24), dark, [0, 0.04, 0]));
     joints.forEach((p, index) => group.add(meshOf(new THREE.SphereGeometry(index === 3 ? 0.035 : 0.052, 20, 12), dark, p)));
     for (let i = 0; i < joints.length - 1; i += 1) group.add(cylinderBetween(joints[i], joints[i + 1], i < 2 ? 0.038 : 0.027, body));
-  } else if (id.includes("glonass")) {
+  } else if (["satellite", "earthSatellite"].includes(kind)) {
     group.add(meshOf(new THREE.BoxGeometry(0.17, 0.18, 0.17), body, [0, 0.22, 0]));
     group.add(meshOf(new THREE.BoxGeometry(0.52, 0.018, 0.15), dark, [0, 0.22, 0]));
     group.add(meshOf(new THREE.SphereGeometry(0.08, 24, 12), body, [0, 0.40, 0]));
-  } else if (id.includes("angara")) {
+  } else if (kind === "rocket") {
     group.add(meshOf(new THREE.CylinderGeometry(0.031, 0.031, 0.43, 28), body, [0, 0.26, 0]));
     const cone = meshOf(new THREE.ConeGeometry(0.031, 0.11, 28), body, [0, 0.53, 0]); group.add(cone);
     [-1, 1].forEach((sign) => group.add(meshOf(new THREE.CylinderGeometry(0.015, 0.015, 0.36, 20), dark, [sign * 0.043, 0.23, 0])));
-  } else if (id.includes("icebreaker")) {
-    group.add(meshOf(new THREE.BoxGeometry(0.82, 0.13, 0.17), body, [0, 0.12, 0]));
-    group.add(meshOf(new THREE.BoxGeometry(0.36, 0.13, 0.14), dark, [-0.08, 0.23, 0]));
-  } else if (id.includes("stadium")) {
+  } else if (["ship", "iceShip", "icebreaker", "hydrofoil"].includes(kind)) {
+    const hull = meshOf(new THREE.ConeGeometry(0.18, 0.92, 4), body, [0, 0.14, 0], [0, 0, Math.PI / 2]);
+    hull.scale.z = 0.55;
+    group.add(hull);
+    group.add(meshOf(new THREE.BoxGeometry(0.38, 0.13, 0.14), dark, [-0.08, 0.23, 0]));
+    if (kind === "hydrofoil") {
+      group.add(meshOf(new THREE.BoxGeometry(0.48, 0.018, 0.38), pale, [0.04, 0.04, 0]));
+      group.add(meshOf(new THREE.BoxGeometry(0.04, 0.16, 0.02), dark, [-0.18, 0.02, 0]));
+    }
+  } else if (kind === "stadium") {
     const ring = meshOf(new THREE.TorusGeometry(0.20, 0.055, 12, 48), body, [0, 0.10, 0], [Math.PI / 2, 0, 0]);
     ring.scale.set(1.35, 1, 1);
     group.add(ring);
-  } else {
+  } else if (kind === "bridge") {
     group.add(meshOf(new THREE.BoxGeometry(1.55, 0.05, 0.18), dark, [0, 0.16, 0]));
     const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(-0.72, 0.18, 0), new THREE.Vector3(0, 0.42, 0), new THREE.Vector3(0.72, 0.18, 0)]);
     group.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 48, 0.018, 10, false), body));
+    [-0.55, -0.3, 0, 0.3, 0.55].forEach((x) => group.add(meshOf(new THREE.BoxGeometry(0.008, 0.23, 0.008), pale, [x, 0.28 + (0.14 * (1 - Math.abs(x))), 0])));
+  } else if (["car", "autocar", "bus", "doubleTrain", "locomotive", "fastTrain"].includes(kind)) {
+    const long = ["bus", "doubleTrain", "locomotive", "fastTrain"].includes(kind);
+    const h = kind === "doubleTrain" ? 0.34 : long ? 0.25 : 0.18;
+    group.add(meshOf(new THREE.BoxGeometry(long ? 0.9 : 0.62, h, long ? 0.24 : 0.3), body, [0, h * 0.65 + 0.08, 0]));
+    if (kind === "fastTrain") group.add(meshOf(new THREE.ConeGeometry(0.17, 0.34, 4), body, [0.55, 0.20, 0], [0, 0, -Math.PI / 2]));
+    [-0.28, 0.28].forEach((x) => [-1, 1].forEach((z) => group.add(meshOf(new THREE.CylinderGeometry(0.055, 0.055, 0.025, 16), dark, [x, 0.055, z * (long ? 0.105 : 0.13)], [Math.PI / 2, 0, 0]))));
+    group.add(meshOf(new THREE.BoxGeometry(long ? 0.62 : 0.34, h * 0.34, 0.012), glass, [0.04, h * 0.78 + 0.08, 0.126]));
+  } else if (kind === "airliner") {
+    group.add(meshOf(new THREE.CylinderGeometry(0.085, 0.085, 0.86, 20), pale, [0, 0.24, 0], [0, 0, Math.PI / 2]));
+    group.add(meshOf(new THREE.ConeGeometry(0.085, 0.18, 20), pale, [0.52, 0.24, 0], [0, 0, -Math.PI / 2]));
+    group.add(meshOf(new THREE.BoxGeometry(0.24, 0.025, 0.82), body, [-0.03, 0.24, 0]));
+    group.add(meshOf(new THREE.BoxGeometry(0.18, 0.018, 0.32), body, [-0.35, 0.28, 0]));
+  } else if (kind === "helicopter") {
+    const fuselage = meshOf(new THREE.SphereGeometry(0.19, 20, 12), body, [0, 0.25, 0]); fuselage.scale.set(1.5, 0.9, 0.9); group.add(fuselage);
+    group.add(meshOf(new THREE.BoxGeometry(0.56, 0.05, 0.05), dark, [-0.30, 0.25, 0]));
+    group.add(meshOf(new THREE.BoxGeometry(0.85, 0.015, 0.055), pale, [0, 0.46, 0]));
+  } else if (kind === "spacecraft") {
+    group.add(meshOf(new THREE.CylinderGeometry(0.16, 0.22, 0.28, 24), body, [0, 0.17, 0]));
+    group.add(meshOf(new THREE.ConeGeometry(0.16, 0.18, 24), pale, [0, 0.40, 0]));
+    group.add(meshOf(new THREE.TorusGeometry(0.20, 0.025, 8, 24), dark, [0, 0.10, 0], [Math.PI / 2, 0, 0]));
+  } else if (["pipeline", "highway", "railway", "utilities"].includes(kind)) {
+    const rails = kind === "pipeline" || kind === "utilities" ? 3 : 2;
+    for (let i = 0; i < rails; i += 1) {
+      const z = (i - (rails - 1) / 2) * 0.13;
+      group.add(meshOf(kind === "pipeline" || kind === "utilities" ? new THREE.CylinderGeometry(0.04, 0.04, 0.85, 14) : new THREE.BoxGeometry(0.9, 0.035, 0.055), i === 0 ? body : pale, [0, 0.12, z], kind === "pipeline" || kind === "utilities" ? [0, 0, Math.PI / 2] : [0, 0, 0]));
+    }
+  } else if (["airport", "hospital", "school", "technopark", "district", "social"].includes(kind)) {
+    const blocks = kind === "district" ? 7 : 4;
+    for (let i = 0; i < blocks; i += 1) {
+      const x = ((i % 4) - 1.5) * 0.18;
+      const z = (Math.floor(i / 4) - 0.4) * 0.23;
+      const h = 0.16 + ((i * 7) % 4) * 0.07;
+      group.add(meshOf(new THREE.BoxGeometry(0.14, h, 0.15), i % 2 ? pale : body, [x, h / 2, z]));
+    }
+    if (kind === "airport") group.add(meshOf(new THREE.TorusGeometry(0.42, 0.035, 8, 36, Math.PI), body, [0, 0.16, 0.05], [Math.PI / 2, 0, 0]));
+  } else if (kind === "port") {
+    for (let i = 0; i < 5; i += 1) group.add(meshOf(new THREE.BoxGeometry(0.16, 0.10, 0.14), i % 2 ? body : pale, [-0.34 + i * 0.17, 0.05, 0]));
+    [-0.25, 0.25].forEach((x) => { group.add(meshOf(new THREE.BoxGeometry(0.035, 0.48, 0.035), dark, [x, 0.24, -0.18])); group.add(meshOf(new THREE.BoxGeometry(0.3, 0.025, 0.025), body, [x + 0.12, 0.44, -0.18])); });
+  } else if (kind === "cosmodrome") {
+    group.add(meshOf(new THREE.CylinderGeometry(0.045, 0.045, 0.52, 20), pale, [0, 0.28, 0]));
+    group.add(meshOf(new THREE.ConeGeometry(0.045, 0.12, 20), pale, [0, 0.60, 0]));
+    group.add(meshOf(new THREE.BoxGeometry(0.18, 0.54, 0.08), body, [-0.22, 0.27, 0]));
+  } else if (kind === "reactor") {
+    group.add(meshOf(new THREE.CylinderGeometry(0.23, 0.28, 0.42, 28), body, [0, 0.23, 0]));
+    group.add(meshOf(new THREE.TorusGeometry(0.25, 0.035, 10, 36), pale, [0, 0.43, 0], [Math.PI / 2, 0, 0]));
+  } else if (kind === "terminal") {
+    group.add(meshOf(new THREE.BoxGeometry(0.48, 0.42, 0.08), dark, [0, 0.28, 0]));
+    group.add(meshOf(new THREE.BoxGeometry(0.39, 0.31, 0.012), glass, [0, 0.31, 0.046]));
+  } else if (kind === "combine") {
+    group.add(meshOf(new THREE.BoxGeometry(0.52, 0.28, 0.32), body, [0.05, 0.22, 0]));
+    group.add(meshOf(new THREE.BoxGeometry(0.82, 0.07, 0.12), pale, [0.26, 0.08, 0]));
+    [-0.15, 0.22].forEach((x) => group.add(meshOf(new THREE.CylinderGeometry(0.12, 0.12, 0.05, 18), dark, [x, 0.10, 0.18], [Math.PI / 2, 0, 0])));
+  } else if (kind === "drone") {
+    group.add(meshOf(new THREE.BoxGeometry(0.28, 0.08, 0.16), body, [0, 0.26, 0]));
+    [[-1,-1],[-1,1],[1,-1],[1,1]].forEach(([x,z]) => { group.add(meshOf(new THREE.BoxGeometry(0.42, 0.025, 0.035), dark, [x * 0.13, 0.28, z * 0.13], [0, x * z * 0.5, 0])); group.add(meshOf(new THREE.TorusGeometry(0.09, 0.01, 6, 24), pale, [x * 0.30, 0.29, z * 0.30], [Math.PI / 2, 0, 0])); });
+  } else if (kind === "rover") {
+    group.add(meshOf(new THREE.BoxGeometry(0.43, 0.36, 0.38), body, [0, 0.22, 0]));
+    group.add(meshOf(new THREE.BoxGeometry(0.24, 0.10, 0.06), glass, [0, 0.27, 0.22]));
+    [-1,1].forEach((x) => [-1,1].forEach((z) => group.add(meshOf(new THREE.CylinderGeometry(0.055, 0.055, 0.035, 14), dark, [x * 0.16, 0.04, z * 0.14], [Math.PI / 2, 0, 0]))));
+  } else if (kind === "coin") {
+    group.add(meshOf(new THREE.CylinderGeometry(0.24, 0.24, 0.06, 36), body, [0, 0.27, 0], [Math.PI / 2, 0, 0]));
+    group.add(meshOf(new THREE.TorusGeometry(0.15, 0.018, 8, 32), pale, [0, 0.27, 0.035]));
+  } else if (kind === "aiCore") {
+    group.add(meshOf(new THREE.IcosahedronGeometry(0.26, 1), body, [0, 0.29, 0]));
+    group.add(meshOf(new THREE.IcosahedronGeometry(0.39, 1), glass, [0, 0.29, 0]));
+  } else if (kind === "server") {
+    [-0.22, 0, 0.22].forEach((x) => { group.add(meshOf(new THREE.BoxGeometry(0.18, 0.52, 0.26), dark, [x, 0.26, 0])); for (let i = 0; i < 5; i += 1) group.add(meshOf(new THREE.BoxGeometry(0.13, 0.025, 0.012), body, [x, 0.10 + i * 0.08, 0.137])); });
+  } else if (kind === "quantum") {
+    [0.28, 0.21, 0.15, 0.09].forEach((r, i) => group.add(meshOf(new THREE.CylinderGeometry(r, r * 0.88, 0.09, 28), i % 2 ? body : pale, [0, 0.08 + i * 0.11, 0])));
+  } else if (kind === "biotech") {
+    group.add(meshOf(new THREE.CylinderGeometry(0.18, 0.18, 0.43, 24), glass, [-0.16, 0.23, 0]));
+    group.add(meshOf(new THREE.SphereGeometry(0.22, 24, 16), body, [0.22, 0.27, 0]));
+  } else if (kind === "materials") {
+    for (let i = 0; i < 5; i += 1) group.add(meshOf(new THREE.BoxGeometry(0.58, 0.035, 0.34), i % 2 ? body : pale, [0, 0.05 + i * 0.08, 0], [0, i * 0.06, 0]));
+  } else {
+    group.add(meshOf(new THREE.BoxGeometry(0.62, 0.32, 0.38), body, [0, 0.18, 0]));
   }
+  fitToEnvelope(group, meta.dims);
+  const base = meshOf(new THREE.BoxGeometry(meta.dims[0] * 0.92, 0.025, meta.dims[1] * 0.82), dark, [0, -0.012, 0]);
+  group.add(base);
   group.traverse((child) => { if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; } });
   return group;
 }
 
+function fitToEnvelope(group, dims) {
+  group.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(group);
+  const size = box.getSize(new THREE.Vector3());
+  const scale = Math.min((dims[0] * 0.9) / Math.max(size.x, 0.001), (dims[2] * 0.9) / Math.max(size.y, 0.001), (dims[1] * 0.9) / Math.max(size.z, 0.001));
+  group.scale.setScalar(scale);
+  group.updateMatrixWorld(true);
+  const fitted = new THREE.Box3().setFromObject(group);
+  group.position.y -= fitted.min.y;
+}
+
 function loadHi3D(id, meta, anchor, proxy) {
-  const loader = new GLTFLoader();
-  loader.load(`./assets/models/${id}.glb`, (gltf) => {
+  gltfLoader.load(`./assets/models/hitem/${id}.glb`, (gltf) => {
     const model = gltf.scene;
-    const box = new THREE.Box3().setFromObject(model);
-    const size = box.getSize(new THREE.Vector3());
+    model.updateMatrixWorld(true);
+    let size = new THREE.Box3().setFromObject(model).getSize(new THREE.Vector3());
+    const regularScale = Math.min(meta.dims[0] / Math.max(size.x, 0.0001), meta.dims[2] / Math.max(size.y, 0.0001), meta.dims[1] / Math.max(size.z, 0.0001));
+    const rotatedScale = Math.min(meta.dims[0] / Math.max(size.z, 0.0001), meta.dims[2] / Math.max(size.y, 0.0001), meta.dims[1] / Math.max(size.x, 0.0001));
+    if (rotatedScale > regularScale * 1.03) {
+      model.rotation.y = Math.PI / 2;
+      model.updateMatrixWorld(true);
+      size = new THREE.Box3().setFromObject(model).getSize(new THREE.Vector3());
+    }
     const scale = Math.min(meta.dims[0] / Math.max(size.x, 0.0001), meta.dims[2] / Math.max(size.y, 0.0001), meta.dims[1] / Math.max(size.z, 0.0001));
     model.scale.setScalar(scale);
     model.updateMatrixWorld(true);
@@ -288,7 +469,7 @@ function loadHi3D(id, meta, anchor, proxy) {
     model.traverse((child) => { if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; child.userData.modelId = id; } });
     anchor.remove(proxy);
     anchor.add(model);
-    meta.status = "Hi3D · web-модель";
+    meta.status = "Hi3D · модель из референсной фотографии";
     if (selectedModelId === id) selectModel(id);
   }, undefined, () => {
     meta.status = "Размерный прокси";
@@ -297,23 +478,48 @@ function loadHi3D(id, meta, anchor, proxy) {
 }
 
 function buildCentralMoscow(scene) {
-  const material = new THREE.MeshStandardMaterial({ color: 0x313a35, roughness: 0.63, metalness: 0.17 });
-  const block = addBox(scene, [3.5, 1.1, 7.2], [0, 0.55, 0.3], material, 0.4);
-  block.castShadow = true;
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.055, 12, 72), new THREE.MeshBasicMaterial({ color: 0xff8a45 }));
+  const plinthMaterial = new THREE.MeshStandardMaterial({ color: 0x252d29, roughness: 0.62, metalness: 0.18 });
+  addBox(scene, [3.6, 0.18, 6.4], [0, 0.09, 0.35], plinthMaterial);
+
+  centerEnvelopes.forEach((entry) => {
+    const meta = physicalModels[entry.id];
+    if (!meta) return;
+    const anchor = new THREE.Group();
+    anchor.name = entry.id;
+    anchor.position.set(...entry.position);
+    anchor.userData.modelId = entry.id;
+    const proxy = createProxy({ ...meta, zone: "technology", kind: entry.id === "center-02" ? "bridge" : entry.id === "center-03" ? "fastTrain" : "district" });
+    proxy.userData.modelId = entry.id;
+    anchor.add(proxy);
+    scene.add(anchor);
+    modelObjects[entry.id] = anchor;
+    anchor.traverse((child) => { child.userData.modelId = entry.id; });
+    clickTargets.push(anchor);
+    loadHi3D(entry.id, meta, anchor, proxy);
+  });
+
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(1.55, 0.035, 12, 96), new THREE.MeshBasicMaterial({ color: 0xff8a45 }));
   ring.rotation.x = Math.PI / 2;
-  ring.position.set(0, 1.14, 0.3);
+  ring.position.set(0, 0.205, 0.35);
   scene.add(ring);
 }
 
 function buildSuspendedObjects(scene) {
   const material = new THREE.MeshStandardMaterial({ color: 0xe6e2d8, roughness: 0.32, metalness: 0.28 });
-  const transport = meshOf(new THREE.BoxGeometry(1.5, 0.08, 0.25), material, [3.1, 3.15, 4.3]);
-  transport.rotation.y = -0.35;
-  scene.add(transport);
-  const tech = meshOf(new THREE.OctahedronGeometry(0.46, 0), material, [-3.1, 3.05, 4.1]);
-  tech.rotation.z = 0.25;
-  scene.add(tech);
+  const accent = new THREE.MeshStandardMaterial({ color: 0x89a8ff, roughness: 0.28, metalness: 0.26 });
+  const plane = new THREE.Group();
+  plane.add(meshOf(new THREE.CylinderGeometry(0.10, 0.10, 1.65, 24), material, [0, 0, 0], [0, 0, Math.PI / 2]));
+  plane.add(meshOf(new THREE.ConeGeometry(0.10, 0.28, 24), material, [0.96, 0, 0], [0, 0, -Math.PI / 2]));
+  plane.add(meshOf(new THREE.BoxGeometry(0.42, 0.035, 1.36), accent, [0.05, 0, 0]));
+  plane.position.set(3.0, 3.22, 3.9);
+  plane.rotation.y = -0.35;
+  scene.add(plane);
+  const satellite = new THREE.Group();
+  satellite.add(meshOf(new THREE.BoxGeometry(0.34, 0.34, 0.34), accent, [0, 0, 0]));
+  satellite.add(meshOf(new THREE.BoxGeometry(1.55, 0.035, 0.38), material, [0, 0, 0]));
+  satellite.position.set(-3.0, 3.15, 3.85);
+  satellite.rotation.set(0.18, 0.28, 0.24);
+  scene.add(satellite);
 }
 
 function drawScreen(zone, phase) {
@@ -322,18 +528,34 @@ function drawScreen(zone, phase) {
   const ctx = layer.getContext("2d");
   const item = content[zone][state.indices[zone]];
   const accent = zoneColors[zone];
-  ctx.fillStyle = "#07100e";
-  ctx.fillRect(0, 0, 1024, 1024);
-  const gradient = ctx.createLinearGradient(0, 0, 1024, 1024);
-  gradient.addColorStop(0, `${accent}55`);
-  gradient.addColorStop(0.42, "#0a1714");
-  gradient.addColorStop(1, "#050706");
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, 1024, 1024);
+  const frame = screenFrames[zone];
+  ctx.clearRect(0, 0, 1024, 1024);
+  if (state.mode !== "plate" && frame && frame.complete && frame.naturalWidth) {
+    const drift = Math.sin(phase * 0.16) * 34;
+    const scale = Math.max(1024 / frame.naturalWidth, 1024 / frame.naturalHeight);
+    const width = frame.naturalWidth * scale;
+    const height = frame.naturalHeight * scale;
+    ctx.drawImage(frame, (1024 - width) / 2 + drift, (1024 - height) / 2, width, height);
+    const shade = ctx.createLinearGradient(0, 0, 1024, 1024);
+    shade.addColorStop(0, "rgba(6,10,8,.12)");
+    shade.addColorStop(0.62, "rgba(6,10,8,.36)");
+    shade.addColorStop(1, "rgba(6,10,8,.78)");
+    ctx.fillStyle = shade;
+    ctx.fillRect(0, 0, 1024, 1024);
+  } else {
+    ctx.fillStyle = "#07100e";
+    ctx.fillRect(0, 0, 1024, 1024);
+    const gradient = ctx.createLinearGradient(0, 0, 1024, 1024);
+    gradient.addColorStop(0, `${accent}55`);
+    gradient.addColorStop(0.42, "#0a1714");
+    gradient.addColorStop(1, "#050706");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 1024, 1024);
+  }
   ctx.save();
-  ctx.globalAlpha = 0.35;
+  ctx.globalAlpha = state.mode === "frame" ? 0.14 : 0.28;
   ctx.strokeStyle = accent;
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 2;
   for (let i = 0; i < 10; i += 1) {
     const x = (i * 173 + phase * 24) % 1180 - 80;
     const y = (i * 97 + phase * 13) % 1040 - 20;
@@ -346,21 +568,73 @@ function drawScreen(zone, phase) {
     }
   }
   ctx.restore();
-  ctx.fillStyle = accent;
-  ctx.font = "700 25px Inter, Arial";
-  ctx.fillText(`${exhibitionPeriod}  ·  ${zoneLabels[zone].toUpperCase()}`, 68, 92);
-  ctx.fillStyle = "#f3f0e7";
-  ctx.font = "600 64px Oswald, Arial";
-  wrapText(ctx, item.title.toUpperCase(), 68, 195, 860, 72, 3);
-  ctx.fillStyle = "#d0d2cb";
-  ctx.font = "500 30px Inter, Arial";
-  wrapText(ctx, item.text, 68, 520, 820, 45, 4);
-  ctx.fillStyle = accent;
-  ctx.fillRect(68, 890, 170, 7);
-  ctx.fillStyle = "#f3f0e7";
-  ctx.font = "600 24px Inter, Arial";
-  ctx.fillText(`${String(state.indices[zone] + 1).padStart(2, "0")} / 14`, 68, 950);
+
+  if (state.mode !== "frame") {
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,.44)";
+    ctx.shadowBlur = 52;
+    ctx.fillStyle = "rgba(13,20,17,.78)";
+    roundedRect(ctx, 52, state.mode === "hybrid" ? 530 : 104, 880, state.mode === "hybrid" ? 390 : 760, 44);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = "rgba(222,238,229,.16)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.restore();
+
+    const top = state.mode === "hybrid" ? 585 : 165;
+    ctx.fillStyle = accent;
+    ctx.font = "700 23px 'IBM Plex Mono', Consolas, monospace";
+    ctx.fillText(`${exhibitionPeriod}  /  ${zoneLabels[zone].toUpperCase()}`, 92, top);
+    const titleGradient = ctx.createLinearGradient(92, top + 42, 92, top + 255);
+    titleGradient.addColorStop(0, "#f3f0e7");
+    titleGradient.addColorStop(1, "#aeb9b3");
+    ctx.fillStyle = titleGradient;
+    ctx.font = "600 66px Oswald, Arial";
+    wrapText(ctx, item.title.toUpperCase(), 92, top + 100, 790, 70, state.mode === "hybrid" ? 2 : 3);
+    if (state.mode === "plate") {
+      const accentWord = (item.title.match(/[А-ЯЁA-Z][а-яёa-z-]{4,}/) || [zoneLabels[zone]])[0];
+      ctx.fillStyle = accent;
+      ctx.font = "italic 600 42px 'Playfair Display', Georgia, serif";
+      ctx.fillText(accentWord, 92, top + 330);
+      ctx.fillStyle = "rgba(218,224,218,.72)";
+      ctx.font = "500 28px Inter, Arial";
+      wrapText(ctx, item.text, 92, top + 405, 760, 42, 4);
+    }
+    ctx.fillStyle = accent;
+    ctx.fillRect(92, 902, 152, 6);
+    ctx.fillStyle = "#d9ddd7";
+    ctx.font = "600 23px 'IBM Plex Mono', Consolas, monospace";
+    ctx.fillText(`${String(state.indices[zone] + 1).padStart(2, "0")} / 14`, 92, 954);
+  } else {
+    ctx.fillStyle = "rgba(7,12,10,.74)";
+    roundedRect(ctx, 66, 840, 410, 104, 28);
+    ctx.fill();
+    ctx.fillStyle = accent;
+    ctx.font = "700 22px 'IBM Plex Mono', Consolas, monospace";
+    ctx.fillText(`${zoneLabels[zone].toUpperCase()}  ·  КАДР 01`, 96, 900);
+  }
+  ctx.save();
+  ctx.globalAlpha = 0.055;
+  for (let i = 0; i < 6200; i += 1) {
+    const x = (i * 73) % 1024;
+    const y = (i * 151) % 1024;
+    ctx.fillStyle = i % 3 ? "#f3f0e7" : accent;
+    ctx.fillRect(x, y, 1, 1);
+  }
+  ctx.restore();
   if (screenTextures[zone]) screenTextures[zone].needsUpdate = true;
+}
+
+function roundedRect(ctx, x, y, width, height, radius) {
+  const r = Math.min(radius, width / 2, height / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + width, y, x + width, y + height, r);
+  ctx.arcTo(x + width, y + height, x, y + height, r);
+  ctx.arcTo(x, y + height, x, y, r);
+  ctx.arcTo(x, y, x + width, y, r);
+  ctx.closePath();
 }
 
 function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
@@ -384,6 +658,11 @@ function setupUi(camera, controls) {
     button.addEventListener("click", () => { state.zone = button.dataset.zone; updateZoneUi(); focusCamera(button.dataset.zone, camera, controls); });
   });
   document.getElementById("screenSelect").addEventListener("change", (event) => { state.indices[state.zone] = Number(event.target.value); updateZoneUi(); });
+  document.getElementById("screenMode").addEventListener("change", (event) => {
+    state.mode = event.target.value;
+    zones.forEach((zone) => drawScreen(zone, performance.now() / 1000));
+    writeUrlState();
+  });
   document.getElementById("screenPrev").addEventListener("click", () => stepScreen(-1));
   document.getElementById("screenNext").addEventListener("click", () => stepScreen(1));
   document.getElementById("screenPlay").addEventListener("click", (event) => {
@@ -398,6 +677,11 @@ function setupUi(camera, controls) {
   document.getElementById("walkMode").addEventListener("click", () => setWalkMode(!state.walking, camera, controls, true));
   document.getElementById("viewerFullscreen").addEventListener("click", toggleFullscreen);
   document.addEventListener("fullscreenchange", updateFullscreenUi);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && root.classList.contains("is-fullscreen-fallback")) {
+      setFallbackFullscreen(false);
+    }
+  });
   setupWalkInput();
   document.querySelectorAll(".review-status button").forEach((button) => button.addEventListener("click", () => saveReview({ status: button.dataset.review })));
   document.getElementById("reviewNote").addEventListener("input", (event) => saveReview({ note: event.target.value }, false));
@@ -417,8 +701,9 @@ function updateZoneUi() {
   document.getElementById("screenIndex").textContent = `${String(index + 1).padStart(2, "0")} / 14`;
   document.getElementById("screenTitle").textContent = item.title;
   document.getElementById("screenBody").textContent = item.text;
+  document.getElementById("screenMode").value = state.mode;
   drawScreen(state.zone, performance.now() / 1000);
-  selectModel(pickPhysicalModel(state.zone, item.title));
+  selectModel(item.id || pickPhysicalModel(state.zone, item.title));
   loadReviewUi();
   writeUrlState();
 }
@@ -430,19 +715,22 @@ function stepScreen(direction) {
 }
 
 function pickPhysicalModel(zone, title) {
-  if (zone === "technology") return /ГЛОНАСС|спутник|космич/i.test(title) ? "technology-glonass" : "technology-robot-arm";
-  if (zone === "construction") return /мост|дорог|магистрал/i.test(title) ? "construction-bridge" : "construction-stadium";
-  return /Ангара|космич|рак/i.test(title) ? "transport-angara" : "transport-icebreaker";
+  const item = content[zone].find((entry) => entry.title === title);
+  return item?.id || exhibitCatalog.find((entry) => entry.zone === zone)?.id;
 }
 
 function selectModel(id) {
   selectedModelId = id;
   Object.entries(modelObjects).forEach(([modelId, object]) => object.scale.setScalar(modelId === id ? 1.18 : 1));
   const meta = physicalModels[id];
+  if (!meta) return;
   document.getElementById("modelTitle").textContent = meta.title;
   document.getElementById("modelSize").textContent = meta.size;
   document.getElementById("modelPlacement").textContent = meta.placement;
   document.getElementById("modelStatus").textContent = meta.status;
+  const reference = document.getElementById("modelReference");
+  reference.href = meta.reference || "#";
+  reference.hidden = !meta.reference;
 }
 
 function focusCamera(name, camera, controls) {
@@ -542,20 +830,32 @@ function updateWalk(camera, controls, delta) {
 }
 
 async function toggleFullscreen() {
+  if (root.classList.contains("is-fullscreen-fallback")) {
+    setFallbackFullscreen(false);
+    return;
+  }
   try {
     if (!document.fullscreenElement) await root.requestFullscreen();
     else await document.exitFullscreen();
   } catch {
-    document.getElementById("reviewSaved").textContent = "Полноэкранный режим заблокирован браузером";
+    setFallbackFullscreen(true);
+    return;
   }
+  if (!document.fullscreenElement) setFallbackFullscreen(true);
 }
 
 function updateFullscreenUi() {
-  const active = document.fullscreenElement === root;
+  const active = document.fullscreenElement === root || root.classList.contains("is-fullscreen-fallback");
   const button = document.getElementById("viewerFullscreen");
   button.setAttribute("aria-pressed", String(active));
   button.textContent = active ? "Закрыть полный экран" : "На весь экран";
   window.dispatchEvent(new Event("resize"));
+}
+
+function setFallbackFullscreen(active) {
+  root.classList.toggle("is-fullscreen-fallback", active);
+  document.documentElement.classList.toggle("viewer-fallback-active", active);
+  updateFullscreenUi();
 }
 
 function updateCameraMotion(camera, controls) {
@@ -619,6 +919,7 @@ function readUrlState() {
   const index = Number(params.get("item"));
   if (Number.isInteger(index) && index >= 0 && index < 14) state.indices[state.zone] = index;
   if (["overview", "visitor", ...zones].includes(params.get("camera"))) state.camera = params.get("camera");
+  if (["plate", "frame", "hybrid"].includes(params.get("mode"))) state.mode = params.get("mode");
 }
 
 function writeUrlState() {
@@ -626,6 +927,7 @@ function writeUrlState() {
   url.searchParams.set("zone", state.zone);
   url.searchParams.set("item", state.indices[state.zone]);
   url.searchParams.set("camera", state.camera);
+  url.searchParams.set("mode", state.mode);
   history.replaceState(null, "", url);
 }
 
