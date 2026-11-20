@@ -25,7 +25,7 @@ const state = {
   zone: "technology",
   indices: { technology: 0, construction: 0, transport: 0 },
   playing: { technology: true, construction: true, transport: true },
-  mode: "plate",
+  mode: "film",
   walking: false,
   camera: "overview",
   reviews: loadReviews()
@@ -68,11 +68,24 @@ const screenDwell = { technology: 8, construction: 9.5, transport: 11 };
 let cameraMotion = null;
 const activeMoves = new Set();
 const screenFrames = {};
+const screenVideos = {};
 zones.forEach((zone) => {
   const image = new Image();
   image.src = `./assets/frames/${zone}-anchor.webp`;
   image.onload = () => drawScreen(zone, performance.now() / 1000);
   screenFrames[zone] = image;
+
+  const video = document.createElement("video");
+  video.src = `./assets/video/${zone}-h3-panorama.mp4`;
+  video.muted = true;
+  video.loop = true;
+  video.playsInline = true;
+  video.preload = "auto";
+  video.addEventListener("loadeddata", () => {
+    syncZoneVideoPlayback(zone);
+    drawScreen(zone, performance.now() / 1000);
+  });
+  screenVideos[zone] = video;
 });
 
 try {
@@ -138,6 +151,7 @@ function init() {
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reducedMotion) zones.forEach((zone) => { state.playing[zone] = false; });
+  zones.forEach(syncZoneVideoPlayback);
   updateScreenPlaybackUi();
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
@@ -773,10 +787,87 @@ function drawScreen(zone, phase) {
   const item = content[zone][state.indices[zone]];
   const accent = zoneColors[zone];
   const frame = screenFrames[zone];
-  drawUpperScreen(layers.upper, zone, item, accent, frame, phase);
+  const video = screenVideos[zone];
+  if (state.mode === "film") drawUpperFilmScreen(layers.upper, zone, item, accent, video, frame);
+  else drawUpperScreen(layers.upper, zone, item, accent, frame, phase);
   drawLowerScreen(layers.lower, zone, item, accent, phase);
   screenTextures[zone].upper.needsUpdate = true;
   screenTextures[zone].lower.needsUpdate = true;
+}
+
+function drawUpperFilmScreen(layer, zone, item, accent, video, frame) {
+  const ctx = layer.getContext("2d");
+  const { width: w, height: h } = layer;
+  ctx.clearRect(0, 0, w, h);
+  paintScreenGround(ctx, w, h, accent);
+
+  const media = video?.readyState >= 2 && video.videoWidth ? video : frame;
+  if (getMediaWidth(media)) drawImageCover(ctx, media, 0, 0, w, h);
+
+  const shade = ctx.createLinearGradient(0, 0, w, 0);
+  shade.addColorStop(0, "rgba(3,7,7,.36)");
+  shade.addColorStop(0.32, "rgba(3,7,7,.10)");
+  shade.addColorStop(0.72, "rgba(3,7,7,.08)");
+  shade.addColorStop(1, "rgba(3,7,7,.38)");
+  ctx.fillStyle = shade;
+  ctx.fillRect(0, 0, w, h);
+
+  const safeZones = {
+    technology: { x: 0.365, width: 0.27, align: "center" },
+    construction: { x: 0.34, width: 0.32, align: "center" },
+    transport: { x: 0.69, width: 0.265, align: "left" }
+  };
+  const safe = safeZones[zone];
+  const textX = w * safe.x;
+  const textW = w * safe.width;
+  const centered = safe.align === "center";
+  const anchorX = centered ? textX + textW / 2 : textX;
+
+  ctx.save();
+  roundedRect(ctx, textX - h * 0.08, h * 0.13, textW + h * 0.16, h * 0.73, h * 0.055);
+  ctx.fillStyle = "rgba(4,9,9,.58)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(235,241,235,.16)";
+  ctx.lineWidth = Math.max(1, h * 0.0035);
+  ctx.stroke();
+  ctx.textAlign = centered ? "center" : "left";
+
+  ctx.fillStyle = accent;
+  ctx.font = `700 ${Math.round(h * 0.046)}px 'IBM Plex Mono', Consolas, monospace`;
+  ctx.fillText(`${exhibitionPeriod}  /  ${zoneLabels[zone].toUpperCase()}`, anchorX, h * 0.25);
+
+  const titleGradient = ctx.createLinearGradient(textX, h * 0.32, textX, h * 0.64);
+  titleGradient.addColorStop(0, "#f7f3ea");
+  titleGradient.addColorStop(1, "#c4ccc6");
+  ctx.fillStyle = titleGradient;
+  drawFittedWrappedText(
+    ctx,
+    item.title.toUpperCase(),
+    anchorX,
+    h * 0.39,
+    textW,
+    h * 0.27,
+    Math.round(h * 0.145),
+    Math.round(h * 0.082),
+    2,
+    "600",
+    "Oswald, Arial"
+  );
+
+  ctx.fillStyle = "rgba(226,232,226,.80)";
+  ctx.font = `500 ${Math.round(h * 0.045)}px Inter, Arial`;
+  drawWrappedLines(ctx, shortenWords(item.text, 10), anchorX, h * 0.72, textW, h * 0.058, 2);
+
+  const ruleW = Math.min(textW * 0.32, h * 0.54);
+  const ruleX = centered ? anchorX - ruleW / 2 : anchorX;
+  ctx.fillStyle = accent;
+  ctx.fillRect(ruleX, h * 0.80, ruleW, Math.max(3, h * 0.010));
+  ctx.fillStyle = "#eef0e9";
+  ctx.font = `600 ${Math.round(h * 0.044)}px 'IBM Plex Mono', Consolas, monospace`;
+  ctx.fillText(`${String(state.indices[zone] + 1).padStart(2, "0")} / 14`, anchorX, h * 0.89);
+  ctx.restore();
+
+  addScreenGrain(ctx, w, h, accent, 0.025);
 }
 
 function drawUpperScreen(layer, zone, item, accent, frame, phase) {
@@ -1111,10 +1202,21 @@ function addScreenGrain(ctx, width, height, accent, alpha = 0.05) {
 }
 
 function drawImageCover(ctx, image, x, y, width, height) {
-  const scale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
-  const drawWidth = image.naturalWidth * scale;
-  const drawHeight = image.naturalHeight * scale;
+  const mediaWidth = getMediaWidth(image);
+  const mediaHeight = getMediaHeight(image);
+  if (!mediaWidth || !mediaHeight) return;
+  const scale = Math.max(width / mediaWidth, height / mediaHeight);
+  const drawWidth = mediaWidth * scale;
+  const drawHeight = mediaHeight * scale;
   ctx.drawImage(image, x + (width - drawWidth) / 2, y + (height - drawHeight) / 2, drawWidth, drawHeight);
+}
+
+function getMediaWidth(media) {
+  return media?.videoWidth || media?.naturalWidth || 0;
+}
+
+function getMediaHeight(media) {
+  return media?.videoHeight || media?.naturalHeight || 0;
 }
 
 function drawFittedWrappedText(ctx, text, x, y, width, maxHeight, maxSize, minSize, maxLines, weight, family) {
@@ -1275,8 +1377,16 @@ function stepZoneScreen(zone, direction) {
 function toggleZonePlayback(zone) {
   state.playing[zone] = !state.playing[zone];
   screenAdvance[zone] = 0;
+  syncZoneVideoPlayback(zone);
   drawScreen(zone, screenPhases[zone]);
   updateScreenPlaybackUi();
+}
+
+function syncZoneVideoPlayback(zone) {
+  const video = screenVideos[zone];
+  if (!video || video.readyState < 2) return;
+  if (state.playing[zone]) video.play().catch(() => {});
+  else video.pause();
 }
 
 function updateScreenPlaybackUi() {
