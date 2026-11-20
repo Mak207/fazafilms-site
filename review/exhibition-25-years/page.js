@@ -98,7 +98,7 @@
         (item.reference ? '<a href="' + item.reference + '" target="_blank" rel="noopener noreferrer">Реальный вид</a>' : '') + '</article>';
     });
     const centerCards = (window.CENTER_PROPOSAL || []).map(function (item) {
-      return '<article class="is-center" style="--zone:#ff8a45"><span>Центр · Москва · предложение</span><strong>' + escapeHTML(item.objectTitle) + '</strong><small>' + escapeHTML(item.size) + '</small><a href="' + item.reference + '" target="_blank" rel="noopener noreferrer">Реальный вид</a></article>';
+      return '<article class="is-center" style="--zone:#ff8a45"><span>Центр · медиаобъект</span><strong>' + escapeHTML(item.objectTitle) + '</strong><small>' + escapeHTML(item.size) + '</small><a href="' + item.reference + '" target="_blank" rel="noopener noreferrer">Референс формы</a></article>';
     });
     physicalRegister.innerHTML = nicheCards.concat(centerCards).join("");
   }
@@ -112,6 +112,21 @@
         '<h3>' + escapeHTML(scenario.title) + '</h3><ol>' + scenario.beats.map(function (beat) {
           return '<li class="' + beat[1].toLowerCase() + '"><time>' + beat[0] + '</time><span>' + escapeHTML(beat[2]) + '</span></li>';
         }).join("") + '</ol></article>';
+    }).join("");
+  }
+
+  const metricsGrid = document.getElementById("metricsGrid");
+  const metricGroups = window.EXHIBIT_METRICS || {};
+  if (metricsGrid) {
+    metricsGrid.innerHTML = Object.keys(metricGroups).map(function (zone) {
+      const group = metricGroups[zone];
+      return '<article class="metrics-group" style="--zone:' + zoneColors[zone] + '">' +
+        '<div class="metrics-group-head"><span>' + escapeHTML(group.title) + '</span><small>' + escapeHTML(group.subtitle) + '</small></div>' +
+        '<div class="metrics-group-list">' + group.metrics.map(function (metric) {
+          return '<a class="metric-card" href="' + metric.source + '" target="_blank" rel="noopener noreferrer">' +
+            '<strong>' + escapeHTML(metric.value) + '</strong><span>' + escapeHTML(metric.label) + '</span><small>' + escapeHTML(metric.detail) + '</small>' +
+          '</a>';
+        }).join("") + '</div><p>' + escapeHTML(group.sourceLabel) + '</p></article>';
     }).join("");
   }
 
