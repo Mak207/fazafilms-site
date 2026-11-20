@@ -17,6 +17,53 @@ const exhibitCatalog = window.EXHIBIT_CATALOG || [];
 const zones = ["technology", "construction", "transport"];
 const zoneLabels = { technology: "Технологии", construction: "Строительство", transport: "Транспорт" };
 const zoneColors = { technology: "#52d5d7", construction: "#b7df78", transport: "#89a8ff" };
+// CMF for the clean parametric exhibits. The colours follow the recognisable
+// livery/material language of the referenced Russian prototypes instead of
+// tinting every object with one generic zone colour.
+const prototypePalettes = {
+  reactor: [0xb9c2c5, 0xc97942, 0x27343b, 0x70b8d6],
+  robot: [0xe5e8e6, 0xc5292e, 0x26323a, 0x71b9d2],
+  satellite: [0xc8c8bd, 0x224c9a, 0x8b6a28, 0x315f9b],
+  earthSatellite: [0xe4e1d5, 0x214a98, 0x9b7930, 0x315f9b],
+  terminal: [0x2b3f57, 0xe9ece7, 0x151d25, 0x2c92c7],
+  combine: [0xc72b2f, 0x262e31, 0x171d20, 0x5e8da4],
+  drone: [0x353c42, 0xe2e5df, 0x14191d, 0x446c82],
+  rover: [0xe1e2dc, 0xc92e35, 0x252c31, 0x4f8299],
+  coin: [0xc3232c, 0xf0eee8, 0x6e171c, 0x8b252d],
+  aiCore: [0x2576b7, 0x5bd7d4, 0x12283c, 0x54b7d0],
+  server: [0x202932, 0x3b91c7, 0x11171d, 0x2d6f99],
+  quantum: [0xd2d5d2, 0xb58b45, 0x30373c, 0x69a5bf],
+  biotech: [0xd4d8d5, 0x4a9fb1, 0x29343a, 0x60b4c9],
+  materials: [0x242a2d, 0x9ca6a6, 0x111517, 0x526b73],
+  rocket: [0xe7e9e4, 0x2e639d, 0x252d35, 0x5385a7],
+  doubleTrain: [0xe6e4de, 0xb5232c, 0x30353a, 0x5b7f96],
+  car: [0x14191d, 0xa6a9a5, 0x080a0c, 0x345267],
+  locomotive: [0x2d669c, 0xc12c34, 0x202b34, 0x4f7892],
+  hydrofoil: [0xe4e8e5, 0x2f6ea3, 0x222d35, 0x4d819d],
+  ship: [0xf0eee7, 0x223e5b, 0x273038, 0x54798f],
+  iceShip: [0xd5443e, 0xf0eee7, 0x202a32, 0x4e748b],
+  icebreaker: [0xc92d31, 0x202b34, 0xf0eee7, 0x557a91],
+  airliner: [0xe8e9e4, 0x315f96, 0x252f39, 0x547d98],
+  helicopter: [0x566b75, 0xe2e4df, 0x252e34, 0x385d73],
+  fastTrain: [0xe7e8e2, 0xc42b32, 0x2c6396, 0x4d7f9d],
+  bus: [0xe4e7e3, 0x2e73ae, 0x263039, 0x4f829e],
+  autocar: [0xe4e5df, 0x222a30, 0x111619, 0x4a7188],
+  spacecraft: [0xc9c9bf, 0xb28a45, 0x33383a, 0x5a7e90],
+  pipeline: [0xd7d4c9, 0xd3a94c, 0x4b5353, 0x668c98],
+  stadium: [0xe5e3dc, 0x8d6b43, 0x343d40, 0x6a8d98],
+  airport: [0xd8d8d2, 0x447ca2, 0x3b4448, 0x648c9e],
+  bridge: [0xe5e4dc, 0x315f75, 0x3a4346, 0x658d9b],
+  highway: [0x4b5354, 0xe5dfca, 0x242b2e, 0x66818a],
+  railway: [0x555c5d, 0xc8b277, 0x252c2f, 0x607d87],
+  port: [0xc84c35, 0x3e6480, 0x293337, 0x5f8291],
+  cosmodrome: [0xe5e5df, 0xd67c34, 0x384348, 0x678c9b],
+  hospital: [0xe2e3dd, 0x68a79a, 0x394347, 0x71a0aa],
+  school: [0xe2d9c7, 0xb96b3e, 0x41484a, 0x76929a],
+  technopark: [0xdfe1dd, 0x4e8499, 0x313c42, 0x6a98a9],
+  district: [0xdad7cc, 0xb67b50, 0x3b4448, 0x7196a0],
+  social: [0xe0ddd3, 0x658aa0, 0x343f44, 0x7096a4],
+  utilities: [0xb9bec0, 0xd0a548, 0x343d41, 0x658d98]
+};
 const exhibitionPeriod = "2000–2025";
 const pavilion = {
   width: 13,
@@ -31,10 +78,9 @@ const pavilion = {
   screenBackZ: -10.30,
   screenBackHalf: 5.35
 };
-// Detailed Hi3D assets are the production view. The clean procedural model is
-// kept only as a loading/failure fallback and can be forced with
-// `?quality=parametric` for diagnostics.
-const useHi3DModels = new URLSearchParams(window.location.search).get("quality") !== "parametric";
+// The approved public view uses clean, dimensioned parametric exhibits.
+// The rejected Hi3D candidates remain available only for explicit comparison.
+const useHi3DModels = new URLSearchParams(window.location.search).get("quality") === "hitem";
 
 const content = Object.fromEntries(zones.map((zone) => [zone, allItems.filter((item) => item.zone === zone)]));
 const metricGroups = window.EXHIBIT_METRICS || {};
@@ -120,7 +166,7 @@ function init() {
   renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.55;
+  renderer.toneMappingExposure = 0.46;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -205,9 +251,9 @@ function init() {
 }
 
 function addExhibitionLighting(scene) {
-  scene.add(new THREE.HemisphereLight(0xe9f3f7, 0x4b5d64, 0.52));
+  scene.add(new THREE.HemisphereLight(0xe9f3f7, 0x4b5d64, 0.38));
 
-  const key = new THREE.DirectionalLight(0xffefd8, 0.78);
+  const key = new THREE.DirectionalLight(0xffefd8, 0.56);
   key.position.set(-3.5, 13.5, 9.5);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
@@ -230,16 +276,16 @@ function addExhibitionLighting(scene) {
     scene.add(spot);
   };
 
-  addSpot([0, 7.25, 0.45], [0, 1.95, 0.15], 20, 0xffe5c3, 0.48);
-  addSpot([-4.4, 6.9, 3.8], [-2.8, 1.45, 3.2], 10, 0xc7e8f3, 0.34);
-  addSpot([4.4, 6.9, 3.8], [2.8, 1.45, 3.2], 10, 0xffe4bd, 0.34);
-  addSpot([-3.4, 6.7, -4.8], [-4.5, 1.15, -4.8], 8, 0xcce9f1, 0.32);
-  addSpot([3.4, 6.7, -4.8], [4.5, 1.15, -4.8], 8, 0xffe8c9, 0.32);
+  addSpot([0, 7.25, 0.45], [0, 1.95, 0.15], 12, 0xffe5c3, 0.48);
+  addSpot([-4.4, 6.9, 3.8], [-2.8, 1.45, 3.2], 6, 0xc7e8f3, 0.34);
+  addSpot([4.4, 6.9, 3.8], [2.8, 1.45, 3.2], 6, 0xffe4bd, 0.34);
+  addSpot([-3.4, 6.7, -4.8], [-4.5, 1.15, -4.8], 5, 0xcce9f1, 0.32);
+  addSpot([3.4, 6.7, -4.8], [4.5, 1.15, -4.8], 5, 0xffe8c9, 0.32);
 
-  const technologyWash = new THREE.PointLight(0x52d5d7, 1.45, 14, 2);
+  const technologyWash = new THREE.PointLight(0x52d5d7, 0.82, 14, 2);
   technologyWash.position.set(-5.5, 2.4, -2.2);
   scene.add(technologyWash);
-  const transportWash = new THREE.PointLight(0x89a8ff, 1.45, 14, 2);
+  const transportWash = new THREE.PointLight(0x89a8ff, 0.82, 14, 2);
   transportWash.position.set(5.5, 2.4, -2.2);
   scene.add(transportWash);
 
@@ -248,7 +294,7 @@ function addExhibitionLighting(scene) {
     [0.88, 0.34, 0.72, 0xb7df78],
     [0, 0.34, -0.42, 0x89a8ff]
   ].forEach(([x, y, z, color]) => {
-    const glow = new THREE.PointLight(color, 1.55, 4.8, 2);
+    const glow = new THREE.PointLight(color, 0.90, 4.8, 2);
     glow.position.set(x, y, z);
     scene.add(glow);
   });
@@ -325,7 +371,7 @@ function addNicheLighting(scene) {
     const target = new THREE.Object3D();
     target.position.set(...targetPosition);
     scene.add(target);
-    const light = new THREE.SpotLight(color, 5.5, 1.65, 0.72, 0.78, 1.5);
+    const light = new THREE.SpotLight(color, 3.15, 1.65, 0.72, 0.78, 1.5);
     light.position.set(...position);
     light.target = target;
     light.castShadow = false;
@@ -500,7 +546,7 @@ function buildPhysicalModels(scene) {
     if (useHi3DModels) {
       loadHi3D(id, meta, anchor, proxy);
     } else {
-      meta.status = "Параметрический выставочный макет · очищенная форма по реальному прототипу";
+      meta.status = "Параметрический выставочный макет · форма и CMF по реальному прототипу";
     }
   });
 }
@@ -511,18 +557,20 @@ function createProxy(meta) {
   const isShip = ["ship", "iceShip", "icebreaker", "hydrofoil"].includes(kind);
   const isRail = ["doubleTrain", "locomotive", "fastTrain", "bus"].includes(kind);
   const isAir = ["airliner", "rocket", "spacecraft", "helicopter"].includes(kind);
-  const primary = meta.zone === "transport"
+  const fallbackPrimary = meta.zone === "transport"
     ? isShip ? 0xc9434b : isRail ? 0x2e75b7 : isAir ? 0xe4e8e5 : 0x315c83
     : meta.zone === "construction"
       ? 0xb7aa87
       : kind === "robot" ? 0xf2a51a : 0xb9c8c7;
-  const secondary = meta.zone === "transport"
+  const fallbackSecondary = meta.zone === "transport"
     ? isShip ? 0xf1f1eb : isRail ? 0xe9ece8 : 0x2a6092
     : meta.zone === "construction" ? 0xd8d2c2 : 0x2b638d;
+  const palette = prototypePalettes[kind] || [fallbackPrimary, fallbackSecondary, meta.zone === "transport" ? 0x172c42 : 0x29353a, 0x17486c];
+  const [primary, secondary, darkColor, glassColor] = palette;
   const body = new THREE.MeshPhysicalMaterial({ color: primary, roughness: 0.30, metalness: 0.22, clearcoat: 0.30, clearcoatRoughness: 0.24, envMapIntensity: 0.84 });
-  const dark = new THREE.MeshStandardMaterial({ color: meta.zone === "transport" ? 0x172c42 : 0x29353a, roughness: 0.42, metalness: 0.48, envMapIntensity: 0.74 });
+  const dark = new THREE.MeshStandardMaterial({ color: darkColor, roughness: 0.42, metalness: 0.48, envMapIntensity: 0.74 });
   const pale = new THREE.MeshPhysicalMaterial({ color: secondary, roughness: 0.34, metalness: 0.12, clearcoat: 0.20, clearcoatRoughness: 0.26, envMapIntensity: 0.76 });
-  const glass = new THREE.MeshPhysicalMaterial({ color: 0x17486c, roughness: 0.10, metalness: 0.10, clearcoat: 0.46, transparent: true, opacity: 0.76, envMapIntensity: 0.92 });
+  const glass = new THREE.MeshPhysicalMaterial({ color: glassColor, roughness: 0.10, metalness: 0.10, clearcoat: 0.46, transparent: true, opacity: 0.76, envMapIntensity: 0.92 });
 
   if (kind === "robot") {
     const joints = [[0, 0.06, 0], [0.02, 0.20, 0], [0.13, 0.35, 0], [0.24, 0.47, 0]];
@@ -928,16 +976,12 @@ function drawCubeFaces() {
     const media = video?.readyState >= 2 && video.videoWidth ? video : frame;
     ctx.clearRect(0, 0, layer.width, layer.height);
     paintScreenGround(ctx, layer.width, layer.height, zoneColors[zone]);
-    // The cube face is square, but the moving image remains a true horizontal
-    // 16:9 composition. It is letterboxed inside the face and never stretched.
-    const viewport = { x: 48, y: 176, width: 928, height: 522 };
-    ctx.fillStyle = "rgba(2,18,48,.84)";
-    roundedRect(ctx, viewport.x, viewport.y, viewport.width, viewport.height, 22);
-    ctx.fill();
+    // Fill the square face from the horizontal master by a centred crop. The
+    // source aspect ratio and horizontal orientation are preserved: no stretch
+    // and no 90-degree rotation, while the face no longer looks letterboxed.
+    const viewport = { x: 0, y: 0, width: layer.width, height: layer.height };
     ctx.save();
-    roundedRect(ctx, viewport.x, viewport.y, viewport.width, viewport.height, 22);
-    ctx.clip();
-    if (getMediaWidth(media)) drawImageContain(ctx, media, viewport.x, viewport.y, viewport.width, viewport.height);
+    if (getMediaWidth(media)) drawImageCover(ctx, media, viewport.x, viewport.y, viewport.width, viewport.height);
     ctx.save();
     ctx.globalCompositeOperation = "screen";
     const wash = ctx.createLinearGradient(viewport.x, viewport.y, viewport.x + viewport.width, viewport.y + viewport.height);
@@ -952,14 +996,11 @@ function drawCubeFaces() {
     drawLivingScreenBackground(ctx, viewport.width, viewport.height, zoneColors[zone], programPhase + index, zone, true);
     ctx.restore();
     ctx.restore();
-    ctx.strokeStyle = "rgba(236,248,255,.72)";
-    ctx.lineWidth = 5;
-    roundedRect(ctx, viewport.x, viewport.y, viewport.width, viewport.height, 22);
-    ctx.stroke();
     const shade = ctx.createLinearGradient(0, 0, 0, layer.height);
-    shade.addColorStop(0, "rgba(3,8,7,.05)");
-    shade.addColorStop(0.72, "rgba(3,8,7,.04)");
-    shade.addColorStop(1, "rgba(2,21,58,.58)");
+    shade.addColorStop(0, "rgba(3,8,7,.42)");
+    shade.addColorStop(0.26, "rgba(3,8,7,.04)");
+    shade.addColorStop(0.68, "rgba(3,8,7,.04)");
+    shade.addColorStop(1, "rgba(2,21,58,.68)");
     ctx.fillStyle = shade;
     ctx.fillRect(0, 0, layer.width, layer.height);
     ctx.fillStyle = "#f3f0e7";
