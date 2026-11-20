@@ -59,10 +59,10 @@ const screenMaterials = {};
 const clickTargets = [];
 const modelObjects = {};
 let selectedModelId = "media-cube";
-let lastScreenDraw = 0;
 let programPhase = 0;
 let programAdvance = 0;
 const programDwell = 12;
+let lastProgramMetricKey = "";
 let cameraMotion = null;
 const activeMoves = new Set();
 const screenFrames = {};
@@ -153,19 +153,20 @@ function init() {
   if (reducedMotion) state.programPlaying = false;
   syncProgramPlayback();
   updateProgramPlaybackUi();
+  let programLastTick = performance.now();
+  window.setInterval(() => {
+    const now = performance.now();
+    const programDelta = Math.max(0, (now - programLastTick) / 1000);
+    programLastTick = now;
+    if (!state.programPlaying) return;
+    programPhase += programDelta;
+    programAdvance += programDelta;
+    if (programAdvance >= programDwell) stepProgram(1);
+    else drawProgramScreen(programPhase);
+  }, 80);
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
     const delta = Math.min(clock.getDelta(), 0.05);
-    const elapsed = clock.elapsedTime;
-    if (state.programPlaying) {
-      programPhase += delta;
-      programAdvance += delta;
-      if (programAdvance >= programDwell) stepProgram(1);
-    }
-    if (!reducedMotion && state.programPlaying && elapsed - lastScreenDraw > 0.08) {
-      drawProgramScreen(programPhase);
-      lastScreenDraw = elapsed;
-    }
     if (cameraMotion) updateCameraMotion(camera, controls);
     if (state.walking) updateWalk(camera, controls, delta);
     controls.update();
@@ -894,15 +895,32 @@ function drawProgramScreen(phase) {
   const video = screenVideos[zone];
   const frame = screenFrames[zone];
   const media = video?.readyState >= 2 && video.videoWidth ? video : frame;
+  const metricWindow = getProgramMetricWindow(topic, phase);
 
-  drawUnifiedUpper(upper, topic, accent, media, phase);
-  drawUnifiedLower(lower, topic, accent, phase);
+  drawUnifiedUpper(upper, topic, accent, media, phase, metricWindow);
+  drawUnifiedLower(lower, topic, accent, phase, metricWindow);
+  updateProgramMetricUi(topic, metricWindow);
   drawCubeFaces();
   screenTextures.upper.needsUpdate = true;
   screenTextures.lower.needsUpdate = true;
 }
 
-function drawUnifiedUpper(layer, topic, accent, media, phase) {
+function getProgramMetricWindow(topic, phase) {
+  const metrics = topic.metrics || [];
+  const pageCount = Math.max(1, Math.ceil(metrics.length / 3));
+  const pageDuration = programDwell / pageCount;
+  const normalizedPhase = ((phase % programDwell) + programDwell) % programDwell;
+  const page = Math.min(pageCount - 1, Math.floor(normalizedPhase / pageDuration));
+  return {
+    metrics: metrics.slice(page * 3, page * 3 + 3),
+    page,
+    pageCount,
+    pageDuration,
+    localProgress: (normalizedPhase % pageDuration) / pageDuration
+  };
+}
+
+function drawUnifiedUpper(layer, topic, accent, media, phase, metricWindow) {
   const ctx = layer.getContext("2d");
   const { width: w, height: h } = layer;
   ctx.clearRect(0, 0, w, h);
@@ -926,33 +944,43 @@ function drawUnifiedUpper(layer, topic, accent, media, phase) {
   ctx.fillRect(0, 0, w, h);
 
   const pulse = 0.72 + Math.sin(phase * 0.72) * 0.10;
+  const transition = Math.min(1, metricWindow.localProgress * 5, (1 - metricWindow.localProgress) * 5);
   const blocks = [0.045, 0.375, 0.705];
   blocks.forEach((fraction, index) => {
+    const metric = metricWindow.metrics[index];
+    if (!metric) return;
     const x = w * fraction;
     const cardW = w * 0.245;
+    const cardY = h * (0.12 + (1 - transition) * 0.025);
+    const metricNumber = metricWindow.page * 3 + index + 1;
     ctx.save();
-    roundedRect(ctx, x, h * 0.12, cardW, h * 0.72, h * 0.055);
-    ctx.fillStyle = "rgba(4,9,8,.62)";
+    ctx.globalAlpha = 0.74 + transition * 0.26;
+    roundedRect(ctx, x, cardY, cardW, h * 0.74, h * 0.055);
+    ctx.fillStyle = "rgba(4,9,8,.72)";
     ctx.fill();
     ctx.strokeStyle = hexToRgba(accent, 0.20 + pulse * 0.16);
     ctx.lineWidth = Math.max(2, h * 0.004);
     ctx.stroke();
     ctx.fillStyle = accent;
-    ctx.font = `700 ${Math.round(h * 0.052)}px 'IBM Plex Mono', Consolas, monospace`;
-    ctx.fillText(`${exhibitionPeriod}  /  ${String(state.programIndex + 1).padStart(2, "0")}—03`, x + h * 0.10, h * 0.25);
+    ctx.font = `700 ${Math.round(h * 0.046)}px 'IBM Plex Mono', Consolas, monospace`;
+    ctx.fillText(`${(topic.title || zoneLabels[topic.zone]).toUpperCase()}  /  ${String(metricNumber).padStart(2, "0")}—${String((topic.metrics || []).length).padStart(2, "0")}`, x + h * 0.10, cardY + h * 0.12);
     ctx.fillStyle = "#f4f1e8";
-    drawFittedWrappedText(ctx, (topic.title || zoneLabels[topic.zone]).toUpperCase(), x + h * 0.10, h * 0.38, cardW - h * 0.20, h * 0.22, Math.round(h * 0.15), Math.round(h * 0.085), 2, "600", "Oswald, Arial");
+    drawFittedWrappedText(ctx, metric.value, x + h * 0.10, cardY + h * 0.24, cardW - h * 0.20, h * 0.18, Math.round(h * 0.15), Math.round(h * 0.07), 1, "500", "Oswald, Arial");
+    ctx.fillStyle = "rgba(241,242,235,.96)";
+    drawFittedWrappedText(ctx, metric.label.toUpperCase(), x + h * 0.10, cardY + h * 0.45, cardW - h * 0.20, h * 0.16, Math.round(h * 0.072), Math.round(h * 0.045), 2, "700", "Inter, Arial");
     ctx.fillStyle = "rgba(230,235,229,.82)";
-    ctx.font = `500 ${Math.round(h * 0.045)}px Inter, Arial`;
-    drawWrappedLines(ctx, topic.subtitle || "Достижения четверти века", x + h * 0.10, h * 0.70, cardW - h * 0.20, h * 0.058, 2);
+    ctx.font = `500 ${Math.round(h * 0.041)}px Inter, Arial`;
+    drawWrappedLines(ctx, metric.detail || exhibitionPeriod, x + h * 0.10, cardY + h * 0.67, cardW - h * 0.20, h * 0.052, 2);
+    ctx.fillStyle = "rgba(255,255,255,.16)";
+    ctx.fillRect(x + h * 0.10, cardY + h * 0.685, cardW - h * 0.20, Math.max(3, h * 0.009));
     ctx.fillStyle = accent;
-    ctx.fillRect(x + h * 0.10, h * 0.78, cardW * (0.22 + index * 0.035), Math.max(4, h * 0.012));
+    ctx.fillRect(x + h * 0.10, cardY + h * 0.685, (cardW - h * 0.20) * ((metricWindow.page + metricWindow.localProgress) / metricWindow.pageCount), Math.max(3, h * 0.009));
     ctx.restore();
   });
   addScreenGrain(ctx, w, h, accent, 0.018);
 }
 
-function drawUnifiedLower(layer, topic, accent, phase) {
+function drawUnifiedLower(layer, topic, accent, phase, metricWindow) {
   const ctx = layer.getContext("2d");
   const { width: w, height: h } = layer;
   ctx.clearRect(0, 0, w, h);
@@ -967,8 +995,7 @@ function drawUnifiedLower(layer, topic, accent, phase) {
   ctx.fillStyle = accent;
   ctx.fillRect(0, 0, w, Math.max(4, h * 0.035));
 
-  const metrics = topic.metrics || [];
-  metrics.slice(0, 3).forEach((metric, index) => {
+  metricWindow.metrics.forEach((metric, index) => {
     const x0 = index * w / 3;
     const inset = h * 0.18;
     if (index) {
@@ -983,7 +1010,8 @@ function drawUnifiedLower(layer, topic, accent, phase) {
     drawWrappedLines(ctx, metric.label.toUpperCase(), x0 + inset, h * 0.72, w / 3 - inset * 2, h * 0.15, 2);
     ctx.fillStyle = "rgba(224,230,223,.60)";
     ctx.font = `500 ${Math.round(h * 0.092)}px 'IBM Plex Mono', Consolas, monospace`;
-    ctx.fillText(metric.detail || exhibitionPeriod, x0 + inset, h * 0.92);
+    const metricNumber = metricWindow.page * 3 + index + 1;
+    ctx.fillText(`${String(metricNumber).padStart(2, "0")} / ${String((topic.metrics || []).length).padStart(2, "0")}  ·  ${metric.detail || exhibitionPeriod}`, x0 + inset, h * 0.92);
   });
   ctx.globalAlpha = 0.08 + Math.sin(phase * 0.9) * 0.025;
   ctx.fillStyle = accent;
@@ -1554,15 +1582,30 @@ function updateProgramUi() {
   document.getElementById("screenBody").textContent = topic.subtitle || "Достижения за 25 лет";
   document.getElementById("screenMode").value = state.mode;
   document.getElementById("programSubtitle").textContent = topic.subtitle || "Достижения за 25 лет";
-  document.getElementById("programKpis").innerHTML = (topic.metrics || []).map((metric) => `<div style="--kpi-color:${zoneColors[topic.zone]}"><strong>${escapeHtml(metric.value)}</strong><span>${escapeHtml(metric.label)}</span></div>`).join("");
+  lastProgramMetricKey = "";
   drawProgramScreen(programPhase);
   loadReviewUi();
   updateProgramPlaybackUi();
   writeUrlState();
 }
 
+function updateProgramMetricUi(topic, metricWindow) {
+  const key = `${topic.zone}:${metricWindow.page}`;
+  if (key === lastProgramMetricKey) return;
+  lastProgramMetricKey = key;
+  const programKpis = document.getElementById("programKpis");
+  if (!programKpis) return;
+  programKpis.innerHTML = metricWindow.metrics.map((metric, index) => {
+    const metricNumber = metricWindow.page * 3 + index + 1;
+    return `<div style="--kpi-color:${zoneColors[topic.zone]}"><strong>${escapeHtml(metric.value)}</strong><span>${String(metricNumber).padStart(2, "0")} · ${escapeHtml(metric.label)}</span></div>`;
+  }).join("");
+  const subtitle = document.getElementById("programSubtitle");
+  if (subtitle) subtitle.textContent = `${topic.subtitle || "Достижения за 25 лет"} · такт ${metricWindow.page + 1}/${metricWindow.pageCount}`;
+}
+
 function setProgramTopic(index) {
   state.programIndex = (index + programTopics.length) % programTopics.length;
+  programPhase = 0;
   programAdvance = 0;
   const video = screenVideos[programTopics[state.programIndex].zone];
   if (video?.readyState >= 2) video.currentTime = 0;

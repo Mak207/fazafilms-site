@@ -128,7 +128,7 @@
     technology: {
       title: "Технологии",
       subtitle: "Наука, цифровая среда и энергетика",
-      sourceLabel: "Росстат · Российский статистический ежегодник 2025; Росатом",
+      sourceLabel: "Росстат · Российский статистический ежегодник 2025; Росатом · публичный отчёт 2024",
       metrics: [
         {
           value: "1,94 трлн ₽",
@@ -147,13 +147,49 @@
           label: "действующих энергоблоков АЭС",
           detail: "2024 · 28,5 ГВт · около 19% электроэнергии России",
           source: "https://rir.rosatom.ru/media-center/news/zamministra-energetiki-rf-pyetr-konyushenko-posetil-obekty-rosatoma-v-kurskoy-oblasti/"
+        },
+        {
+          value: "675,7 тыс.",
+          label: "человек работали в исследованиях и разработках",
+          detail: "2024 · из них 339,1 тыс. исследователей",
+          source: "https://rosstat.gov.ru/storage/mediabank/Ejegodnik_2025.pdf"
+        },
+        {
+          value: "4 157",
+          label: "организаций выполняли исследования и разработки",
+          detail: "2024 · научные организации, вузы и предприятия",
+          source: "https://rosstat.gov.ru/storage/mediabank/Ejegodnik_2025.pdf"
+        },
+        {
+          value: "42,5 млрд ₽",
+          label: "затраты на нанотехнологические исследования",
+          detail: "2024 · 291 организация и 12 078 исследователей",
+          source: "https://rosstat.gov.ru/storage/mediabank/Ejegodnik_2025.pdf"
+        },
+        {
+          value: "26 608",
+          label: "заявок на патенты на изобретения",
+          detail: "2024 · подано в России",
+          source: "https://rosstat.gov.ru/storage/mediabank/Ejegodnik_2025.pdf"
+        },
+        {
+          value: "21 600",
+          label: "патентов на изобретения выдано",
+          detail: "2024 · 16 250 из них российским заявителям",
+          source: "https://rosstat.gov.ru/storage/mediabank/Ejegodnik_2025.pdf"
+        },
+        {
+          value: "215,5 млрд кВт·ч",
+          label: "выработали российские АЭС",
+          detail: "2024 · атомная генерация энергосистемы страны",
+          source: "https://www.report.rosatom.ru/go/rosatom/go_rosatom_2024/rosatom_2024_key_results_ru.pdf"
         }
       ]
     },
     construction: {
       title: "Строительство",
       subtitle: "Жильё и созданные объекты",
-      sourceLabel: "Росстат · ввод жилья в России",
+      sourceLabel: "Росстат · ввод жилья в России; Российский статистический ежегодник 2025",
       metrics: [
         {
           value: "108,1 млн м²",
@@ -172,13 +208,49 @@
           label: "жилых домов построено",
           detail: "2025 · в 2015 году — 286,1 тыс. домов",
           source: "https://rosstat.gov.ru/folder/313/document/288267?print=1"
+        },
+        {
+          value: "496,7 тыс.",
+          label: "зданий введено в эксплуатацию",
+          detail: "2024 · в 2000 году — 119,7 тыс.; рост ×4,1",
+          source: "https://rosstat.gov.ru/storage/mediabank/Ejegodnik_2025.pdf"
+        },
+        {
+          value: "170,8 млн м²",
+          label: "общая площадь введённых зданий",
+          detail: "2024 · в 2000 году — 44,7 млн м²; рост ×3,8",
+          source: "https://rosstat.gov.ru/storage/mediabank/Ejegodnik_2025.pdf"
+        },
+        {
+          value: "38,4 млн м²",
+          label: "площадь новых нежилых зданий",
+          detail: "2024 · в 2000 году — 8,3 млн м²; рост ×4,6",
+          source: "https://rosstat.gov.ru/storage/mediabank/Ejegodnik_2025.pdf"
+        },
+        {
+          value: "21,3 тыс.",
+          label: "нежилых зданий введено",
+          detail: "2024 · в 2000 году — 8,9 тыс.; рост ×2,4",
+          source: "https://rosstat.gov.ru/storage/mediabank/Ejegodnik_2025.pdf"
+        },
+        {
+          value: "9,5 млн м²",
+          label: "площадь новых коммерческих зданий",
+          detail: "2024 · в 2000 году — 0,9 млн м²; рост ×10,6",
+          source: "https://rosstat.gov.ru/storage/mediabank/Ejegodnik_2025.pdf"
+        },
+        {
+          value: "6,4 млн м²",
+          label: "площадь новых учебных зданий",
+          detail: "2024 · в 2000 году — 1,5 млн м²; рост ×4,3",
+          source: "https://rosstat.gov.ru/storage/mediabank/Ejegodnik_2025.pdf"
         }
       ]
     },
     transport: {
       title: "Транспорт",
       subtitle: "Дороги, мосты и связность территории",
-      sourceLabel: "Минтранс России · итоги дорожного строительства",
+      sourceLabel: "Минтранс России · транспортный комплекс и итоги дорожного строительства",
       metrics: [
         {
           value: "25 тыс. км",
@@ -197,6 +269,42 @@
           label: "новых федеральных дорог введено",
           detail: "2024 · рекордный объём федеральной дорожной стройки",
           source: "https://mintrans.gov.ru/eye/press-center/branch-news/5857"
+        },
+        {
+          value: "10,4 млрд",
+          label: "пассажиров перевезено общественным транспортом",
+          detail: "2024 · без учёта городского электрического транспорта",
+          source: "https://mintrans.gov.ru/file/529088"
+        },
+        {
+          value: "8,4 млрд т",
+          label: "грузов перевезено транспортным комплексом",
+          detail: "2024 · рост к предыдущему году на 6,2%",
+          source: "https://mintrans.gov.ru/file/529088"
+        },
+        {
+          value: "3,04 трлн т·км",
+          label: "грузооборот транспорта",
+          detail: "2024 · работа всех основных видов транспорта",
+          source: "https://mintrans.gov.ru/file/529088"
+        },
+        {
+          value: "863,8 млн т",
+          label: "грузов перевалили морские порты",
+          detail: "2024 · совокупный грузооборот портовой системы",
+          source: "https://mintrans.gov.ru/file/529088"
+        },
+        {
+          value: "216,4 млн",
+          label: "пассажиров обслужили аэропорты России",
+          detail: "2024 · рост пассажиропотока на 5,1%",
+          source: "https://www.mintrans.gov.ru/eye/press-center/branch-news/6434"
+        },
+        {
+          value: "111,7 млн",
+          label: "пассажиров перевезли российские авиакомпании",
+          detail: "2024 · 84,7 млн на внутренних линиях",
+          source: "https://www.mintrans.gov.ru/press-center/news/11689"
         }
       ]
     }
