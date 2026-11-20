@@ -116,10 +116,91 @@
 
   window.EXHIBIT_CATALOG = catalog;
   window.CENTER_PROPOSAL = [
-    { objectTitle: "Макет делового центра «Москва-Сити»", size: "1,90 × 1,35 × 1,65 м", reference: "https://stroi.mos.ru/moskva-siti" },
-    { objectTitle: "Парящий мост парка «Зарядье»", size: "3,20 × 0,55 × 0,75 м", reference: "https://www.zaryadyepark.ru/" },
-    { objectTitle: "Городской поезд «Москва-2024»", size: "2,80 × 0,52 × 0,60 м", reference: "https://transport.mos.ru/metro" }
+    {
+      id: "media-cube",
+      objectTitle: "Центральный видеокуб",
+      size: "ребро 1,50 м · диагональ 2,60 м",
+      placement: "центр зала · нижняя вершина над постаментом",
+      reference: "./assets/reference/video-cube-reference.jpg"
+    }
   ];
+  window.EXHIBIT_METRICS = {
+    technology: {
+      title: "Технологии",
+      subtitle: "Наука, цифровая среда и энергетика",
+      sourceLabel: "Росстат · Российский статистический ежегодник 2025; Росатом",
+      metrics: [
+        {
+          value: "1,94 трлн ₽",
+          label: "внутренние затраты на исследования и разработки",
+          detail: "2024 · в 2000 году — 76,7 млрд ₽; номинальный рост ×25,3",
+          source: "https://rosstat.gov.ru/storage/mediabank/Ejegodnik_2025.pdf"
+        },
+        {
+          value: "90,4%",
+          label: "домохозяйств имели доступ к интернету",
+          detail: "2024 · широкополосный доступ — 89,8%",
+          source: "https://rosstat.gov.ru/storage/mediabank/Ejegodnik_2025.pdf"
+        },
+        {
+          value: "35",
+          label: "действующих энергоблоков АЭС",
+          detail: "2024 · 28,5 ГВт · около 19% электроэнергии России",
+          source: "https://rir.rosatom.ru/media-center/news/zamministra-energetiki-rf-pyetr-konyushenko-posetil-obekty-rosatoma-v-kurskoy-oblasti/"
+        }
+      ]
+    },
+    construction: {
+      title: "Строительство",
+      subtitle: "Жильё и созданные объекты",
+      sourceLabel: "Росстат · ввод жилья в России",
+      metrics: [
+        {
+          value: "108,1 млн м²",
+          label: "жилья введено за год",
+          detail: "2025 · в 2000 году — 30,3 млн м²; рост объёма ×3,6",
+          source: "https://rosstat.gov.ru/folder/313/document/288267?print=1"
+        },
+        {
+          value: "1,342 млн",
+          label: "новых квартир построено",
+          detail: "2025 · за счёт всех источников финансирования",
+          source: "https://rosstat.gov.ru/folder/313/document/288267?print=1"
+        },
+        {
+          value: "480 тыс.",
+          label: "жилых домов построено",
+          detail: "2025 · в 2015 году — 286,1 тыс. домов",
+          source: "https://rosstat.gov.ru/folder/313/document/288267?print=1"
+        }
+      ]
+    },
+    transport: {
+      title: "Транспорт",
+      subtitle: "Дороги, мосты и связность территории",
+      sourceLabel: "Минтранс России · итоги дорожного строительства",
+      metrics: [
+        {
+          value: "25 тыс. км",
+          label: "дорог построено и отремонтировано",
+          detail: "2024 · федеральная, региональная и местная сеть",
+          source: "https://mintrans.gov.ru/press-center/news/11778"
+        },
+        {
+          value: "1 млрд м²",
+          label: "дорожного покрытия уложено",
+          detail: "итог нацпроекта «Безопасные качественные дороги» к концу 2024",
+          source: "https://mintrans.gov.ru/press-center/news/11778"
+        },
+        {
+          value: "507 км",
+          label: "новых федеральных дорог введено",
+          detail: "2024 · рекордный объём федеральной дорожной стройки",
+          source: "https://mintrans.gov.ru/eye/press-center/branch-news/5857"
+        }
+      ]
+    }
+  };
   window.EXHIBIT_SCENARIOS = {
     technology: {
       title: "Технологии · от ядра к орбите",

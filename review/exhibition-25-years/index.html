@@ -8,13 +8,13 @@
   <meta name="referrer" content="no-referrer">
   <title>Выставка 25 лет развития России — материалы проекта ФАЗА</title>
   <meta name="description" content="Рабочая структура выставочного пространства: технологии, строительство и транспорт. 42 позиции экспозиции.">
-  <link rel="icon" href="/favicon.svg">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230b0d0c'/%3E%3Ctext x='9' y='46' font-size='42' font-family='Arial' font-weight='700' fill='%23f1eee6'%3EФ%3C/text%3E%3Ccircle cx='53' cy='46' r='4' fill='%23ff8a45'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css?v=9">
-  <script defer src="./exhibit-data.js?v=2"></script>
-  <script defer src="./page.js?v=2"></script>
+  <link rel="stylesheet" href="./style.css?v=10">
+  <script defer src="./exhibit-data.js?v=3"></script>
+  <script defer src="./page.js?v=3"></script>
   <script type="importmap">
     {
       "imports": {
@@ -23,7 +23,7 @@
       }
     }
   </script>
-    <script type="module" src="./exhibition-3d.js?v=16"></script>
+    <script type="module" src="./exhibition-3d.js?v=17"></script>
 </head>
 <body>
   <a class="skip-link" href="#register">К списку экспонатов</a>
@@ -62,7 +62,7 @@
           <span class="shape shape--circle d"></span>
           <span class="shape shape--square e"></span>
           <span class="shape shape--triangle f"></span>
-          <div class="moscow-core"><span>Центр</span><strong>Москва</strong></div>
+          <div class="moscow-core"><span>Видеокуб</span><strong>1,5 м</strong></div>
         </div>
       </div>
     </section>
@@ -73,7 +73,7 @@
           <p class="eyebrow">Интерактивное согласование</p>
           <h2 id="interactive-title">Пройдите выставку до монтажа</h2>
         </div>
-        <p>Рабочая сцена 10 × 17 × 4 м: план восстановлен по метровой сетке схемы, высота собрана по утверждённому разрезу. Выберите стену, переключайте контент и фиксируйте решение по каждому сюжету.</p>
+        <p>Рабочая сцена 10 × 17 × 4 м. Длинный П-образный экран работает как единая панорама: тема и показатели меняются синхронно. В центре — видеокуб с тремя тематическими гранями.</p>
       </div>
 
       <div class="viewer-shell" data-viewer-state="loading">
@@ -84,6 +84,7 @@
           <div class="viewer-cameras" role="group" aria-label="Точки обзора">
             <button type="button" data-camera="overview" class="is-active">Общий вид</button>
             <button type="button" data-camera="visitor">Посетитель</button>
+            <button type="button" data-camera="cube">Видеокуб</button>
             <button type="button" data-camera="technology">Технологии</button>
             <button type="button" data-camera="construction">Строительство</button>
             <button type="button" data-camera="transport">Транспорт</button>
@@ -100,69 +101,30 @@
         </div>
 
         <aside class="viewer-panel" aria-label="Управление контентом и оценка">
-          <div class="viewer-zone-tabs" role="tablist" aria-label="Тематические стены">
+          <div class="viewer-zone-tabs" role="tablist" aria-label="Темы единого эфира">
             <button type="button" role="tab" data-zone="technology" aria-selected="true">Технологии</button>
             <button type="button" role="tab" data-zone="construction" aria-selected="false">Строительство</button>
             <button type="button" role="tab" data-zone="transport" aria-selected="false">Транспорт</button>
           </div>
 
-          <section class="screen-channel-console" aria-label="Независимое управление тремя экранами">
-            <div class="screen-channel is-selected" data-screen-channel="technology">
-              <button class="screen-channel-focus" type="button" data-channel-focus="technology">
-                <span>Технологии</span><small data-channel-index>01 / 14</small>
-              </button>
-              <p data-channel-title>Атомный реактор и проект «Прорыв»</p>
-              <div class="screen-channel-footer">
-                <span class="screen-channel-state" data-channel-state>в эфире</span>
-                <div class="screen-channel-controls">
-                  <button type="button" data-channel-zone="technology" data-channel-action="prev" aria-label="Предыдущая сцена: технологии">←</button>
-                  <button type="button" data-channel-zone="technology" data-channel-action="play" aria-label="Пауза или пуск: технологии" aria-pressed="true">Пауза</button>
-                  <button type="button" data-channel-zone="technology" data-channel-action="next" aria-label="Следующая сцена: технологии">→</button>
-                </div>
-              </div>
+          <section class="program-console" aria-label="Единый синхронный эфир медиапериметра">
+            <div class="program-console-head">
+              <span>Единый экран · синхронный цикл</span>
+              <strong id="programState">в эфире</strong>
             </div>
-            <div class="screen-channel" data-screen-channel="construction">
-              <button class="screen-channel-focus" type="button" data-channel-focus="construction">
-                <span>Строительство</span><small data-channel-index>01 / 14</small>
-              </button>
-              <p data-channel-title>Программа газификации</p>
-              <div class="screen-channel-footer">
-                <span class="screen-channel-state" data-channel-state>в эфире</span>
-                <div class="screen-channel-controls">
-                  <button type="button" data-channel-zone="construction" data-channel-action="prev" aria-label="Предыдущая сцена: строительство">←</button>
-                  <button type="button" data-channel-zone="construction" data-channel-action="play" aria-label="Пауза или пуск: строительство" aria-pressed="true">Пауза</button>
-                  <button type="button" data-channel-zone="construction" data-channel-action="next" aria-label="Следующая сцена: строительство">→</button>
-                </div>
-              </div>
-            </div>
-            <div class="screen-channel" data-screen-channel="transport">
-              <button class="screen-channel-focus" type="button" data-channel-focus="transport">
-                <span>Транспорт</span><small data-channel-index>01 / 14</small>
-              </button>
-              <p data-channel-title>Семейство ракет-носителей «Ангара»</p>
-              <div class="screen-channel-footer">
-                <span class="screen-channel-state" data-channel-state>в эфире</span>
-                <div class="screen-channel-controls">
-                  <button type="button" data-channel-zone="transport" data-channel-action="prev" aria-label="Предыдущая сцена: транспорт">←</button>
-                  <button type="button" data-channel-zone="transport" data-channel-action="play" aria-label="Пауза или пуск: транспорт" aria-pressed="true">Пауза</button>
-                  <button type="button" data-channel-zone="transport" data-channel-action="next" aria-label="Следующая сцена: транспорт">→</button>
-                </div>
-              </div>
-            </div>
+            <p id="programSubtitle">Наука, цифровая среда и энергетика</p>
+            <div class="program-kpis" id="programKpis" aria-live="polite"></div>
           </section>
 
           <div class="viewer-content-card">
-            <div class="viewer-content-meta"><span id="screenPeriod">2000–2025</span><span id="screenIndex">01 / 14</span></div>
-            <h3 id="screenTitle">Атомный реактор и проект «Прорыв»</h3>
-            <p id="screenBody">Выберите сюжет — соответствующая медиастена обновится прямо в пространстве.</p>
-            <label class="viewer-select-label" for="screenSelect">Сюжет на экране</label>
+            <div class="viewer-content-meta"><span id="screenPeriod">2000–2025</span><span id="screenIndex">01 / 03</span></div>
+            <h3 id="screenTitle">Технологии</h3>
+            <p id="screenBody">Единый фильм занимает весь П-образный экран; показатели переключаются вместе с темой.</p>
+            <label class="viewer-select-label" for="screenSelect">Тема синхронного цикла</label>
             <select id="screenSelect"></select>
             <label class="viewer-select-label" for="screenMode">Вид экранного контента</label>
             <select id="screenMode">
-              <option value="film">Короткий фильм + типографика</option>
-              <option value="plate">Анимированная экранная сцена</option>
-              <option value="frame">Пробный кадр ролика</option>
-              <option value="hybrid">Пробный кадр + плашка</option>
+              <option value="film">Единый фильм + показатели</option>
             </select>
             <div class="viewer-stepper">
               <button type="button" id="screenPrev">Предыдущий</button>
@@ -209,6 +171,15 @@
         </div>
         <div class="scenario-grid" id="scenarioGrid"></div>
       </section>
+
+      <section class="metrics-board" aria-labelledby="metrics-title">
+        <div class="section-heading">
+          <p class="eyebrow">Показатели 2000–2025</p>
+          <h2 id="metrics-title">Достижения в цифрах</h2>
+        </div>
+        <p class="metrics-note">В экранный цикл включены только проверяемые показатели Росстата, Минтранса России и Росатома. Год и источник указаны у каждой плашки.</p>
+        <div class="metrics-grid" id="metricsGrid"></div>
+      </section>
     </section>
 
     <section class="concept" id="concept" aria-labelledby="concept-title">
@@ -229,13 +200,13 @@
         </article>
         <article>
           <span>03</span>
-          <h3>Москва в центре</h3>
-          <p>Центральный блок показывает столицу как пример комплексного соединения технологий, строительства и транспорта.</p>
+          <h3>Видеокуб в центре</h3>
+          <p>Куб с ребром 1,5 м развёрнут на пространственную диагональ. Три одновременно видимые грани показывают технологии, строительство и транспорт.</p>
         </article>
         <article>
           <span>04</span>
           <h3>Единый визуальный язык</h3>
-          <p>Киноизображение, физические материалы, направленный свет и спокойная типографика связывают медиастены с реальными макетами.</p>
+          <p>Единый панорамный фильм, проверяемые показатели и три грани видеокуба связывают медиастены с реальными макетами.</p>
         </article>
       </div>
     </section>
@@ -271,7 +242,7 @@
       <div class="space-copy">
         <p class="eyebrow">Принцип пространственной сборки</p>
         <h2 id="space-title">Экран — фон. Экспонат — доказательство.</h2>
-        <p>Фоновая анимация поддерживает тематику зоны и не спорит с текстовыми плашками. Каждая позиция получает связь с конкретным годом, экранным сюжетом и физическим объектом или моделью.</p>
+        <p>Единая панорама меняет три темы по циклу. Нижняя лента синхронно показывает показатели, а видеокуб удерживает все три темы одновременно.</p>
       </div>
       <div class="space-technical">
         <figure class="wall-section">
@@ -289,7 +260,7 @@
           <div><dt>Конструкция</dt><dd>единый бесшовный П-образный медиапериметр внутри павильона</dd></div>
           <div><dt>Высота</dt><dd>0,5 м экран + 1 м ниша + 2,5 м экран до потолка = 4 м</dd></div>
           <div><dt>Экспонаты</dt><dd>физические объекты и макеты внутри ниш</dd></div>
-          <div><dt>Контент</dt><dd>тематический фон + модульные информационные плашки</dd></div>
+          <div><dt>Контент</dt><dd>единый панорамный фильм + синхронные плашки показателей + три тематические грани видеокуба</dd></div>
         </dl>
       </div>
     </section>

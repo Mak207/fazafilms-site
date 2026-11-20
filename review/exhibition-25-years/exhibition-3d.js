@@ -21,10 +21,13 @@ const exhibitionPeriod = "2000–2025";
 const showRawHi3DCandidates = new URLSearchParams(window.location.search).get("quality") === "raw";
 
 const content = Object.fromEntries(zones.map((zone) => [zone, allItems.filter((item) => item.zone === zone)]));
+const metricGroups = window.EXHIBIT_METRICS || {};
+const programTopics = zones.map((zone) => ({ zone, ...(metricGroups[zone] || {}) }));
 const state = {
   zone: "technology",
+  programIndex: 0,
+  programPlaying: true,
   indices: { technology: 0, construction: 0, transport: 0 },
-  playing: { technology: true, construction: true, transport: true },
   mode: "film",
   walking: false,
   camera: "overview",
@@ -36,21 +39,16 @@ const physicalModels = Object.fromEntries(exhibitCatalog.map((item) => [item.id,
   title: item.objectTitle,
   placement: item.zone === "technology" ? "левая ниша" : item.zone === "transport" ? "правая ниша" : "торцевая ниша"
 }]));
-const centerEnvelopes = [
-  { id: "center-01", dims: [2.35, 1.85, 1.75], position: [0, 0.30, -2.35], rotation: 0, placement: "станция 01 · город" },
-  { id: "center-02", dims: [3.35, 0.90, 0.62], position: [0, 0.20, 0.15], rotation: -0.08, placement: "станция 02 · инфраструктура" },
-  { id: "center-03", dims: [3.20, 0.72, 0.68], position: [0, 0.22, 2.45], rotation: 0.06, placement: "станция 03 · движение" }
-];
-(window.CENTER_PROPOSAL || []).forEach((item, index) => {
-  const envelope = centerEnvelopes[index];
-  if (!envelope) return;
-  physicalModels[envelope.id] = {
-    ...item,
-    ...envelope,
-    title: item.objectTitle,
-    status: "Hi3D · модель из референсной фотографии"
-  };
-});
+// Kept empty so the retired Moscow-centre builder remains inert during cache transitions.
+const centerEnvelopes = [];
+const cubeProposal = (window.CENTER_PROPOSAL || [])[0];
+if (cubeProposal) physicalModels["media-cube"] = {
+  ...cubeProposal,
+  id: "media-cube",
+  title: cubeProposal.objectTitle,
+  placement: cubeProposal.placement,
+  status: "3 видеограни · ребро 1,50 м · единая синхронная программа"
+};
 
 const gltfLoader = new GLTFLoader();
 gltfLoader.setMeshoptDecoder(MeshoptDecoder);
@@ -60,19 +58,21 @@ const screenTextures = {};
 const screenMaterials = {};
 const clickTargets = [];
 const modelObjects = {};
-let selectedModelId = "technology-01";
+let selectedModelId = "media-cube";
 let lastScreenDraw = 0;
-const screenPhases = { technology: 0, construction: 2.4, transport: 4.8 };
-const screenAdvance = { technology: 0, construction: 2.8, transport: 5.6 };
-const screenDwell = { technology: 8, construction: 9.5, transport: 11 };
+let programPhase = 0;
+let programAdvance = 0;
+const programDwell = 12;
 let cameraMotion = null;
 const activeMoves = new Set();
 const screenFrames = {};
 const screenVideos = {};
+const cubeFaceCanvases = {};
+const cubeFaceTextures = {};
 zones.forEach((zone) => {
   const image = new Image();
   image.src = `./assets/frames/${zone}-anchor.webp`;
-  image.onload = () => drawScreen(zone, performance.now() / 1000);
+  image.onload = () => drawProgramScreen(performance.now() / 1000);
   screenFrames[zone] = image;
 
   const video = document.createElement("video");
@@ -82,8 +82,8 @@ zones.forEach((zone) => {
   video.playsInline = true;
   video.preload = "auto";
   video.addEventListener("loadeddata", () => {
-    syncZoneVideoPlayback(zone);
-    drawScreen(zone, performance.now() / 1000);
+    syncProgramPlayback();
+    drawProgramScreen(performance.now() / 1000);
   });
   screenVideos[zone] = video;
 });
@@ -130,7 +130,7 @@ function init() {
   buildPavilion(scene);
   addNicheLighting(scene);
   buildPhysicalModels(scene);
-  buildCentralMoscow(scene);
+  buildMediaCube(scene);
 
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
@@ -144,32 +144,26 @@ function init() {
   });
 
   setupUi(camera, controls);
-  updateZoneUi();
+  updateProgramUi();
   selectModel(selectedModelId);
   resize();
   window.addEventListener("resize", resize);
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (reducedMotion) zones.forEach((zone) => { state.playing[zone] = false; });
-  zones.forEach(syncZoneVideoPlayback);
-  updateScreenPlaybackUi();
+  if (reducedMotion) state.programPlaying = false;
+  syncProgramPlayback();
+  updateProgramPlaybackUi();
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
     const delta = Math.min(clock.getDelta(), 0.05);
     const elapsed = clock.elapsedTime;
-    zones.forEach((zone) => {
-      if (!state.playing[zone]) return;
-      screenPhases[zone] += delta;
-      screenAdvance[zone] += delta;
-      if (screenAdvance[zone] >= screenDwell[zone]) {
-        screenAdvance[zone] = 0;
-        stepZoneScreen(zone, 1);
-      }
-    });
-    if (!reducedMotion && elapsed - lastScreenDraw > 0.08) {
-      zones.forEach((zone) => {
-        if (state.playing[zone]) drawScreen(zone, screenPhases[zone]);
-      });
+    if (state.programPlaying) {
+      programPhase += delta;
+      programAdvance += delta;
+      if (programAdvance >= programDwell) stepProgram(1);
+    }
+    if (!reducedMotion && state.programPlaying && elapsed - lastScreenDraw > 0.08) {
+      drawProgramScreen(programPhase);
       lastScreenDraw = elapsed;
     }
     if (cameraMotion) updateCameraMotion(camera, controls);
@@ -213,9 +207,9 @@ function addExhibitionLighting(scene) {
     scene.add(spot);
   };
 
-  addSpot([-2.8, 4.7, -0.6], [0, 0.8, -2.35], 38, 0xffead0, 0.34);
-  addSpot([2.9, 4.3, 1.2], [0, 0.45, 0.15], 34, 0xfff0dc, 0.31);
-  addSpot([-2.3, 4.0, 4.5], [0, 0.45, 2.45], 32, 0xffe8cc, 0.30);
+  addSpot([0, 5.35, 0.45], [0, 1.95, 0.45], 42, 0xffead0, 0.46);
+  addSpot([-3.2, 3.4, 2.8], [0, 1.85, 0.45], 18, 0xcffeff, 0.38);
+  addSpot([3.2, 3.2, 2.2], [0, 1.80, 0.45], 16, 0xd8ffc0, 0.38);
 
   const technologyWash = new THREE.PointLight(0x52d5d7, 7, 10, 2);
   technologyWash.position.set(-4.0, 2.25, -2.2);
@@ -223,6 +217,16 @@ function addExhibitionLighting(scene) {
   const transportWash = new THREE.PointLight(0x89a8ff, 6, 10, 2);
   transportWash.position.set(4.0, 2.25, -2.2);
   scene.add(transportWash);
+
+  [
+    [-0.88, 0.34, 0.72, 0x52d5d7],
+    [0.88, 0.34, 0.72, 0xb7df78],
+    [0, 0.34, -0.42, 0x89a8ff]
+  ].forEach(([x, y, z, color]) => {
+    const glow = new THREE.PointLight(color, 7, 3.4, 2);
+    glow.position.set(x, y, z);
+    scene.add(glow);
+  });
 }
 
 function addNicheLighting(scene) {
@@ -287,32 +291,31 @@ function buildPavilion(scene) {
 
 function addSeamlessMediaWalls(scene) {
   const path = [];
-  const add = (x, z, zone) => path.push({ x, z, zone });
-  add(-4.985, 8.35, "technology");
-  add(-4.985, -7.6, "technology");
+  const add = (x, z) => path.push({ x, z });
+  add(-4.985, 8.35);
+  add(-4.985, -7.6);
   for (let i = 1; i <= 8; i += 1) {
     const a = Math.PI + (Math.PI / 2) * (i / 8);
-    add(-4.085 + Math.cos(a) * 0.9, -7.6 + Math.sin(a) * 0.9, i <= 4 ? "technology" : "construction");
+    add(-4.085 + Math.cos(a) * 0.9, -7.6 + Math.sin(a) * 0.9);
   }
-  add(4.085, -8.5, "construction");
+  add(4.085, -8.5);
   for (let i = 1; i <= 8; i += 1) {
     const a = -Math.PI / 2 + (Math.PI / 2) * (i / 8);
-    add(4.085 + Math.cos(a) * 0.9, -7.6 + Math.sin(a) * 0.9, i <= 4 ? "construction" : "transport");
+    add(4.085 + Math.cos(a) * 0.9, -7.6 + Math.sin(a) * 0.9);
   }
-  add(4.985, 8.35, "transport");
+  add(4.985, 8.35);
 
-  const zoneLengths = { technology: 0, construction: 0, transport: 0 };
   const segments = [];
+  let totalLength = 0;
   for (let i = 0; i < path.length - 1; i += 1) {
     const a = path[i];
     const b = path[i + 1];
-    const zone = b.zone || a.zone;
     const length = Math.hypot(b.x - a.x, b.z - a.z);
-    segments.push({ a, b, zone, start: zoneLengths[zone], length, index: i });
-    zoneLengths[zone] += length;
+    segments.push({ a, b, start: totalLength, length, index: i });
+    totalLength += length;
   }
 
-  createScreenLayers(zoneLengths);
+  createScreenLayers(totalLength);
 
   const pathOffsets = path.map((point, index) => {
     const normalFor = (from, to) => {
@@ -329,17 +332,16 @@ function addSeamlessMediaWalls(scene) {
     return miter.multiplyScalar(0.012 / Math.max(miter.dot(next), 0.25));
   });
 
-  const buildStrip = (y0, y1, materials) => {
+  const buildStrip = (y0, y1, material) => {
     const positions = [];
     const uvs = [];
     const indices = [];
-    const groups = [];
     let vertex = 0;
     segments.forEach((segment) => {
       const offsetA = pathOffsets[segment.index];
       const offsetB = pathOffsets[segment.index + 1];
-      const u0 = segment.start / zoneLengths[segment.zone];
-      const u1 = (segment.start + segment.length) / zoneLengths[segment.zone];
+      const u0 = segment.start / totalLength;
+      const u1 = (segment.start + segment.length) / totalLength;
       positions.push(
         segment.a.x + offsetA.x, y0, segment.a.z + offsetA.y,
         segment.b.x + offsetB.x, y0, segment.b.z + offsetB.y,
@@ -348,7 +350,6 @@ function addSeamlessMediaWalls(scene) {
       );
       uvs.push(u0, 0, u1, 0, u1, 1, u0, 1);
       indices.push(vertex, vertex + 1, vertex + 2, vertex, vertex + 2, vertex + 3);
-      groups.push({ start: indices.length - 6, count: 6, materialIndex: zones.indexOf(segment.zone) });
       vertex += 4;
     });
     const geometry = new THREE.BufferGeometry();
@@ -356,42 +357,36 @@ function addSeamlessMediaWalls(scene) {
     geometry.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
     geometry.setIndex(indices);
     geometry.computeVertexNormals();
-    groups.forEach((group) => geometry.addGroup(group.start, group.count, group.materialIndex));
-    scene.add(new THREE.Mesh(geometry, materials));
+    scene.add(new THREE.Mesh(geometry, material));
   };
 
-  buildStrip(0, 0.5, zones.map((zone) => screenMaterials[zone].lower));
-  buildStrip(1.5, 4, zones.map((zone) => screenMaterials[zone].upper));
+  buildStrip(0, 0.5, screenMaterials.lower);
+  buildStrip(1.5, 4, screenMaterials.upper);
   const niche = new THREE.MeshStandardMaterial({ color: 0x070a08, roughness: 0.92, metalness: 0.06 });
-  buildStrip(0.5, 1.5, [niche, niche, niche]);
+  buildStrip(0.5, 1.5, niche);
 }
 
-function createScreenLayers(zoneLengths) {
-  zones.forEach((zone) => {
-    const lengthMeters = zoneLengths[zone];
-    screenCanvases[zone] = {};
-    screenTextures[zone] = {};
-    screenMaterials[zone] = {};
-    [
-      ["upper", 2.5, 210],
-      ["lower", 0.5, 240]
-    ].forEach(([band, heightMeters, pixelsPerMeter]) => {
-      const layer = document.createElement("canvas");
-      layer.width = Math.min(4096, Math.max(1536, Math.round(lengthMeters * pixelsPerMeter)));
-      layer.height = Math.max(112, Math.round(layer.width * heightMeters / lengthMeters));
-      screenCanvases[zone][band] = layer;
-      const texture = new THREE.CanvasTexture(layer);
-      texture.colorSpace = THREE.SRGBColorSpace;
-      texture.anisotropy = 8;
-      screenTextures[zone][band] = texture;
-      screenMaterials[zone][band] = new THREE.MeshBasicMaterial({ map: texture, toneMapped: false });
-    });
-    drawScreen(zone, 0);
+function createScreenLayers(lengthMeters) {
+  [
+    ["upper", 2.5, 190],
+    ["lower", 0.5, 210]
+  ].forEach(([band, heightMeters, pixelsPerMeter]) => {
+    const layer = document.createElement("canvas");
+    layer.width = Math.min(8192, Math.max(4096, Math.round(lengthMeters * pixelsPerMeter)));
+    layer.height = Math.max(112, Math.round(layer.width * heightMeters / lengthMeters));
+    screenCanvases[band] = layer;
+    const texture = new THREE.CanvasTexture(layer);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = 8;
+    screenTextures[band] = texture;
+    screenMaterials[band] = new THREE.MeshBasicMaterial({ map: texture, toneMapped: false });
   });
+  drawProgramScreen(0);
 }
 
 function buildPhysicalModels(scene) {
   Object.entries(physicalModels).forEach(([id, meta]) => {
+    if (id === "media-cube") return;
     const t = meta.index / 13;
     const slot = meta.zone === "technology"
       ? { position: [-4.58, 0.58, THREE.MathUtils.lerp(-7.42, 7.42, t)], rotation: [0, Math.PI / 2, 0] }
@@ -639,6 +634,114 @@ function loadHi3D(id, meta, anchor, proxy) {
   });
 }
 
+function buildMediaCube(scene) {
+  const id = "media-cube";
+  const meta = physicalModels[id];
+  if (!meta) return;
+
+  const group = new THREE.Group();
+  group.name = id;
+  group.position.set(0, 0, 0.42);
+  group.userData.modelId = id;
+
+  const graphite = new THREE.MeshStandardMaterial({ color: 0x111713, roughness: 0.34, metalness: 0.62, envMapIntensity: 0.72 });
+  const blackMetal = new THREE.MeshStandardMaterial({ color: 0x070b09, roughness: 0.28, metalness: 0.78, envMapIntensity: 0.9 });
+  const base = meshOf(new RoundedBoxGeometry(2.18, 0.18, 2.18, 8, 0.08), graphite, [0, 0.09, 0]);
+  base.castShadow = true;
+  base.receiveShadow = true;
+  group.add(base);
+
+  const underlight = new THREE.Mesh(
+    new RoundedBoxGeometry(2.30, 0.045, 2.30, 8, 0.08),
+    new THREE.MeshBasicMaterial({ color: 0xe9efe8, transparent: true, opacity: 0.82, toneMapped: false })
+  );
+  underlight.position.y = 0.026;
+  group.add(underlight);
+
+  const post = meshOf(new THREE.CylinderGeometry(0.12, 0.19, 0.61, 32), blackMetal, [0, 0.49, 0]);
+  post.castShadow = true;
+  group.add(post);
+  const collar = meshOf(new THREE.CylinderGeometry(0.24, 0.24, 0.08, 32), graphite, [0, 0.76, 0]);
+  group.add(collar);
+
+  zones.forEach((zone) => {
+    const layer = document.createElement("canvas");
+    layer.width = 1024;
+    layer.height = 1024;
+    cubeFaceCanvases[zone] = layer;
+    const texture = new THREE.CanvasTexture(layer);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.generateMipmaps = false;
+    cubeFaceTextures[zone] = texture;
+  });
+  drawCubeFaces();
+  const videoMaterial = (zone) => new THREE.MeshBasicMaterial({ map: cubeFaceTextures[zone], toneMapped: false });
+  const cube = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 1.5), [
+    videoMaterial("technology"), videoMaterial("construction"),
+    videoMaterial("transport"), videoMaterial("technology"),
+    videoMaterial("construction"), videoMaterial("transport")
+  ]);
+  const bottomVertex = 0.80;
+  cube.position.y = bottomVertex + Math.sqrt(3) * 0.75;
+  cube.quaternion.setFromUnitVectors(new THREE.Vector3(1, 1, 1).normalize(), new THREE.Vector3(0, 1, 0));
+  cube.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), Math.PI * 0.14);
+  cube.castShadow = true;
+  cube.userData.modelId = id;
+  group.add(cube);
+
+  const edges = new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.BoxGeometry(1.5, 1.5, 1.5), 12),
+    new THREE.LineBasicMaterial({ color: 0xe4e9e2, transparent: true, opacity: 0.78, toneMapped: false })
+  );
+  edges.position.copy(cube.position);
+  edges.quaternion.copy(cube.quaternion);
+  edges.scale.setScalar(1.006);
+  edges.userData.modelId = id;
+  group.add(edges);
+
+  const label = createStationLabel("ВИДЕОКУБ · 1,50 М", "03", 0xff8a4d);
+  label.position.set(0, 0.19, 1.105);
+  label.rotation.x = -Math.PI / 2;
+  label.scale.set(0.88, 0.88, 0.88);
+  label.userData.modelId = id;
+  group.add(label);
+
+  group.traverse((child) => { child.userData.modelId = id; });
+  scene.add(group);
+  modelObjects[id] = group;
+  clickTargets.push(group);
+}
+
+function drawCubeFaces() {
+  zones.forEach((zone, index) => {
+    const layer = cubeFaceCanvases[zone];
+    if (!layer) return;
+    const ctx = layer.getContext("2d");
+    const video = screenVideos[zone];
+    const frame = screenFrames[zone];
+    const media = video?.readyState >= 2 && video.videoWidth ? video : frame;
+    ctx.clearRect(0, 0, layer.width, layer.height);
+    paintScreenGround(ctx, layer.width, layer.height, zoneColors[zone]);
+    if (getMediaWidth(media)) drawImageCover(ctx, media, 0, 0, layer.width, layer.height);
+    const shade = ctx.createLinearGradient(0, 0, 0, layer.height);
+    shade.addColorStop(0, "rgba(3,8,7,.08)");
+    shade.addColorStop(0.58, "rgba(3,8,7,.18)");
+    shade.addColorStop(1, "rgba(3,8,7,.84)");
+    ctx.fillStyle = shade;
+    ctx.fillRect(0, 0, layer.width, layer.height);
+    ctx.fillStyle = zoneColors[zone];
+    ctx.fillRect(54, 716, 140 + index * 36, 10);
+    ctx.font = "700 38px 'IBM Plex Mono', Consolas, monospace";
+    ctx.fillText(`${exhibitionPeriod}  /  0${index + 1}`, 54, 790);
+    ctx.fillStyle = "#f3f0e7";
+    ctx.font = "600 92px Oswald, Arial";
+    ctx.fillText(zoneLabels[zone].toUpperCase(), 54, 902);
+    cubeFaceTextures[zone].needsUpdate = true;
+  });
+}
+
 function buildCentralMoscow(scene) {
   const stations = [
     { id: "center-01", base: [2.85, 0.28, 2.20], color: 0xffb26f, label: "ГОРОД · МОСКВА-СИТИ" },
@@ -779,6 +882,113 @@ function createStationLabel(title, index, color) {
   const texture = new THREE.CanvasTexture(layer);
   texture.colorSpace = THREE.SRGBColorSpace;
   return new THREE.Mesh(new THREE.PlaneGeometry(1.90, 0.30), new THREE.MeshBasicMaterial({ map: texture, transparent: true, toneMapped: false }));
+}
+
+function drawProgramScreen(phase) {
+  const upper = screenCanvases.upper;
+  const lower = screenCanvases.lower;
+  if (!upper || !lower) return;
+  const topic = programTopics[state.programIndex] || programTopics[0];
+  const zone = topic.zone;
+  const accent = zoneColors[zone];
+  const video = screenVideos[zone];
+  const frame = screenFrames[zone];
+  const media = video?.readyState >= 2 && video.videoWidth ? video : frame;
+
+  drawUnifiedUpper(upper, topic, accent, media, phase);
+  drawUnifiedLower(lower, topic, accent, phase);
+  drawCubeFaces();
+  screenTextures.upper.needsUpdate = true;
+  screenTextures.lower.needsUpdate = true;
+}
+
+function drawUnifiedUpper(layer, topic, accent, media, phase) {
+  const ctx = layer.getContext("2d");
+  const { width: w, height: h } = layer;
+  ctx.clearRect(0, 0, w, h);
+  paintScreenGround(ctx, w, h, accent);
+
+  if (getMediaWidth(media)) {
+    const panels = 3;
+    const overlap = w * 0.025;
+    for (let panel = 0; panel < panels; panel += 1) {
+      const x = panel * w / panels - (panel ? overlap : 0);
+      const width = w / panels + (panel ? overlap : 0) + (panel < panels - 1 ? overlap : 0);
+      drawImageCover(ctx, media, x, 0, width, h);
+    }
+  }
+
+  const shade = ctx.createLinearGradient(0, 0, 0, h);
+  shade.addColorStop(0, "rgba(2,7,6,.12)");
+  shade.addColorStop(0.66, "rgba(2,7,6,.16)");
+  shade.addColorStop(1, "rgba(2,7,6,.72)");
+  ctx.fillStyle = shade;
+  ctx.fillRect(0, 0, w, h);
+
+  const pulse = 0.72 + Math.sin(phase * 0.72) * 0.10;
+  const blocks = [0.045, 0.375, 0.705];
+  blocks.forEach((fraction, index) => {
+    const x = w * fraction;
+    const cardW = w * 0.245;
+    ctx.save();
+    roundedRect(ctx, x, h * 0.12, cardW, h * 0.72, h * 0.055);
+    ctx.fillStyle = "rgba(4,9,8,.62)";
+    ctx.fill();
+    ctx.strokeStyle = hexToRgba(accent, 0.20 + pulse * 0.16);
+    ctx.lineWidth = Math.max(2, h * 0.004);
+    ctx.stroke();
+    ctx.fillStyle = accent;
+    ctx.font = `700 ${Math.round(h * 0.052)}px 'IBM Plex Mono', Consolas, monospace`;
+    ctx.fillText(`${exhibitionPeriod}  /  ${String(state.programIndex + 1).padStart(2, "0")}—03`, x + h * 0.10, h * 0.25);
+    ctx.fillStyle = "#f4f1e8";
+    drawFittedWrappedText(ctx, (topic.title || zoneLabels[topic.zone]).toUpperCase(), x + h * 0.10, h * 0.38, cardW - h * 0.20, h * 0.22, Math.round(h * 0.15), Math.round(h * 0.085), 2, "600", "Oswald, Arial");
+    ctx.fillStyle = "rgba(230,235,229,.82)";
+    ctx.font = `500 ${Math.round(h * 0.045)}px Inter, Arial`;
+    drawWrappedLines(ctx, topic.subtitle || "Достижения четверти века", x + h * 0.10, h * 0.70, cardW - h * 0.20, h * 0.058, 2);
+    ctx.fillStyle = accent;
+    ctx.fillRect(x + h * 0.10, h * 0.78, cardW * (0.22 + index * 0.035), Math.max(4, h * 0.012));
+    ctx.restore();
+  });
+  addScreenGrain(ctx, w, h, accent, 0.018);
+}
+
+function drawUnifiedLower(layer, topic, accent, phase) {
+  const ctx = layer.getContext("2d");
+  const { width: w, height: h } = layer;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = "#08100d";
+  ctx.fillRect(0, 0, w, h);
+  const glow = ctx.createLinearGradient(0, 0, w, 0);
+  glow.addColorStop(0, hexToRgba(accent, 0.04));
+  glow.addColorStop(0.5, hexToRgba(accent, 0.18));
+  glow.addColorStop(1, hexToRgba(accent, 0.04));
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, 0, w, Math.max(4, h * 0.035));
+
+  const metrics = topic.metrics || [];
+  metrics.slice(0, 3).forEach((metric, index) => {
+    const x0 = index * w / 3;
+    const inset = h * 0.18;
+    if (index) {
+      ctx.fillStyle = "rgba(255,255,255,.12)";
+      ctx.fillRect(x0, h * 0.20, 2, h * 0.62);
+    }
+    ctx.fillStyle = accent;
+    ctx.font = `500 ${Math.round(h * 0.35)}px Oswald, Arial`;
+    ctx.fillText(metric.value, x0 + inset, h * 0.52);
+    ctx.fillStyle = "#ecede7";
+    ctx.font = `700 ${Math.round(h * 0.125)}px Inter, Arial`;
+    drawWrappedLines(ctx, metric.label.toUpperCase(), x0 + inset, h * 0.72, w / 3 - inset * 2, h * 0.15, 2);
+    ctx.fillStyle = "rgba(224,230,223,.60)";
+    ctx.font = `500 ${Math.round(h * 0.092)}px 'IBM Plex Mono', Consolas, monospace`;
+    ctx.fillText(metric.detail || exhibitionPeriod, x0 + inset, h * 0.92);
+  });
+  ctx.globalAlpha = 0.08 + Math.sin(phase * 0.9) * 0.025;
+  ctx.fillStyle = accent;
+  ctx.fillRect((phase * 96) % w, 0, Math.max(8, w * 0.002), h);
+  ctx.globalAlpha = 1;
 }
 
 function drawScreen(zone, phase) {
@@ -1298,32 +1508,20 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
 
 function setupUi(camera, controls) {
   document.querySelectorAll(".viewer-zone-tabs button").forEach((button) => {
-    button.addEventListener("click", () => { state.zone = button.dataset.zone; updateZoneUi(); focusCamera(button.dataset.zone, camera, controls); });
-  });
-  document.querySelectorAll("[data-channel-focus]").forEach((button) => {
     button.addEventListener("click", () => {
-      state.zone = button.dataset.channelFocus;
-      updateZoneUi();
+      setProgramTopic(zones.indexOf(button.dataset.zone));
       focusCamera(state.zone, camera, controls);
     });
   });
-  document.querySelectorAll("[data-channel-action]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const zone = button.dataset.channelZone;
-      const action = button.dataset.channelAction;
-      if (action === "play") toggleZonePlayback(zone);
-      else stepZoneScreen(zone, action === "next" ? 1 : -1);
-    });
-  });
-  document.getElementById("screenSelect").addEventListener("change", (event) => { state.indices[state.zone] = Number(event.target.value); updateZoneUi(); });
+  document.getElementById("screenSelect").addEventListener("change", (event) => setProgramTopic(Number(event.target.value)));
   document.getElementById("screenMode").addEventListener("change", (event) => {
     state.mode = event.target.value;
-    zones.forEach((zone) => drawScreen(zone, performance.now() / 1000));
+    drawProgramScreen(performance.now() / 1000);
     writeUrlState();
   });
-  document.getElementById("screenPrev").addEventListener("click", () => stepZoneScreen(state.zone, -1));
-  document.getElementById("screenNext").addEventListener("click", () => stepZoneScreen(state.zone, 1));
-  document.getElementById("screenPlay").addEventListener("click", () => toggleZonePlayback(state.zone));
+  document.getElementById("screenPrev").addEventListener("click", () => stepProgram(-1));
+  document.getElementById("screenNext").addEventListener("click", () => stepProgram(1));
+  document.getElementById("screenPlay").addEventListener("click", toggleProgramPlayback);
   document.querySelectorAll(".viewer-cameras [data-camera]").forEach((button) => button.addEventListener("click", () => {
     if (state.walking) setWalkMode(false, camera, controls, false);
     focusCamera(button.dataset.camera, camera, controls);
@@ -1343,71 +1541,64 @@ function setupUi(camera, controls) {
   document.getElementById("downloadReview").addEventListener("click", downloadReviews);
 }
 
-function updateZoneUi() {
-  const items = content[state.zone];
-  const index = state.indices[state.zone];
-  const item = items[index];
+function updateProgramUi() {
+  const topic = programTopics[state.programIndex] || programTopics[0];
+  state.zone = topic.zone;
   document.querySelectorAll(".viewer-zone-tabs button").forEach((button) => button.setAttribute("aria-selected", String(button.dataset.zone === state.zone)));
   const select = document.getElementById("screenSelect");
-  select.innerHTML = items.map((entry, itemIndex) => `<option value="${itemIndex}">${String(itemIndex + 1).padStart(2, "0")} · ${escapeHtml(entry.title)}</option>`).join("");
-  select.value = String(index);
+  select.innerHTML = programTopics.map((entry, itemIndex) => `<option value="${itemIndex}">${String(itemIndex + 1).padStart(2, "0")} · ${escapeHtml(entry.title || zoneLabels[entry.zone])}</option>`).join("");
+  select.value = String(state.programIndex);
   document.getElementById("screenPeriod").textContent = exhibitionPeriod;
-  document.getElementById("screenIndex").textContent = `${String(index + 1).padStart(2, "0")} / 14`;
-  document.getElementById("screenTitle").textContent = item.title;
-  document.getElementById("screenBody").textContent = item.text;
+  document.getElementById("screenIndex").textContent = `${String(state.programIndex + 1).padStart(2, "0")} / 03`;
+  document.getElementById("screenTitle").textContent = topic.title || zoneLabels[topic.zone];
+  document.getElementById("screenBody").textContent = topic.subtitle || "Достижения за 25 лет";
   document.getElementById("screenMode").value = state.mode;
-  drawScreen(state.zone, screenPhases[state.zone]);
-  selectModel(item.id || pickPhysicalModel(state.zone, item.title));
+  document.getElementById("programSubtitle").textContent = topic.subtitle || "Достижения за 25 лет";
+  document.getElementById("programKpis").innerHTML = (topic.metrics || []).map((metric) => `<div style="--kpi-color:${zoneColors[topic.zone]}"><strong>${escapeHtml(metric.value)}</strong><span>${escapeHtml(metric.label)}</span></div>`).join("");
+  drawProgramScreen(programPhase);
   loadReviewUi();
-  updateScreenPlaybackUi();
+  updateProgramPlaybackUi();
   writeUrlState();
 }
 
-function stepZoneScreen(zone, direction) {
-  const total = content[zone].length;
-  state.indices[zone] = (state.indices[zone] + direction + total) % total;
-  screenAdvance[zone] = 0;
-  if (zone === state.zone) updateZoneUi();
-  else {
-    drawScreen(zone, screenPhases[zone]);
-    updateScreenPlaybackUi();
-  }
+function setProgramTopic(index) {
+  state.programIndex = (index + programTopics.length) % programTopics.length;
+  programAdvance = 0;
+  const video = screenVideos[programTopics[state.programIndex].zone];
+  if (video?.readyState >= 2) video.currentTime = 0;
+  updateProgramUi();
 }
 
-function toggleZonePlayback(zone) {
-  state.playing[zone] = !state.playing[zone];
-  screenAdvance[zone] = 0;
-  syncZoneVideoPlayback(zone);
-  drawScreen(zone, screenPhases[zone]);
-  updateScreenPlaybackUi();
+function stepProgram(direction) {
+  setProgramTopic(state.programIndex + direction);
 }
 
-function syncZoneVideoPlayback(zone) {
-  const video = screenVideos[zone];
-  if (!video || video.readyState < 2) return;
-  if (state.playing[zone]) video.play().catch(() => {});
-  else video.pause();
+function toggleProgramPlayback() {
+  state.programPlaying = !state.programPlaying;
+  programAdvance = 0;
+  syncProgramPlayback();
+  drawProgramScreen(programPhase);
+  updateProgramPlaybackUi();
 }
 
-function updateScreenPlaybackUi() {
+function syncProgramPlayback() {
   zones.forEach((zone) => {
-    const channel = document.querySelector(`[data-screen-channel="${zone}"]`);
-    if (!channel) return;
-    const index = state.indices[zone];
-    const item = content[zone][index];
-    channel.classList.toggle("is-selected", zone === state.zone);
-    channel.classList.toggle("is-paused", !state.playing[zone]);
-    channel.querySelector("[data-channel-index]").textContent = `${String(index + 1).padStart(2, "0")} / 14`;
-    channel.querySelector("[data-channel-title]").textContent = item.title;
-    const play = channel.querySelector('[data-channel-action="play"]');
-    play.setAttribute("aria-pressed", String(state.playing[zone]));
-    play.textContent = state.playing[zone] ? "Пауза" : "Пуск";
-    channel.querySelector("[data-channel-state]").textContent = state.playing[zone] ? "в эфире" : "остановлен";
+    const video = screenVideos[zone];
+    if (!video || video.readyState < 2) return;
+    if (state.programPlaying) video.play().catch(() => {});
+    else video.pause();
   });
+}
+
+function updateProgramPlaybackUi() {
+  const console = document.querySelector(".program-console");
+  console?.classList.toggle("is-paused", !state.programPlaying);
+  const programState = document.getElementById("programState");
+  if (programState) programState.textContent = state.programPlaying ? "в эфире" : "остановлен";
   const activePlay = document.getElementById("screenPlay");
   if (activePlay) {
-    activePlay.setAttribute("aria-pressed", String(state.playing[state.zone]));
-    activePlay.textContent = state.playing[state.zone] ? "Пауза" : "Пуск";
+    activePlay.setAttribute("aria-pressed", String(state.programPlaying));
+    activePlay.textContent = state.programPlaying ? "Пауза" : "Пуск";
   }
 }
 
@@ -1432,8 +1623,9 @@ function selectModel(id) {
 
 function focusCamera(name, camera, controls) {
   const views = {
-    overview: { position: [4.35, 5.4, 7.8], target: [0, 0.95, -2.0] },
-    visitor: { position: [0, 1.65, 7.7], target: [0, 1.28, 1.2] },
+    overview: { position: [4.8, 4.7, 7.9], target: [0, 1.35, 0.25] },
+    visitor: { position: [0, 1.65, 7.7], target: [0, 1.75, 0.42] },
+    cube: { position: [3.75, 2.75, 4.55], target: [0, 1.92, 0.42] },
     technology: { position: [-1.55, 1.75, -0.4], target: [-4.75, 1.42, -0.4] },
     construction: { position: [0, 3.2, 0.2], target: [0, 1.65, -8.25] },
     transport: { position: [1.55, 1.75, -0.4], target: [4.75, 1.42, -0.4] }
@@ -1512,7 +1704,7 @@ function updateWalk(camera, controls, delta) {
   const current = camera.position.clone();
   const candidate = current.clone().add(movement);
   candidate.y = 1.65;
-  const canStand = (point) => point.x >= -4.45 && point.x <= 4.45 && point.z >= -7.85 && point.z <= 8.45 && !(Math.abs(point.x) < 2.15 && point.z > -3.55 && point.z < 4.45);
+  const canStand = (point) => point.x >= -4.45 && point.x <= 4.45 && point.z >= -7.85 && point.z <= 8.45 && Math.hypot(point.x, point.z - 0.42) > 1.45;
   let next = candidate;
   if (!canStand(next)) {
     const slideX = current.clone(); slideX.x = candidate.x;
@@ -1563,11 +1755,12 @@ function updateCameraMotion(camera, controls) {
   if (t >= 1) cameraMotion = null;
 }
 
-function reviewKey() { return `${state.zone}:${state.indices[state.zone]}`; }
+function reviewKey() { return `program:${state.programIndex}`; }
 
 function saveReview(patch, announce = true) {
   const key = reviewKey();
-  state.reviews[key] = { ...(state.reviews[key] || {}), ...patch, zone: state.zone, index: state.indices[state.zone], title: content[state.zone][state.indices[state.zone]].title, updatedAt: new Date().toISOString() };
+  const topic = programTopics[state.programIndex];
+  state.reviews[key] = { ...(state.reviews[key] || {}), ...patch, zone: state.zone, index: state.programIndex, title: topic.title, updatedAt: new Date().toISOString() };
   localStorage.setItem("faza-exhibition-review-v1", JSON.stringify(state.reviews));
   loadReviewUi();
   if (announce) {
@@ -1612,17 +1805,18 @@ function downloadReviews() {
 function readUrlState() {
   const params = new URLSearchParams(location.search);
   const zone = params.get("zone");
-  if (zones.includes(zone)) state.zone = zone;
-  const index = Number(params.get("item"));
-  if (Number.isInteger(index) && index >= 0 && index < 14) state.indices[state.zone] = index;
-  if (["overview", "visitor", ...zones].includes(params.get("camera"))) state.camera = params.get("camera");
-  if (["plate", "frame", "hybrid"].includes(params.get("mode"))) state.mode = params.get("mode");
+  if (zones.includes(zone)) {
+    state.zone = zone;
+    state.programIndex = zones.indexOf(zone);
+  }
+  if (["overview", "visitor", "cube", ...zones].includes(params.get("camera"))) state.camera = params.get("camera");
+  state.mode = "film";
 }
 
 function writeUrlState() {
   const url = new URL(location.href);
   url.searchParams.set("zone", state.zone);
-  url.searchParams.set("item", state.indices[state.zone]);
+  url.searchParams.delete("item");
   url.searchParams.set("camera", state.camera);
   url.searchParams.set("mode", state.mode);
   history.replaceState(null, "", url);
@@ -1679,5 +1873,11 @@ function findModelId(object) {
 }
 
 function escapeHtml(value) {
-  return value.replace(/[&<>\"]/g, (symbol) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[symbol]));
+  return String(value).replace(/[&<>\"]/g, (symbol) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[symbol]));
+}
+
+function hexToRgba(hex, alpha) {
+  const value = hex.replace("#", "");
+  const number = Number.parseInt(value.length === 3 ? value.split("").map((part) => part + part).join("") : value, 16);
+  return `rgba(${(number >> 16) & 255},${(number >> 8) & 255},${number & 255},${alpha})`;
 }
