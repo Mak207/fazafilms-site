@@ -94,6 +94,20 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .viewer-zone-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:5px;border-radius:12px;background:#090b0a}
 .viewer-zone-tabs button{min-width:0;height:40px;padding:0 5px;border:0;border-radius:8px;background:transparent;color:var(--muted);font-size:11px;font-weight:700}
 .viewer-zone-tabs button[aria-selected="true"]{background:var(--text);color:var(--bg)}
+.screen-channel-console{display:grid;gap:7px;margin-top:10px;padding:10px;border:1px solid #ffffff12;border-radius:14px;background:#0b0e0c}
+.screen-channel{padding:10px;border:1px solid #ffffff12;border-radius:11px;background:linear-gradient(135deg,#141a16,#0c100e);transition:border-color .2s,background .2s}
+.screen-channel.is-selected{border-color:#ff8a4566;background:linear-gradient(135deg,#241a14,#101411)}
+.screen-channel.is-paused{opacity:.72}
+.screen-channel-focus{display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;padding:0;border:0;background:transparent;color:#e8e5dc;text-align:left;font:700 11px/1.2 "Inter",sans-serif}
+.screen-channel-focus small{color:var(--orange);font:700 10px/1 "IBM Plex Mono",monospace;letter-spacing:.08em}
+.screen-channel p{min-height:27px;margin:7px 0 8px;color:#aaa99f;font-size:11px;line-height:1.25}
+.screen-channel-footer{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.screen-channel-state{color:#7fd18a;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.screen-channel.is-paused .screen-channel-state{color:#aaa99f}
+.screen-channel-controls{display:grid;grid-template-columns:30px 58px 30px;gap:4px}
+.screen-channel-controls button{height:28px;padding:0;border:1px solid #ffffff18;border-radius:7px;background:#090b0a;color:#d7d4cc;font-size:10px;font-weight:700}
+.screen-channel-controls button:hover{border-color:#777e79;color:#fff}
+.screen-channel-controls button[aria-pressed="true"]{border-color:#7fd18a66;color:#9adea3}
 .viewer-content-card,.viewer-object-card,.viewer-review{padding:22px 2px;border-bottom:1px solid var(--line)}
 .viewer-content-meta{display:flex;justify-content:space-between;gap:20px;color:var(--orange);font:600 12px/1 "Inter",sans-serif;letter-spacing:.1em;text-transform:uppercase}
 .viewer-content-card h3,.viewer-object-card h3{margin:16px 0 9px;font-family:"Oswald",sans-serif;font-size:28px;font-weight:500;line-height:1.08;text-transform:uppercase}

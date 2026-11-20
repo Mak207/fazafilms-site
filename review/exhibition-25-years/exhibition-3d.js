@@ -24,7 +24,7 @@ const content = Object.fromEntries(zones.map((zone) => [zone, allItems.filter((i
 const state = {
   zone: "technology",
   indices: { technology: 0, construction: 0, transport: 0 },
-  playing: false,
+  playing: { technology: true, construction: true, transport: true },
   mode: "plate",
   walking: false,
   camera: "overview",
@@ -61,8 +61,10 @@ const screenMaterials = {};
 const clickTargets = [];
 const modelObjects = {};
 let selectedModelId = "technology-01";
-let autoTimer = 0;
 let lastScreenDraw = 0;
+const screenPhases = { technology: 0, construction: 2.4, transport: 4.8 };
+const screenAdvance = { technology: 0, construction: 2.8, transport: 5.6 };
+const screenDwell = { technology: 8, construction: 9.5, transport: 11 };
 let cameraMotion = null;
 const activeMoves = new Set();
 const screenFrames = {};
@@ -135,17 +137,26 @@ function init() {
   window.addEventListener("resize", resize);
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reducedMotion) zones.forEach((zone) => { state.playing[zone] = false; });
+  updateScreenPlaybackUi();
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
     const delta = Math.min(clock.getDelta(), 0.05);
     const elapsed = clock.elapsedTime;
+    zones.forEach((zone) => {
+      if (!state.playing[zone]) return;
+      screenPhases[zone] += delta;
+      screenAdvance[zone] += delta;
+      if (screenAdvance[zone] >= screenDwell[zone]) {
+        screenAdvance[zone] = 0;
+        stepZoneScreen(zone, 1);
+      }
+    });
     if (!reducedMotion && elapsed - lastScreenDraw > 0.08) {
-      zones.forEach((zone) => drawScreen(zone, elapsed));
+      zones.forEach((zone) => {
+        if (state.playing[zone]) drawScreen(zone, screenPhases[zone]);
+      });
       lastScreenDraw = elapsed;
-    }
-    if (state.playing && elapsed - autoTimer > 6) {
-      stepScreen(1);
-      autoTimer = elapsed;
     }
     if (cameraMotion) updateCameraMotion(camera, controls);
     if (state.walking) updateWalk(camera, controls, delta);
@@ -1187,19 +1198,30 @@ function setupUi(camera, controls) {
   document.querySelectorAll(".viewer-zone-tabs button").forEach((button) => {
     button.addEventListener("click", () => { state.zone = button.dataset.zone; updateZoneUi(); focusCamera(button.dataset.zone, camera, controls); });
   });
+  document.querySelectorAll("[data-channel-focus]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.zone = button.dataset.channelFocus;
+      updateZoneUi();
+      focusCamera(state.zone, camera, controls);
+    });
+  });
+  document.querySelectorAll("[data-channel-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const zone = button.dataset.channelZone;
+      const action = button.dataset.channelAction;
+      if (action === "play") toggleZonePlayback(zone);
+      else stepZoneScreen(zone, action === "next" ? 1 : -1);
+    });
+  });
   document.getElementById("screenSelect").addEventListener("change", (event) => { state.indices[state.zone] = Number(event.target.value); updateZoneUi(); });
   document.getElementById("screenMode").addEventListener("change", (event) => {
     state.mode = event.target.value;
     zones.forEach((zone) => drawScreen(zone, performance.now() / 1000));
     writeUrlState();
   });
-  document.getElementById("screenPrev").addEventListener("click", () => stepScreen(-1));
-  document.getElementById("screenNext").addEventListener("click", () => stepScreen(1));
-  document.getElementById("screenPlay").addEventListener("click", (event) => {
-    state.playing = !state.playing;
-    event.currentTarget.setAttribute("aria-pressed", String(state.playing));
-    event.currentTarget.textContent = state.playing ? "Пауза" : "Автопоказ";
-  });
+  document.getElementById("screenPrev").addEventListener("click", () => stepZoneScreen(state.zone, -1));
+  document.getElementById("screenNext").addEventListener("click", () => stepZoneScreen(state.zone, 1));
+  document.getElementById("screenPlay").addEventListener("click", () => toggleZonePlayback(state.zone));
   document.querySelectorAll(".viewer-cameras [data-camera]").forEach((button) => button.addEventListener("click", () => {
     if (state.walking) setWalkMode(false, camera, controls, false);
     focusCamera(button.dataset.camera, camera, controls);
@@ -1232,16 +1254,51 @@ function updateZoneUi() {
   document.getElementById("screenTitle").textContent = item.title;
   document.getElementById("screenBody").textContent = item.text;
   document.getElementById("screenMode").value = state.mode;
-  drawScreen(state.zone, performance.now() / 1000);
+  drawScreen(state.zone, screenPhases[state.zone]);
   selectModel(item.id || pickPhysicalModel(state.zone, item.title));
   loadReviewUi();
+  updateScreenPlaybackUi();
   writeUrlState();
 }
 
-function stepScreen(direction) {
-  const total = content[state.zone].length;
-  state.indices[state.zone] = (state.indices[state.zone] + direction + total) % total;
-  updateZoneUi();
+function stepZoneScreen(zone, direction) {
+  const total = content[zone].length;
+  state.indices[zone] = (state.indices[zone] + direction + total) % total;
+  screenAdvance[zone] = 0;
+  if (zone === state.zone) updateZoneUi();
+  else {
+    drawScreen(zone, screenPhases[zone]);
+    updateScreenPlaybackUi();
+  }
+}
+
+function toggleZonePlayback(zone) {
+  state.playing[zone] = !state.playing[zone];
+  screenAdvance[zone] = 0;
+  drawScreen(zone, screenPhases[zone]);
+  updateScreenPlaybackUi();
+}
+
+function updateScreenPlaybackUi() {
+  zones.forEach((zone) => {
+    const channel = document.querySelector(`[data-screen-channel="${zone}"]`);
+    if (!channel) return;
+    const index = state.indices[zone];
+    const item = content[zone][index];
+    channel.classList.toggle("is-selected", zone === state.zone);
+    channel.classList.toggle("is-paused", !state.playing[zone]);
+    channel.querySelector("[data-channel-index]").textContent = `${String(index + 1).padStart(2, "0")} / 14`;
+    channel.querySelector("[data-channel-title]").textContent = item.title;
+    const play = channel.querySelector('[data-channel-action="play"]');
+    play.setAttribute("aria-pressed", String(state.playing[zone]));
+    play.textContent = state.playing[zone] ? "Пауза" : "Пуск";
+    channel.querySelector("[data-channel-state]").textContent = state.playing[zone] ? "в эфире" : "остановлен";
+  });
+  const activePlay = document.getElementById("screenPlay");
+  if (activePlay) {
+    activePlay.setAttribute("aria-pressed", String(state.playing[state.zone]));
+    activePlay.textContent = state.playing[state.zone] ? "Пауза" : "Пуск";
+  }
 }
 
 function pickPhysicalModel(zone, title) {
