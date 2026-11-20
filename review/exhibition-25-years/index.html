@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css?v=4">
+  <link rel="stylesheet" href="./style.css?v=5">
   <script defer src="./page.js?v=1"></script>
   <script type="importmap">
     {
@@ -22,7 +22,7 @@
       }
     }
   </script>
-  <script type="module" src="./exhibition-3d.js?v=2"></script>
+  <script type="module" src="./exhibition-3d.js?v=3"></script>
 </head>
 <body>
   <a class="skip-link" href="#register">К списку экспонатов</a>
@@ -86,6 +86,15 @@
             <button type="button" data-camera="technology">Технологии</button>
             <button type="button" data-camera="construction">Строительство</button>
             <button type="button" data-camera="transport">Транспорт</button>
+            <button type="button" id="walkMode" aria-pressed="false">Прогулка</button>
+            <button type="button" id="viewerFullscreen" aria-pressed="false">На весь экран</button>
+          </div>
+          <p class="walk-hint" id="walkHint">WASD или стрелки · мышь — осмотр · Shift — быстрее</p>
+          <div class="walk-pad" aria-label="Управление прогулкой">
+            <button type="button" data-move="forward" aria-label="Вперёд">↑</button>
+            <button type="button" data-move="left" aria-label="Влево">←</button>
+            <button type="button" data-move="back" aria-label="Назад">↓</button>
+            <button type="button" data-move="right" aria-label="Вправо">→</button>
           </div>
         </div>
 

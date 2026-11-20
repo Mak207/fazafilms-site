@@ -20,6 +20,7 @@ const state = {
   zone: "technology",
   indices: { technology: 0, construction: 0, transport: 0 },
   playing: false,
+  walking: false,
   camera: "overview",
   reviews: loadReviews()
 };
@@ -51,6 +52,7 @@ let selectedModelId = "technology-robot-arm";
 let autoTimer = 0;
 let lastScreenDraw = 0;
 let cameraMotion = null;
+const activeMoves = new Set();
 
 try {
   if (!allItems.length) throw new Error("Не загрузился список из 42 позиций");
@@ -128,7 +130,8 @@ function init() {
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
-    const elapsed = clock.getElapsedTime();
+    const delta = Math.min(clock.getDelta(), 0.05);
+    const elapsed = clock.elapsedTime;
     if (!reducedMotion && elapsed - lastScreenDraw > 0.08) {
       zones.forEach((zone) => drawScreen(zone, elapsed));
       lastScreenDraw = elapsed;
@@ -138,6 +141,7 @@ function init() {
       autoTimer = elapsed;
     }
     if (cameraMotion) updateCameraMotion(camera, controls);
+    if (state.walking) updateWalk(camera, controls, delta);
     controls.update();
     renderer.render(scene, camera);
   });
@@ -387,7 +391,14 @@ function setupUi(camera, controls) {
     event.currentTarget.setAttribute("aria-pressed", String(state.playing));
     event.currentTarget.textContent = state.playing ? "Пауза" : "Автопоказ";
   });
-  document.querySelectorAll(".viewer-cameras button").forEach((button) => button.addEventListener("click", () => focusCamera(button.dataset.camera, camera, controls)));
+  document.querySelectorAll(".viewer-cameras [data-camera]").forEach((button) => button.addEventListener("click", () => {
+    if (state.walking) setWalkMode(false, camera, controls, false);
+    focusCamera(button.dataset.camera, camera, controls);
+  }));
+  document.getElementById("walkMode").addEventListener("click", () => setWalkMode(!state.walking, camera, controls, true));
+  document.getElementById("viewerFullscreen").addEventListener("click", toggleFullscreen);
+  document.addEventListener("fullscreenchange", updateFullscreenUi);
+  setupWalkInput();
   document.querySelectorAll(".review-status button").forEach((button) => button.addEventListener("click", () => saveReview({ status: button.dataset.review })));
   document.getElementById("reviewNote").addEventListener("input", (event) => saveReview({ note: event.target.value }, false));
   document.getElementById("copyReviewLink").addEventListener("click", copyReviewLink);
@@ -445,8 +456,106 @@ function focusCamera(name, camera, controls) {
   const view = views[name] || views.overview;
   state.camera = name;
   cameraMotion = { startPosition: camera.position.clone(), startTarget: controls.target.clone(), endPosition: new THREE.Vector3(...view.position), endTarget: new THREE.Vector3(...view.target), started: performance.now(), duration: 850 };
-  document.querySelectorAll(".viewer-cameras button").forEach((button) => button.classList.toggle("is-active", button.dataset.camera === name));
+  document.querySelectorAll(".viewer-cameras [data-camera]").forEach((button) => button.classList.toggle("is-active", button.dataset.camera === name));
   writeUrlState();
+}
+
+function setWalkMode(enabled, camera, controls, moveToStart) {
+  state.walking = enabled;
+  root.dataset.walking = String(enabled);
+  activeMoves.clear();
+  const button = document.getElementById("walkMode");
+  button.setAttribute("aria-pressed", String(enabled));
+  button.textContent = enabled ? "Выйти из прогулки" : "Прогулка";
+  controls.enablePan = !enabled;
+  controls.enableZoom = !enabled;
+  controls.minDistance = enabled ? 0.75 : 2.2;
+  controls.maxDistance = enabled ? 1.25 : 34;
+  controls.minPolarAngle = enabled ? Math.PI * 0.34 : 0;
+  controls.maxPolarAngle = enabled ? Math.PI * 0.66 : Math.PI * 0.49;
+  if (enabled && moveToStart) {
+    cameraMotion = null;
+    camera.position.set(0, 1.65, 7.2);
+    controls.target.set(0, 1.65, 6.2);
+    state.camera = "visitor";
+    writeUrlState();
+  }
+  if (!enabled && moveToStart) focusCamera("overview", camera, controls);
+}
+
+function setupWalkInput() {
+  const keyMap = {
+    KeyW: "forward", ArrowUp: "forward", KeyS: "back", ArrowDown: "back",
+    KeyA: "left", ArrowLeft: "left", KeyD: "right", ArrowRight: "right"
+  };
+  window.addEventListener("keydown", (event) => {
+    if (state.walking && event.key === "Shift") activeMoves.add("fast");
+    if (!state.walking || !keyMap[event.code] || /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || "")) return;
+    activeMoves.add(keyMap[event.code]);
+    if (event.shiftKey) activeMoves.add("fast");
+    event.preventDefault();
+  });
+  window.addEventListener("keyup", (event) => {
+    if (keyMap[event.code]) activeMoves.delete(keyMap[event.code]);
+    if (event.key === "Shift") activeMoves.delete("fast");
+  });
+  document.querySelectorAll(".walk-pad [data-move]").forEach((button) => {
+    const start = (event) => { activeMoves.add(button.dataset.move); event.preventDefault(); };
+    const stop = () => activeMoves.delete(button.dataset.move);
+    button.addEventListener("pointerdown", start);
+    button.addEventListener("pointerup", stop);
+    button.addEventListener("pointercancel", stop);
+    button.addEventListener("pointerleave", stop);
+  });
+  window.addEventListener("blur", () => activeMoves.clear());
+}
+
+function updateWalk(camera, controls, delta) {
+  if (!activeMoves.size) return;
+  const forward = controls.target.clone().sub(camera.position);
+  forward.y = 0;
+  if (forward.lengthSq() < 0.0001) forward.set(0, 0, -1);
+  forward.normalize();
+  const right = new THREE.Vector3(-forward.z, 0, forward.x);
+  const movement = new THREE.Vector3();
+  if (activeMoves.has("forward")) movement.add(forward);
+  if (activeMoves.has("back")) movement.sub(forward);
+  if (activeMoves.has("right")) movement.add(right);
+  if (activeMoves.has("left")) movement.sub(right);
+  if (!movement.lengthSq()) return;
+  movement.normalize().multiplyScalar((activeMoves.has("fast") ? 5.2 : 2.8) * delta);
+  const current = camera.position.clone();
+  const candidate = current.clone().add(movement);
+  candidate.y = 1.65;
+  const canStand = (point) => point.x >= -4.45 && point.x <= 4.45 && point.z >= -7.85 && point.z <= 8.45 && !(Math.abs(point.x) < 2.15 && point.z > -3.55 && point.z < 4.45);
+  let next = candidate;
+  if (!canStand(next)) {
+    const slideX = current.clone(); slideX.x = candidate.x;
+    const slideZ = current.clone(); slideZ.z = candidate.z;
+    next = canStand(slideX) ? slideX : canStand(slideZ) ? slideZ : current;
+  }
+  const offset = next.clone().sub(camera.position);
+  camera.position.add(offset);
+  controls.target.add(offset);
+  camera.position.y = 1.65;
+  controls.target.y = 1.65;
+}
+
+async function toggleFullscreen() {
+  try {
+    if (!document.fullscreenElement) await root.requestFullscreen();
+    else await document.exitFullscreen();
+  } catch {
+    document.getElementById("reviewSaved").textContent = "Полноэкранный режим заблокирован браузером";
+  }
+}
+
+function updateFullscreenUi() {
+  const active = document.fullscreenElement === root;
+  const button = document.getElementById("viewerFullscreen");
+  button.setAttribute("aria-pressed", String(active));
+  button.textContent = active ? "Закрыть полный экран" : "На весь экран";
+  window.dispatchEvent(new Event("resize"));
 }
 
 function updateCameraMotion(camera, controls) {
