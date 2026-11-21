@@ -1,9 +1,9 @@
 // All panels share the arc-length UV of the real wall. Artwork and type have
 // square pixels; the joints between the three editorial areas are on the arcs.
 const themes = [
-  {id:"technology", title:"Технологии России", ink:"#78f5ed", cells:[0,1,2,0,0,1,1,1,2]},
-  {id:"construction", title:"Строительство России", ink:"#c8ee8d", cells:[3,3,3,4,4,5,4,4,5]},
-  {id:"transport", title:"Транспорт России", ink:"#73e8ff", cells:[6,6,6,7,8,7,8,8,7]}
+  {id:"technology", title:"Технологии России", ink:"#78f5ed", cells:[0,9,2,10,11,12,13,14,2]},
+  {id:"construction", title:"Строительство России", ink:"#c8ee8d", cells:[3,15,16,4,17,18,19,20,5]},
+  {id:"transport", title:"Транспорт России", ink:"#73e8ff", cells:[6,21,22,23,24,7,8,25,26]}
 ];
 const modes = ["hero","cards","grid"];
 const ease = t => { t=Math.min(1,Math.max(0,t)); return t*t*(3-2*t); };
@@ -50,11 +50,12 @@ function plate(ctx,x,y,w,h,r) {
 }
 
 export function createWallProgram(topics, catalog, pavilion, videos, art, objectAction, refresh) {
-  const photos=new Image();
+  const photos=new Image(), subjects=new Image();
   const overlays=new Map();
   function invalidate(){ overlays.clear(); refresh(); }
-  art.onload=invalidate; photos.onload=invalidate;
+  art.onload=invalidate; photos.onload=invalidate; subjects.onload=invalidate;
   art.src="./assets/frames/panorama-atlas.webp"; photos.src="./assets/frames/metric-atlas.webp";
+  subjects.src="./assets/frames/metric-subjects.webp";
   document.fonts?.ready.then(invalidate);
   const side=pavilion.screenFrontZ-pavilion.screenCornerZ;
   const arc=Math.PI/2*(pavilion.screenX-pavilion.screenBackHalf);
@@ -69,9 +70,11 @@ export function createWallProgram(topics, catalog, pavilion, videos, art, object
   }).sort((a,b)=>a.u-b.u);
 
   function photo(ctx,index,x,y,w,h) {
-    if(!photos.naturalWidth) return;
-    const sw=photos.naturalWidth/3, sh=photos.naturalHeight/3;
-    cover(ctx,photos,index%3*sw+2,Math.floor(index/3)*sh+2,sw-4,sh-4,x,y,w,h);
+    const extra=index>=9, source=extra?subjects:photos;
+    if(!source.naturalWidth) return;
+    const cols=extra?6:3, n=extra?index-9:index;
+    const sw=source.naturalWidth/cols, sh=source.naturalHeight/3;
+    cover(ctx,source,n%cols*sw+2,Math.floor(n/cols)*sh+2,sw-4,sh-4,x,y,w,h);
   }
 
   const joins=new Map();
