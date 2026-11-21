@@ -3,7 +3,6 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
 const root = document.querySelector(".viewer-shell");
 const canvas = document.getElementById("exhibitionCanvas");
@@ -169,17 +168,13 @@ function init() {
   // Keep the review deterministic. Automatic exposure made the same scene
   // look washed out on bright displays and grey on dark ones.
   renderer.toneMappingExposure = 0.82;
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.enabled = false;
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xdce8eb);
   // A pale, dense fog was the main source of the previous "white veil".
   // The atrium is only 28 m deep, so use a restrained cool haze instead.
   scene.fog = new THREE.FogExp2(0xdce8eb, 0.00055);
-  const pmremGenerator = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.035).texture;
-  pmremGenerator.dispose();
 
   const camera = new THREE.PerspectiveCamera(42, 1, 0.05, 80);
   const initialView = getCameraView("overview", isNarrowScene());
@@ -202,6 +197,7 @@ function init() {
   buildFeatureIslands(scene);
   addSuspendedHeroModels(scene);
   addVisitorFigures(scene);
+  useGalleryMaterials(scene);
 
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
@@ -254,6 +250,26 @@ function init() {
   }
 }
 
+// Compact material path for mobile GPUs, including desktop-site mode.
+function useGalleryMaterials(group) {
+  const materials = new Map();
+  function convert(original) {
+    if (!original.isMeshStandardMaterial) return original;
+    if (!materials.has(original)) materials.set(original, new THREE.MeshLambertMaterial({
+      color: original.color, map: original.map, emissive: original.emissive,
+      emissiveMap: original.emissiveMap, emissiveIntensity: original.emissiveIntensity,
+      vertexColors: original.vertexColors, transparent: original.transparent,
+      opacity: original.opacity, side: original.side, depthWrite: original.depthWrite
+    }));
+    return materials.get(original);
+  }
+  group.traverse(object => {
+    if (object.isMesh) object.material = Array.isArray(object.material)
+      ? object.material.map(convert) : convert(object.material);
+  });
+  for (const original of materials.keys()) original.dispose();
+}
+
 function addExhibitionLighting(scene) {
   // Exhibition-lighting hierarchy.  The atrium is lit by a cool daylight
   // key plus a restrained sky/ground fill.  Every other source owns one
@@ -276,39 +292,9 @@ function addExhibitionLighting(scene) {
   key.shadow.bias = -0.00012;
   scene.add(key);
 
-  const addSpot = (name, position, targetPosition, intensity, color, angle = 0.38, distance = 10) => {
-    const target = new THREE.Object3D();
-    target.position.set(...targetPosition);
-    scene.add(target);
-    const spot = new THREE.SpotLight(color, intensity, distance, angle, 0.76, 1.85);
-    spot.name = name;
-    spot.position.set(...position);
-    spot.target = target;
-    spot.castShadow = true;
-    spot.shadow.mapSize.set(1024, 1024);
-    spot.shadow.bias = -0.00008;
-    spot.shadow.radius = 3;
-    scene.add(spot);
-  };
-
-  // Warm centre pool reads against the cool atrium without lifting the set.
-  addSpot("LGT_HERO_CUBE", [0, 7.35, 1.0], [0, 1.58, -0.30], 3.6, 0xffe2ba, 0.42, 9.5);
-  addSpot("LGT_ISLAND_TECH", [-4.8, 6.9, 4.1], [-3.35, 1.10, 2.35], 2.8, 0xe8fbff, 0.32, 8.5);
-  addSpot("LGT_ISLAND_TRANSPORT", [4.8, 6.9, 4.1], [3.35, 1.10, 2.35], 2.8, 0xffecd1, 0.32, 8.5);
-  addSpot("LGT_FRONT_CITY", [0, 7.0, 5.9], [0, 0.9, 5.15], 2.4, 0xfff0d7, 0.34, 8.0);
-  addSpot("LGT_REAR_TECH", [-3.8, 6.8, -5.6], [-4.85, 1.00, -4.8], 1.65, 0xd6eef1, 0.27, 8.0);
-  addSpot("LGT_REAR_TRANSPORT", [3.8, 6.8, -5.6], [4.85, 1.00, -4.8], 1.65, 0xffe1bd, 0.27, 8.0);
-
-  [
-    [-0.88, 0.34, 0.72, 0x52d5d7],
-    [0.88, 0.34, 0.72, 0xb7df78],
-    [0, 0.34, -0.42, 0x89a8ff]
-  ].forEach(([x, y, z, color]) => {
-    const glow = new THREE.PointLight(color, 0.20, 2.25, 2);
-    glow.name = "LGT_CUBE_PLINTH_GLOW";
-    glow.position.set(x, y, z);
-    scene.add(glow);
-  });
+  const fill = new THREE.DirectionalLight(0xffe6c6, 0.62);
+  fill.position.set(6, 5, -4);
+  scene.add(fill);
 }
 
 function buildAtriumShell(scene) {
@@ -378,34 +364,58 @@ function addNicheLighting(scene) {
   addBox(scene, [0.035, 0.025, 20.15], [5.78, 0.595, 0.18], accentMaterials.transport);
   addBox(scene, [12.0, 0.025, 0.035], [0, 0.595, -9.65], accentMaterials.construction);
 
-  const addNicheSpot = (position, targetPosition, color = warm) => {
-    const target = new THREE.Object3D();
-    target.position.set(...targetPosition);
-    scene.add(target);
-    const light = new THREE.SpotLight(color, 2.25, 1.75, 0.66, 0.90, 1.65);
-    light.name = "LGT_NICHE_OBJECT";
-    light.position.set(...position);
-    light.target = target;
-    light.castShadow = false;
-    scene.add(light);
-  };
-
-  for (let i = 0; i < 8; i += 1) {
-    const z = THREE.MathUtils.lerp(-8.75, 8.75, i / 7);
-    addNicheSpot([-5.48, 1.40, z], [-6.02, 0.91, z]);
-    addNicheSpot([5.48, 1.40, z], [6.02, 0.91, z]);
-    const x = THREE.MathUtils.lerp(-5.15, 5.15, i / 7);
-    addNicheSpot([x, 1.40, -9.35], [x, 0.91, -9.95]);
-  }
 }
 
 function buildPavilion(scene) {
   const floorMaterial = new THREE.MeshPhysicalMaterial({ color: 0xcbd3d0, roughness: 0.38, metalness: 0.02, clearcoat: 0.24, clearcoatRoughness: 0.34, envMapIntensity: 0.72 });
+  // Static daylight falloff and grazing light from the plinths, in metres.
+  const ground = document.createElement("canvas");
+  ground.width = 512;
+  ground.height = 768;
+  const paint = ground.getContext("2d");
+  const dx = ground.width / (pavilion.atriumWidth - .8);
+  const dz = ground.height / (pavilion.atriumDepth - .8);
+  paint.setTransform(dx, 0, 0, dz, ground.width / 2, ground.height / 2);
+  const daylight = paint.createLinearGradient(-9,-7,8,6);
+  daylight.addColorStop(0, "#fcfaf4");
+  daylight.addColorStop(.52, "#c8ccce");
+  daylight.addColorStop(1, "#b1babd");
+  paint.fillStyle = daylight;
+  paint.fillRect(-10,-15,20,30);
+  paint.strokeStyle = "rgba(90,95,98,.19)";
+  paint.lineWidth = .018;
+  paint.beginPath();
+  for (let x = -9; x <= 9; x += 1.5) { paint.moveTo(x,-15); paint.lineTo(x,15); }
+  for (let z = -15; z <= 15; z += 1.5) { paint.moveTo(-10,z); paint.lineTo(10,z); }
+  paint.stroke();
+  for (const [x,z,r] of [[0,-.35,2.4],[-3.6,2.65,2.2],[3.6,2.65,2.2],[0,4.55,3.2]]) {
+    const bounce = paint.createRadialGradient(x,z,.5,x,z,r);
+    bounce.addColorStop(0,"rgba(255,230,191,.72)");
+    bounce.addColorStop(1,"rgba(255,230,191,0)");
+    paint.fillStyle = bounce;
+    paint.fillRect(x-r,z-r,2*r,2*r);
+  }
+  floorMaterial.map = new THREE.CanvasTexture(ground);
+  floorMaterial.map.colorSpace = THREE.SRGBColorSpace;
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(pavilion.atriumWidth - 0.8, pavilion.atriumDepth - 0.8), floorMaterial);
   floor.rotation.x = -Math.PI / 2;
   floor.position.z = 0;
   floor.receiveShadow = true;
   scene.add(floor);
+  // Soft contact pools anchor the plinths to the floor without GPU shadow maps.
+  const tile = document.createElement("canvas");
+  tile.width = tile.height = 128;
+  const brush = tile.getContext("2d");
+  const shade = brush.createRadialGradient(64, 64, 12, 64, 64, 64);
+  shade.addColorStop(0, "rgba(42,38,34,.54)");
+  shade.addColorStop(.64, "rgba(52,47,43,.27)");
+  shade.addColorStop(1, "rgba(52,47,43,0)");
+  brush.fillStyle = shade;
+  brush.fillRect(0, 0, 128, 128);
+  const contact = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(tile), transparent: true, depthWrite: false, toneMapped: false });
+  for (const [x,z,width,depth] of [[0,-.35,3.8,3.8],[0,4.55,7.4,3.2],[-3.6,2.65,4.6,3],[3.6,2.65,4.6,3],[-3.35,-3.55,3.8,2.7],[3.35,-3.55,3.8,2.7]]) {
+    scene.add(meshOf(new THREE.PlaneGeometry(width, depth), contact, [x,.008,z], [-Math.PI/2,0,0]));
+  }
 
   const wallMaterial = new THREE.MeshPhysicalMaterial({ color: 0xe7e9e4, roughness: 0.42, metalness: 0.03, clearcoat: 0.12, envMapIntensity: 0.58 });
   addBox(scene, [0.36, pavilion.height, pavilion.depth + 0.6], [-6.68, 2, 0], wallMaterial);
@@ -499,6 +509,20 @@ function addSeamlessMediaWalls(scene) {
   buildStrip(0, 0.5, screenMaterials.lower);
   buildStrip(1.5, 4, screenMaterials.upper);
   const niche = new THREE.MeshPhysicalMaterial({ color: 0xe5e8e3, roughness: 0.46, metalness: 0.02, clearcoat: 0.16, envMapIntensity: 0.62 });
+  const wash = document.createElement("canvas");
+  wash.width = 128;
+  wash.height = 96;
+  const brush = wash.getContext("2d");
+  const pool = brush.createRadialGradient(64, 15, 2, 64, 20, 72);
+  pool.addColorStop(0, "#fff3db");
+  pool.addColorStop(0.55, "#e5ded2");
+  pool.addColorStop(1, "#c8c9c4");
+  brush.fillStyle = pool;
+  brush.fillRect(0, 0, wash.width, wash.height);
+  niche.map = new THREE.CanvasTexture(wash);
+  niche.map.colorSpace = THREE.SRGBColorSpace;
+  niche.map.wrapS = THREE.RepeatWrapping;
+  niche.map.repeat.x = 42;
   buildStrip(0.5, 1.5, niche);
 
   const portalMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.24, metalness: 0.04, clearcoat: 0.32, envMapIntensity: 0.86 });
@@ -760,6 +784,7 @@ function loadHi3D(id, meta, anchor, proxy) {
   gltfLoader.load(`./assets/models/hitem/${id}.glb`, (gltf) => {
     const model = gltf.scene;
     applyMuseumFinish(model, meta, id);
+    useGalleryMaterials(model);
     model.updateMatrixWorld(true);
     let size = new THREE.Box3().setFromObject(model).getSize(new THREE.Vector3());
     const regularScale = Math.min(meta.dims[0] / Math.max(size.x, 0.0001), meta.dims[2] / Math.max(size.y, 0.0001), meta.dims[1] / Math.max(size.z, 0.0001));
@@ -847,14 +872,25 @@ function buildMediaCube(scene) {
   drawCubeFaces();
   const videoMaterial = (zone) => new THREE.MeshBasicMaterial({ map: cubeFaceTextures[zone], toneMapped: false });
   const cube = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 1.5), [
-    videoMaterial("technology"), videoMaterial("construction"),
-    videoMaterial("transport"), videoMaterial("technology"),
-    videoMaterial("construction"), videoMaterial("transport")
+    videoMaterial("technology"), videoMaterial("technology"),
+    videoMaterial("construction"), videoMaterial("construction"),
+    videoMaterial("transport"), videoMaterial("transport")
   ]);
   const bottomVertex = 0.92;
   cube.position.y = bottomVertex + Math.sqrt(3) * 0.75;
   cube.quaternion.setFromUnitVectors(new THREE.Vector3(1, 1, 1).normalize(), new THREE.Vector3(0, 1, 0));
-  cube.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), Math.PI * 0.14);
+  const worldUp = new THREE.Vector3(0, 1, 0);
+  const frontNormal = worldUp.clone().applyQuaternion(cube.quaternion);
+  cube.rotateOnWorldAxis(worldUp, -Math.atan2(frontNormal.x, frontNormal.z));
+  const { position, normal, uv } = cube.geometry.attributes;
+  for (let i = 0; i < position.count; i++) {
+    const n = new THREE.Vector3().fromBufferAttribute(normal, i).applyQuaternion(cube.quaternion);
+    const right = new THREE.Vector3().crossVectors(worldUp, n).normalize();
+    const up = new THREE.Vector3().crossVectors(n, right);
+    const point = new THREE.Vector3().fromBufferAttribute(position, i).applyQuaternion(cube.quaternion);
+    const diagonal = 1.5 * Math.SQRT2;
+    uv.setXY(i, .5 + point.dot(right) / diagonal, .5 + point.dot(up) / diagonal);
+  }
   cube.castShadow = true;
   cube.userData.modelId = id;
   group.add(cube);
@@ -1093,18 +1129,15 @@ function drawCubeFaces() {
     shade.addColorStop(1, "rgba(2,21,58,.68)");
     ctx.fillStyle = shade;
     ctx.fillRect(0, 0, layer.width, layer.height);
-    ctx.fillStyle = "#f3f0e7";
-    ctx.font = "700 60px Oswald, Arial";
-    ctx.fillText(zoneLabels[zone].toUpperCase(), 52, 105);
-    ctx.fillStyle = zoneColors[zone];
-    ctx.font = "700 32px 'IBM Plex Mono', Consolas, monospace";
-    ctx.fillText(exhibitionPeriod, 52, 148);
-    ctx.fillRect(52, 770, 142 + index * 34, 9);
-    ctx.font = "700 34px 'IBM Plex Mono', Consolas, monospace";
-    ctx.fillText(`ГРАНЬ 0${index + 1}  /  СИНХРОННЫЙ ЭФИР`, 52, 836);
-    ctx.fillStyle = "#f3f0e7";
-    ctx.font = "600 58px Oswald, Arial";
-    ctx.fillText("25 ЛЕТ ДОСТИЖЕНИЙ", 52, 922);
+    // The safe title area is inside the diamond cutout on all six faces.
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.font = "600 54px Oswald, Arial";
+    ctx.fillStyle = "#fff";
+    ctx.shadowColor = "#142635";
+    ctx.shadowBlur = 8;
+    ctx.fillText(zoneLabels[zone].toUpperCase(), 512, 385, 535);
+    ctx.restore();
     cubeFaceTextures[zone].needsUpdate = true;
   });
 }
