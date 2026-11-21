@@ -1,0 +1,14 @@
+Visitor motion clips
+====================
+
+The visitor models use retargeted full-body clips from Mesh2Motion:
+https://github.com/Mesh2Motion/mesh2motion-app
+
+Mesh2Motion states that its 3D models, rigs and animations are released under
+CC0. The application code is MIT licensed. The source clips were retargeted to
+the exhibition visitor rigs, grounded, constrained to a 0.72 m action radius
+and compressed for real-time web delivery.
+
+Included motion families: greeting and social gestures, kneeling and
+meditation, fitness, jumping, evasive movement, dance, victory gestures,
+kicking and acrobatics.

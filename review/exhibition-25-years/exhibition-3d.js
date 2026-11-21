@@ -1,4 +1,4 @@
-import { addWalkers } from "./visitors.js?v=39";
+import { addWalkers } from "./visitors-v40.js?v=40";
 import { mountRailPanel, signPlinth } from "./plinths.js?v=33";
 import { createWallProgram } from "./wall-program.js?v=32";
 import * as THREE from "three";
@@ -295,7 +295,9 @@ function init() {
     if (cameraMotion) updateCameraMotion(camera, controls);
     if (state.walking) updateWalk(camera, controls, delta);
     trainPanel.update(Math.min(elapsed,.15), camera, state.walking);
-    visitorTime += Math.min(elapsed, .12);
+    // Keep the real five-minute visitor schedule at low frame rates. A long
+    // background-tab suspension is intentionally ignored.
+    if (elapsed < 1) visitorTime += elapsed;
     updateWalkers(visitorTime);
     controls.update();
     exhibits.update(camera, performance.now(), selectedModelId);
