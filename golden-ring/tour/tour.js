@@ -251,7 +251,7 @@ async function loadModel() {
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
     const gltf = await new Promise((resolve, reject) => loader.load(
-      'assets/pavilion.glb?v=20261121-1',
+      'assets/pavilion.glb?v=20261121-empty',
       resolve,
       event => {
         if (!event.total) return;
