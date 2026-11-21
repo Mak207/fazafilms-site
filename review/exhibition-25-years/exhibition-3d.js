@@ -3,6 +3,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { createExhibitLoader } from "./exhibit-lod.js?v=30";
 
 const root = document.querySelector(".viewer-shell");
 const canvas = document.getElementById("exhibitionCanvas");
@@ -77,9 +78,6 @@ const pavilion = {
   screenBackZ: -10.30,
   screenBackHalf: 5.35
 };
-// The approved public view uses clean, dimensioned parametric exhibits.
-// The rejected Hi3D candidates remain available only for explicit comparison.
-const useHi3DModels = new URLSearchParams(window.location.search).get("quality") === "hitem";
 
 const content = Object.fromEntries(zones.map((zone) => [zone, allItems.filter((item) => item.zone === zone)]));
 const metricGroups = window.EXHIBIT_METRICS || {};
@@ -100,8 +98,6 @@ const physicalModels = Object.fromEntries(exhibitCatalog.map((item) => [item.id,
   title: item.objectTitle,
   placement: item.zone === "technology" ? "левая ниша" : item.zone === "transport" ? "правая ниша" : "торцевая ниша"
 }]));
-// Kept empty so the retired Moscow-centre builder remains inert during cache transitions.
-const centerEnvelopes = [];
 const cubeProposal = (window.CENTER_PROPOSAL || [])[0];
 if (cubeProposal) physicalModels["media-cube"] = {
   ...cubeProposal,
@@ -113,6 +109,13 @@ if (cubeProposal) physicalModels["media-cube"] = {
 
 const gltfLoader = new GLTFLoader();
 gltfLoader.setMeshoptDecoder(MeshoptDecoder);
+const exhibits = createExhibitLoader(gltfLoader, useGalleryMaterials, (anchor, level) => {
+  const id = anchor.userData.modelId;
+  physicalModels[id].status = level === "detail"
+    ? "HiTem · крупный план · текстура 2048 × 2048"
+    : "HiTem · общий вид · текстура 512 × 512";
+  if (id === selectedModelId) selectModel(id);
+});
 // Metres on the pavilion floor. The last two coordinates are the point of interest.
 const visitorPlacements = [
   { name: "amara", x: -3.25, z: 4.18, lookX: -3.6, lookZ: 2.65 },
@@ -192,7 +195,7 @@ function init() {
   controls.enableDamping = true;
   controls.dampingFactor = 0.065;
   controls.target.set(...initialView.target);
-  controls.minDistance = 2.2;
+  controls.minDistance = 0.65;
   controls.maxDistance = 44;
   controls.maxPolarAngle = Math.PI * 0.49;
 
@@ -210,13 +213,38 @@ function init() {
 
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
+  let tapStart;
+  canvas.addEventListener("pointerdown", (event) => {
+    tapStart = event.isPrimary && event.button === 0 ? [event.clientX, event.clientY] : null;
+  });
+  canvas.addEventListener("pointercancel", () => { tapStart = null; });
   canvas.addEventListener("pointerup", (event) => {
+    if (!tapStart || Math.hypot(event.clientX-tapStart[0], event.clientY-tapStart[1]) > 7) return;
+    tapStart = null;
     const rect = canvas.getBoundingClientRect();
     pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
     raycaster.setFromCamera(pointer, camera);
     const hit = raycaster.intersectObjects(clickTargets, true).find((entry) => findModelId(entry.object));
-    if (hit) selectModel(findModelId(hit.object));
+    if (!hit) return;
+    const id = findModelId(hit.object);
+    selectModel(id);
+    const anchor = modelObjects[id];
+    if (!state.walking && anchor.userData.assetId) {
+      const bounds = new THREE.Box3().setFromObject(anchor);
+      const target = bounds.getCenter(new THREE.Vector3());
+      const direction = camera.position.clone().sub(target);
+      if (physicalModels[id].zone) direction.set(0,0,1).applyQuaternion(anchor.quaternion);
+      direction.y = 0;
+      direction.normalize();
+      const size = bounds.getSize(new THREE.Vector3());
+      const distance = Math.max(0.9, Math.max(size.x,size.z)/Math.min(1,camera.aspect)*1.5, size.y*1.8);
+      const position = target.clone().addScaledVector(direction,distance);
+      position.y += distance*0.32;
+      cameraMotion = {startPosition:camera.position.clone(), startTarget:controls.target.clone(),
+        endPosition:position, endTarget:target, started:performance.now(), duration:700};
+      document.querySelectorAll(".viewer-cameras [data-camera]").forEach(button => button.classList.remove("is-active"));
+    }
   });
 
   setupUi(camera, controls);
@@ -246,6 +274,7 @@ function init() {
     if (cameraMotion) updateCameraMotion(camera, controls);
     if (state.walking) updateWalk(camera, controls, delta);
     controls.update();
+    exhibits.update(camera, performance.now(), selectedModelId);
     renderer.render(scene, camera);
   });
 
@@ -592,11 +621,8 @@ function buildPhysicalModels(scene) {
     modelObjects[id] = anchor;
     anchor.traverse((child) => { child.userData.modelId = id; });
     clickTargets.push(anchor);
-    if (useHi3DModels) {
-      loadHi3D(id, meta, anchor, proxy);
-    } else {
-      meta.status = "Параметрический выставочный макет · форма и CMF по реальному прототипу";
-    }
+    meta.status = "Загружается модель HiTem";
+    exhibits.register(anchor, id, meta.dims, proxy);
   });
 }
 
@@ -761,81 +787,6 @@ function fitToEnvelope(group, dims) {
   group.position.y -= fitted.min.y;
 }
 
-function applyMuseumFinish(model, meta, id) {
-  model.traverse((child) => {
-    if (!child.isMesh) return;
-    if (child.geometry?.attributes?.position && !child.geometry.morphAttributes?.position?.length) {
-      child.geometry.computeVertexNormals();
-    }
-    const prepareMaterial = (source) => {
-      const material = source?.clone ? source.clone() : new THREE.MeshStandardMaterial({ color: 0xffffff });
-      // Hi3D generated every object from its photographic prototype. Preserve
-      // that baked colour map instead of replacing it with a flat zone colour.
-      if (material.map) {
-        material.map.colorSpace = THREE.SRGBColorSpace;
-        material.map.needsUpdate = true;
-      }
-      if (material.color) material.color.set(0xffffff);
-      material.roughness = 0.44;
-      material.metalness = 0.05;
-      material.envMapIntensity = 0.68;
-      material.side = THREE.FrontSide;
-      material.needsUpdate = true;
-      return material;
-    };
-    child.material = Array.isArray(child.material)
-      ? child.material.map(prepareMaterial)
-      : prepareMaterial(child.material);
-    child.castShadow = true;
-    child.receiveShadow = true;
-    child.userData.modelId = id;
-  });
-  model.userData.finish = `Hi3D photographic prototype · ${meta.zone}`;
-}
-
-function loadHi3D(id, meta, anchor, proxy) {
-  gltfLoader.load(`./assets/models/hitem/${id}.glb`, (gltf) => {
-    const model = gltf.scene;
-    applyMuseumFinish(model, meta, id);
-    useGalleryMaterials(model);
-    model.updateMatrixWorld(true);
-    let size = new THREE.Box3().setFromObject(model).getSize(new THREE.Vector3());
-    const regularScale = Math.min(meta.dims[0] / Math.max(size.x, 0.0001), meta.dims[2] / Math.max(size.y, 0.0001), meta.dims[1] / Math.max(size.z, 0.0001));
-    const rotatedScale = Math.min(meta.dims[0] / Math.max(size.z, 0.0001), meta.dims[2] / Math.max(size.y, 0.0001), meta.dims[1] / Math.max(size.x, 0.0001));
-    if (rotatedScale > regularScale * 1.03) {
-      model.rotation.y = Math.PI / 2;
-      model.updateMatrixWorld(true);
-      size = new THREE.Box3().setFromObject(model).getSize(new THREE.Vector3());
-    }
-    const scale = Math.min(meta.dims[0] / Math.max(size.x, 0.0001), meta.dims[2] / Math.max(size.y, 0.0001), meta.dims[1] / Math.max(size.z, 0.0001));
-    model.scale.setScalar(scale);
-    model.updateMatrixWorld(true);
-    const normalized = new THREE.Box3().setFromObject(model);
-    const center = normalized.getCenter(new THREE.Vector3());
-    const fittedSize = normalized.getSize(new THREE.Vector3());
-    model.position.sub(center);
-    model.position.y -= normalized.min.y - center.y;
-    anchor.remove(proxy);
-    anchor.add(model);
-    meta.occupancy = {
-      width: Math.min(100, Math.round(fittedSize.x / meta.dims[0] * 100)),
-      depth: Math.min(100, Math.round(fittedSize.z / meta.dims[1] * 100)),
-      height: Math.min(100, Math.round(fittedSize.y / meta.dims[2] * 100))
-    };
-    const axisOccupancy = [
-      ["ширина", meta.occupancy.width],
-      ["высота", meta.occupancy.height],
-      ["глубина", meta.occupancy.depth]
-    ];
-    const limitingAxis = axisOccupancy.reduce((best, entry) => entry[1] > best[1] ? entry : best, axisOccupancy[0]);
-    meta.status = `Hi3D · фототекстура прототипа · максимум: ${meta.occupancy.width}% ш / ${meta.occupancy.height}% в / ${meta.occupancy.depth}% гл · ограничитель — ${limitingAxis[0]}`;
-    if (selectedModelId === id) selectModel(id);
-  }, undefined, () => {
-    meta.status = "Размерный прокси";
-    if (selectedModelId === id) selectModel(id);
-  });
-}
-
 function buildMediaCube(scene) {
   const id = "media-cube";
   const meta = physicalModels[id];
@@ -924,6 +875,25 @@ function buildMediaCube(scene) {
   clickTargets.push(group);
 }
 
+function addDisplayExhibit(group, asset, title, placement, dims, position, rotation = 0, location = "island") {
+  const id = location + "-" + asset;
+  const source = physicalModels[asset];
+  physicalModels[id] = {
+    title: title || source.title, placement, dims, reference: source?.reference,
+    size: dims.map(value => value.toLocaleString("ru-RU")).join(" × ") + " м",
+    status: "Загружается модель HiTem"
+  };
+  const anchor = new THREE.Group();
+  anchor.name = id;
+  anchor.userData.modelId = id;
+  anchor.position.set(...position);
+  anchor.rotation.y = rotation;
+  group.add(anchor);
+  clickTargets.push(anchor);
+  modelObjects[id] = anchor;
+  exhibits.register(anchor, asset, dims);
+}
+
 function buildFeatureIslands(scene) {
   const plinth = new THREE.MeshPhysicalMaterial({ color: 0xf0f1ee, roughness: 0.25, metalness: 0.12, clearcoat: 0.42, clearcoatRoughness: 0.22, envMapIntensity: 1.05 });
   const glow = new THREE.MeshBasicMaterial({ color: 0xe7fbff, transparent: true, opacity: 0.88, toneMapped: false });
@@ -946,22 +916,15 @@ function buildFeatureIslands(scene) {
     group.add(base);
     group.add(meshOf(new RoundedBoxGeometry(baseSize[0] + 0.10, 0.035, baseSize[2] + 0.10, 8, 0.14), glow, [0, 0.025, 0]));
 
-    const meta = physicalModels[spec.model];
-    if (meta) {
-      const model = createProxy(meta);
-      model.scale.multiplyScalar(spec.scale || 1.65);
-      model.position.set(spec.companion ? 0.25 : -0.12, 0.24, 0);
-      model.rotation.y = spec.rotation;
-      group.add(model);
-    }
-
-    const companionMeta = spec.companion && physicalModels[spec.companion];
-    if (companionMeta) {
-      const companion = createProxy(companionMeta);
-      companion.scale.multiplyScalar(1.22);
-      companion.position.set(-0.92, 0.24, 0.04);
-      companion.rotation.y = -0.18;
-      group.add(companion);
+    const side = spec.position[0] < 0 ? "левый" : "правый";
+    const placement = (rear ? "дальний " : "передний ") + side + " подиум";
+    if (spec.model === "transport-11") {
+      addDisplayExhibit(group, "center-03", "Поезд «Москва-2024»", placement, [2.77,0.94,1.08], [0,0.22,-0.13], spec.rotation);
+    } else if (spec.companion) {
+      addDisplayExhibit(group, spec.model, null, placement, [1.32,1.04,1.25], [0.65,0.22,-0.12], spec.rotation);
+      addDisplayExhibit(group, spec.companion, null, placement, [1.05,1.08,1.11], [-0.85,0.22,0]);
+    } else {
+      addDisplayExhibit(group, spec.model, null, placement, [2.08,1.10,1.25], [0,0.20,-0.07], spec.rotation);
     }
 
     const tablet = new THREE.Group();
@@ -984,26 +947,12 @@ function buildFrontCityIsland(scene, plinth, glow) {
   group.add(base);
   group.add(meshOf(new RoundedBoxGeometry(5.27, 0.035, 1.74, 10, 0.17), glow, [0, 0.025, 0]));
 
-  const lawn = new THREE.MeshStandardMaterial({ color: 0x5f8c5d, roughness: 0.78 });
-  const ivory = new THREE.MeshPhysicalMaterial({ color: 0xf0eee5, roughness: 0.33, metalness: 0.04, clearcoat: 0.14 });
-  const brick = new THREE.MeshPhysicalMaterial({ color: 0xa94736, roughness: 0.48, metalness: 0.02, clearcoat: 0.08 });
-  const gold = new THREE.MeshStandardMaterial({ color: 0xd7ad45, roughness: 0.32, metalness: 0.46 });
-  group.add(meshOf(new RoundedBoxGeometry(4.70, 0.045, 1.22, 5, 0.06), lawn, [0, 0.27, 0]));
-  for (let i = 0; i < 9; i += 1) {
-    const x = -2.00 + i * 0.50;
-    const height = 0.28 + (i % 4) * 0.09;
-    const material = i < 4 ? brick : ivory;
-    group.add(meshOf(new RoundedBoxGeometry(0.28, height, 0.25, 4, 0.025), material, [x, 0.29 + height / 2, -0.10 + (i % 2) * 0.18]));
-    if (i < 4) group.add(meshOf(new THREE.ConeGeometry(0.11, 0.20, 12), gold, [x, 0.29 + height + 0.10, -0.10 + (i % 2) * 0.18]));
-  }
-  for (let i = 0; i < 16; i += 1) {
-    const x = -2.20 + i * 0.29;
-    const z = i % 2 ? 0.48 : -0.48;
-    group.add(meshOf(new THREE.ConeGeometry(0.055, 0.18, 10), lawn, [x, 0.38, z]));
-  }
+  addDisplayExhibit(group, "center-01", "Москва-Сити", "передний центральный подиум", [2.77,1.42,1.48], [-0.98,0.24,0]);
+  addDisplayExhibit(group, "center-02", "Парящий мост «Зарядья»", "передний центральный подиум", [1.73,1.32,0.82], [1.45,0.24,0]);
   group.traverse((child) => { if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; } });
   const label = createIslandFaceLabel("ДОСТИЖЕНИЯ РОССИИ");
-  label.position.set(0, 0.47, 0.825);
+  label.scale.y = 0.38;
+  label.position.set(0, 0.12, 0.825);
   group.add(label);
   scene.add(group);
 }
@@ -1025,41 +974,17 @@ function createIslandFaceLabel(text) {
 }
 
 function addSuspendedHeroModels(scene) {
-  const white = new THREE.MeshPhysicalMaterial({ color: 0xf2f3f0, roughness: 0.23, metalness: 0.18, clearcoat: 0.34, envMapIntensity: 1.0 });
-  const blue = new THREE.MeshPhysicalMaterial({ color: 0x18589b, roughness: 0.26, metalness: 0.34, clearcoat: 0.28, envMapIntensity: 0.95 });
-  const red = new THREE.MeshPhysicalMaterial({ color: 0xcf3340, roughness: 0.28, metalness: 0.24, clearcoat: 0.30, envMapIntensity: 0.92 });
-  const dark = new THREE.MeshStandardMaterial({ color: 0x20313b, roughness: 0.32, metalness: 0.54 });
   const cable = new THREE.MeshStandardMaterial({ color: 0x7a8589, roughness: 0.38, metalness: 0.66 });
-
-  const satellite = new THREE.Group();
-  satellite.position.set(-3.85, 5.75, 0.45);
-  satellite.rotation.set(-0.34, -0.18, -0.06);
-  satellite.add(meshOf(new THREE.CylinderGeometry(0.28, 0.33, 0.72, 28), white, [0, 0, 0], [0, 0, Math.PI / 2]));
-  satellite.add(meshOf(new THREE.CylinderGeometry(0.16, 0.22, 0.30, 24), dark, [0.46, 0, 0], [0, 0, Math.PI / 2]));
-  [-1, 1].forEach((side) => {
-    const panel = meshOf(new RoundedBoxGeometry(1.28, 0.06, 0.70, 3, 0.035), blue, [side * 1.00, 0, 0]);
-    satellite.add(panel);
-    for (let i = -2; i <= 2; i += 1) satellite.add(meshOf(new THREE.BoxGeometry(0.012, 0.065, 0.68), white, [side * (1.00 + i * 0.12), 0.035, 0]));
-  });
-  scene.add(satellite);
-  scene.add(cylinderBetween([-4.35, pavilion.atriumHeight - 0.10, 0.45], [-4.35, 6.02, 0.45], 0.008, cable));
-  scene.add(cylinderBetween([-3.35, pavilion.atriumHeight - 0.10, 0.45], [-3.35, 6.02, 0.45], 0.008, cable));
-
-  const plane = new THREE.Group();
-  plane.position.set(4.0, 5.9, -1.0);
-  plane.rotation.set(0.02, -0.34, -0.05);
-  plane.add(meshOf(new THREE.CylinderGeometry(0.18, 0.20, 2.1, 28), white, [0, 0, 0], [0, 0, Math.PI / 2]));
-  plane.add(meshOf(new THREE.ConeGeometry(0.19, 0.55, 28), white, [1.30, 0, 0], [0, 0, -Math.PI / 2]));
-  plane.add(meshOf(new THREE.BoxGeometry(0.55, 0.055, 2.45), blue, [0.0, 0, 0]));
-  plane.add(meshOf(new THREE.BoxGeometry(0.45, 0.045, 0.92), blue, [-0.86, 0.08, 0]));
-  plane.add(meshOf(new THREE.BoxGeometry(0.14, 0.70, 0.055), blue, [-0.91, 0.26, 0]));
-  [-1, 1].forEach((side) => {
-    plane.add(meshOf(new THREE.BoxGeometry(1.34, 0.025, 0.018), red, [0.13, -0.05, side * 0.195]));
-    for (let i = 0; i < 7; i += 1) plane.add(meshOf(new RoundedBoxGeometry(0.09, 0.055, 0.016, 2, 0.012), dark, [-0.52 + i * 0.20, 0.075, side * 0.202]));
-  });
-  scene.add(plane);
-  scene.add(cylinderBetween([3.15, pavilion.atriumHeight - 0.10, -1.0], [3.15, 6.15, -1.0], 0.008, cable));
-  scene.add(cylinderBetween([4.85, pavilion.atriumHeight - 0.10, -1.0], [4.85, 6.15, -1.0], 0.008, cable));
+  const fixtures = [
+    {asset: "technology-03", x: -3.85, y: 5.34, z: 0.45, dims: [3.2, 1.24, 1.00], yaw: -0.18},
+    {asset: "transport-09", x: 4.00, y: 5.44, z: -1.0, dims: [3.1, 2.85, 1.12], yaw: -0.34}
+  ];
+  for (const {asset, x, y, z, dims, yaw} of fixtures) {
+    addDisplayExhibit(scene, asset, null, "подвес над экспозицией", dims, [x, y, z], yaw, "suspended");
+    for (const dx of [-0.30, 0.30]) {
+      scene.add(cylinderBetween([x+dx, pavilion.atriumHeight-0.10, z], [x+dx, y+dims[2]*0.55, z], 0.008, cable));
+    }
+  }
 }
 
 function addVisitorFigures(scene) {
@@ -1140,148 +1065,6 @@ function drawCubeFaces() {
     ctx.restore();
     cubeFaceTextures[zone].needsUpdate = true;
   });
-}
-
-function buildCentralMoscow(scene) {
-  const stations = [
-    { id: "center-01", base: [2.85, 0.28, 2.20], color: 0xffb26f, label: "ГОРОД · МОСКВА-СИТИ" },
-    { id: "center-02", base: [3.80, 0.18, 1.22], color: 0xb7df78, label: "ИНФРАСТРУКТУРА · ЗАРЯДЬЕ" },
-    { id: "center-03", base: [3.62, 0.20, 1.18], color: 0x89a8ff, label: "ДВИЖЕНИЕ · МОСКВА-2024" }
-  ];
-  const plinthMaterial = new THREE.MeshStandardMaterial({ color: 0x2a332d, roughness: 0.64, metalness: 0.10 });
-
-  centerEnvelopes.forEach((entry, index) => {
-    const meta = physicalModels[entry.id];
-    if (!meta) return;
-    const station = stations[index];
-    const plinth = new THREE.Mesh(new RoundedBoxGeometry(...station.base, 5, 0.07), plinthMaterial);
-    plinth.position.set(entry.position[0], station.base[1] / 2, entry.position[2]);
-    plinth.rotation.y = entry.rotation;
-    plinth.castShadow = true;
-    plinth.receiveShadow = true;
-    scene.add(plinth);
-
-    const underlight = new THREE.Mesh(
-      new RoundedBoxGeometry(station.base[0] + 0.05, 0.025, station.base[2] + 0.05, 4, 0.06),
-      new THREE.MeshBasicMaterial({ color: station.color, transparent: true, opacity: 0.34 })
-    );
-    underlight.position.set(entry.position[0], 0.018, entry.position[2]);
-    underlight.rotation.y = entry.rotation;
-    scene.add(underlight);
-
-    const label = createStationLabel(station.label, String(index + 1).padStart(2, "0"), station.color);
-    label.position.set(entry.position[0], station.base[1] + 0.008, entry.position[2] + station.base[2] * 0.36);
-    label.rotation.set(-Math.PI / 2, 0, entry.rotation);
-    scene.add(label);
-
-    const anchor = new THREE.Group();
-    anchor.name = entry.id;
-    anchor.position.set(...entry.position);
-    anchor.rotation.y = entry.rotation;
-    anchor.userData.modelId = entry.id;
-    const maquette = createCenterMaquette(entry.id, meta);
-    maquette.userData.modelId = entry.id;
-    anchor.add(maquette);
-    scene.add(anchor);
-    modelObjects[entry.id] = anchor;
-    anchor.traverse((child) => { child.userData.modelId = entry.id; });
-    clickTargets.push(anchor);
-    if (showRawHi3DCandidates) {
-      loadHi3D(entry.id, meta, anchor, maquette);
-    } else {
-      meta.status = "Параметрический выставочный макет · очищенная форма по прототипу";
-    }
-  });
-}
-
-function createCenterMaquette(id, meta) {
-  const group = new THREE.Group();
-  const ivory = new THREE.MeshPhysicalMaterial({ color: 0xe2e3dd, roughness: 0.30, metalness: 0.08, clearcoat: 0.22, clearcoatRoughness: 0.28, envMapIntensity: 0.78 });
-  const silver = new THREE.MeshPhysicalMaterial({ color: 0xaab6ba, roughness: 0.27, metalness: 0.26, clearcoat: 0.18, envMapIntensity: 0.84 });
-  const graphite = new THREE.MeshPhysicalMaterial({ color: 0x263036, roughness: 0.34, metalness: 0.32, envMapIntensity: 0.72 });
-  const blue = new THREE.MeshPhysicalMaterial({ color: 0x466b91, roughness: 0.28, metalness: 0.18, clearcoat: 0.26, envMapIntensity: 0.82 });
-  const glass = new THREE.MeshPhysicalMaterial({ color: 0x172b3a, roughness: 0.12, metalness: 0.22, clearcoat: 0.42, envMapIntensity: 1.0 });
-
-  if (id === "center-01") {
-    group.add(meshOf(new RoundedBoxGeometry(1.88, 0.06, 1.32, 4, 0.05), graphite, [0, 0.03, 0]));
-    const towers = [
-      [-0.56, -0.26, 0.24, 0.28, 0.88, -0.08],
-      [-0.28, 0.27, 0.22, 0.24, 1.18, 0.04],
-      [0.03, -0.08, 0.28, 0.30, 1.55, -0.03],
-      [0.34, 0.23, 0.24, 0.25, 1.02, 0.08],
-      [0.62, -0.20, 0.20, 0.23, 0.74, -0.10],
-      [-0.70, 0.30, 0.18, 0.20, 0.60, 0.10]
-    ];
-    towers.forEach(([x, z, w, d, h, rotation], index) => {
-      const tower = meshOf(new RoundedBoxGeometry(w, h, d, 4, Math.min(w, d) * 0.14), index % 2 ? silver : ivory, [x, h / 2 + 0.06, z], [0, rotation, 0]);
-      group.add(tower);
-      if (index === 2) group.add(meshOf(new THREE.ConeGeometry(0.035, 0.28, 18), silver, [x, h + 0.20, z]));
-    });
-  } else if (id === "center-02") {
-    const points = [
-      new THREE.Vector3(-1.52, 0.18, -0.24),
-      new THREE.Vector3(-0.58, 0.18, -0.06),
-      new THREE.Vector3(0.30, 0.18, 0.20),
-      new THREE.Vector3(1.55, 0.18, 0.30)
-    ];
-    for (let i = 0; i < points.length - 1; i += 1) {
-      const a = points[i];
-      const b = points[i + 1];
-      const dx = b.x - a.x;
-      const dz = b.z - a.z;
-      const length = Math.hypot(dx, dz);
-      const segment = new THREE.Group();
-      segment.position.set((a.x + b.x) / 2, a.y, (a.z + b.z) / 2);
-      segment.rotation.y = -Math.atan2(dz, dx);
-      segment.add(meshOf(new RoundedBoxGeometry(length + 0.03, 0.10, 0.42, 4, 0.04), ivory, [0, 0, 0]));
-      segment.add(meshOf(new THREE.BoxGeometry(length, 0.045, 0.035), silver, [0, 0.095, -0.18]));
-      segment.add(meshOf(new THREE.BoxGeometry(length, 0.045, 0.035), silver, [0, 0.095, 0.18]));
-      group.add(segment);
-    }
-    [-0.72, 0.62].forEach((x) => group.add(meshOf(new THREE.CylinderGeometry(0.055, 0.075, 0.18, 20), graphite, [x, 0.09, 0.02])));
-  } else {
-    group.add(meshOf(new RoundedBoxGeometry(2.84, 0.46, 0.56, 8, 0.10), ivory, [0, 0.32, 0]));
-    group.add(meshOf(new RoundedBoxGeometry(2.64, 0.08, 0.49, 6, 0.05), silver, [0, 0.58, 0]));
-    group.add(meshOf(new THREE.BoxGeometry(2.46, 0.12, 0.43), graphite, [0, 0.12, 0]));
-    [-0.98, 0.98].forEach((x) => [-1, 1].forEach((z) => group.add(meshOf(new THREE.CylinderGeometry(0.105, 0.105, 0.055, 24), graphite, [x, 0.09, z * 0.235], [Math.PI / 2, 0, 0]))));
-    [-1, 1].forEach((side) => {
-      const z = side * 0.286;
-      [-1.02, -0.67, -0.31, 0.31, 0.67, 1.02].forEach((x) => group.add(meshOf(new RoundedBoxGeometry(0.25, 0.17, 0.018, 3, 0.025), glass, [x, 0.39, z])));
-      [-0.49, 0.49].forEach((x) => group.add(meshOf(new RoundedBoxGeometry(0.30, 0.34, 0.020, 3, 0.025), blue, [x, 0.31, z])));
-      group.add(meshOf(new THREE.BoxGeometry(2.60, 0.035, 0.022), blue, [0, 0.22, z + side * 0.004]));
-    });
-    group.add(meshOf(new RoundedBoxGeometry(0.02, 0.22, 0.32, 3, 0.03), glass, [1.425, 0.39, 0]));
-    group.add(meshOf(new RoundedBoxGeometry(0.02, 0.22, 0.32, 3, 0.03), glass, [-1.425, 0.39, 0]));
-  }
-
-  fitToEnvelope(group, meta.dims);
-  group.traverse((child) => {
-    if (!child.isMesh) return;
-    child.castShadow = true;
-    child.receiveShadow = true;
-    child.userData.modelId = id;
-  });
-  return group;
-}
-
-function createStationLabel(title, index, color) {
-  const layer = document.createElement("canvas");
-  layer.width = 1024;
-  layer.height = 160;
-  const ctx = layer.getContext("2d");
-  ctx.fillStyle = "#111713";
-  roundedRect(ctx, 0, 0, layer.width, layer.height, 28);
-  ctx.fill();
-  ctx.fillStyle = `#${color.toString(16).padStart(6, "0")}`;
-  ctx.fillRect(34, 34, 8, 92);
-  ctx.font = "700 42px 'IBM Plex Mono', Consolas, monospace";
-  ctx.fillText(index, 72, 102);
-  ctx.fillStyle = "#e5e2da";
-  ctx.font = "600 37px Oswald, Arial";
-  ctx.fillText(title, 172, 102);
-  const texture = new THREE.CanvasTexture(layer);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  return new THREE.Mesh(new THREE.PlaneGeometry(1.90, 0.30), new THREE.MeshBasicMaterial({ map: texture, transparent: true, toneMapped: false }));
 }
 
 function drawProgramScreen(phase) {
@@ -2211,7 +1994,7 @@ function isNarrowScene() {
 function getCameraView(name, narrow = false) {
   const views = {
     overview: narrow
-      ? { position: [0, 3.30, 11.0], target: [0, 1.58, -2.25] }
+      ? { position: [0, 4.35, 15.8], target: [0, 1.10, 0.3] }
       : { position: [0, 5.05, 14.7], target: [0, 1.62, -1.75] },
     visitor: { position: [0, 1.65, 10.9], target: [0, 1.72, -1.25] },
     cube: narrow
