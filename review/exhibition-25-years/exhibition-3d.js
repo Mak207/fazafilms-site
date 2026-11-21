@@ -1,3 +1,4 @@
+import { addWalkers } from "./visitors.js?v=35";
 import { mountRailPanel, signPlinth } from "./plinths.js?v=33";
 import { createWallProgram } from "./wall-program.js?v=32";
 import * as THREE from "three";
@@ -118,15 +119,7 @@ const exhibits = createExhibitLoader(gltfLoader, useGalleryMaterials, (anchor, l
     : "HiTem · общий вид · текстура 512 × 512";
   if (id === selectedModelId) selectModel(id);
 });
-// Metres on the pavilion floor. The last two coordinates are the point of interest.
-const visitorPlacements = [
-  { name: "amara", x: -2.54, z: 3.68, lookX: -3.6, lookZ: 2.65 },
-  { name: "daniel", x: 2.25, z: 1.52, lookX: 3.6, lookZ: 2.65 },
-  { name: "alex", x: -4.85, z: -0.75, lookX: -6.4, lookZ: -1.6 },
-  { name: "avery", x: 3.85, z: -5.32, lookX: 3.35, lookZ: -3.55 },
-  { name: "riley", x: -2.02, z: -6.35, lookX: 0, lookZ: -9.95 },
-  { name: "harper", x: 3.54, z: 5.85, lookX: 4.5, lookZ: 1.1 }
-];
+let updateWalkers;
 
 const screenCanvases = {};
 const screenTextures = {};
@@ -220,7 +213,7 @@ function init() {
   buildMediaCube(scene);
   buildFeatureIslands(scene);
   addSuspendedHeroModels(scene);
-  addVisitorFigures(scene);
+  addPlanters(scene);
   useGalleryMaterials(scene);
 
   const raycaster = new THREE.Raycaster();
@@ -297,6 +290,7 @@ function init() {
     if (cameraMotion) updateCameraMotion(camera, controls);
     if (state.walking) updateWalk(camera, controls, delta);
     trainPanel.update(Math.min(elapsed,.15), camera, state.walking);
+    updateWalkers(now/1000);
     controls.update();
     exhibits.update(camera, performance.now(), selectedModelId);
     renderer.render(scene, camera);
@@ -476,9 +470,7 @@ function buildPavilion(scene) {
   brush.fillStyle = shade;
   brush.fillRect(0, 0, 128, 128);
   const contact = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(tile), transparent: true, depthWrite: false, toneMapped: false });
-  for (const {x, z} of visitorPlacements) {
-    scene.add(meshOf(new THREE.PlaneGeometry(0.75, 0.57), contact, [x, 0.009, z], [-Math.PI / 2, 0, 0]));
-  }
+  updateWalkers = addWalkers(scene,gltfLoader,contact);
   for (const [x,z,width,depth] of [[0,-.35,3.8,3.8],[0,4.55,7.4,3.2],[-3.6,2.65,4.6,3],[3.6,2.65,4.6,3],[-3.35,-3.55,3.8,2.7],[3.35,-3.55,3.8,2.7]]) {
     scene.add(meshOf(new THREE.PlaneGeometry(width, depth), contact, [x,.008,z], [-Math.PI/2,0,0]));
   }
@@ -974,18 +966,7 @@ function addSuspendedHeroModels(scene) {
   }
 }
 
-function addVisitorFigures(scene) {
-  // Innerscene / MakeHuman CC0. Each posed asset has its own face and wardrobe.
-  for (const {name, x, z, lookX, lookZ} of visitorPlacements) {
-    gltfLoader.load(`./assets/models/visitors/${name}.glb`, ({scene: figure}) => {
-      useGalleryMaterials(figure);
-      figure.name = `visitor-${name}`;
-      figure.position.set(x, 0, z);
-      figure.rotation.y = Math.atan2(lookX - x, lookZ - z);
-      scene.add(figure);
-    });
-  }
-
+function addPlanters(scene) {
   const planter = new THREE.MeshPhysicalMaterial({ color: 0xf0f1ee, roughness: 0.28, metalness: 0.08, clearcoat: 0.24 });
   const trunk = new THREE.MeshStandardMaterial({ color: 0x765e45, roughness: 0.86 });
   const leaf = new THREE.MeshStandardMaterial({ color: 0x3d714f, roughness: 0.72 });
