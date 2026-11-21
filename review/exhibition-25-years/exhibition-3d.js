@@ -1,4 +1,4 @@
-import { addWalkers } from "./visitors.js?v=36";
+import { addWalkers } from "./visitors.js?v=38";
 import { mountRailPanel, signPlinth } from "./plinths.js?v=33";
 import { createWallProgram } from "./wall-program.js?v=32";
 import * as THREE from "three";
@@ -271,6 +271,7 @@ function init() {
   updateProgramPlaybackUi();
   const cubeStart = performance.now();
   let lastTick = cubeStart;
+  let visitorTime = 0;
   let lastPaint = -Infinity;
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
@@ -294,7 +295,8 @@ function init() {
     if (cameraMotion) updateCameraMotion(camera, controls);
     if (state.walking) updateWalk(camera, controls, delta);
     trainPanel.update(Math.min(elapsed,.15), camera, state.walking);
-    updateWalkers(now/1000);
+    visitorTime += Math.min(elapsed, .12);
+    updateWalkers(visitorTime);
     controls.update();
     exhibits.update(camera, performance.now(), selectedModelId);
     renderer.render(scene, camera);
