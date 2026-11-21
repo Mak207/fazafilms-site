@@ -6,7 +6,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { createExhibitLoader } from "./exhibit-lod.js?v=34";
+import { createExhibitLoader } from "./exhibit-lod.js?v=37";
 
 const root = document.querySelector(".viewer-shell");
 const canvas = document.getElementById("exhibitionCanvas");
@@ -117,6 +117,10 @@ const exhibits = createExhibitLoader(gltfLoader, useGalleryMaterials, (anchor, l
   physicalModels[id].status = level === "detail"
     ? "HiTem · крупный план · текстура 2048 × 2048"
     : "HiTem · общий вид · текстура 512 × 512";
+  if (anchor.userData.assetId === "center-01") {
+    const view = level === "detail" ? "крупный план" : "общий вид";
+    physicalModels[id].status = "HiTem · " + view + " · Эволюция, Федерация, Меркурий и Город Столиц";
+  }
   if (id === selectedModelId) selectModel(id);
 });
 let updateWalkers;
@@ -925,7 +929,7 @@ function buildFeatureIslands(scene) {
       models:[["construction-12",[2.08,1.10,1.05],[0,.38,0]]] },
     { x:3.35, z:-3.55, yaw:-.08, size:[2.40,.38,1.42], title:physicalModels["construction-02"].title,
       models:[["construction-02",[2.08,1.10,1.05],[0,.38,0]]] },
-    { x:0, z:5.48, yaw:0, size:[3.80,.38,2.25], title:"Москва-Сити",
+    { x:0, z:5.48, yaw:0, size:[3.80,.38,2.25], title:"Москва-Сити", reference:"./assets/reference/moscow-city/",
       models:[["center-01",[3.747,2.199,2.124],[0,.38,0]]] }
   ];
   for (const spec of islands) {
@@ -944,8 +948,10 @@ function buildFeatureIslands(scene) {
       trainPanel=mountRailPanel(group,top);
       addDisplayExhibit(group,"center-03",spec.title,placement,[2.02,.65,.63],[0,trainPanel.contactY,0]);
     } else {
-      for (const [asset,dims,position] of spec.models)
+      for (const [asset,dims,position] of spec.models) {
         addDisplayExhibit(group,asset,physicalModels[asset]?.title || spec.title,placement,dims,position);
+        if (spec.reference) physicalModels["island-"+asset].reference = spec.reference;
+      }
     }
     signPlinth(group,spec.title,width,depth,top,spec.train?"Нажмите на вагон · движение пути":"");
     scene.add(group);

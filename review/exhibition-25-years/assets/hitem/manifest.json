@@ -1,16 +1,89 @@
 [
   {
     "id": "center-01",
-    "title": "Moscow-City scale model · Moscow-City Museum",
-    "query": "Moscow International Business Center skyline",
-    "photo": "review/exhibition-25-years/assets/hitem/references/center-01.jpg",
-    "image_url": "https://static.tildacdn.com/tild6263-3633-4033-b466-306663613432/2.jpg",
-    "original_url": "https://static.tildacdn.com/tild6263-3633-4033-b466-306663613432/2.jpg",
-    "page_url": "https://museum.citymoscow.ru/idea-implementation",
-    "width": 0,
-    "height": 0,
-    "license": "museum press image",
-    "artist": "Moscow-City Museum"
+    "title": "Современный ММДЦ «Москва-Сити»",
+    "photo": "review/exhibition-25-years/assets/reference/moscow-city/evolution.webp",
+    "page_url": "./assets/reference/moscow-city/",
+    "method": "HiTem v3.0 · two photographs per architectural complex",
+    "components": [
+      {
+        "component": "capitals",
+        "photos": [
+          {
+            "view": "front",
+            "title": "City of Capitals in Moscow-City 28-03-2010.jpg",
+            "author": "Bradmoscu",
+            "license": "CC BY-SA 3.0",
+            "url": "https://commons.wikimedia.org/wiki/File:City_of_Capitals_in_Moscow-City_28-03-2010.jpg"
+          },
+          {
+            "view": "right",
+            "title": "Moscow-City (46987796634).jpg",
+            "author": "Sergei F from Krasnoznamensk, Russia",
+            "license": "CC BY 2.0",
+            "url": "https://commons.wikimedia.org/wiki/File:Moscow-City_(46987796634).jpg"
+          }
+        ]
+      },
+      {
+        "component": "evolution",
+        "photos": [
+          {
+            "view": "front",
+            "title": "Evolution Tower 2019.jpg",
+            "author": "Dzasohovich (cropped by Florstein)",
+            "license": "CC BY-SA 4.0",
+            "url": "https://commons.wikimedia.org/wiki/File:Evolution_Tower_2019.jpg"
+          },
+          {
+            "view": "right",
+            "title": "4Y1A0171 Moscow (Ninara) - Flickr.jpg",
+            "author": "Ninara",
+            "license": "CC BY 2.0",
+            "url": "https://commons.wikimedia.org/wiki/File:4Y1A0171_Moscow_(Ninara)_-_Flickr.jpg"
+          }
+        ]
+      },
+      {
+        "component": "federation",
+        "photos": [
+          {
+            "view": "front",
+            "title": "Башня федерация 2018 (3to4).jpg",
+            "author": "Dinozaurus",
+            "license": "CC BY-SA 4.0",
+            "url": "https://commons.wikimedia.org/wiki/File:%D0%91%D0%B0%D1%88%D0%BD%D1%8F_%D1%84%D0%B5%D0%B4%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D1%8F_2018_(3to4).jpg"
+          },
+          {
+            "view": "right",
+            "title": "Federation Tower 2022(cropped).jpg",
+            "author": "kishjar?",
+            "license": "CC BY-SA 4.0",
+            "url": "https://commons.wikimedia.org/wiki/File:Federation_Tower_2022(cropped).jpg"
+          }
+        ]
+      },
+      {
+        "component": "mercury",
+        "photos": [
+          {
+            "view": "front",
+            "title": "Mercury City Tower 2022.jpg",
+            "author": "kishjar?",
+            "license": "CC BY-SA 2.0",
+            "url": "https://commons.wikimedia.org/wiki/File:Mercury_City_Tower_2022.jpg"
+          },
+          {
+            "view": "left",
+            "title": "View from Imperia Tower Moscow 04-2014 img12.jpg",
+            "author": "A.Savin",
+            "license": "CC BY-SA 3.0",
+            "url": "https://commons.wikimedia.org/wiki/File:View_from_Imperia_Tower_Moscow_04-2014_img12.jpg"
+          }
+        ]
+      }
+    ],
+    "ground": "OpenStreetMap / OpenFreeMap"
   },
   {
     "id": "center-02",

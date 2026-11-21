@@ -12,7 +12,7 @@ export function createExhibitLoader(loader, prepare, changed) {
   let nextCheck = 0;
 
   function fetchModel(folder, id) {
-    const version = ["center-01","center-03"].includes(id) ? 33 : 30;
+    const version = id === "center-01" ? 37 : id === "center-03" ? 33 : 30;
     return loader.loadAsync(`./assets/models/${folder}/${id}.glb?v=${version}`).then(({scene}) => {
       scene.traverse(object => {
         if (object.isMesh && !object.geometry.hasAttribute("normal")) object.geometry.computeVertexNormals();
