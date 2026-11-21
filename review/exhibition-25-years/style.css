@@ -49,14 +49,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .interactive-heading{max-width:none;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr);align-items:end;gap:48px}
 .interactive-heading>p{max-width:560px;margin:0;color:var(--muted);font-size:17px}
 .viewer-shell{display:grid;grid-template-columns:minmax(0,1fr) 370px;height:clamp(640px,64vh,820px);min-height:0;border:1px solid var(--line);border-radius:22px;background:#080a09;overflow:hidden;box-shadow:0 32px 90px #0008}
-.viewer-stage{position:relative;min-width:0;min-height:0;background:radial-gradient(circle at 50% 25%,#233531,#090b0a 62%);overflow:hidden}
+.viewer-stage{display:flex;flex-direction:column;position:relative;min-width:0;min-height:0;background:radial-gradient(circle at 50% 25%,#233531,#090b0a 62%);overflow:hidden}
 #exhibitionCanvas{display:block;width:100%;height:100%;min-height:0;touch-action:none}
 .viewer-loading{position:absolute;inset:0;display:grid;place-items:center;background:#090b0af2;color:var(--muted);font-weight:700;letter-spacing:.08em;text-transform:uppercase;transition:opacity .35s,visibility .35s}
 [data-viewer-state="ready"] .viewer-loading{opacity:0;visibility:hidden}
 [data-viewer-state="error"] .viewer-loading{padding:30px;text-align:center;color:#f8a67b}
 .viewer-badge{position:absolute;left:18px;top:18px;padding:9px 12px;border:1px solid #ffffff24;border-radius:999px;background:#0a0c0bbd;backdrop-filter:blur(12px);color:#dbd8cf;font:600 12px/1 "Inter",sans-serif;letter-spacing:.1em}
 .viewer-badge span{color:var(--orange)}
-.viewer-cameras{position:absolute;left:18px;right:18px;bottom:18px;display:flex;flex-wrap:wrap;gap:6px;padding:7px;border:1px solid #ffffff1c;border-radius:14px;background:#0a0c0bd9;backdrop-filter:blur(14px)}
+.viewer-cameras{position:relative;flex:0 0 auto;display:flex;flex-wrap:wrap;gap:6px;padding:7px;border:1px solid #ffffff1c;border-radius:14px;background:#0a0c0bd9;backdrop-filter:blur(14px)}
 .viewer-cameras button{min-height:38px;padding:0 13px;border:0;border-radius:9px;background:transparent;color:#aaa99f;font-size:12px;font-weight:700}
 .viewer-cameras button:hover,.viewer-cameras button.is-active,.viewer-cameras button[aria-pressed="true"]{background:#f3f0e7;color:#0b0d0c}
 .walk-hint{position:absolute;left:18px;top:58px;display:none;margin:0;padding:9px 12px;border:1px solid #ffffff1c;border-radius:10px;background:#0a0c0bd9;color:#d7d4cc;font-size:12px;backdrop-filter:blur(12px)}
@@ -222,7 +222,7 @@ footer a:last-child:hover{color:var(--orange)}
   .hero{padding:50px 0 70px}.hero h1{font-size:clamp(54px,17vw,78px)}.hero-lead{margin:24px 0 0}
   .concept,.interactive,.register,.space{padding:78px 0}.section-heading{margin-bottom:34px}
   .interactive-heading{grid-template-columns:1fr;gap:18px}.viewer-shell{border-radius:16px}.viewer-stage,#exhibitionCanvas{min-height:520px}.viewer-panel{padding:16px}.physical-register{grid-template-columns:1fr}
-  .viewer-cameras{left:10px;right:10px;bottom:10px;max-height:96px;overflow:auto}.viewer-cameras button{flex:1 1 95px}
+  .viewer-cameras{max-height:96px;overflow:auto}.viewer-cameras button{flex:1 1 95px}
   .viewer-shell:fullscreen,.viewer-shell.is-fullscreen-fallback{grid-template-columns:1fr}.viewer-shell:fullscreen .viewer-panel,.viewer-shell.is-fullscreen-fallback .viewer-panel{display:none}.viewer-shell:fullscreen .viewer-stage,.viewer-shell:fullscreen #exhibitionCanvas,.viewer-shell.is-fullscreen-fallback .viewer-stage,.viewer-shell.is-fullscreen-fallback #exhibitionCanvas{height:100vh;min-height:100vh}
   .walk-hint{left:10px;top:54px;max-width:calc(100% - 20px);font-size:10px}.walk-pad{right:12px;bottom:112px;grid-template-columns:repeat(3,46px);grid-template-rows:repeat(2,46px)}
   .concept-grid,.exhibit-grid{grid-template-columns:1fr}.concept-grid article{min-height:250px}.concept-grid h3{margin-top:45px}.metrics-group-list{grid-template-columns:1fr}
@@ -235,3 +235,6 @@ footer a:last-child:hover{color:var(--orange)}
 
 @media(max-width:430px){.site-header nav a:first-child,.site-header nav a:nth-child(3){display:none}.filters{grid-template-columns:1fr}.viewer-stage,#exhibitionCanvas{min-height:440px}.viewer-zone-tabs{grid-template-columns:1fr}.viewer-stepper,.review-actions{grid-template-columns:1fr}.physical-register article{grid-template-columns:1fr}.physical-register small{white-space:normal}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* Reserve a separate row for controls so the foreground plinth stays visible. */
+.viewer-shell .viewer-stage #exhibitionCanvas{flex:1 1 0;height:0;min-height:0}

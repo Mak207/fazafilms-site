@@ -1,10 +1,11 @@
+import { mountRailPanel, signPlinth } from "./plinths.js?v=33";
 import { createWallProgram } from "./wall-program.js?v=32";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { createExhibitLoader } from "./exhibit-lod.js?v=30";
+import { createExhibitLoader } from "./exhibit-lod.js?v=33";
 
 const root = document.querySelector(".viewer-shell");
 const canvas = document.getElementById("exhibitionCanvas");
@@ -119,8 +120,8 @@ const exhibits = createExhibitLoader(gltfLoader, useGalleryMaterials, (anchor, l
 });
 // Metres on the pavilion floor. The last two coordinates are the point of interest.
 const visitorPlacements = [
-  { name: "amara", x: -3.25, z: 4.18, lookX: -3.6, lookZ: 2.65 },
-  { name: "daniel", x: 2.35, z: 0.96, lookX: 3.6, lookZ: 2.65 },
+  { name: "amara", x: -2.54, z: 3.68, lookX: -3.6, lookZ: 2.65 },
+  { name: "daniel", x: 2.25, z: 1.52, lookX: 3.6, lookZ: 2.65 },
   { name: "alex", x: -4.85, z: -0.75, lookX: -6.4, lookZ: -1.6 },
   { name: "avery", x: 3.85, z: -5.32, lookX: 3.35, lookZ: -3.55 },
   { name: "riley", x: -2.02, z: -6.35, lookX: 0, lookZ: -9.95 },
@@ -138,6 +139,8 @@ let programAdvance = 0;
 const programDwell = 24;
 const cubeTurnMs = 120000;
 let cubeRotor;
+let trainPanel;
+const islandFootprints = [];
 let panoramaTime = 0;
 let wallTextureLimit = 8192;
 let lastProgramMetricKey = "";
@@ -238,12 +241,14 @@ function init() {
     if (!hit) return;
     const id = findModelId(hit.object);
     selectModel(id);
+    if (id === "island-center-03") trainPanel.toggle();
     const anchor = modelObjects[id];
     if (!state.walking && anchor.userData.assetId) {
       const bounds = new THREE.Box3().setFromObject(anchor);
       const target = bounds.getCenter(new THREE.Vector3());
       const direction = camera.position.clone().sub(target);
       if (physicalModels[id].zone) direction.set(0,0,1).applyQuaternion(anchor.quaternion);
+      if (id === "island-center-03") direction.set(-1, 0, .48);
       direction.y = 0;
       direction.normalize();
       const size = bounds.getSize(new THREE.Vector3());
@@ -260,6 +265,7 @@ function init() {
   updateProgramUi();
   selectModel(selectedModelId);
   resize();
+  new ResizeObserver(resize).observe(canvas);
   window.addEventListener("resize", resize);
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -290,6 +296,7 @@ function init() {
     const delta = Math.min(clock.getDelta(), 0.05);
     if (cameraMotion) updateCameraMotion(camera, controls);
     if (state.walking) updateWalk(camera, controls, delta);
+    trainPanel.update(Math.min(elapsed,.15), camera, state.walking);
     controls.update();
     exhibits.update(camera, performance.now(), selectedModelId);
     renderer.render(scene, camera);
@@ -444,7 +451,7 @@ function buildPavilion(scene) {
   for (let x = -9; x <= 9; x += 1.5) { paint.moveTo(x,-15); paint.lineTo(x,15); }
   for (let z = -15; z <= 15; z += 1.5) { paint.moveTo(-10,z); paint.lineTo(10,z); }
   paint.stroke();
-  for (const [x,z,r] of [[0,-.35,2.4],[-3.6,2.65,2.2],[3.6,2.65,2.2],[0,4.55,3.2]]) {
+  for (const [x,z,r] of [[0,-.35,2.4],[-3.55,2.55,2.2],[3.55,2.55,2.2],[0,5.48,2.7]]) {
     const bounce = paint.createRadialGradient(x,z,.5,x,z,r);
     bounce.addColorStop(0,"rgba(255,230,191,.72)");
     bounce.addColorStop(1,"rgba(255,230,191,0)");
@@ -827,6 +834,7 @@ function buildMediaCube(scene) {
   );
   underlight.position.y = 0.026;
   group.add(underlight);
+  signPlinth(group, "Видеокуб", 2.28, 2.28, .20);
 
   const inset = meshOf(new RoundedBoxGeometry(1.12, 0.09, 1.12, 7, 0.08), blackMetal, [0, 0.245, 0]);
   inset.receiveShadow = true;
@@ -917,80 +925,39 @@ function addDisplayExhibit(group, asset, title, placement, dims, position, rotat
 function buildFeatureIslands(scene) {
   const plinth = new THREE.MeshPhysicalMaterial({ color: 0xf0f1ee, roughness: 0.25, metalness: 0.12, clearcoat: 0.42, clearcoatRoughness: 0.22, envMapIntensity: 1.05 });
   const glow = new THREE.MeshBasicMaterial({ color: 0xe7fbff, transparent: true, opacity: 0.88, toneMapped: false });
-  const tabletGlass = new THREE.MeshPhysicalMaterial({ color: 0x143f62, roughness: 0.14, metalness: 0.18, clearcoat: 0.46, envMapIntensity: 1.0 });
-  const islandSpecs = [
-    { position: [-3.60, 0, 2.65], model: "technology-02", companion: "technology-01", rotation: 0.22, accent: zoneColors.technology, scale: 1.72 },
-    { position: [3.60, 0, 2.65], model: "transport-11", rotation: -0.14, accent: zoneColors.transport, scale: 1.82 },
-    { position: [-3.35, 0, -3.55], model: "construction-12", rotation: 0.08, accent: zoneColors.construction, scale: 1.92 },
-    { position: [3.35, 0, -3.55], model: "construction-02", rotation: -0.08, accent: zoneColors.construction, scale: 2.08 }
+  const islands = [
+    { x:-3.55, z:2.55, yaw:Math.PI/2, size:[2.78,.40,1.42], title:"Робот-манипулятор и реактор БРЕСТ-ОД-300",
+      models:[["technology-02",[1.20,.95,1.02],[.66,.40,0]],["technology-01",[1.02,.96,.96],[-.72,.40,0]]] },
+    { x:3.55, z:2.55, yaw:Math.PI/2, size:[2.92,.40,1.36], title:"Поезд «Москва-2024»", train:true },
+    { x:-3.35, z:-3.55, yaw:.08, size:[2.40,.38,1.42], title:physicalModels["construction-12"].title,
+      models:[["construction-12",[2.08,1.10,1.05],[0,.38,0]]] },
+    { x:3.35, z:-3.55, yaw:-.08, size:[2.40,.38,1.42], title:physicalModels["construction-02"].title,
+      models:[["construction-02",[2.08,1.10,1.05],[0,.38,0]]] },
+    { x:0, z:5.48, yaw:0, size:[3.80,.38,2.25], title:"Москва-Сити",
+      models:[["center-01",[3.747,2.199,2.124],[0,.38,0]]] }
   ];
-
-  islandSpecs.forEach((spec) => {
+  for (const spec of islands) {
     const group = new THREE.Group();
-    group.position.set(...spec.position);
-    const rear = spec.position[2] < 0;
-    const baseSize = rear ? [2.40, 0.20, 1.42] : [3.05, 0.22, 1.64];
-    const base = meshOf(new RoundedBoxGeometry(...baseSize, 8, 0.13), plinth, [0, baseSize[1] / 2, 0]);
-    base.castShadow = true;
-    base.receiveShadow = true;
-    group.add(base);
-    group.add(meshOf(new RoundedBoxGeometry(baseSize[0] + 0.10, 0.035, baseSize[2] + 0.10, 8, 0.14), glow, [0, 0.025, 0]));
-
-    const side = spec.position[0] < 0 ? "левый" : "правый";
-    const placement = (rear ? "дальний " : "передний ") + side + " подиум";
-    if (spec.model === "transport-11") {
-      addDisplayExhibit(group, "center-03", "Поезд «Москва-2024»", placement, [2.77,0.94,1.08], [0,0.22,-0.13], spec.rotation);
-    } else if (spec.companion) {
-      addDisplayExhibit(group, spec.model, null, placement, [1.32,1.04,1.25], [0.65,0.22,-0.12], spec.rotation);
-      addDisplayExhibit(group, spec.companion, null, placement, [1.05,1.08,1.11], [-0.85,0.22,0]);
+    group.position.set(spec.x,0,spec.z);
+    group.rotation.y = spec.yaw;
+    group.name = "Постамент · " + spec.title;
+    const [width,top,depth] = spec.size;
+    islandFootprints.push({x:spec.x,z:spec.z,yaw:spec.yaw,width,depth});
+    const base=meshOf(new RoundedBoxGeometry(width,top,depth,6,.035),plinth,[0,top/2,0]);
+    base.castShadow=true; base.receiveShadow=true; group.add(base);
+    group.add(meshOf(new RoundedBoxGeometry(width+.035,.028,depth+.035,5,.029),glow,[0,.025,0]));
+    let placement=(spec.z<0?"дальний ":"передний ")+(spec.x<0?"левый":"правый")+" подиум";
+    if(spec.x===0) placement="передний центральный подиум";
+    if (spec.train) {
+      trainPanel=mountRailPanel(group,top);
+      addDisplayExhibit(group,"center-03",spec.title,placement,[2.02,.65,.63],[0,trainPanel.contactY,0]);
     } else {
-      addDisplayExhibit(group, spec.model, null, placement, [2.08,1.10,1.25], [0,0.20,-0.07], spec.rotation);
+      for (const [asset,dims,position] of spec.models)
+        addDisplayExhibit(group,asset,physicalModels[asset]?.title || spec.title,placement,dims,position);
     }
-
-    const tablet = new THREE.Group();
-    tablet.position.set(baseSize[0] * 0.34, 0.48, baseSize[2] * 0.27);
-    tablet.rotation.set(-0.42, -0.22, 0);
-    tablet.add(meshOf(new RoundedBoxGeometry(0.48, 0.035, 0.34, 5, 0.045), tabletGlass, [0, 0, 0]));
-    group.add(tablet);
+    signPlinth(group,spec.title,width,depth,top,spec.train?"Нажмите на вагон · движение пути":"");
     scene.add(group);
-  });
-
-  buildFrontCityIsland(scene, plinth, glow);
-}
-
-function buildFrontCityIsland(scene, plinth, glow) {
-  const group = new THREE.Group();
-  group.position.set(0, 0, 4.55);
-  const base = meshOf(new RoundedBoxGeometry(5.15, 0.24, 1.62, 10, 0.16), plinth, [0, 0.12, 0]);
-  base.castShadow = true;
-  base.receiveShadow = true;
-  group.add(base);
-  group.add(meshOf(new RoundedBoxGeometry(5.27, 0.035, 1.74, 10, 0.17), glow, [0, 0.025, 0]));
-
-  addDisplayExhibit(group, "center-01", "Москва-Сити", "передний центральный подиум", [2.77,1.42,1.48], [-0.98,0.24,0]);
-  addDisplayExhibit(group, "center-02", "Парящий мост «Зарядья»", "передний центральный подиум", [1.73,1.32,0.82], [1.45,0.24,0]);
-  group.traverse((child) => { if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; } });
-  const label = createIslandFaceLabel("ДОСТИЖЕНИЯ РОССИИ");
-  label.scale.y = 0.38;
-  label.position.set(0, 0.12, 0.825);
-  group.add(label);
-  scene.add(group);
-}
-
-function createIslandFaceLabel(text) {
-  const layer = document.createElement("canvas");
-  layer.width = 1200;
-  layer.height = 180;
-  const ctx = layer.getContext("2d");
-  ctx.clearRect(0, 0, layer.width, layer.height);
-  ctx.fillStyle = "#f4f3ec";
-  ctx.font = "600 66px 'IBM Plex Mono', Consolas, monospace";
-  ctx.textAlign = "center";
-  ctx.letterSpacing = "9px";
-  ctx.fillText(text, layer.width / 2, 116);
-  const texture = new THREE.CanvasTexture(layer);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  return new THREE.Mesh(new THREE.PlaneGeometry(3.30, 0.50), new THREE.MeshBasicMaterial({ map: texture, transparent: true, toneMapped: false, side: THREE.DoubleSide }));
+  }
 }
 
 function addSuspendedHeroModels(scene) {
@@ -1786,8 +1753,8 @@ function isNarrowScene() {
 function getCameraView(name, narrow = false) {
   const views = {
     overview: narrow
-      ? { position: [0, 4.35, 15.8], target: [0, 1.10, 0.3] }
-      : { position: [0, 5.05, 14.7], target: [0, 1.62, -1.75] },
+      ? { position: [0, 4.55, 17.0], target: [0, 1.00, 1.2] }
+      : { position: [0, 4.85, 16.0], target: [0, 1.08, .9] },
     visitor: { position: [0, 1.65, 10.9], target: [0, 1.72, -1.25] },
     cube: narrow
       ? { position: [3.65, 2.75, 4.3], target: [0, 1.92, -0.35] }
@@ -1876,9 +1843,13 @@ function updateWalk(camera, controls, delta) {
   candidate.y = 1.65;
   const canStand = (point) => {
     const outsideCube = Math.hypot(point.x, point.z + 0.35) > 1.45;
-    const outsideLeftIsland = Math.hypot((point.x + 3.45) / 1.55, (point.z - 2.35) / 0.95) > 1;
-    const outsideRightIsland = Math.hypot((point.x - 3.45) / 1.55, (point.z - 2.35) / 0.95) > 1;
-    return point.x >= -5.65 && point.x <= 5.65 && point.z >= -9.45 && point.z <= 10.45 && outsideCube && outsideLeftIsland && outsideRightIsland;
+    const outsideIslands = islandFootprints.every(({x,z,yaw,width,depth}) => {
+      const dx=point.x-x, dz=point.z-z;
+      const along=dx*Math.cos(yaw)-dz*Math.sin(yaw);
+      const across=dx*Math.sin(yaw)+dz*Math.cos(yaw);
+      return Math.abs(along)>width/2+.18 || Math.abs(across)>depth/2+.18;
+    });
+    return point.x >= -5.65 && point.x <= 5.65 && point.z >= -9.45 && point.z <= 10.45 && outsideCube && outsideIslands;
   };
   let next = candidate;
   if (!canStand(next)) {

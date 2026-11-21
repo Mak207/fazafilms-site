@@ -12,7 +12,8 @@ export function createExhibitLoader(loader, prepare, changed) {
   let nextCheck = 0;
 
   function fetchModel(folder, id) {
-    return loader.loadAsync(`./assets/models/${folder}/${id}.glb?v=30`).then(({scene}) => {
+    const version = ["center-01","center-03"].includes(id) ? 33 : 30;
+    return loader.loadAsync(`./assets/models/${folder}/${id}.glb?v=${version}`).then(({scene}) => {
       scene.traverse(object => {
         if (object.isMesh && !object.geometry.hasAttribute("normal")) object.geometry.computeVertexNormals();
       });
@@ -23,7 +24,8 @@ export function createExhibitLoader(loader, prepare, changed) {
 
   function fit(model, entry) {
     const [width, depth, height] = entry.dims;
-    const box = new THREE.Box3().setFromObject(model);
+    const precisionFit = entry.id === "center-03" || entry.id === "center-01";
+    const box = new THREE.Box3().setFromObject(model,precisionFit);
     const size = box.getSize(new THREE.Vector3());
     const scale = Math.min(width/size.x, depth/size.z, height/size.y);
     const turned = Math.min(width/size.z, depth/size.x, height/size.y);
@@ -32,7 +34,7 @@ export function createExhibitLoader(loader, prepare, changed) {
     frame.add(model);
     frame.rotation.y = entry.turn ? Math.PI/2 : 0;
     frame.scale.setScalar(entry.turn ? turned : scale);
-    box.setFromObject(frame);
+    box.setFromObject(frame,precisionFit);
     const center = box.getCenter(new THREE.Vector3());
     frame.position.set(-center.x, -box.min.y, -center.z);
     return frame;
