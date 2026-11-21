@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#14231e">
+  <title>Интерактивный 3D-тур по павильону · Золотое кольцо</title>
+  <link rel="stylesheet" href="tour.css?v=1">
+  <script type="module" src="tour.js?v=1"></script>
+</head>
+<body>
+  <main class="tour" id="tour" data-mode="orbit" data-state="loading">
+    <header class="tour-bar">
+      <div>
+        <strong>Золотое кольцо</strong>
+        <span>интерактивный 3D-тур по павильону</span>
+      </div>
+      <div class="tour-bar-actions">
+        <span class="model-status">М 1:1 · без приборов</span>
+        <button type="button" id="fullscreen">На весь экран</button>
+      </div>
+    </header>
+
+    <section class="stage" id="stage" aria-label="Трёхмерная модель павильона">
+      <canvas id="canvas" tabindex="0" aria-label="Интерактивный 3D-тур. Перетаскивайте мышью для обзора, используйте колесо для масштаба."></canvas>
+
+      <div class="loading" id="loading" role="status" aria-live="polite">
+        <div class="loading-copy">
+          <p>Исходная сборка 1911</p>
+          <strong id="loading-title">Загружаем павильон</strong>
+          <div class="progress" aria-hidden="true"><i id="progress"></i></div>
+          <span id="loading-detail">Подготавливаем 3D-модель…</span>
+          <button type="button" id="retry" hidden>Повторить загрузку</button>
+        </div>
+      </div>
+
+      <article class="view-card" aria-live="polite">
+        <p id="view-kicker">Общий вид</p>
+        <h1 id="view-title">Павильон целиком</h1>
+        <p id="view-description">Архитектура и сценография без добавленных объектов интерактивов.</p>
+      </article>
+
+      <div class="help" id="help">
+        <button type="button" id="help-toggle" aria-expanded="false">Как управлять</button>
+        <div class="help-copy" id="help-copy" hidden>
+          <p><b>Мышь или касание</b> — повернуть обзор</p>
+          <p><b>Колесо или два пальца</b> — приблизить</p>
+          <p><b>Прогулка</b> — WASD, стрелки или экранные кнопки</p>
+        </div>
+      </div>
+
+      <nav class="camera-nav" aria-label="Точки обзора">
+        <button type="button" data-view="overview" class="is-active">Общий вид</button>
+        <button type="button" data-view="entrance">Вход</button>
+        <button type="button" data-view="center">Центральная зона</button>
+        <button type="button" data-view="regions">Региональные залы</button>
+        <button type="button" data-view="workshops">Мастерские</button>
+        <button type="button" data-view="plan">Сверху</button>
+        <button type="button" id="walk" aria-pressed="false">Прогулка</button>
+      </nav>
+
+      <div class="walk-pad" id="walk-pad" aria-label="Управление прогулкой">
+        <button type="button" data-move="forward" aria-label="Идти вперёд">↑</button>
+        <button type="button" data-move="left" aria-label="Идти влево">←</button>
+        <button type="button" data-move="back" aria-label="Идти назад">↓</button>
+        <button type="button" data-move="right" aria-label="Идти вправо">→</button>
+      </div>
+
+      <p class="walk-hint" id="walk-hint" hidden>Перетаскивайте, чтобы смотреть · WASD или стрелки — идти · Shift — быстрее</p>
+      <p class="notice" id="notice" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+</body>
+</html>

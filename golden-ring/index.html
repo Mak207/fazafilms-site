@@ -10,8 +10,8 @@
   <link rel="icon" href="/favicon.svg">
   <meta property="og:title" content="Золотое кольцо — референсы и решения">
   <meta property="og:image" content="https://fazafilms.ru/golden-ring/media/hero.jpg">
-  <link rel="stylesheet" href="style.css?v=10">
-  <script defer src="page.js?v=10"></script>
+  <link rel="stylesheet" href="style.css?v=11">
+  <script defer src="page.js?v=11"></script>
 </head>
 <body>
   <a class="skip" href="#main">Перейти к содержанию</a>
@@ -22,6 +22,7 @@
       <nav aria-label="Разделы проекта">
         <a href="#approved" data-nav="approved">Референсы</a>
         <a href="#interactives" data-nav="interactives">Интерактивы</a>
+        <a href="#tour" data-nav="tour">3D-тур</a>
         <a href="#spatial" data-nav="spatial">Пространственная схема</a>
         <a href="drawings.html">Чертежи приборов</a>
         <a href="#decisions" data-nav="decisions">Вопросы к встрече</a>
@@ -86,6 +87,24 @@
         </article>
       </div>
       <p class="meeting-link">После обсуждения выбранный вариант и комментарии можно записать в <a href="files/golden-ring-decisions.xlsx" download>реестр решений Excel</a>.</p>
+    </section>
+    <section class="panel" id="tour" aria-labelledby="tour-title">
+      <div class="heading-row tour-heading">
+        <div>
+          <p class="eyebrow">Общая сборка 1911 · масштаб 1:1</p>
+          <h1 id="tour-title" tabindex="-1">Интерактивный 3D-тур по павильону</h1>
+          <p class="intro">Осмотрите архитектуру и сценографию с общего плана, из точки посетителя или в свободной прогулке. Девять добавленных приборов скрыты, поэтому здесь можно оценить само пространство и будущую расстановку.</p>
+        </div>
+        <a class="button" href="tour/" target="_blank" rel="noopener">Открыть отдельно</a>
+      </div>
+      <div class="tour-frame-shell">
+        <iframe id="pavilion-tour" title="Интерактивный 3D-тур по павильону Золотое кольцо" data-src="tour/index.html" loading="lazy" allow="fullscreen" referrerpolicy="same-origin"></iframe>
+      </div>
+      <div class="tour-notes" aria-label="Возможности 3D-тура">
+        <article><b>Точки обзора</b><span>Общий вид, вход, центральная зона, региональные залы, мастерские и план сверху.</span></article>
+        <article><b>Свободная прогулка</b><span>Мышь, WASD, стрелки и сенсорные кнопки на экране.</span></article>
+        <article><b>Для обсуждения</b><span>Оценивайте маршруты, видовые оси и свободные места до размещения приборов.</span></article>
+      </div>
     </section>
     <section class="panel" id="spatial" aria-labelledby="spatial-title">
       <div class="heading-row spatial-heading">
