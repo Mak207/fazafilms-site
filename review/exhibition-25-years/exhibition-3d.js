@@ -1,3 +1,4 @@
+import { createWallProgram } from "./wall-program.js?v=31";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -134,7 +135,11 @@ const modelObjects = {};
 let selectedModelId = "media-cube";
 let programPhase = 0;
 let programAdvance = 0;
-const programDwell = 12;
+const programDwell = 24;
+const cubeTurnMs = 120000;
+let cubeRotor;
+let panoramaTime = 0;
+let wallTextureLimit = 8192;
 let lastProgramMetricKey = "";
 let cameraMotion = null;
 const activeMoves = new Set();
@@ -145,7 +150,7 @@ const cubeFaceTextures = {};
 zones.forEach((zone) => {
   const image = new Image();
   image.src = `./assets/frames/${zone}-anchor.webp`;
-  image.onload = () => drawProgramScreen(performance.now() / 1000);
+  image.onload = () => drawProgramScreen(programPhase);
   screenFrames[zone] = image;
 
   const video = document.createElement("video");
@@ -156,10 +161,13 @@ zones.forEach((zone) => {
   video.preload = "auto";
   video.addEventListener("loadeddata", () => {
     syncProgramPlayback();
-    drawProgramScreen(performance.now() / 1000);
+    drawProgramScreen(programPhase);
   });
   screenVideos[zone] = video;
 });
+
+const panoramaArt = new Image();
+const paintWall = createWallProgram(programTopics, exhibitCatalog, pavilion, screenVideos, panoramaArt, drawObjectAction, () => drawProgramScreen(programPhase));
 
 try {
   if (!allItems.length) throw new Error("Не загрузился список из 42 позиций");
@@ -173,6 +181,7 @@ try {
 function init() {
   readUrlState();
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
+  wallTextureLimit = Math.min(8192, renderer.capabilities.maxTextureSize);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
   renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -257,19 +266,27 @@ function init() {
   if (reducedMotion) state.programPlaying = false;
   syncProgramPlayback();
   updateProgramPlaybackUi();
-  let programLastTick = performance.now();
-  window.setInterval(() => {
-    const now = performance.now();
-    const programDelta = Math.max(0, (now - programLastTick) / 1000);
-    programLastTick = now;
-    if (!state.programPlaying) return;
-    programPhase += programDelta;
-    programAdvance += programDelta;
-    if (programAdvance >= programDwell) stepProgram(1);
-    else drawProgramScreen(programPhase);
-  }, 80);
+  const cubeStart = performance.now();
+  let lastTick = cubeStart;
+  let lastPaint = -Infinity;
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
+    const now = performance.now();
+    const elapsed = (now - lastTick) / 1000;
+    lastTick = now;
+    cubeRotor.rotation.y = ((now - cubeStart) % cubeTurnMs) * Math.PI * 2 / cubeTurnMs;
+    if (state.programPlaying) {
+      panoramaTime += elapsed;
+      programPhase += elapsed;
+      programAdvance += elapsed;
+      if (programAdvance >= programDwell) {
+        stepProgram(1);
+        lastPaint = now;
+      } else if (now - lastPaint >= 1000 / 24) {
+        drawProgramScreen(programPhase);
+        lastPaint = now;
+      }
+    }
     const delta = Math.min(clock.getDelta(), 0.05);
     if (cameraMotion) updateCameraMotion(camera, controls);
     if (state.walking) updateWalk(camera, controls, delta);
@@ -588,8 +605,8 @@ function createScreenLayers(lengthMeters) {
     ["lower", 0.5, 210]
   ].forEach(([band, heightMeters, pixelsPerMeter]) => {
     const layer = document.createElement("canvas");
-    layer.width = Math.min(8192, Math.max(4096, Math.round(lengthMeters * pixelsPerMeter)));
-    layer.height = Math.max(112, Math.round(layer.width * heightMeters / lengthMeters));
+    layer.width = Math.min(wallTextureLimit, Math.max(4096, Math.round(lengthMeters * pixelsPerMeter)));
+    layer.height = Math.round(layer.width * heightMeters / lengthMeters);
     screenCanvases[band] = layer;
     const texture = new THREE.CanvasTexture(layer);
     texture.colorSpace = THREE.SRGBColorSpace;
@@ -823,8 +840,8 @@ function buildMediaCube(scene) {
 
   zones.forEach((zone) => {
     const layer = document.createElement("canvas");
-    layer.width = 1024;
-    layer.height = 1024;
+    layer.width = 768;
+    layer.height = 768;
     cubeFaceCanvases[zone] = layer;
     const texture = new THREE.CanvasTexture(layer);
     texture.colorSpace = THREE.SRGBColorSpace;
@@ -857,7 +874,10 @@ function buildMediaCube(scene) {
   }
   cube.castShadow = true;
   cube.userData.modelId = id;
-  group.add(cube);
+  cubeRotor = new THREE.Group();
+  cubeRotor.name = "media-cube-rotor";
+  group.add(cubeRotor);
+  cubeRotor.add(cube);
 
   const edges = new THREE.LineSegments(
     new THREE.EdgesGeometry(new THREE.BoxGeometry(1.5, 1.5, 1.5), 12),
@@ -867,7 +887,7 @@ function buildMediaCube(scene) {
   edges.quaternion.copy(cube.quaternion);
   edges.scale.setScalar(1.006);
   edges.userData.modelId = id;
-  group.add(edges);
+  cubeRotor.add(edges);
 
   group.traverse((child) => { child.userData.modelId = id; });
   scene.add(group);
@@ -1031,22 +1051,19 @@ function drawCubeFaces() {
     // source aspect ratio and horizontal orientation are preserved: no stretch
     // and no 90-degree rotation, while the face no longer looks letterboxed.
     const viewport = { x: 0, y: 0, width: layer.width, height: layer.height };
-    ctx.save();
     if (getMediaWidth(media)) drawImageCover(ctx, media, viewport.x, viewport.y, viewport.width, viewport.height);
-    ctx.save();
-    ctx.globalCompositeOperation = "screen";
-    const wash = ctx.createLinearGradient(viewport.x, viewport.y, viewport.x + viewport.width, viewport.y + viewport.height);
-    wash.addColorStop(0, "rgba(0,88,220,.34)");
-    wash.addColorStop(0.55, hexToRgba(zoneColors[zone], 0.24));
-    wash.addColorStop(1, "rgba(0,52,150,.42)");
-    ctx.fillStyle = wash;
-    ctx.fillRect(viewport.x, viewport.y, viewport.width, viewport.height);
-    ctx.restore();
-    ctx.save();
-    ctx.translate(viewport.x, viewport.y);
-    drawLivingScreenBackground(ctx, viewport.width, viewport.height, zoneColors[zone], programPhase + index, zone, true);
-    ctx.restore();
-    ctx.restore();
+    if (panoramaArt.naturalWidth) {
+      const row = panoramaArt.naturalHeight / zones.length;
+      const crop = row - 4;
+      const focus = { technology: 0.26, construction: 0.68, transport: 0.20 }[zone];
+      const pan = focus + 0.035 * Math.sin(panoramaTime * 0.12 + index);
+      ctx.save();
+      const filmMix = (1 - Math.cos(panoramaTime * Math.PI / 12)) / 2;
+      ctx.globalAlpha = video?.readyState >= 2 ? 0.94 - 0.77 * filmMix : 1;
+      ctx.drawImage(panoramaArt, (panoramaArt.naturalWidth - crop) * pan, row * index + 2, crop, crop,
+        0, 0, layer.width, layer.height);
+      ctx.restore();
+    }
     const shade = ctx.createLinearGradient(0, 0, 0, layer.height);
     shade.addColorStop(0, "rgba(3,8,7,.42)");
     shade.addColorStop(0.26, "rgba(3,8,7,.04)");
@@ -1057,11 +1074,11 @@ function drawCubeFaces() {
     // The safe title area is inside the diamond cutout on all six faces.
     ctx.save();
     ctx.textAlign = "center";
-    ctx.font = "600 54px Oswald, Arial";
+    ctx.font = `600 ${layer.width * 0.053}px Oswald, Arial`;
     ctx.fillStyle = "#fff";
     ctx.shadowColor = "#142635";
     ctx.shadowBlur = 8;
-    ctx.fillText(zoneLabels[zone].toUpperCase(), 512, 385, 535);
+    ctx.fillText(zoneLabels[zone].toUpperCase(), layer.width * .5, layer.height * .376, layer.width * .523);
     ctx.restore();
     cubeFaceTextures[zone].needsUpdate = true;
   });
@@ -1072,15 +1089,8 @@ function drawProgramScreen(phase) {
   const lower = screenCanvases.lower;
   if (!upper || !lower) return;
   const topic = programTopics[state.programIndex] || programTopics[0];
-  const zone = topic.zone;
-  const accent = zoneColors[zone];
-  const video = screenVideos[zone];
-  const frame = screenFrames[zone];
-  const media = video?.readyState >= 2 && video.videoWidth ? video : frame;
   const metricWindow = getProgramMetricWindow(topic, phase);
-
-  drawUnifiedUpper(upper, topic, accent, media, phase, metricWindow);
-  drawUnifiedLower(lower, topic, accent, phase, metricWindow);
+  paintWall(upper, lower, panoramaTime, metricWindow.page, topic.zone, state.mode, state.programPlaying);
   updateProgramMetricUi(topic, metricWindow);
   drawCubeFaces();
   screenTextures.upper.needsUpdate = true;
@@ -1100,221 +1110,6 @@ function getProgramMetricWindow(topic, phase) {
     pageDuration,
     localProgress: (normalizedPhase % pageDuration) / pageDuration
   };
-}
-
-function drawUnifiedUpper(layer, topic, accent, media, phase, metricWindow) {
-  const ctx = layer.getContext("2d");
-  const { width: w, height: h } = layer;
-  ctx.clearRect(0, 0, w, h);
-  const ground = ctx.createLinearGradient(0, 0, w, h);
-  ground.addColorStop(0, "#03275b");
-  ground.addColorStop(0.46, "#075f9f");
-  ground.addColorStop(1, "#031f57");
-  ctx.fillStyle = ground;
-  ctx.fillRect(0, 0, w, h);
-
-  if (getMediaWidth(media)) {
-    ctx.save();
-    ctx.globalAlpha = 0.68;
-    drawImageCoverPan(ctx, media, 0, 0, w, h, Math.sin(phase * 0.12) * 0.10, Math.cos(phase * 0.09) * 0.035);
-    ctx.restore();
-  }
-
-  ctx.save();
-  ctx.globalCompositeOperation = "screen";
-  const blueWash = ctx.createLinearGradient(0, 0, w, h);
-  blueWash.addColorStop(0, "rgba(0,118,255,.34)");
-  blueWash.addColorStop(0.48, hexToRgba(accent, 0.20));
-  blueWash.addColorStop(1, "rgba(0,58,168,.42)");
-  ctx.fillStyle = blueWash;
-  ctx.fillRect(0, 0, w, h);
-  ctx.restore();
-
-  const shade = ctx.createLinearGradient(0, 0, 0, h);
-  shade.addColorStop(0, "rgba(2,22,55,.18)");
-  shade.addColorStop(0.55, "rgba(2,30,68,.20)");
-  shade.addColorStop(1, "rgba(1,18,46,.72)");
-  ctx.fillStyle = shade;
-  ctx.fillRect(0, 0, w, h);
-
-  drawLivingScreenBackground(ctx, w, h, accent, phase, topic.zone);
-
-  ctx.fillStyle = "rgba(239,248,255,.96)";
-  ctx.font = `600 ${Math.round(h * 0.078)}px Oswald, Arial`;
-  ctx.fillText(`${(topic.title || zoneLabels[topic.zone]).toUpperCase()} РОССИИ`, w * 0.045, h * 0.115);
-  ctx.fillStyle = accent;
-  ctx.font = `700 ${Math.round(h * 0.040)}px 'IBM Plex Mono', Consolas, monospace`;
-  ctx.fillText(`${exhibitionPeriod}  ·  ДОСТИЖЕНИЯ ЗА 25 ЛЕТ`, w * 0.045, h * 0.175);
-  ctx.fillStyle = "rgba(235,247,255,.72)";
-  ctx.textAlign = "right";
-  ctx.fillText(`ТАКТ ${metricWindow.page + 1} / ${metricWindow.pageCount}`, w * 0.955, h * 0.145);
-  ctx.textAlign = "left";
-
-  const pulse = 0.72 + Math.sin(phase * 0.72) * 0.10;
-  const transition = Math.min(1, metricWindow.localProgress * 5, (1 - metricWindow.localProgress) * 5);
-  const displayedMetrics = topic.metrics || metricWindow.metrics;
-  displayedMetrics.forEach((metric, index) => {
-    const fraction = 0.017 + index * 0.108;
-    const x = w * fraction;
-    const cardW = w * 0.097;
-    const cardY = h * (0.22 + (1 - transition) * 0.025);
-    const cardH = h * 0.62;
-    const metricNumber = index + 1;
-    ctx.save();
-    ctx.globalAlpha = 0.78 + transition * 0.16 + Math.sin(phase * 0.55 + index * 0.64) * 0.035;
-    roundedRect(ctx, x, cardY, cardW, cardH, h * 0.026);
-    const cardGround = ctx.createLinearGradient(x, cardY, x + cardW, cardY + cardH);
-    cardGround.addColorStop(0, "rgba(4,61,125,.80)");
-    cardGround.addColorStop(0.54, "rgba(6,103,163,.67)");
-    cardGround.addColorStop(1, "rgba(3,38,96,.82)");
-    ctx.fillStyle = cardGround;
-    ctx.fill();
-    ctx.strokeStyle = `rgba(211,241,255,${0.42 + pulse * 0.16})`;
-    ctx.lineWidth = Math.max(2, h * 0.0035);
-    ctx.stroke();
-
-    ctx.save();
-    roundedRect(ctx, x, cardY, cardW, cardH, h * 0.026);
-    ctx.clip();
-    const sweepX = x - h * 0.25 + ((phase * 0.13 + index * 0.31) % 1.25) * (cardW + h * 0.50);
-    const sweep = ctx.createLinearGradient(sweepX - h * 0.18, 0, sweepX + h * 0.18, 0);
-    sweep.addColorStop(0, "rgba(255,255,255,0)");
-    sweep.addColorStop(0.5, "rgba(219,249,255,.20)");
-    sweep.addColorStop(1, "rgba(255,255,255,0)");
-    ctx.fillStyle = sweep;
-    ctx.fillRect(x, cardY, cardW, cardH);
-    ctx.restore();
-
-    const inset = h * 0.045;
-    ctx.fillStyle = "rgba(228,247,255,.82)";
-    ctx.font = `700 ${Math.round(h * 0.027)}px 'IBM Plex Mono', Consolas, monospace`;
-    ctx.fillText(`${String(metricNumber).padStart(2, "0")} / ${String(displayedMetrics.length).padStart(2, "0")}`, x + inset, cardY + h * 0.07);
-    drawMetricGlyph(ctx, topic.zone, x + cardW - inset * 1.05, cardY + h * 0.066, h * 0.052, accent, phase + index * 0.8);
-    ctx.fillStyle = "#f1f8fb";
-    drawFittedWrappedText(ctx, metric.value, x + inset, cardY + h * 0.15, cardW - inset * 2, h * 0.13, Math.round(h * 0.098), Math.round(h * 0.047), 1, "600", "Oswald, Arial");
-    ctx.fillStyle = "rgba(241,249,252,.97)";
-    drawFittedWrappedText(ctx, metric.label.toUpperCase(), x + inset, cardY + h * 0.32, cardW - inset * 2, h * 0.16, Math.round(h * 0.044), Math.round(h * 0.027), 3, "700", "Inter, Arial");
-    ctx.fillStyle = "rgba(220,238,246,.78)";
-    ctx.font = `500 ${Math.round(h * 0.027)}px Inter, Arial`;
-    drawWrappedLines(ctx, metric.detail || exhibitionPeriod, x + inset, cardY + h * 0.51, cardW - inset * 2, h * 0.034, 3);
-    ctx.fillStyle = "rgba(255,255,255,.20)";
-    ctx.fillRect(x + inset, cardY + cardH - h * 0.045, cardW - inset * 2, Math.max(3, h * 0.008));
-    ctx.fillStyle = accent;
-    ctx.fillRect(x + inset, cardY + cardH - h * 0.045, (cardW - inset * 2) * ((programAdvance % programDwell) / programDwell), Math.max(3, h * 0.008));
-    ctx.restore();
-  });
-  addScreenGrain(ctx, w, h, accent, 0.024);
-}
-
-function drawUnifiedLower(layer, topic, accent, phase, metricWindow) {
-  const ctx = layer.getContext("2d");
-  const { width: w, height: h } = layer;
-  ctx.clearRect(0, 0, w, h);
-  const glow = ctx.createLinearGradient(0, 0, w, 0);
-  glow.addColorStop(0, "#032e69");
-  glow.addColorStop(0.48, "#087bb7");
-  glow.addColorStop(1, "#03275f");
-  ctx.fillStyle = glow;
-  ctx.fillRect(0, 0, w, h);
-  drawLivingScreenBackground(ctx, w, h, accent, phase * 1.35, topic.zone, true);
-  ctx.fillStyle = "rgba(231,249,255,.72)";
-  ctx.fillRect(0, 0, w, Math.max(4, h * 0.025));
-
-  metricWindow.metrics.forEach((metric, index) => {
-    const x0 = index * w / 3;
-    const inset = h * 0.18;
-    if (index) {
-      ctx.fillStyle = "rgba(232,248,255,.28)";
-      ctx.fillRect(x0, h * 0.20, 2, h * 0.62);
-    }
-    ctx.fillStyle = "#eefaff";
-    ctx.font = `500 ${Math.round(h * 0.35)}px Oswald, Arial`;
-    ctx.fillText(metric.value, x0 + inset, h * 0.52);
-    ctx.fillStyle = "rgba(238,249,253,.92)";
-    ctx.font = `700 ${Math.round(h * 0.125)}px Inter, Arial`;
-    drawWrappedLines(ctx, metric.label.toUpperCase(), x0 + inset, h * 0.72, w / 3 - inset * 2, h * 0.15, 2);
-    ctx.fillStyle = "rgba(218,240,248,.72)";
-    ctx.font = `500 ${Math.round(h * 0.092)}px 'IBM Plex Mono', Consolas, monospace`;
-    const metricNumber = metricWindow.page * 3 + index + 1;
-    ctx.fillText(`${String(metricNumber).padStart(2, "0")} / ${String((topic.metrics || []).length).padStart(2, "0")}  ·  ${metric.detail || exhibitionPeriod}`, x0 + inset, h * 0.92);
-  });
-  ctx.globalAlpha = 0.08 + Math.sin(phase * 0.9) * 0.025;
-  ctx.fillStyle = "#dffaff";
-  ctx.fillRect((phase * 96) % w, 0, Math.max(8, w * 0.002), h);
-  ctx.globalAlpha = 1;
-}
-
-function drawLivingScreenBackground(ctx, width, height, accent, phase, zone, compact = false) {
-  ctx.save();
-  const horizon = compact ? height * 0.68 : height * 0.78;
-  const step = compact ? height * 0.34 : height * 0.15;
-  ctx.globalAlpha = compact ? 0.20 : 0.26;
-  for (let x = -step; x < width + step; x += step) {
-    const seed = Math.abs(Math.sin(x * 0.0037 + zone.length * 1.7));
-    const buildingH = height * (compact ? 0.20 : 0.13 + seed * 0.17);
-    ctx.fillStyle = x % (step * 2) < step ? "rgba(160,224,255,.52)" : hexToRgba(accent, 0.42);
-    ctx.fillRect(x, horizon - buildingH, step * 0.64, buildingH);
-  }
-
-  ctx.lineWidth = Math.max(1.5, height * 0.006);
-  for (let lane = 0; lane < 3; lane += 1) {
-    const y = height * (0.72 + lane * 0.085);
-    const offset = ((phase * (42 + lane * 18)) % (width * 0.22));
-    const trail = ctx.createLinearGradient(0, 0, width, 0);
-    trail.addColorStop(0, "rgba(105,231,255,.10)");
-    trail.addColorStop(0.5, lane === 1 ? hexToRgba(accent, 0.82) : "rgba(139,222,255,.64)");
-    trail.addColorStop(1, "rgba(105,231,255,.10)");
-    ctx.strokeStyle = trail;
-    ctx.beginPath();
-    ctx.moveTo(-width * 0.05 + offset, y);
-    ctx.bezierCurveTo(width * 0.28, y - height * (0.12 + lane * 0.025), width * 0.62, y + height * 0.08, width * 1.05 + offset, y - height * 0.04);
-    ctx.stroke();
-  }
-
-  if (!compact) {
-    ctx.globalAlpha = 0.34;
-    ctx.strokeStyle = "rgba(184,239,255,.72)";
-    ctx.lineWidth = Math.max(1, height * 0.003);
-    const nodeCount = 18;
-    const nodes = [];
-    for (let i = 0; i < nodeCount; i += 1) {
-      const x = width * (i / (nodeCount - 1));
-      const y = height * (0.13 + 0.07 * Math.sin(i * 1.37 + phase * 0.28));
-      nodes.push([x, y]);
-    }
-    ctx.beginPath();
-    nodes.forEach(([x, y], index) => index ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
-    ctx.stroke();
-    nodes.forEach(([x, y], index) => {
-      const radius = height * (0.006 + 0.003 * Math.sin(phase * 1.2 + index));
-      ctx.fillStyle = index % 3 ? "rgba(218,249,255,.82)" : accent;
-      ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
-    });
-  }
-  ctx.restore();
-}
-
-function drawMetricGlyph(ctx, zone, x, y, size, accent, phase) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.strokeStyle = "rgba(224,248,255,.86)";
-  ctx.fillStyle = hexToRgba(accent, 0.82);
-  ctx.lineWidth = Math.max(2, size * 0.07);
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-  if (zone === "technology") {
-    ctx.beginPath(); ctx.arc(0, 0, size * 0.20, 0, Math.PI * 2); ctx.stroke();
-    ctx.beginPath(); ctx.ellipse(0, 0, size * 0.52, size * 0.22, phase * 0.22, 0, Math.PI * 2); ctx.stroke();
-    ctx.beginPath(); ctx.arc(Math.cos(phase) * size * 0.42, Math.sin(phase) * size * 0.18, size * 0.08, 0, Math.PI * 2); ctx.fill();
-  } else if (zone === "construction") {
-    [0.34, 0.62, 0.46].forEach((height, index) => ctx.strokeRect(-size * 0.48 + index * size * 0.34, size * (0.32 - height), size * 0.25, size * height));
-    ctx.beginPath(); ctx.moveTo(-size * 0.56, size * 0.34); ctx.lineTo(size * 0.54, size * 0.34); ctx.stroke();
-  } else {
-    ctx.beginPath(); ctx.moveTo(-size * 0.52, size * 0.18); ctx.bezierCurveTo(-size * 0.12, -size * 0.35, size * 0.18, size * 0.30, size * 0.52, -size * 0.20); ctx.stroke();
-    const t = (phase * 0.18) % 1;
-    ctx.beginPath(); ctx.arc(-size * 0.52 + t * size * 1.04, Math.sin(t * Math.PI * 2) * size * 0.12, size * 0.09, 0, Math.PI * 2); ctx.fill();
-  }
-  ctx.restore();
 }
 
 function drawScreen(zone, phase) {
@@ -1867,7 +1662,7 @@ function setupUi(camera, controls) {
   document.getElementById("screenSelect").addEventListener("change", (event) => setProgramTopic(Number(event.target.value)));
   document.getElementById("screenMode").addEventListener("change", (event) => {
     state.mode = event.target.value;
-    drawProgramScreen(performance.now() / 1000);
+    drawProgramScreen(programPhase);
     writeUrlState();
   });
   document.getElementById("screenPrev").addEventListener("click", () => stepProgram(-1));
@@ -1930,8 +1725,6 @@ function setProgramTopic(index) {
   state.programIndex = (index + programTopics.length) % programTopics.length;
   programPhase = 0;
   programAdvance = 0;
-  const video = screenVideos[programTopics[state.programIndex].zone];
-  if (video?.readyState >= 2) video.currentTime = 0;
   updateProgramUi();
 }
 
@@ -1941,7 +1734,6 @@ function stepProgram(direction) {
 
 function toggleProgramPlayback() {
   state.programPlaying = !state.programPlaying;
-  programAdvance = 0;
   syncProgramPlayback();
   drawProgramScreen(programPhase);
   updateProgramPlaybackUi();
@@ -2193,7 +1985,7 @@ function readUrlState() {
     state.programIndex = zones.indexOf(zone);
   }
   if (["overview", "visitor", "cube", ...zones].includes(params.get("camera"))) state.camera = params.get("camera");
-  state.mode = "film";
+  state.mode = ["hero", "cards", "grid"].includes(params.get("mode")) ? params.get("mode") : "film";
 }
 
 function writeUrlState() {
