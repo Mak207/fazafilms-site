@@ -204,6 +204,36 @@ body:has(dialog[open]) { overflow: hidden; }
   .viewer-controls button, .viewer-bar button { padding-inline: 9px; font-size: 13px; }
   dialog { width: 100vw; height: 100dvh; border-radius: 0; }
 }
+
+/* Interactive pavilion tour: loaded only when its project tab is opened. */
+.tour-heading { align-items: center; }
+.tour-heading > div { max-width: 900px; }
+.tour-frame-shell {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #101916;
+  box-shadow: 0 24px 70px #2d282626;
+}
+.tour-frame-shell iframe {
+  display: block;
+  width: 100%;
+  height: clamp(640px, 72vh, 900px);
+  border: 0;
+  background: #101916;
+}
+.tour-notes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
+.tour-notes article { display: grid; gap: 5px; padding: 17px 19px; border-left: 4px solid #315c4b; background: var(--surface); }
+.tour-notes b { color: var(--olive); }
+.tour-notes span { color: var(--muted); font-size: 14px; }
+@media (max-width: 840px) {
+  .tour-frame-shell iframe { height: min(760px, 74dvh); min-height: 560px; }
+  .tour-notes { grid-template-columns: 1fr; gap: 8px; }
+}
+@media (max-width: 520px) {
+  .tour-frame-shell { margin-inline: calc((100vw - 100%) / -2); border-inline: 0; border-radius: 0; }
+  .tour-frame-shell iframe { height: calc(100dvh - 146px); min-height: 520px; }
+}
 @media print {
   .masthead, footer, .heading-row > .button, nav, .filter, .meeting-link, dialog { display: none; }
   main { width: 100%; padding: 0; }

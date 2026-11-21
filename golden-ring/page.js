@@ -35,6 +35,10 @@ function showSection(focus = false) {
     else link.removeAttribute('aria-current');
   }
   const heading = document.getElementById(section.id + '-title');
+  if (section.id === 'tour') {
+    const tourFrame = document.getElementById('pavilion-tour');
+    if (tourFrame && !tourFrame.getAttribute('src')) tourFrame.src = tourFrame.dataset.src;
+  }
   document.title = section.id === 'approved' ? 'Золотое кольцо — референсы · ФАЗА' : heading.textContent + ' · Золотое кольцо';
   if (target?.matches('.decision')) {
     if (target.hidden) {
