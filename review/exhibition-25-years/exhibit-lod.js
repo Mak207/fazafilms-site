@@ -114,8 +114,12 @@ export function createExhibitLoader(loader, prepare, changed) {
       const distance = Math.max(0,camera.position.distanceTo(sphere.center)-sphere.radius);
       screen.copy(sphere.center).project(camera);
       entry.rank = distance + (visible ? Math.min(3,Math.hypot(screen.x, screen.y)) : 100);
-      if (visible && entry.anchor.userData.modelId === selectedId) entry.rank -= 3;
-      if (visible && distance < (entry.wanted ? 5 : 4.2)) nearby.push(entry);
+      const selected = entry.anchor.userData.modelId === selectedId;
+      if (visible && selected) entry.rank -= 3;
+      // Framing a wide selected diorama on a portrait screen keeps the eye
+      // farther from its centre than framing a single shelf exhibit.
+      const near = selected ? Math.max(4.2, sphere.radius * 3.1) : 4.2;
+      if (visible && distance < near + (entry.wanted ? .8 : 0)) nearby.push(entry);
     }
     nearby.sort((a,b) => a.rank-b.rank);
     const wanted = new Set(nearby.slice(0, window.innerWidth <= 740 ? 2 : 3));
