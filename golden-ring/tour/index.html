@@ -6,8 +6,8 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="theme-color" content="#14231e">
   <title>Интерактивный 3D-тур по павильону · Золотое кольцо</title>
-  <link rel="stylesheet" href="tour.css?v=2">
-  <script type="module" src="tour.js?v=2"></script>
+  <link rel="stylesheet" href="tour.css?v=3">
+  <script type="module" src="tour.js?v=3"></script>
 </head>
 <body>
   <main class="tour" id="tour" data-mode="orbit" data-state="loading">
@@ -39,6 +39,10 @@
         <p id="view-kicker">Общий вид</p>
         <h1 id="view-title">Павильон целиком</h1>
         <p id="view-description">Архитектура и сценография без добавленных объектов интерактивов.</p>
+        <div id="screen-controls" hidden>
+          <button type="button" id="next-screen">Следующий экран</button>
+          <button type="button" id="screen-motion">Пауза</button>
+        </div>
       </article>
 
       <div class="help" id="help">
@@ -52,6 +56,7 @@
 
       <nav class="camera-nav" aria-label="Точки обзора">
         <button type="button" data-view="overview" class="is-active">Общий вид</button>
+        <button type="button" data-view="media">Экраны</button>
         <button type="button" data-view="entrance">Вход</button>
         <button type="button" data-view="center">Центральная зона</button>
         <button type="button" data-view="regions">Региональные залы</button>

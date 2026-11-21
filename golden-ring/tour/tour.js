@@ -1,6 +1,7 @@
 import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
 import { GLTFLoader } from '../interactives/vendor/three-0.180/GLTFLoader.js';
 import { MeshoptDecoder } from './vendor/meshopt_decoder.mjs';
+import { lightGallery, finishGallery, screens } from './gallery.js?v=3';
 
 const root = document.getElementById('tour');
 const stage = document.getElementById('stage');
@@ -17,6 +18,13 @@ const walkButton = document.getElementById('walk');
 const walkHint = document.getElementById('walk-hint');
 const fullscreenButton = document.getElementById('fullscreen');
 const notice = document.getElementById('notice');
+const screenControls = document.getElementById('screen-controls');
+const motionButton = document.getElementById('screen-motion');
+let screenIndex = 0;
+const mediaTime = { value: 0 };
+const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+let motionEnabled = !motionPreference.matches;
+let lastFrameTime;
 
 const views = {
   overview: {
@@ -41,7 +49,7 @@ const views = {
     kicker: 'Экспозиционный маршрут',
     title: 'Региональные залы',
     description: 'Последовательность пространств вдоль северной части павильона.',
-    position: [-10, 5.2, -4], target: [-20, 1.7, -12]
+    position: [-16.1, 2.4, -5.8], target: [-20, 1.75, -12.1]
   },
   workshops: {
     kicker: 'Рабочие зоны',
@@ -58,30 +66,18 @@ const views = {
 };
 
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+renderer.transmissionResolutionScale = .5;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.12;
-
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xd8d0bf);
-scene.fog = new THREE.FogExp2(0xd8d0bf, 0.0065);
+lightGallery(scene, renderer);
 
 const camera = new THREE.PerspectiveCamera(46, 1, 0.08, 260);
 camera.position.fromArray(views.overview.position);
 let target = new THREE.Vector3(...views.overview.target);
 camera.lookAt(target);
 
-scene.add(new THREE.HemisphereLight(0xfff5df, 0x52635c, 2.55));
-const key = new THREE.DirectionalLight(0xffe3b6, 4.1);
-key.position.set(34, 48, 28);
-scene.add(key);
-const fill = new THREE.DirectionalLight(0xc6e4dc, 2.15);
-fill.position.set(-35, 24, -28);
-scene.add(fill);
-const rim = new THREE.DirectionalLight(0xffb36d, 1.4);
-rim.position.set(10, 18, -46);
-scene.add(rim);
 
 let pavilion = null;
 let cameraMotion = null;
@@ -94,6 +90,13 @@ const pointers = new Map();
 let lastPointer = null;
 let lastPinch = 0;
 let noticeTimer = 0;
+const mediaMeshes = [];
+const frustum = new THREE.Frustum();
+const projectionView = new THREE.Matrix4();
+const previousProjectionView = new THREE.Matrix4();
+let refreshFrame = true;
+let screenInView = false;
+let lastDraw = 0;
 
 function resize() {
   const width = Math.max(1, stage.clientWidth);
@@ -101,18 +104,26 @@ function resize() {
   renderer.setSize(width, height, false);
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
+  refreshFrame = true;
 }
 
 function setView(name, immediate = false) {
-  const view = views[name] || views.overview;
+  const isScreen = name === 'media';
+  const hall = screenIndex === 3 ? 'Финальный зал' : 'Региональный зал';
+  const view = isScreen ? { ...screens[screenIndex], kicker: `${hall} · Экран ${screenIndex + 1} из ${screens.length}`,
+    description: '' } : views[name] || views.overview;
   if (mode === 'walk') setWalk(false, false);
+  screenControls.hidden = !isScreen;
   viewKicker.textContent = view.kicker;
   viewTitle.textContent = view.title;
   viewDescription.textContent = view.description;
   document.querySelectorAll('[data-view]').forEach(button => button.classList.toggle('is-active', button.dataset.view === name));
   const endPosition = new THREE.Vector3(...view.position);
   const endTarget = new THREE.Vector3(...view.target);
+  const endFov = isScreen ? [72,61,64,70][screenIndex] : 46;
   if (immediate || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    camera.fov = endFov;
+    camera.updateProjectionMatrix();
     camera.position.copy(endPosition);
     target.copy(endTarget);
     orbitDistance = camera.position.distanceTo(target);
@@ -121,6 +132,7 @@ function setView(name, immediate = false) {
     return;
   }
   cameraMotion = {
+    startFov: camera.fov, endFov,
     startPosition: camera.position.clone(),
     startTarget: target.clone(),
     endPosition,
@@ -134,6 +146,8 @@ function updateCameraMotion() {
   if (!cameraMotion) return;
   const t = Math.min(1, (performance.now() - cameraMotion.started) / cameraMotion.duration);
   const eased = 1 - Math.pow(1 - t, 3);
+  camera.fov = THREE.MathUtils.lerp(cameraMotion.startFov,cameraMotion.endFov,eased);
+  camera.updateProjectionMatrix();
   camera.position.lerpVectors(cameraMotion.startPosition, cameraMotion.endPosition, eased);
   target.lerpVectors(cameraMotion.startTarget, cameraMotion.endTarget, eased);
   orbitDistance = camera.position.distanceTo(target);
@@ -182,6 +196,9 @@ function setWalk(enabled, moveToStart = true) {
   activeMoves.clear();
   cameraMotion = null;
   if (enabled) {
+    camera.fov = 52;
+    camera.updateProjectionMatrix();
+    screenControls.hidden = true;
     if (moveToStart) camera.position.set(40, 1.65, 14);
     const direction = new THREE.Vector3(32, 1.55, 8).sub(camera.position).normalize();
     yaw = Math.atan2(direction.x, -direction.z);
@@ -220,10 +237,27 @@ function updateWalk(delta) {
   updateWalkTarget();
 }
 
-function animate() {
-  updateCameraMotion();
-  renderer.render(scene, camera);
+function animate(now) {
   requestAnimationFrame(animate);
+  if (document.hidden) { lastFrameTime = undefined; return; }
+  if (motionEnabled && !document.hidden && lastFrameTime !== undefined) {
+    mediaTime.value += Math.min((now - lastFrameTime) / 1000, .25);
+  }
+  lastFrameTime = now;
+  updateCameraMotion();
+  camera.updateMatrixWorld();
+  projectionView.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+  const cameraMoved = !projectionView.equals(previousProjectionView);
+  if (refreshFrame || cameraMoved) {
+    frustum.setFromProjectionMatrix(projectionView);
+    screenInView = mediaMeshes.some(mesh => frustum.intersectsObject(mesh));
+  } else if (!motionEnabled || !screenInView || now - lastDraw < 1000 / 30) {
+    return;
+  }
+  previousProjectionView.copy(projectionView);
+  refreshFrame = false;
+  lastDraw = now;
+  renderer.render(scene, camera);
 }
 
 let lastWalkUpdate = performance.now();
@@ -251,7 +285,7 @@ async function loadModel() {
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
     const gltf = await new Promise((resolve, reject) => loader.load(
-      'assets/pavilion.glb?v=20261121-empty',
+      'assets/pavilion.glb?v=gallery-3',
       resolve,
       event => {
         if (!event.total) return;
@@ -273,7 +307,12 @@ async function loadModel() {
         material.needsUpdate = true;
       });
     });
+    await finishGallery(pavilion, renderer, mediaTime);
     scene.add(pavilion);
+    pavilion.updateMatrixWorld(true);
+    mediaMeshes.length = 0;
+    pavilion.traverse(mesh => { if (mesh.isMesh && /^Pavilion_(display|panorama)/.test(mesh.name)) mediaMeshes.push(mesh); });
+    refreshFrame = true;
     if (renderer.compileAsync) {
       await Promise.race([
         renderer.compileAsync(scene, camera),
@@ -283,7 +322,7 @@ async function loadModel() {
     progress.style.width = '100%';
     root.dataset.state = 'ready';
     loading.setAttribute('aria-hidden', 'true');
-    setView('overview', true);
+    openTourLocation();
   } catch (error) {
     console.error(error);
     root.dataset.state = 'error';
@@ -304,6 +343,16 @@ canvas.addEventListener('pointerdown', event => {
     lastPinch = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
   }
 });
+function openTourLocation() {
+  const hash = location.hash;
+  if (hash === '#panorama' || hash === '#screens') {
+    screenIndex = hash === '#panorama' ? screens.length - 1 : 0;
+    setView('media', true);
+  } else {
+    setView('overview', true);
+  }
+}
+window.addEventListener('hashchange', openTourLocation);
 
 canvas.addEventListener('pointermove', event => {
   if (!pointers.has(event.pointerId)) return;
@@ -338,6 +387,18 @@ canvas.addEventListener('wheel', event => {
 }, { passive: false });
 
 document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => setView(button.dataset.view)));
+document.getElementById('next-screen').addEventListener('click', () => {
+  screenIndex = (screenIndex + 1) % screens.length;
+  setView('media');
+});
+function setScreenMotion(enabled) {
+  motionEnabled = enabled;
+  motionButton.textContent = enabled ? 'Пауза' : 'Запустить';
+  motionButton.setAttribute('aria-label', enabled ? 'Остановить движение на экранах' : 'Включить движение на экранах');
+}
+setScreenMotion(motionEnabled);
+motionButton.addEventListener('click', () => setScreenMotion(!motionEnabled));
+motionPreference.addEventListener('change', event => setScreenMotion(!event.matches));
 walkButton.addEventListener('click', () => setWalk(mode !== 'walk'));
 
 const keyMap = { KeyW: 'forward', ArrowUp: 'forward', KeyS: 'back', ArrowDown: 'back', KeyA: 'left', ArrowLeft: 'left', KeyD: 'right', ArrowRight: 'right' };
