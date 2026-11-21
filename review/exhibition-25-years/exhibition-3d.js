@@ -113,6 +113,15 @@ if (cubeProposal) physicalModels["media-cube"] = {
 
 const gltfLoader = new GLTFLoader();
 gltfLoader.setMeshoptDecoder(MeshoptDecoder);
+// Metres on the pavilion floor. The last two coordinates are the point of interest.
+const visitorPlacements = [
+  { name: "amara", x: -3.25, z: 4.18, lookX: -3.6, lookZ: 2.65 },
+  { name: "daniel", x: 2.35, z: 0.96, lookX: 3.6, lookZ: 2.65 },
+  { name: "alex", x: -4.85, z: -0.75, lookX: -6.4, lookZ: -1.6 },
+  { name: "avery", x: 3.85, z: -5.32, lookX: 3.35, lookZ: -3.55 },
+  { name: "riley", x: -2.02, z: -6.35, lookX: 0, lookZ: -9.95 },
+  { name: "harper", x: 3.54, z: 5.85, lookX: 4.5, lookZ: 1.1 }
+];
 
 const screenCanvases = {};
 const screenTextures = {};
@@ -259,7 +268,8 @@ function useGalleryMaterials(group) {
       color: original.color, map: original.map, emissive: original.emissive,
       emissiveMap: original.emissiveMap, emissiveIntensity: original.emissiveIntensity,
       vertexColors: original.vertexColors, transparent: original.transparent,
-      opacity: original.opacity, side: original.side, depthWrite: original.depthWrite
+      opacity: original.opacity, alphaTest: original.alphaTest, alphaMap: original.alphaMap,
+      side: original.side, depthWrite: original.depthWrite
     }));
     return materials.get(original);
   }
@@ -413,6 +423,9 @@ function buildPavilion(scene) {
   brush.fillStyle = shade;
   brush.fillRect(0, 0, 128, 128);
   const contact = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(tile), transparent: true, depthWrite: false, toneMapped: false });
+  for (const {x, z} of visitorPlacements) {
+    scene.add(meshOf(new THREE.PlaneGeometry(0.75, 0.57), contact, [x, 0.009, z], [-Math.PI / 2, 0, 0]));
+  }
   for (const [x,z,width,depth] of [[0,-.35,3.8,3.8],[0,4.55,7.4,3.2],[-3.6,2.65,4.6,3],[3.6,2.65,4.6,3],[-3.35,-3.55,3.8,2.7],[3.35,-3.55,3.8,2.7]]) {
     scene.add(meshOf(new THREE.PlaneGeometry(width, depth), contact, [x,.008,z], [-Math.PI/2,0,0]));
   }
@@ -1050,29 +1063,16 @@ function addSuspendedHeroModels(scene) {
 }
 
 function addVisitorFigures(scene) {
-  const skin = new THREE.MeshStandardMaterial({ color: 0xd1aa91, roughness: 0.68, metalness: 0 });
-  const palette = [0x263746, 0xc5b59f, 0x617481, 0xd7d8d2, 0x425263, 0xb8a48d];
-  const placements = [
-    [-2.3, 2.8, 0.04], [-1.45, 1.95, -0.10], [2.25, 1.2, 0.18],
-    [3.2, -3.2, -0.16], [-3.35, -4.15, 0.24], [1.25, -6.15, -0.06]
-  ];
-  placements.forEach(([x, z, rotation], index) => {
-    const cloth = new THREE.MeshStandardMaterial({ color: palette[index % palette.length], roughness: 0.62, metalness: 0.02 });
-    const figure = new THREE.Group();
-    figure.position.set(x, 0, z);
-    figure.rotation.y = rotation;
-    figure.add(meshOf(new THREE.SphereGeometry(0.105, 18, 12), skin, [0, 1.66, 0]));
-    const torso = meshOf(new THREE.CylinderGeometry(0.18, 0.24, 0.72, 18), cloth, [0, 1.18, 0]);
-    figure.add(torso);
-    [-0.10, 0.10].forEach((legX) => figure.add(meshOf(new THREE.CylinderGeometry(0.055, 0.065, 0.78, 14), cloth, [legX, 0.48, 0])));
-    [-1, 1].forEach((side) => {
-      const arm = meshOf(new THREE.CylinderGeometry(0.045, 0.05, 0.64, 14), cloth, [side * 0.22, 1.14, 0], [0, 0, side * 0.14]);
-      figure.add(arm);
+  // Innerscene / MakeHuman CC0. Each posed asset has its own face and wardrobe.
+  for (const {name, x, z, lookX, lookZ} of visitorPlacements) {
+    gltfLoader.load(`./assets/models/visitors/${name}.glb`, ({scene: figure}) => {
+      useGalleryMaterials(figure);
+      figure.name = `visitor-${name}`;
+      figure.position.set(x, 0, z);
+      figure.rotation.y = Math.atan2(lookX - x, lookZ - z);
+      scene.add(figure);
     });
-    figure.scale.setScalar(0.96 + (index % 3) * 0.035);
-    figure.traverse((child) => { if (child.isMesh) { child.castShadow = true; child.receiveShadow = true; } });
-    scene.add(figure);
-  });
+  }
 
   const planter = new THREE.MeshPhysicalMaterial({ color: 0xf0f1ee, roughness: 0.28, metalness: 0.08, clearcoat: 0.24 });
   const trunk = new THREE.MeshStandardMaterial({ color: 0x765e45, roughness: 0.86 });
