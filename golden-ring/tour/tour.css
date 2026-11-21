@@ -49,7 +49,7 @@ button:focus-visible, canvas:focus-visible { outline: 3px solid #edb95d; outline
   display: grid;
   place-items: center;
   padding: 24px;
-  background: linear-gradient(90deg, #0b120eaa, #0b120e35), url("poster.png?v=2") center / cover no-repeat;
+  background: linear-gradient(90deg, #0b120eaa, #0b120e35), url("poster.png?v=3") center / cover no-repeat;
   transition: opacity .45s ease, visibility .45s ease;
 }
 [data-state="ready"] .loading { opacity: 0; visibility: hidden; pointer-events: none; }
@@ -74,6 +74,8 @@ button:focus-visible, canvas:focus-visible { outline: 3px solid #edb95d; outline
   pointer-events: none;
 }
 .view-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
+#screen-controls:not([hidden]) { display:flex; flex-wrap:wrap; gap:5px; pointer-events:auto; }
+#screen-controls button { min-height:44px; padding:4px 9px; color:var(--ink); background:#263b32; border:1px solid var(--line); border-radius:7px; cursor:pointer; font-size:12px; }
 .view-card > p:first-child { margin-bottom: 5px; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; font-size: 11px; }
 .view-card h1 { margin: 0 0 7px; font: 400 clamp(22px, 3vw, 31px)/1.08 Georgia, serif; }
 .help { position: absolute; z-index: 5; top: clamp(12px, 2vw, 26px); right: clamp(12px, 2vw, 26px); display: grid; justify-items: end; gap: 7px; }
@@ -121,7 +123,7 @@ html.tour-fullscreen { overflow: hidden; }
   #fullscreen::before { content: "⛶"; position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink); font-size: 19px; }
   .view-card { top: 10px; left: 10px; width: min(285px, calc(100% - 100px)); padding: 12px 14px; }
   .view-card h1 { font-size: 21px; }
-  .view-card p:last-child { display: none; }
+  #view-description { display: none; }
   .help { top: 10px; right: 10px; }
   .help button { width: 44px; padding: 0; overflow: hidden; color: transparent; }
   .help button::before { content: "?"; color: var(--ink); font-weight: 700; }
@@ -133,7 +135,7 @@ html.tour-fullscreen { overflow: hidden; }
 @media (max-height: 560px) {
   .tour-bar { min-height: 48px; padding-block: 5px; }
   .view-card { top: 8px; left: 8px; padding: 9px 12px; }
-  .view-card p:last-child { display: none; }
+  #view-description { display: none; }
   .camera-nav { bottom: 7px; }
   .camera-nav button { min-height: 36px; }
 }
