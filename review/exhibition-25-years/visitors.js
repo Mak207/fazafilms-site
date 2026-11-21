@@ -13,21 +13,21 @@ const routes = [
 
 // One lap starts at an exhibit. Integrating the acceleration ramps gives the
 // travelled distance; that same distance advances the gait and its footfalls.
+const ramp = 1.22;
 function lap(time, length, speed, pause) {
-  const ramp = .85;
   const travel = length/speed + ramp;
   const t = time % (pause+travel) - pause;
-  if (t <= 0) return {distance:0, weight:0};
-  if (t < ramp) return {distance:speed*t*t/(2*ramp),weight:t/ramp};
+  if (t <= 0) return {distance:0, weight:0, direction:0, rest:t+pause};
+  if (t < ramp) return {distance:speed*t*t/(2*ramp),weight:t/ramp,direction:1};
   const remaining = travel-t;
-  if (remaining < ramp) return {distance:length-speed*remaining*remaining/(2*ramp),weight:remaining/ramp};
-  return {distance:speed*(t-ramp/2),weight:1};
+  if (remaining < ramp) return {distance:length-speed*remaining*remaining/(2*ramp),weight:remaining/ramp,direction:-1};
+  return {distance:speed*(t-ramp/2),weight:1,direction:0};
 }
 
 export function addWalkers(scene, loader, contactMaterial) {
   const actors = [];
   for (const route of routes) {
-    loader.load(`./assets/models/visitors/walking-${route.model}.glb`, ({scene:rig, animations}) => {
+    loader.load(`./assets/models/visitors/walking-${route.model}.glb?v=39`, ({scene:rig, animations}) => {
       const holder = new THREE.Group();
       holder.name = "visitor-"+route.model;
       const shadow = new THREE.Mesh(new THREE.PlaneGeometry(.76,.56), contactMaterial);
@@ -52,6 +52,8 @@ export function addWalkers(scene, loader, contactMaterial) {
       const curve = new THREE.CatmullRomCurve3(route.points.map(([x,z])=>new THREE.Vector3(x,0,z)),true);
       curve.arcLengthDivisions=512;
       const actor={route,holder,feet,curve,mixer,walk:action("Walk"),idle:action("Observe"),length:curve.getLength()};
+      actor.rig=rig;
+      actor.soles=outsoleSamples(rig);
       actor.upperBody = [[bones.Spine2, .22], [bones.Neck, .32], [bones.Head, .46]].filter(([bone])=>bone);
       actor.savedPose = [...feet.flatMap(f=>[f.thigh,f.shin,f.bone]), ...actor.upperBody.map(([b])=>b)]
         .map(bone=>({bone, rotation:bone.quaternion.clone()}));
@@ -64,6 +66,9 @@ export function addWalkers(scene, loader, contactMaterial) {
         mixer.update(0);
         foot.bone.getWorldPosition(foot.mid);
       }
+      actor.hips = bones.Hips;
+      actor.hipBase = bones.Hips.position.clone();
+      planSteps(actor);
       capturePose(actor);
       updateActor(actor,0);
       actors.push(actor);
@@ -100,6 +105,74 @@ function pointJoint(bone, origin, child, goal) {
   bone.quaternion.setFromUnitVectors(from,to).multiply(worldQ).premultiply(parentQ.invert());
 }
 
+// Keep a sparse sample of the actual outsole, including the heel and toe edges.
+const shoePoint=new THREE.Vector3();
+function outsoleSamples(rig) {
+  rig.updateMatrixWorld(true);
+  const samples=[];
+  rig.traverse(mesh=>{
+    if(!mesh.isSkinnedMesh) return;
+    const cells=new Map();
+    for(let i=0;i<mesh.geometry.attributes.position.count;i++) {
+      mesh.getVertexPosition(i,shoePoint).applyMatrix4(mesh.matrixWorld);
+      if(shoePoint.y>.035) continue;
+      const key=Math.floor(shoePoint.x/.04)+","+Math.floor(shoePoint.z/.045);
+      if(!cells.has(key) || shoePoint.y<cells.get(key).y) cells.set(key,{i,y:shoePoint.y});
+    }
+    if(cells.size) samples.push({mesh,indices:Array.from(cells.values(),c=>c.i)});
+  });
+  return samples;
+}
+
+function groundShoes(actor) {
+  actor.holder.updateMatrixWorld(true);
+  let lowest=Infinity;
+  for(const {mesh,indices} of actor.soles) {
+    for(const i of indices){
+      mesh.getVertexPosition(i,shoePoint).applyMatrix4(mesh.matrixWorld);
+      lowest=Math.min(lowest,shoePoint.y);
+    }
+  }
+  if(Number.isFinite(lowest)) actor.rig.position.y=.001-lowest;
+}
+
+function planSteps(actor) {
+  const {feet,route,curve,length,stride,holder,idle,walk,mixer}=actor;
+  // Measure both shoes on this rig at the exact gait phases that bound the transition.
+  for (const direction of [0,-1,1]) {
+    const d=direction*route.speed*ramp/2;
+    curve.getPointAt(wrap(d/length,1),holder.position);
+    holder.rotation.y=headingAt(curve,length,d);
+    walk.setEffectiveWeight(direction===0 ? 0 : 1);
+    idle.setEffectiveWeight(direction===0 ? 1 : 0);
+    idle.time=0;
+    walk.time=walk.getClip().duration*wrap(d/stride,1);
+    mixer.update(0);
+    for(const f of feet) {
+      f.marks ??= {};
+      f.marks[direction]=f.bone.getWorldPosition(new THREE.Vector3());
+    }
+  }
+  for(const direction of [-1,1]){
+    const first=feet.reduce((a,b)=>a.marks[direction].distanceTo(a.marks[0])>b.marks[direction].distanceTo(b.marks[0]) ? a : b);
+    for(const f of feet){
+      f.first ??= {};
+      f.first[direction]=f===first;
+    }
+  }
+}
+
+function transitionFoot(foot,direction,t) {
+  const leading=foot.first[direction];
+  const start=leading ? .08 : .53, end=leading ? .72 : 1;
+  const progress=smooth(t,start,end);
+  target.copy(foot.marks[0]).lerp(foot.marks[direction],progress);
+  target.y+=(leading ? .075 : .043)*Math.sin(Math.PI*progress);
+  // Match velocity on entering the captured stride as well as position.
+  const blend=1-smooth(t,.72,1);
+  if(blend) solveFoot(foot,blend);
+}
+
 function plantFoot(foot, actor, distance, phase, speedWeight) {
   // Lock the flat part of stance. Keep the captured heel strike, toe-off and swing.
   const offset = wrap(phase-foot.phase+.5,1)-.5;
@@ -111,11 +184,16 @@ function plantFoot(foot, actor, distance, phase, speedWeight) {
   const yaw = headingAt(curve,length,anchorDistance);
   target.x += foot.mid.x*Math.cos(yaw)+foot.mid.z*Math.sin(yaw);
   target.z += foot.mid.z*Math.cos(yaw)-foot.mid.x*Math.sin(yaw);
+  foot.bone.getWorldPosition(ankle);
+  target.y=ankle.y;
+  solveFoot(foot,lock);
+}
+
+function solveFoot(foot,lock) {
   foot.thigh.getWorldPosition(hip);
   foot.shin.getWorldPosition(knee);
   foot.bone.getWorldPosition(ankle);
   foot.bone.getWorldQuaternion(footQ);
-  target.y=ankle.y;
   target.lerp(ankle,1-lock);
   const thighLength=hip.distanceTo(knee), shinLength=knee.distanceTo(ankle);
   axis.subVectors(target,hip);
@@ -136,7 +214,7 @@ function plantFoot(foot, actor, distance, phase, speedWeight) {
 
 function updateActor(actor,time) {
   const {route,holder,feet,curve,mixer,walk,idle,length,stride} = actor;
-  const {distance,weight}=lap(time+route.offset,length,route.speed,route.pause);
+  const {distance,weight,direction,rest}=lap(time+route.offset,length,route.speed,route.pause);
   const phase=wrap(distance/stride,1);
   curve.getPointAt(distance/length,holder.position);
   const heading=headingAt(curve,length,distance);
@@ -144,6 +222,8 @@ function updateActor(actor,time) {
 
   // Restore sampled rotations before evaluating a new frame (also when time stands still).
   for (const {bone,rotation} of actor.savedPose) bone.quaternion.copy(rotation);
+  actor.rig.position.y=0;
+  actor.hips.position.copy(actor.hipBase);
   walk.time=phase*walk.getClip().duration;
   idle.time=time%idle.getClip().duration;
   const blend=smooth(weight,0,1);
@@ -151,7 +231,19 @@ function updateActor(actor,time) {
   idle.setEffectiveWeight(1-blend);
   mixer.update(0);
   capturePose(actor);
-  for (const foot of feet) plantFoot(foot,actor,distance,phase,weight);
+  actor.hipBase.copy(actor.hips.position);
+  // Shift over the supporting shoe before the other heel leaves the floor.
+  const departSupport=feet.find(f=>!f.first[1]);
+  const supportSign=departSupport.bone.name.endsWith("LeftFoot") ? 1 : -1;
+  const prep=rest!==undefined ? smooth(rest,route.pause-.42,route.pause) :
+    direction===1 ? 1-smooth(weight,0,.52) : 0;
+  actor.hips.position.x+=supportSign*.024*prep;
+  if(direction) actor.hips.position.z+=direction*.018*Math.sin(Math.PI*weight);
+  for (const foot of feet) {
+    plantFoot(foot,actor,distance,phase,weight);
+    if(direction) transitionFoot(foot,direction,weight);
+    else if(rest!==undefined) {target.copy(foot.marks[0]);solveFoot(foot,1);}
+  }
 
   const gaze=Math.atan2(route.look[0]-holder.position.x,route.look[1]-holder.position.z);
   const nearStop=Math.min(distance,length-distance);
@@ -162,6 +254,7 @@ function updateActor(actor,time) {
     axis.copy(up).applyQuaternion(parentQ.invert());
     bone.quaternion.premultiply(worldQ.setFromAxisAngle(axis,turn*share));
   }
+  groundShoes(actor);
   for(const {bone,contact} of feet) {
     bone.getWorldPosition(contact.position);
     holder.worldToLocal(contact.position);
