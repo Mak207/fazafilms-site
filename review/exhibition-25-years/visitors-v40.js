@@ -10,17 +10,25 @@ const stations=[
   {name:"Москва-Сити",position:[0,3.62],target:[0,5.48]},
   {name:"Новый жилой микрорайон",position:[-3.35,-1.88],target:[-3.35,-3.55]},
   {name:"Большая спортивная арена",position:[3.35,-1.88],target:[3.35,-3.55]},
-  {name:"Видеокуб",position:[-1.72,-.35],target:[0,-.35]}
+  {name:"Видеокуб",position:[-1.96,-.35],target:[0,-.35]}
 ];
 
-// A small navigation graph follows the real aisles and keeps planned routes out
-// of the six plinth envelopes. The first six nodes are the viewing stations.
-const nodes=[...stations.map(s=>s.position),[-5,-1],[-5,3.8],[-3,7.7],[0,7.8],[3,7.7],[5,3.8],[5,-1],[-5,-6.5],[-2.5,-7.6],[2.5,-7.6],[5,-6.5],[0,-2.2],[-2.5,-.45],[2.5,-.45],[-2.8,3.55],[2.8,3.55],[-2.35,-1.7],[2.35,-1.7]];
-const edges=[[0,6],[0,18],[1,12],[1,19],[2,20],[2,21],[3,6],[3,22],[4,12],[4,23],[5,18],[5,22],[6,7],[6,13],[6,22],[7,8],[7,20],[8,9],[9,10],[10,11],[11,21],[11,12],[12,16],[12,23],[13,14],[14,15],[15,16],[17,22],[17,23],[18,22],[19,23]];
-const links=nodes.map(()=>[]);for(const [a,b] of edges){links[a].push(b);links[b].push(a);}
+// Bounds measured from the rendered Three.js scene. Each footprint is expanded
+// by the visitor capsule radius, so a valid centreline also clears shoulders.
+const clearance=.48,obstacles=[
+  [-1.22,1.22,-1.56,.86],      // media cube and pedestal
+  [-4.28,-2.82,1.14,3.96],    // technology plinth
+  [2.85,4.25,1.07,4.03],      // train plinth
+  [-4.62,-2.08,-4.37,-2.73],  // residential plinth
+  [2.08,4.62,-4.37,-2.73],    // arena plinth
+  [-1.92,1.92,4.34,6.62]      // Moscow City plinth
+].map(([minX,maxX,minZ,maxZ])=>({minX:minX-clearance,maxX:maxX+clearance,minZ:minZ-clearance,maxZ:maxZ+clearance}));
+const nav={minX:-5.18,maxX:5.18,minZ:-8.75,maxZ:8.75,step:.38};
+const routeCache=new Map();
 const ramp=1.18,params=new URLSearchParams(location.search),demoPeriod=Math.max(1,Number(params.get("visitorDemoEvery"))||300),demoOnly=params.has("visitorDemoOnly");
 const sessionSeed=(Number(params.get("visitorSeed"))||crypto.getRandomValues(new Uint32Array(1))[0])>>>0;
-const demoKinds=["Greeting","Clapping","HeadNod","Reject","Confused","Kneel","Meditate","Burpee","Pushup","JumpingJacks","Jump","Roll","Dodge","Moonwalk","DanceSimple","Charleston","Victory","Kick","Backflip","Tumbling","PowerUp"];
+const demoKinds=["wave","point","clap","look-around","nod","bow","stretch","shoulder-roll"];
+const demoDurations={wave:3.2,point:2.8,clap:3.0,"look-around":3.4,nod:2.6,bow:3.0,stretch:3.4,"shoulder-roll":3.2};
 const forcedDemo=params.get("visitorDemoAction");
 const smooth=THREE.MathUtils.smoothstep,clamp=THREE.MathUtils.clamp,wrap=THREE.MathUtils.euclideanModulo;
 
@@ -31,32 +39,40 @@ function demoForSlot(slot){
   for(let i=bag.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[bag[i],bag[j]]=[bag[j],bag[i]];}
   return bag[(slot-1)%bag.length];
 }
-function point(index){return new THREE.Vector3(nodes[index][0],0,nodes[index][1]);}
+function point(index){const [x,z]=stations[index].position;return new THREE.Vector3(x,0,z);}
 function viewYaw(index){const s=stations[index];return Math.atan2(s.target[0]-s.position[0],s.target[1]-s.position[1]);}
 function angleMix(a,b,t){return a+Math.atan2(Math.sin(b-a),Math.cos(b-a))*t;}
 
-function shortestPath(start,goal){
-  const open=[start],cost=new Array(nodes.length).fill(Infinity),previous=new Array(nodes.length).fill(-1);cost[start]=0;
-  while(open.length){let best=0;for(let i=1;i<open.length;i++)if(cost[open[i]]<cost[open[best]])best=i;const current=open.splice(best,1)[0];if(current===goal)break;
-    for(const next of links[current]){const c=cost[current]+Math.hypot(nodes[next][0]-nodes[current][0],nodes[next][1]-nodes[current][1]);if(c>=cost[next])continue;cost[next]=c;previous[next]=current;open.push(next);}
+function blocked(x,z){return x<nav.minX||x>nav.maxX||z<nav.minZ||z>nav.maxZ||obstacles.some(o=>x>o.minX&&x<o.maxX&&z>o.minZ&&z<o.maxZ);}
+function segmentClear(a,b){const n=Math.max(2,Math.ceil(a.distanceTo(b)/.09));for(let i=0;i<=n;i++){const t=i/n;if(blocked(a.x+(b.x-a.x)*t,a.z+(b.z-a.z)*t))return false;}return true;}
+function navPath(startIndex,goalIndex){
+  const cacheKey=`${startIndex}:${goalIndex}`;if(routeCache.has(cacheKey))return routeCache.get(cacheKey).map(p=>p.clone());
+  const start=point(startIndex),goal=point(goalIndex),cols=Math.floor((nav.maxX-nav.minX)/nav.step)+1,rows=Math.floor((nav.maxZ-nav.minZ)/nav.step)+1;
+  const key=(x,z)=>z*cols+x,position=(x,z)=>new THREE.Vector3(nav.minX+x*nav.step,0,nav.minZ+z*nav.step),valid=(x,z)=>x>=0&&x<cols&&z>=0&&z<rows&&!blocked(position(x,z).x,position(x,z).z);
+  function snap(origin){const cx=Math.round((origin.x-nav.minX)/nav.step),cz=Math.round((origin.z-nav.minZ)/nav.step);for(let r=0;r<12;r++)for(let dz=-r;dz<=r;dz++)for(let dx=-r;dx<=r;dx++){if(Math.max(Math.abs(dx),Math.abs(dz))!==r)continue;const x=cx+dx,z=cz+dz,p=position(x,z);if(valid(x,z)&&segmentClear(origin,p))return[x,z];}throw new Error("No free navigation cell");}
+  const [sx,sz]=snap(start),[gx,gz]=snap(goal),startKey=key(sx,sz),goalKey=key(gx,gz),open=[startKey],cost=new Map([[startKey,0]]),previous=new Map(),cell=new Map([[startKey,[sx,sz]]]);
+  while(open.length){let best=0;for(let i=1;i<open.length;i++){const [ax,az]=cell.get(open[i]),[bx,bz]=cell.get(open[best]);if((cost.get(open[i])+Math.hypot(gx-ax,gz-az))<(cost.get(open[best])+Math.hypot(gx-bx,gz-bz)))best=i;}const current=open.splice(best,1)[0];if(current===goalKey)break;const [x,z]=cell.get(current);
+    for(const [dx,dz] of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]]){const nx=x+dx,nz=z+dz;if(!valid(nx,nz))continue;if(dx&&dz&&(!valid(x+dx,z)||!valid(x,z+dz)))continue;const next=key(nx,nz),candidate=cost.get(current)+Math.hypot(dx,dz);if(candidate>= (cost.get(next)??Infinity))continue;cost.set(next,candidate);previous.set(next,current);cell.set(next,[nx,nz]);if(!open.includes(next))open.push(next);}
   }
-  const route=[];for(let cursor=goal;cursor>=0;cursor=previous[cursor]){route.push(point(cursor));if(cursor===start)break;}return route.reverse();
+  if(!cost.has(goalKey))throw new Error(`No route ${startIndex} -> ${goalIndex}`);const grid=[];for(let cursor=goalKey;;cursor=previous.get(cursor)){const [x,z]=cell.get(cursor);grid.push(position(x,z));if(cursor===startKey)break;}grid.reverse();const raw=[start,...grid,goal],simple=[raw[0]];for(let i=0;i<raw.length-1;){let j=raw.length-1;while(j>i+1&&!segmentClear(raw[i],raw[j]))j--;simple.push(raw[j]);i=j;}routeCache.set(cacheKey,simple.map(p=>p.clone()));routeCache.set(`${goalIndex}:${startIndex}`,simple.slice().reverse().map(p=>p.clone()));return simple;
 }
-function roundedPath(points){
+function roundedPath(points,maxRadius=.34){
   const path=new THREE.CurvePath(),line=(a,b)=>{if(a.distanceToSquared(b)>1e-6)path.add(new THREE.LineCurve3(a.clone(),b.clone()));};let current=points[0].clone();
-  for(let i=1;i<points.length-1;i++){const previous=points[i-1],corner=points[i],next=points[i+1],radius=Math.min(.34,corner.distanceTo(previous)*.24,corner.distanceTo(next)*.24);const entry=corner.clone().lerp(previous,radius/corner.distanceTo(previous)),exit=corner.clone().lerp(next,radius/corner.distanceTo(next));line(current,entry);path.add(new THREE.QuadraticBezierCurve3(entry,corner.clone(),exit));current=exit;}
+  for(let i=1;i<points.length-1;i++){const previous=points[i-1],corner=points[i],next=points[i+1],radius=Math.min(maxRadius,corner.distanceTo(previous)*.24,corner.distanceTo(next)*.24);if(radius<=0){line(current,corner);current=corner.clone();continue;}const entry=corner.clone().lerp(previous,radius/corner.distanceTo(previous)),exit=corner.clone().lerp(next,radius/corner.distanceTo(next));line(current,entry);path.add(new THREE.QuadraticBezierCurve3(entry,corner.clone(),exit));current=exit;}
   line(current,points.at(-1));return path;
 }
+function curveClear(curve,length){const sample=new THREE.Vector3();for(let d=0;d<=length;d+=.055){curve.getPointAt(Math.min(1,d/length),sample);if(blocked(sample.x,sample.z))return false;}return true;}
+export function auditVisitorNavigation(){const routes=[];for(let a=0;a<stations.length;a++)for(let b=a+1;b<stations.length;b++){const points=navPath(a,b),curve=roundedPath(points),length=curve.getLength(),clear=curveClear(curve,length);routes.push({from:stations[a].name,to:stations[b].name,points:points.map(p=>[+p.x.toFixed(2),+p.z.toFixed(2)]),length:+length.toFixed(2),clear});}return{capsuleRadius:clearance,routes};}
 function travel(time,length,speed){const total=length/speed+ramp;if(time>=total)return{distance:length,weight:0,direction:-1,done:true};if(time<ramp)return{distance:speed*time*time/(2*ramp),weight:time/ramp,direction:1};const remaining=total-time;if(remaining<ramp)return{distance:length-speed*remaining*remaining/(2*ramp),weight:remaining/ramp,direction:-1};return{distance:speed*(time-ramp/2),weight:1,direction:0};}
 
 export function addWalkers(scene,loader,contactMaterial){
   const actors=[];
-  profiles.forEach((profile,index)=>loader.load(`./assets/models/visitors/walking-${profile.model}.glb?v=40`,({scene:rig,animations})=>{
+  profiles.forEach((profile,index)=>loader.load(`./assets/models/visitors/walking-${profile.model}.glb?v=41`,({scene:rig,animations})=>{
     const holder=new THREE.Group();holder.name="visitor-"+profile.model;const shadow=new THREE.Mesh(new THREE.PlaneGeometry(.76,.56),contactMaterial.clone());shadow.rotation.x=-Math.PI/2;shadow.position.y=.009;holder.add(shadow,rig);
     const bones={},feet=[];rig.traverse(b=>{if(b.isBone)bones[b.name.replace(/^mixamorig:?/,"")]=b;});
     rig.traverse(b=>{if(!b.isBone||!/(Left|Right)Foot$/.test(b.name))return;const contact=new THREE.Mesh(new THREE.PlaneGeometry(.18,.31),contactMaterial.clone());contact.rotation.x=-Math.PI/2;holder.add(contact);const side=b.name.endsWith("LeftFoot")?"Left":"Right";feet.push({bone:b,contact,shin:b.parent,thigh:b.parent.parent,phase:profile.stance[side],mid:new THREE.Vector3(),side});});
     rig.traverse(o=>{if(o.isSkinnedMesh)o.frustumCulled=false;});const mixer=new THREE.AnimationMixer(rig),action=n=>mixer.clipAction(THREE.AnimationClip.findByName(animations,n)).play();
-    const actor={profile,index,holder,rig,bones,feet,mixer,walk:action("Walk"),idle:action("Observe"),shadow,random:rng(profile.seed^sessionSeed),demoActions:new Map()};for(const clip of animations.filter(c=>c.name.startsWith("Demo_"))){const a=mixer.clipAction(clip);a.loop=THREE.LoopOnce;a.clampWhenFinished=true;a.enabled=true;a.setEffectiveWeight(0);actor.demoActions.set(clip.name.slice(5),a);}
+    const actor={profile,index,holder,rig,bones,feet,mixer,walk:action("Walk"),idle:action("Observe"),shadow,random:rng(profile.seed^sessionSeed)};
     actor.soles=outsoleSamples(rig);actor.hips=bones.Hips;actor.hipBase=bones.Hips.position.clone();actor.upperBody=[[bones.Spine2,.22],[bones.Neck,.32],[bones.Head,.46]].filter(([b])=>b);actor.arms=["Left","Right"].map(side=>({side,upper:bones[side+"Arm"],lower:bones[side+"ForeArm"],hand:bones[side+"Hand"]})).filter(a=>a.upper&&a.lower&&a.hand);
     actor.savedPose=[...feet.flatMap(f=>[f.thigh,f.shin,f.bone]),...actor.upperBody.map(([b])=>b),...actor.arms.flatMap(a=>[a.upper,a.lower,a.hand])].filter((b,i,a)=>a.indexOf(b)===i).map(bone=>({bone,rotation:bone.quaternion.clone()}));
     actor.walkDuration=actor.walk.getClip().duration;actor.stride=profile.speed*actor.walkDuration;actor.idle.setEffectiveWeight(1);actor.walk.setEffectiveWeight(0);holder.position.copy(point(profile.start));holder.rotation.y=viewYaw(profile.start);
@@ -83,13 +99,33 @@ function solveFoot(foot,weight){solveChain(foot.thigh,foot.shin,foot.bone,target
 function solveChain(root,middle,end,goal,weight,preserveEnd=false){root.getWorldPosition(hip);middle.getWorldPosition(knee);end.getWorldPosition(ankle);if(preserveEnd)end.getWorldQuaternion(footQ);target.copy(goal).lerp(ankle,1-weight);const a=hip.distanceTo(knee),b=knee.distanceTo(ankle);axis.subVectors(target,hip);const reach=clamp(axis.length(),Math.abs(a-b)+.001,a+b-.0001);axis.normalize();bend.subVectors(knee,hip);bend.addScaledVector(axis,-bend.dot(axis));if(bend.lengthSq()<1e-8)return;bend.normalize();const along=(a*a-b*b+reach*reach)/(2*reach);desiredKnee.copy(hip).addScaledVector(axis,along).addScaledVector(bend,Math.sqrt(Math.max(0,a*a-along*along)));pointJoint(root,hip,knee,desiredKnee);end.getWorldPosition(ankle);pointJoint(middle,desiredKnee,ankle,target);if(preserveEnd){middle.getWorldQuaternion(parentQ);end.quaternion.copy(parentQ.invert()).multiply(footQ);}}
 
 function chooseStation(actor){const banned=new Set(actor.behavior.recent.slice(-2));let choices=stations.map((_,i)=>i).filter(i=>i!==actor.behavior.current&&!banned.has(i));if(!choices.length)choices=stations.map((_,i)=>i).filter(i=>i!==actor.behavior.current);return choices[Math.floor(actor.random()*choices.length)];}
-function beginJourney(actor){const destination=chooseStation(actor);actor.curve=roundedPath(shortestPath(actor.behavior.current,destination));actor.length=actor.curve.getLength();actor.stride=actor.length/Math.max(2,Math.round(actor.length/(actor.profile.speed*actor.walkDuration)));Object.assign(actor.behavior,{phase:"walk",time:0,destination,startYaw:actor.holder.rotation.y,stationName:stations[destination].name});}
+function beginJourney(actor){const destination=chooseStation(actor),route=navPath(actor.behavior.current,destination);actor.curve=roundedPath(route);actor.length=actor.curve.getLength();if(!curveClear(actor.curve,actor.length))actor.curve=roundedPath(route,.0);actor.length=actor.curve.getLength();actor.stride=actor.length/Math.max(2,Math.round(actor.length/(actor.profile.speed*actor.walkDuration)));Object.assign(actor.behavior,{phase:"walk",time:0,destination,startYaw:actor.holder.rotation.y,stationName:stations[destination].name});}
 function beginObserve(actor){const b=actor.behavior;Object.assign(b,{phase:"observe",time:0,current:b.destination,pause:5+actor.random()*6,arriveYaw:actor.holder.rotation.y,stationName:stations[b.destination].name});b.recent.push(b.current);b.recent=b.recent.slice(-3);}
-function beginDemo(actor,slot){const b=actor.behavior,kind=demoForSlot(slot),demo=actor.demoActions.get(kind);if(!demo){b.lastDemoSlot=slot;return;}for(const a of actor.demoActions.values())a.stop().setEffectiveWeight(0);demo.reset().play();Object.assign(b,{phase:"demo",time:0,lastDemoSlot:slot,lastDemoKind:kind,demoKind:kind,demoCount:(b.demoCount||0)+1,demoYaw:actor.holder.rotation.y,demo});}
+function beginDemo(actor,slot){const b=actor.behavior,kind=demoForSlot(slot);Object.assign(b,{phase:"demo",time:0,lastDemoSlot:slot,lastDemoKind:kind,demoKind:kind,demoCount:(b.demoCount||0)+1,demoYaw:actor.holder.rotation.y});}
 
 function evaluatePose(actor,time,weight,distance=0,direction=0){restorePose(actor);actor.rig.position.y=0;actor.hips.position.copy(actor.hipBase);const phase=actor.curve?wrap(distance/actor.stride,1):0;actor.walk.time=phase*actor.walkDuration;actor.idle.time=time%actor.idle.getClip().duration;const blend=smooth(weight,0,1);actor.walk.setEffectiveWeight(blend);actor.idle.setEffectiveWeight(1-blend);actor.mixer.update(0);capturePose(actor);actor.hipBase.copy(actor.hips.position);if(actor.curve)for(const foot of actor.feet){plantFoot(foot,actor,distance,phase,weight);if(direction)transitionFoot(foot,actor,direction,weight);}}
+function armTarget(actor,arm,offset,weight){actor.bones.Head.getWorldPosition(headPoint);localTarget.copy(offset).applyQuaternion(actor.holder.quaternion).add(headPoint);solveChain(arm.upper,arm.lower,arm.hand,localTarget,weight);}
+function pulse(t,d,edge=.18){return smooth(t,0,d*edge)*(1-smooth(t,d*(1-edge),d));}
 function applyDemo(actor,time){
-  const b=actor.behavior,d=b.demo.getClip().duration,blendIn=Math.min(.20,d*.22),blendOut=Math.min(.28,d*.24),weight=smooth(time,0,blendIn)*(1-smooth(time,d-blendOut,d));actor.holder.position.copy(point(b.current));actor.holder.rotation.y=b.demoYaw;restorePose(actor);actor.rig.position.y=0;actor.hips.position.copy(actor.hipBase);actor.walk.setEffectiveWeight(0);actor.idle.time=time%actor.idle.getClip().duration;actor.idle.setEffectiveWeight(1-weight);b.demo.time=Math.min(time,d);b.demo.setEffectiveWeight(weight);actor.mixer.update(0);actor.shadow.material.opacity=.42*(1-.58*smooth(actor.hips.position.y,.18,.55));return time>=d;
+  const b=actor.behavior,kind=b.demoKind,d=demoDurations[kind],strength=pulse(time,d);actor.holder.position.copy(point(b.current));actor.holder.rotation.y=b.demoYaw;evaluatePose(actor,time,0);const euler=new THREE.Euler();
+  if(kind==="wave"){
+    const arm=actor.arms[actor.index%actor.arms.length],side=arm.side==="Left"?1:-1;armTarget(actor,arm,new THREE.Vector3(side*(.31+.045*Math.sin(time*8)),.33,.03),strength);arm.hand.quaternion.multiply(worldQ.setFromEuler(euler.set(0,0,.22*Math.sin(time*9)*strength)));
+  }else if(kind==="point"){
+    const arm=actor.arms[actor.index%actor.arms.length],s=stations[b.current];localTarget.set(s.target[0],1.12,s.target[1]);solveChain(arm.upper,arm.lower,arm.hand,localTarget,strength*.82);
+  }else if(kind==="clap"){
+    const opening=.065+.055*(.5+.5*Math.cos(time*7));for(const arm of actor.arms){const side=arm.side==="Left"?1:-1;armTarget(actor,arm,new THREE.Vector3(side*opening,-.09,.28),strength*.78);}
+  }else if(kind==="look-around"){
+    actor.bones.Head.quaternion.multiply(worldQ.setFromEuler(euler.set(0,.38*Math.sin(time*1.8)*strength,0)));
+  }else if(kind==="nod"){
+    actor.bones.Head.quaternion.multiply(worldQ.setFromEuler(euler.set(.16*Math.sin(time*4.2)*strength,0,0)));
+  }else if(kind==="bow"){
+    actor.bones.Spine2.quaternion.multiply(worldQ.setFromEuler(euler.set(.24*strength,0,0)));
+  }else if(kind==="stretch"){
+    for(const arm of actor.arms)armTarget(actor,arm,new THREE.Vector3(arm.side==="Left"?.16:-.16,.48,.02),strength*.74);
+  }else if(kind==="shoulder-roll"){
+    const roll=.18*Math.sin(time*3.6)*strength;for(const arm of actor.arms)arm.upper.quaternion.multiply(worldQ.setFromEuler(euler.set(0,0,arm.side==="Left"?roll:-roll)));
+  }
+  groundShoes(actor);actor.shadow.material.opacity=.42;return time>=d;
 }
 function applyGaze(actor,index,strength=1){const s=stations[index],gaze=Math.atan2(s.target[0]-actor.holder.position.x,s.target[1]-actor.holder.position.z),turn=clamp(Math.atan2(Math.sin(gaze-actor.holder.rotation.y),Math.cos(gaze-actor.holder.rotation.y)),-1.05,1.05)*strength;for(const [bone,share] of actor.upperBody){bone.parent.getWorldQuaternion(parentQ);axis.copy(up).applyQuaternion(parentQ.invert());bone.quaternion.premultiply(worldQ.setFromAxisAngle(axis,turn*share));}}
 
@@ -99,6 +135,6 @@ function updateActor(actor,time){
   if(b.phase==="walk"){const m=travel(b.time,actor.length,actor.profile.speed);actor.curve.getPointAt(m.distance/actor.length,actor.holder.position);actor.holder.rotation.y=angleMix(b.startYaw,headingAt(actor.curve,actor.length,m.distance),smooth(b.time,0,.82));evaluatePose(actor,time,m.weight,m.distance,m.direction);if(m.done)beginObserve(actor);
   }else if(b.phase==="observe"){actor.holder.position.copy(point(b.current));actor.holder.rotation.y=angleMix(b.arriveYaw??actor.holder.rotation.y,viewYaw(b.current),smooth(b.time,0,1.05));evaluatePose(actor,time,0);applyGaze(actor,b.current,1-smooth(b.time,0,.75));groundShoes(actor);
   }else if(b.phase==="demo"&&applyDemo(actor,b.time)){actor.holder.position.y=0;b.phase="observe";b.time=0;b.pause=3.8+actor.random()*2;}
-  actor.holder.userData.visitorState=b.phase;actor.holder.userData.visitorStation=b.stationName;actor.holder.userData.demoKind=b.demoKind||"";actor.holder.userData.demoCount=b.demoCount||0;actor.holder.userData.demoTime=b.phase==="demo"?b.time:0;actor.holder.userData.demoDuration=b.demo?.getClip().duration||0;actor.holder.userData.demoClip=b.demo?.getClip().name||"";
+  actor.holder.userData.visitorState=b.phase;actor.holder.userData.visitorStation=b.stationName;actor.holder.userData.demoKind=b.demoKind||"";actor.holder.userData.demoCount=b.demoCount||0;actor.holder.userData.demoTime=b.phase==="demo"?b.time:0;actor.holder.userData.demoDuration=demoDurations[b.demoKind]||0;actor.holder.userData.demoClip=b.demoKind?"Gesture_"+b.demoKind:"";
   for(const {bone,contact} of actor.feet){bone.getWorldPosition(contact.position);actor.holder.worldToLocal(contact.position);contact.material.opacity=.85*(1-smooth(contact.position.y,.095,.24));contact.position.y=.011;contact.position.z+=.045;}
 }

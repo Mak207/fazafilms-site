@@ -1,14 +1,15 @@
-Visitor motion clips
-====================
+Visitor motion sources
+======================
 
-The visitor models use retargeted full-body clips from Mesh2Motion:
-https://github.com/Mesh2Motion/mesh2motion-app
+The production visitor models use the original, verified Walk and Observe
+clips embedded in walking-man.glb and walking-woman.glb. Locomotion is owned by
+the scene controller; the skeleton never translates the character root.
 
-Mesh2Motion states that its 3D models, rigs and animations are released under
-CC0. The application code is MIT licensed. The source clips were retargeted to
-the exhibition visitor rigs, grounded, constrained to a 0.72 m action radius
-and compressed for real-time web delivery.
+Short exhibition gestures are procedural, stationary upper-body overlays. They
+do not modify the hips, legs, feet or character root. Feet stay grounded and
+the navigation controller keeps a visitor capsule outside inflated exhibit and
+plinth footprints.
 
-Included motion families: greeting and social gestures, kneeling and
-meditation, fitness, jumping, evasive movement, dance, victory gestures,
-kicking and acrobatics.
+The previously tested Mesh2Motion full-body retargets were removed from the
+production build after visual QA exposed incompatible leg-chain retargeting.
+They are not shipped or used by the pavilion.
