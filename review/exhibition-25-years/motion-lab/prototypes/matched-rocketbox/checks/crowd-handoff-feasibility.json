@@ -1,0 +1,70 @@
+{
+  "schema": "matched-rocketbox-crowd-handoff-feasibility-v1",
+  "date": "2026-11-22",
+  "status": "READ_ONLY_FEASIBILITY_NOT_IMPLEMENTED",
+  "sourceReferenceManifestSha256": "d38674c9d312ee453db0dc6842b22135ff991601397bd68b72a00b78be55b8d6",
+  "inputs": {
+    "readyAdapter": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de",
+    "pinnedCoreMjs": "cef1b0ffe4ff60bb7ec607475e0e17d38f200a121e884761f308eb2fbd5c3285",
+    "pinnedWasmCompatMjs": "8bc6efc4b50ac191e9a2eae6f2650560af66f62808e04780216f4a3404155ffb",
+    "pinnedUpstreamGit": "8a2ece9f8b4947fcb328e17c7ac76c41744021b3",
+    "upstreamCrowdCppSha256": "a9e042f4b6dd2e8618ff577385c292792d05bfad6da126fa395ea302398cad2e"
+  },
+  "upstream": {
+    "cpp": "https://github.com/isaac-mason/recast-navigation-js/blob/8a2ece9f8b4947fcb328e17c7ac76c41744021b3/packages/recast-navigation-wasm/src/Crowd.cpp",
+    "docs": "https://recastnav.com/classdtCrowd.html"
+  },
+  "velocityApi": {
+    "highLevel": "CrowdAgent.requestMoveVelocity({x,y,z}) exists and delegates to dtCrowd requestMoveVelocity. It sets desired velocity request, replaces target state with velocity mode, and does not seed actual velocity.",
+    "actualVelocity": "CrowdAgent.velocity() reads actual raw vel. Upstream adjusts nvel to vel subject to maxAcceleration. There is no high-level CrowdAgent.setVelocity in pinned0.44.0.",
+    "rawStateHandoff": "Pinned generated binding exposes agent.raw.set_vel(componentIndex,value). This is an available low-level state handoff, not a verified locomotion integration.",
+    "teleport": "Exact pinned CrowdUtils.agentTeleport resets dvel, nvel, vel and desiredSpeed to0, resets corridor, and sets targetState NONE.",
+    "currentAdapter": "queueRootMotion applies guarded teleport before a shared update. Existing authored Turn can finish near rest. Authored Start ends with nonzero velocity, so simply reusing Turn handoff restarts Crowd at0.",
+    "conclusion": "requestMoveVelocity alone after last teleport is insufficient for C1 handoff. A future adapter could seed actual velocity once at the ownership boundary before the first free Crowd tick, request a valid navmesh target, and leave subsequent translation to Crowd. This has NOT been implemented or dynamically verified. No direct holder transform or second root integration is required by that architecture.",
+    "synchronization": "Do not seed before a teleport which would clear it; do not seed plus also advance full authored root on the same ownership interval. Collision/acceleration response can still change subsequent trajectory."
+  },
+  "stopGeometry": {
+    "artifact": "motion-lab/prototypes/matched-rocketbox/checks/stop-lead-navmesh-feasibility.json",
+    "artifactSha256": "1b10d9b3fd31d7acd8a91802fbb281da1a8543d74ae3acce9007f883fcff55c0",
+    "emma": {
+      "netTravel": 0.677760945,
+      "netPlusArrivalTolerance": 0.797760945,
+      "pathPlusArrivalTolerance": 0.843878349,
+      "stationsFeasible": 6
+    },
+    "ethan": {
+      "netTravel": 1.424844073,
+      "netPlusArrivalTolerance": 1.544844073,
+      "pathPlusArrivalTolerance": 1.559465988,
+      "stationsFeasible": 6
+    },
+    "rawMinClearanceByStation": [
+      0.830000534058,
+      0.82,
+      0.789999809265,
+      0.850000004768,
+      0.850000004768,
+      0.83999994278
+    ],
+    "projectionMax": 1.04e-7,
+    "directUpstreamPathPoints": 2,
+    "limits": "Static straight line to six projected stations only. No Crowd.update was run. Full authored Stop lateral trajectory, new skin envelopes, dynamic peer reservations and contact continuity are not accepted by this test.",
+    "currentApproachLead": 0.65,
+    "currentLeadInsufficientForBoth": true
+  },
+  "actualIntegrationConstraints": [
+    "Load the complete shared-reference Idle/Start/baseWalk/Stop set on existing matched rigs; these animation-only bundles do not require another retarget or manual joint rotation.",
+    "Current createNativeMotion has no Start/Stop states, requires four Turn clips, and uses the previous Walk cycle. Loading new GLB alone is not integration. Boundaries between retained Turns and new Idle/Start require a compatibility check.",
+    "Authored Start root trajectory must be preflighted and committed through the existing single world owner; terminal velocity needs a deliberate one-time ownership transfer.",
+    "Stop must begin before the station at the correct authored Walk phase and speed. Current arbitrary-speed arrival followed by Idle cannot preserve authored Stop. Arrival lead must accommodate complete Stop trajectory and terminal claim.",
+    "Whole-cycle phase and exact remaining distance are coupled. A position-only near-station trigger can enter Stop with the wrong support foot even when pose endpoints were measured compatible.",
+    "Dynamic peers can invalidate the authored corridor. Full-path reservation/preflight and a safe response to root-step rejection remain necessary.",
+    "Current .68m skin envelope was measured for prior clips, not this complete new Start/Stop set.",
+    "Emma authored right-leg C0 seam13.835mm/1.303deg and source root derivative discontinuity remain. Ethan near-zero C0 seam is not a C1/contact certificate."
+  ],
+  "frozenV44Changed": false,
+  "newFullSceneTestsRun": false,
+  "newSolver": false,
+  "manualJointEdits": false,
+  "conclusion": "An isolated matched-source sequence is implemented and recorded; structural asset blockers are resolved. Separate v45 is technically feasible using current rigs and upstream Crowd API, but phase/speed/root ownership and dynamic contact gates remain real integration work. No production-ready replacement or full naturalness PASS is claimed."
+}

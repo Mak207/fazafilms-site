@@ -1,0 +1,1082 @@
+{
+  "schema": "matched-rocketbox-reference-v1",
+  "createdUTC": "2026-11-22T15:35:15.910046+00:00",
+  "status": "ISOLATED_REFERENCE_RECORDED;NOT_INTEGRATED;NO_FULL_CONTACT_OR_VISUAL_ACCEPTANCE",
+  "sourceRepository": "https://github.com/microsoft/Microsoft-Rocketbox",
+  "sourceRevision": "0943055db6ec570bcef9f2c8b41c9e5467c808f9",
+  "sourceManifest": "source-manifest.json",
+  "sourceManifestSHA256": "59bb181c3d67504562be3f5c5b532a3f50767cdd3c3b8cf162426154dec4a205",
+  "successfulCommonReferenceAudit": "checks/common-reference-audit.json",
+  "successfulCommonReferenceAuditSHA256": "d38674c9d312ee453db0dc6842b22135ff991601397bd68b72a00b78be55b8d6",
+  "abProof": "checks/reference-ab.json",
+  "abProofSHA256": "ecaadfc2b4b90dece6696eb2e79ac57c964e2e2426534c1dc6d8ca98a07cb946",
+  "sourceBoundaryProof": "checks/base-source-boundary-audit.json",
+  "sourceBoundaryProofSHA256": "4b2aaba7a75c23505c2a58f9c28a20d1e7f9e196cc2f829a428f695789656d02",
+  "rootKinematicsProof": "checks/root-boundary-kinematics.json",
+  "rootKinematicsProofSHA256": "658c4d15897f420c43d8a8aae9b9a7af98821ea9fa2337ef4d45ab1b77e4c0a9",
+  "method": {
+    "retargetingLibrary": "https://github.com/upf-gti/retargeting-threejs",
+    "retargetingLibraryRevision": "82f1b8218813547224dd96df1638c950d241824d",
+    "solverCodeSHA256": "4fca7f6deab1a912b659b30998595e248d88b1d46d6cca414287139af02506c6",
+    "solverInstancesPerActor": 1,
+    "sharedReference": "Pinned author Idle source, existing semantic canonical calibration once; UPF CURRENT cloned references reused across Idle/Walk/Start/Stop",
+    "sourceMotionVariant": "walk_neutral without numeric suffix",
+    "manualJointCorrections": false,
+    "IK": false,
+    "meshOrIBMChanges": false,
+    "sourceCoordinates": {
+      "units": "metres",
+      "up": "+Y",
+      "rootAdvancement": "+Z with authored X offsets"
+    },
+    "rootPolicy": "Full authored Hips XYZ retained, one shared library scale ratio across all actions",
+    "blenderObservedVersion": "4.5.10 LTS",
+    "threeRevision": "169",
+    "threeSHA256": "0a3368c165eea773490aec7b77c22de70e3eac288503409256fdbf4d12578416"
+  },
+  "actors": [
+    {
+      "actor": "emma",
+      "motionFile": "outputs/emma-matched-locomotion.glb",
+      "motionSHA256": "0f459cdfabf1fc54588251f6d81d461ad335e0125a042d0b67dc0970fe6aa20e",
+      "motionBytes": 1383800,
+      "targetModelRelativePath": "../../../assets/models/visitors/walking-woman.glb",
+      "targetModelSHA256": "be518e47c6e418c3a3dc4cf0692bbcc324ff9b70af23c0c539376f1e6debb957",
+      "binding": {
+        "boneCount": 80,
+        "restTRSMaxAbsComponentDelta": 0,
+        "parentMismatches": [],
+        "finiteValues": true,
+        "strictlyIncreasingKeys": true,
+        "quaternionNormMaxError": 4.695173716484646e-08
+      },
+      "clips": [
+        {
+          "name": "Idle",
+          "durationS": 15.533333333333333,
+          "gltfDurationS": 15.533333778381348,
+          "sourceFile": "f_idle_neutral_01.max.fbx",
+          "sourceSHA256": "fd68b33ea9e290dc734ca8c3a71ef5842bb2dfe719853ff84f6336d06d39fdcb",
+          "targetRootDeltaXYZM": [
+            -2.339331154132755e-09,
+            5.124787261223673e-10,
+            4.678094067896912e-10
+          ],
+          "targetRootNetHorizontalM": 2.385647897275918e-09,
+          "existingUPFTranslationRatio": 1.0061991773815377
+        },
+        {
+          "name": "Walk",
+          "durationS": 1.2333333333333334,
+          "gltfDurationS": 1.2333333492279053,
+          "sourceFile": "f_walk_neutral.max.fbx",
+          "sourceSHA256": "e210c9e34949a4eacad0a85021d4d1a59aab177ca1737e6038309896147ebae2",
+          "targetRootDeltaXYZM": [
+            0.0,
+            5.5593655567953704e-08,
+            1.606523258540137
+          ],
+          "targetRootNetHorizontalM": 1.606523258540137,
+          "existingUPFTranslationRatio": 1.0061991773815377
+        },
+        {
+          "name": "Start",
+          "durationS": 0.9333333333333333,
+          "gltfDurationS": 0.9333333373069763,
+          "sourceFile": "f_walk_start.max.fbx",
+          "sourceSHA256": "509cb6486c0938bdc8ed000041c6c6be82bc7324b8b2ab68515a6bc143b3e24b",
+          "targetRootDeltaXYZM": [
+            -2.0960365844314902e-10,
+            -0.00583726209738733,
+            0.773015554846761
+          ],
+          "targetRootNetHorizontalM": 0.773015554846761,
+          "existingUPFTranslationRatio": 1.0061991773815377
+        },
+        {
+          "name": "Stop",
+          "durationS": 1.7666666666666666,
+          "gltfDurationS": 1.7666666507720947,
+          "sourceFile": "f_walk_stop.max.fbx",
+          "sourceSHA256": "e2f7d8dd7b08f53e33befb5515095af54f87effc6491b0774e401c99f497256b",
+          "targetRootDeltaXYZM": [
+            -0.03208768740188016,
+            0.0058373212814331055,
+            0.6770009443313185
+          ],
+          "targetRootNetHorizontalM": 0.6777609448089332,
+          "existingUPFTranslationRatio": 1.0061991773815377
+        }
+      ],
+      "boundarySummary": {
+        "StopEnd_to_IdleStart": {
+          "legsWorldRotationRMSDeg": 0.009573865358873241,
+          "legsWorldRotationMaxDeg": 0.022940266169084334,
+          "bodyWorldRotationMaxDeg": 0.022940266169084334,
+          "maxBodyBone": "LeftUpLeg",
+          "rootHeightJumpM": 0.0,
+          "endpointPositionGapAfterXZAlignmentM": {
+            "LeftFoot": 0.00014567656900310252,
+            "LeftToeBase": 0.00014572362962082753,
+            "RightFoot": 1.7015691644740461e-06,
+            "RightToeBase": 1.7168320137834212e-06,
+            "LeftHand": 3.4930994781387205e-07,
+            "RightHand": 3.4227769801984046e-07,
+            "Head": 6.766029364223554e-08
+          },
+          "bodyWorldRotationDegrees": {
+            "Hips": 7.2445096183544e-06,
+            "LeftUpLeg": 0.022940266169084334,
+            "LeftLeg": 0.01727906095393219,
+            "LeftFoot": 3.157808532191534e-05,
+            "LeftToeBase": 9.352621701108683e-06,
+            "RightUpLeg": 0.00028426944544097954,
+            "RightLeg": 0.00015836983342252078,
+            "RightFoot": 2.8674595153725626e-05,
+            "RightToeBase": 2.173352885506323e-05,
+            "Spine": 1.2194326777763644e-05,
+            "Spine1": 2.0276000680978274e-05,
+            "Spine2": 1.322660445345283e-05,
+            "Neck": 2.7427270755268835e-05,
+            "Head": 1.7413633929712578e-05,
+            "LeftShoulder": 8.566715585445833e-05,
+            "LeftArm": 8.192668841484428e-05,
+            "LeftForeArm": 8.238805093144573e-05,
+            "LeftHand": 0.00041690039031331823,
+            "RightShoulder": 5.4400859574799435e-05,
+            "RightArm": 6.946591168626176e-05,
+            "RightForeArm": 8.365239156607494e-06,
+            "RightHand": 7.415553713695787e-05
+          }
+        },
+        "StartEnd_to_Walk": {
+          "walkPhase0": {
+            "legsWorldRotationRMSDeg": 0.59892328812986,
+            "legsWorldRotationMaxDeg": 1.303028128845383,
+            "bodyWorldRotationMaxDeg": 1.303028128845383,
+            "maxBodyBone": "RightUpLeg",
+            "rootHeightJumpM": -5.9184045775317884e-08,
+            "endpointPositionGapAfterXZAlignmentM": {
+              "LeftFoot": 7.998592704837054e-07,
+              "LeftToeBase": 8.154508208466227e-07,
+              "RightFoot": 0.013834750647356403,
+              "RightToeBase": 0.013834673640235601,
+              "LeftHand": 1.4174967849676038e-06,
+              "RightHand": 6.057523267683407e-07,
+              "Head": 7.197935255029342e-08
+            },
+            "bodyWorldRotationDegrees": {
+              "Hips": 3.440612458546887e-05,
+              "LeftUpLeg": 0.00015818561812994965,
+              "LeftLeg": 0.00011993012837071052,
+              "LeftFoot": 2.335035803573985e-05,
+              "LeftToeBase": 1.8231616061100753e-05,
+              "RightUpLeg": 1.303028128845383,
+              "RightLeg": 1.2371336208463721,
+              "RightFoot": 5.8606446033922464e-05,
+              "RightToeBase": 1.690385577616028e-05,
+              "Spine": 1.2663509647306442e-05,
+              "Spine1": 2.6781832797797937e-05,
+              "Spine2": 2.013168567464636e-05,
+              "Neck": 3.083056905897141e-05,
+              "Head": 1.5835142153691186e-05,
+              "LeftShoulder": 0.00012456905674424856,
+              "LeftArm": 0.00023699870643993821,
+              "LeftForeArm": 0.00025157799055650147,
+              "LeftHand": 0.00041798651134403495,
+              "RightShoulder": 9.722528974186774e-05,
+              "RightArm": 9.947836983144979e-05,
+              "RightForeArm": 6.461662190787587e-05,
+              "RightHand": 9.53172415049716e-05
+            }
+          },
+          "nearestLegRotationPhase": {
+            "index": 74,
+            "time": 1.2333333333333334,
+            "fraction": 1.0,
+            "legsWorldRotationRMSDeg": 0.5988942228373249,
+            "legsWorldRotationMaxDeg": 1.3029638699560504,
+            "bodyWorldRotationMaxDeg": 1.3029638699560504,
+            "maxBodyBone": "RightUpLeg",
+            "rootHeightJumpM": -3.5903902073641802e-09,
+            "endpointPositionGapAfterXZAlignmentM": {
+              "LeftFoot": 7.899846701348522e-07,
+              "LeftToeBase": 8.536152823748729e-07,
+              "RightFoot": 0.013834546242842513,
+              "RightToeBase": 0.013834464263716956,
+              "LeftHand": 1.4167642099424978e-06,
+              "RightHand": 5.163362446330036e-07,
+              "Head": 8.289876870775601e-08
+            },
+            "bodyWorldRotationDegrees": {
+              "Hips": 3.5243379011007245e-05,
+              "LeftUpLeg": 0.000386622796128419,
+              "LeftLeg": 0.00037442427959549605,
+              "LeftFoot": 2.486226386113331e-05,
+              "LeftToeBase": 4.296102116609259e-05,
+              "RightUpLeg": 1.3029638699560504,
+              "RightLeg": 1.2370745601221813,
+              "RightFoot": 5.9544208714703734e-05,
+              "RightToeBase": 2.639804052796836e-05,
+              "Spine": 1.024528375501913e-05,
+              "Spine1": 2.1867274910380033e-05,
+              "Spine2": 1.9394009140490052e-05,
+              "Neck": 2.6008585494473073e-05,
+              "Head": 2.049056751003828e-05,
+              "LeftShoulder": 0.00012495466611577296,
+              "LeftArm": 0.0002479885459298932,
+              "LeftForeArm": 0.0002578339869759324,
+              "LeftHand": 0.00042736125763427585,
+              "RightShoulder": 9.416314404482751e-05,
+              "RightArm": 9.987327191865877e-05,
+              "RightForeArm": 6.670371275920168e-05,
+              "RightHand": 9.454940846092225e-05
+            }
+          },
+          "selection": "Diagnostic only: minimum leg world-rotation RMS over existing 60Hz Walk keys; no keys were altered and contact/velocity continuity is not proven."
+        },
+        "Walk_to_StopStart": {
+          "walkPhase0": {
+            "legsWorldRotationRMSDeg": 0.5988587634041904,
+            "legsWorldRotationMaxDeg": 1.3026153252985895,
+            "bodyWorldRotationMaxDeg": 1.3026153252985895,
+            "maxBodyBone": "RightUpLeg",
+            "rootHeightJumpM": 0.0,
+            "endpointPositionGapAfterXZAlignmentM": {
+              "LeftFoot": 7.114755211810384e-07,
+              "LeftToeBase": 6.900235687403823e-07,
+              "RightFoot": 0.013834295576563058,
+              "RightToeBase": 0.013834218948667381,
+              "LeftHand": 8.328000372308964e-07,
+              "RightHand": 3.9950850027119705e-07,
+              "Head": 2.9189130506355835e-08
+            },
+            "bodyWorldRotationDegrees": {
+              "Hips": 1.322660445345283e-05,
+              "LeftUpLeg": 2.8109776091470028e-05,
+              "LeftLeg": 9.388404963994948e-05,
+              "LeftFoot": 4.5626992864754896e-05,
+              "LeftToeBase": 4.186103643529547e-05,
+              "RightUpLeg": 1.3026153252985895,
+              "RightLeg": 1.237287220396519,
+              "RightFoot": 3.0640840678340816e-05,
+              "RightToeBase": 2.328784023135477e-05,
+              "Spine": 8.365239156607494e-06,
+              "Spine1": 9.956626120759429e-06,
+              "Spine2": 9.507220963046143e-06,
+              "Neck": 1.3445240826417657e-05,
+              "Head": 2.0773209379101157e-05,
+              "LeftShoulder": 5.0596444439175195e-05,
+              "LeftArm": 0.00013004292747237207,
+              "LeftForeArm": 0.00016404900148775774,
+              "LeftHand": 5.6941005829034584e-05,
+              "RightShoulder": 3.993616922797983e-05,
+              "RightArm": 5.4588126426632306e-05,
+              "RightForeArm": 5.480136210733337e-05,
+              "RightHand": 5.4239830530157784e-05
+            }
+          },
+          "nearestLegRotationPhase": {
+            "index": 0,
+            "time": 0.0,
+            "fraction": 0.0,
+            "legsWorldRotationRMSDeg": 0.5988587634041904,
+            "legsWorldRotationMaxDeg": 1.3026153252985895,
+            "bodyWorldRotationMaxDeg": 1.3026153252985895,
+            "maxBodyBone": "RightUpLeg",
+            "rootHeightJumpM": 0.0,
+            "endpointPositionGapAfterXZAlignmentM": {
+              "LeftFoot": 7.114755211810384e-07,
+              "LeftToeBase": 6.900235687403823e-07,
+              "RightFoot": 0.013834295576563058,
+              "RightToeBase": 0.013834218948667381,
+              "LeftHand": 8.328000372308964e-07,
+              "RightHand": 3.9950850027119705e-07,
+              "Head": 2.9189130506355835e-08
+            },
+            "bodyWorldRotationDegrees": {
+              "Hips": 1.322660445345283e-05,
+              "LeftUpLeg": 2.8109776091470028e-05,
+              "LeftLeg": 9.388404963994948e-05,
+              "LeftFoot": 4.5626992864754896e-05,
+              "LeftToeBase": 4.186103643529547e-05,
+              "RightUpLeg": 1.3026153252985895,
+              "RightLeg": 1.237287220396519,
+              "RightFoot": 3.0640840678340816e-05,
+              "RightToeBase": 2.328784023135477e-05,
+              "Spine": 8.365239156607494e-06,
+              "Spine1": 9.956626120759429e-06,
+              "Spine2": 9.507220963046143e-06,
+              "Neck": 1.3445240826417657e-05,
+              "Head": 2.0773209379101157e-05,
+              "LeftShoulder": 5.0596444439175195e-05,
+              "LeftArm": 0.00013004292747237207,
+              "LeftForeArm": 0.00016404900148775774,
+              "LeftHand": 5.6941005829034584e-05,
+              "RightShoulder": 3.993616922797983e-05,
+              "RightArm": 5.4588126426632306e-05,
+              "RightForeArm": 5.480136210733337e-05,
+              "RightHand": 5.4239830530157784e-05
+            }
+          },
+          "selection": "Diagnostic only: minimum leg world-rotation RMS over existing 60Hz Walk keys; no keys were altered and contact/velocity continuity is not proven."
+        }
+      }
+    },
+    {
+      "actor": "ethan",
+      "motionFile": "outputs/ethan-matched-locomotion.glb",
+      "motionSHA256": "68f27bcb6704bee65088c4e6c8a109a052e7b8f8a2c7129cae1dfb6dd154c43c",
+      "motionBytes": 1134820,
+      "targetModelRelativePath": "../../../assets/models/visitors/walking-man.glb",
+      "targetModelSHA256": "710096e92e0acbfac10f9680f262514402822dfeda33f9f0dc4117bec24172d9",
+      "binding": {
+        "boneCount": 80,
+        "restTRSMaxAbsComponentDelta": 0,
+        "parentMismatches": [],
+        "finiteValues": true,
+        "strictlyIncreasingKeys": true,
+        "quaternionNormMaxError": 4.932073083274702e-08
+      },
+      "clips": [
+        {
+          "name": "Idle",
+          "durationS": 11.666666666666666,
+          "gltfDurationS": 11.666666984558105,
+          "sourceFile": "m_idle_neutral_01.max.fbx",
+          "sourceSHA256": "818cc185af21390575f7fbfdeb3012ba2ce5969fbcb220ea725a2617b339a6e2",
+          "targetRootDeltaXYZM": [
+            3.89214311738224e-09,
+            2.8079472080833057e-10,
+            1.4573690842428066e-09
+          ],
+          "targetRootNetHorizontalM": 4.1560441159704564e-09,
+          "existingUPFTranslationRatio": 1.0241087970998775
+        },
+        {
+          "name": "Walk",
+          "durationS": 1.0666666666666667,
+          "gltfDurationS": 1.0666667222976685,
+          "sourceFile": "m_walk_neutral.max.fbx",
+          "sourceSHA256": "93089851a370e3a117a6bd04c002815f7133fce41c6271e9eb448ca1228b154f",
+          "targetRootDeltaXYZM": [
+            -1.983226204907732e-09,
+            4.774141149077593e-08,
+            1.5319278723329923
+          ],
+          "targetRootNetHorizontalM": 1.5319278723329923,
+          "existingUPFTranslationRatio": 1.0241087970998775
+        },
+        {
+          "name": "Start",
+          "durationS": 0.9666666666666667,
+          "gltfDurationS": 0.9666666388511658,
+          "sourceFile": "m_walk_start.max.fbx",
+          "sourceSHA256": "05243edcc6712bbd526ac2d7022e6a8bd49debaadf012f96d4b81795fb169817",
+          "targetRootDeltaXYZM": [
+            0.0,
+            0.00672990083694458,
+            0.6216560604998265
+          ],
+          "targetRootNetHorizontalM": 0.6216560604998265,
+          "existingUPFTranslationRatio": 1.0241087970998775
+        },
+        {
+          "name": "Stop",
+          "durationS": 2.0,
+          "gltfDurationS": 2.0,
+          "sourceFile": "m_walk_stop.max.fbx",
+          "sourceSHA256": "808f112c37c0db60fd1855fb2785749557ecdb9107e8028cd3f28b11aa9c62b1",
+          "targetRootDeltaXYZM": [
+            0.036355543879234675,
+            -0.006729841232299805,
+            1.4243801834898935
+          ],
+          "targetRootNetHorizontalM": 1.4248440731144785,
+          "existingUPFTranslationRatio": 1.0241087970998775
+        }
+      ],
+      "boundarySummary": {
+        "StopEnd_to_IdleStart": {
+          "legsWorldRotationRMSDeg": 0.009249831726461231,
+          "legsWorldRotationMaxDeg": 0.01698829577727317,
+          "bodyWorldRotationMaxDeg": 0.01698829577727317,
+          "maxBodyBone": "RightLeg",
+          "rootHeightJumpM": -5.960464477539063e-08,
+          "endpointPositionGapAfterXZAlignmentM": {
+            "LeftFoot": 1.1907913667794098e-05,
+            "LeftToeBase": 1.1883402130427705e-05,
+            "RightFoot": 1.299151093248964e-06,
+            "RightToeBase": 1.355673916242938e-06,
+            "LeftHand": 4.1407343737338936e-07,
+            "RightHand": 7.231506068506427e-07,
+            "Head": 2.07728280909517e-07
+          },
+          "bodyWorldRotationDegrees": {
+            "Hips": 7.2445096183544e-06,
+            "LeftUpLeg": 0.00980964460092743,
+            "LeftLeg": 0.009838006129097044,
+            "LeftFoot": 1.790890709046331e-05,
+            "LeftToeBase": 9.083766426908162e-05,
+            "RightUpLeg": 0.016982443955287883,
+            "RightLeg": 0.01698829577727317,
+            "RightFoot": 5.688977684355846e-05,
+            "RightToeBase": 3.916206761302329e-05,
+            "Spine": 2.2198114802541473e-05,
+            "Spine1": 1.1066171232981565e-05,
+            "Spine2": 2.2329078268013682e-05,
+            "Neck": 3.257792601184328e-05,
+            "Head": 2.2972699315936532e-05,
+            "LeftShoulder": 2.0632372437402982e-05,
+            "LeftArm": 3.6543107863314335e-05,
+            "LeftForeArm": 4.062383844459321e-05,
+            "LeftHand": 2.6781832797797937e-05,
+            "RightShoulder": 4.9724527722266914e-05,
+            "RightArm": 7.324561878562104e-05,
+            "RightForeArm": 7.64782963905902e-05,
+            "RightHand": 5.2961499991993124e-05
+          }
+        },
+        "StartEnd_to_Walk": {
+          "walkPhase0": {
+            "legsWorldRotationRMSDeg": 0.008878607839801479,
+            "legsWorldRotationMaxDeg": 0.018757393039164825,
+            "bodyWorldRotationMaxDeg": 0.018757393039164825,
+            "maxBodyBone": "LeftUpLeg",
+            "rootHeightJumpM": 0.0,
+            "endpointPositionGapAfterXZAlignmentM": {
+              "LeftFoot": 2.4745892700557253e-06,
+              "LeftToeBase": 2.1081797609163294e-06,
+              "RightFoot": 2.6492220999285397e-06,
+              "RightToeBase": 4.2352779743988283e-07,
+              "LeftHand": 5.052761510654529e-06,
+              "RightHand": 5.319204582390579e-06,
+              "Head": 2.244342672352308e-06
+            },
+            "bodyWorldRotationDegrees": {
+              "Hips": 0.0009696207729406694,
+              "LeftUpLeg": 0.018757393039164825,
+              "LeftLeg": 0.018738538428968863,
+              "LeftFoot": 0.0009682847132690789,
+              "LeftToeBase": 0.0009589227416613951,
+              "RightUpLeg": 0.0009315511695321371,
+              "RightLeg": 0.0009394210749846619,
+              "RightFoot": 0.0009704578806461658,
+              "RightToeBase": 0.0010025556781407612,
+              "Spine": 0.0009742451442836823,
+              "Spine1": 0.0009761586550803259,
+              "Spine2": 0.0009651041587325281,
+              "Neck": 0.0009786242390924006,
+              "Head": 0.0009646312339672296,
+              "LeftShoulder": 0.0009733199307458057,
+              "LeftArm": 0.0010057265112105587,
+              "LeftForeArm": 0.001000612514696769,
+              "LeftHand": 0.0009605951435047694,
+              "RightShoulder": 0.0009590397983100762,
+              "RightArm": 0.0009600471111434958,
+              "RightForeArm": 0.0009714728628795652,
+              "RightHand": 0.000963419912407071
+            }
+          },
+          "nearestLegRotationPhase": {
+            "index": 64,
+            "time": 1.0666666666666667,
+            "fraction": 1.0,
+            "legsWorldRotationRMSDeg": 2.4302156898866412e-05,
+            "legsWorldRotationMaxDeg": 4.140582133719097e-05,
+            "bodyWorldRotationMaxDeg": 5.114097014383975e-05,
+            "maxBodyBone": "RightArm",
+            "rootHeightJumpM": 4.774141149077593e-08,
+            "endpointPositionGapAfterXZAlignmentM": {
+              "LeftFoot": 8.110385865145883e-08,
+              "LeftToeBase": 6.48892234115555e-08,
+              "RightFoot": 1.086896014758228e-07,
+              "RightToeBase": 3.388947223041283e-08,
+              "LeftHand": 1.9289532682344358e-07,
+              "RightHand": 3.348168427089486e-07,
+              "Head": 6.360485163403546e-08
+            },
+            "bodyWorldRotationDegrees": {
+              "Hips": 9.956626120759429e-06,
+              "LeftUpLeg": 1.5926940848252767e-05,
+              "LeftLeg": 2.173352885506323e-05,
+              "LeftFoot": 8.00910673140078e-06,
+              "LeftToeBase": 3.212731058883991e-05,
+              "RightUpLeg": 1.3115919625095422e-05,
+              "RightLeg": 1.3872179782028061e-05,
+              "RightFoot": 3.6262773032641635e-05,
+              "RightToeBase": 4.140582133719097e-05,
+              "Spine": 1.0663629423853015e-05,
+              "Spine1": 1.183023466776879e-05,
+              "Spine2": 1.7160637906838783e-05,
+              "Neck": 2.606457820835492e-05,
+              "Head": 2.7639067497065907e-05,
+              "LeftShoulder": 3.3110570461814085e-05,
+              "LeftArm": 4.0190889973957885e-05,
+              "LeftForeArm": 4.383443853060019e-05,
+              "LeftHand": 3.1531884733425465e-05,
+              "RightShoulder": 3.025781511322959e-05,
+              "RightArm": 5.114097014383975e-05,
+              "RightForeArm": 3.0545534566662854e-05,
+              "RightHand": 4.426468493192651e-05
+            }
+          },
+          "selection": "Diagnostic only: minimum leg world-rotation RMS over existing 60Hz Walk keys; no keys were altered and contact/velocity continuity is not proven."
+        },
+        "Walk_to_StopStart": {
+          "walkPhase0": {
+            "legsWorldRotationRMSDeg": 0.008883842421648669,
+            "legsWorldRotationMaxDeg": 0.018766734198276597,
+            "bodyWorldRotationMaxDeg": 0.018766734198276597,
+            "maxBodyBone": "LeftUpLeg",
+            "rootHeightJumpM": 0.0,
+            "endpointPositionGapAfterXZAlignmentM": {
+              "LeftFoot": 2.6516518367928577e-06,
+              "LeftToeBase": 2.1508228379146096e-06,
+              "RightFoot": 2.5279087943845986e-06,
+              "RightToeBase": 5.365150582217431e-07,
+              "LeftHand": 5.0969726664298305e-06,
+              "RightHand": 6.029818480761661e-06,
+              "Head": 2.2940136370982048e-06
+            },
+            "bodyWorldRotationDegrees": {
+              "Hips": 0.000983999221636382,
+              "LeftUpLeg": 0.018766734198276597,
+              "LeftLeg": 0.018736851414940418,
+              "LeftFoot": 0.0009803165674556083,
+              "LeftToeBase": 0.00100480416940757,
+              "RightUpLeg": 0.0010955602669886972,
+              "RightLeg": 0.0010072879226382672,
+              "RightFoot": 0.0009647611980548194,
+              "RightToeBase": 0.0009795102109749045,
+              "Spine": 0.0009833960397796222,
+              "Spine1": 0.000981095514479696,
+              "Spine2": 0.0009805619133220066,
+              "Neck": 0.0009934491951178511,
+              "Head": 0.0009768498846851228,
+              "LeftShoulder": 0.0009751485500604817,
+              "LeftArm": 0.0009884265490468867,
+              "LeftForeArm": 0.000987009601683192,
+              "LeftHand": 0.0009872710042625862,
+              "RightShoulder": 0.000985069810784351,
+              "RightArm": 0.001017196685629375,
+              "RightForeArm": 0.0010476439297366343,
+              "RightHand": 0.0009233458370348033
+            }
+          },
+          "nearestLegRotationPhase": {
+            "index": 64,
+            "time": 1.0666666666666667,
+            "fraction": 1.0,
+            "legsWorldRotationRMSDeg": 0.00019030110458373935,
+            "legsWorldRotationMaxDeg": 0.00042418719236535956,
+            "bodyWorldRotationMaxDeg": 0.00042418719236535956,
+            "maxBodyBone": "RightUpLeg",
+            "rootHeightJumpM": -4.774141149077593e-08,
+            "endpointPositionGapAfterXZAlignmentM": {
+              "LeftFoot": 4.3027606761450307e-07,
+              "LeftToeBase": 4.6973189560356667e-07,
+              "RightFoot": 5.830480842693317e-07,
+              "RightToeBase": 5.367551461950074e-07,
+              "LeftHand": 2.1742531253862436e-07,
+              "RightHand": 1.0504690781221695e-06,
+              "Head": 7.453796644110637e-08
+            },
+            "bodyWorldRotationDegrees": {
+              "Hips": 1.4688877218970407e-05,
+              "LeftUpLeg": 3.157808532191534e-05,
+              "LeftLeg": 4.154641875820248e-05,
+              "LeftFoot": 2.159895462705536e-05,
+              "LeftToeBase": 2.4979263396122898e-05,
+              "RightUpLeg": 0.00042418719236535956,
+              "RightLeg": 0.00037470451402278073,
+              "RightFoot": 3.1066100129895285e-05,
+              "RightToeBase": 2.4448356591142696e-05,
+              "Spine": 1.2313298636799906e-05,
+              "Spine1": 1.0386604689550568e-05,
+              "Spine2": 1.6643112294063943e-05,
+              "Neck": 2.4685724843160074e-05,
+              "Head": 2.1395506250453414e-05,
+              "LeftShoulder": 2.5095717469822522e-05,
+              "LeftArm": 1.7413633929712578e-05,
+              "LeftForeArm": 2.826493702772014e-05,
+              "LeftHand": 3.856184715011519e-05,
+              "RightShoulder": 6.423192839181373e-05,
+              "RightArm": 0.00015118303969144595,
+              "RightForeArm": 0.00013937184683921478,
+              "RightHand": 2.847050291451707e-05
+            }
+          },
+          "selection": "Diagnostic only: minimum leg world-rotation RMS over existing 60Hz Walk keys; no keys were altered and contact/velocity continuity is not proven."
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Emma source Start/Walk and Walk/Stop right-leg boundary remains about1.303deg; target RightFoot/RightToeBase bone-position gap13.835mm. This is NOT a material-sole contact measurement.",
+    "C0 pose matching does not establish joint velocity/acceleration continuity, ideal foot locking or skin collision freedom.",
+    "New source cycle differs from current v44 Walk in duration, stride and initial phase. Same-fraction old/new comparison is not a phase-aligned quality A/B.",
+    "No navigation/root-owner integration or full-scene acceptance of this reference.",
+    "Existing v44 geometry/envelope and contact gates cannot automatically be transferred to these new clips."
+  ],
+  "runtime": {
+    "entrypointsChangedByPrototype": false,
+    "runtimeObservedPath": "../../../visitors-v44.js",
+    "runtimeObservedSHA256": "bccc1feea2548202027e98de18c65f8aa5f93acefe704817f742eff724bdfab6",
+    "adapterObservedSHA256": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de",
+    "note": "Runtime remains separate frozen review candidate; no imports or scene references added by this package."
+  },
+  "preview": {
+    "player": "replay.html",
+    "script": "replay.mjs",
+    "scriptSHA256": "f28f22b0f58cc54be4c63faf357385b7ed0ede642a9eee8682bbd16649969eca",
+    "sequence": "Idle last1s -> Start -> 2 complete base Walk cycles -> Stop -> Idle first1s",
+    "actionWeights": 1,
+    "blend": false,
+    "Crowd": false,
+    "holderYaw": false,
+    "animatedFootCorrection": false,
+    "floor": "Constant per actor measured once at IdleEnd; animated source Y retained",
+    "sourceVideoExternalPath": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-ready-locomotion-data-20261122\\matched-rocketbox\\source-reference-video\\matched-rocketbox-source-reference.mp4",
+    "sourceVideoSHA256": "585f8a21bf4a862af527a567197d4bb9f7c971a39f922a04af891265dca0475b",
+    "sourceVideoBytes": 6633410,
+    "durationS": 28.666667,
+    "visualReferenceRecorded": true,
+    "contactAcceptance": false,
+    "fullVisualAcceptance": false
+  },
+  "externalInputs": {
+    "worldSamplesDirectory": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-ready-locomotion-data-20261122\\matched-rocketbox\\common-reference\\world-samples",
+    "worldSamplesIndexSHA256": "c49744fa34b10f8ed1f3a0a8b0f667cba1f58c269041a2898331cf7a02d1d045",
+    "worldSamples": [
+      {
+        "file": "f_idle_neutral_01.json",
+        "sha256": "6d96fd56d4f09edbc58f0ce9ef527fe280eb3dc543e31d6a834d9d7d959903da",
+        "bytes": 27275900,
+        "source": "f_idle_neutral_01.max.fbx",
+        "bones": 54,
+        "frames": 933,
+        "duration": 15.533333333333333,
+        "source_fps": 30.0,
+        "source_frame_range": [
+          1.0,
+          467.0
+        ],
+        "hips_first_minus_reference_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "hips_first_vs_reference_deg": 0.0,
+        "hips_delta_first_to_last_m": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "file": "f_walk_start.json",
+        "sha256": "74bef2aa43b638498bbccba98049616670130e289465a3cda0d883cc3d144c4f",
+        "bytes": 1697605,
+        "source": "f_walk_start.max.fbx",
+        "bones": 54,
+        "frames": 57,
+        "duration": 0.9333333333333333,
+        "source_fps": 30.0,
+        "source_frame_range": [
+          1.0,
+          29.0
+        ],
+        "hips_first_minus_reference_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "hips_first_vs_reference_deg": 0.0,
+        "hips_delta_first_to_last_m": [
+          0.0,
+          -0.0058013200759887695,
+          0.7682530283927917
+        ]
+      },
+      {
+        "file": "f_walk_stop.json",
+        "sha256": "f1ce32d948dea71b0a08c5d4b6805ecb9204860c39a96b487cb206cc94a30a3c",
+        "bytes": 3145313,
+        "source": "f_walk_stop.max.fbx",
+        "bones": 54,
+        "frames": 107,
+        "duration": 1.7666666666666666,
+        "source_fps": 30.0,
+        "source_frame_range": [
+          1.0,
+          54.0
+        ],
+        "hips_first_minus_reference_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "hips_first_vs_reference_deg": 0.0,
+        "hips_delta_first_to_last_m": [
+          -0.03188999742269516,
+          0.005801379680633545,
+          0.6728299856185913
+        ]
+      },
+      {
+        "file": "m_idle_neutral_01.json",
+        "sha256": "b01cab15d5fade183fe7f19bd8002d5714f22d16d43d6fc86f9e92a2af418d71",
+        "bytes": 20438886,
+        "source": "m_idle_neutral_01.max.fbx",
+        "bones": 54,
+        "frames": 701,
+        "duration": 11.666666666666666,
+        "source_fps": 30.0,
+        "source_frame_range": [
+          1.0,
+          351.0
+        ],
+        "hips_first_minus_reference_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "hips_first_vs_reference_deg": 0.0,
+        "hips_delta_first_to_last_m": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "file": "m_walk_start.json",
+        "sha256": "896f69803f579d8d7aa54df9272683c333892b470bd5348e8be9aed25b93dc06",
+        "bytes": 1756152,
+        "source": "m_walk_start.max.fbx",
+        "bones": 54,
+        "frames": 59,
+        "duration": 0.9666666666666667,
+        "source_fps": 30.0,
+        "source_frame_range": [
+          1.0,
+          30.0
+        ],
+        "hips_first_minus_reference_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "hips_first_vs_reference_deg": 0.0,
+        "hips_delta_first_to_last_m": [
+          0.0,
+          0.006571471691131592,
+          0.6070215106010437
+        ]
+      },
+      {
+        "file": "m_walk_stop.json",
+        "sha256": "d69e3ff449c0e57dfae6269f55ce8d22b643223a6e6619336f022cf62418c34b",
+        "bytes": 3537248,
+        "source": "m_walk_stop.max.fbx",
+        "bones": 54,
+        "frames": 121,
+        "duration": 2.0,
+        "source_fps": 30.0,
+        "source_frame_range": [
+          1.0,
+          61.0
+        ],
+        "hips_first_minus_reference_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "hips_first_vs_reference_deg": 0.0,
+        "hips_delta_first_to_last_m": [
+          0.0354996882379055,
+          -0.006571412086486816,
+          1.3908485174179077
+        ]
+      },
+      {
+        "file": "f_walk_neutral.json",
+        "sha256": "48c21e3fcecdfd5be23f1725c6cd50b9c725f5559ad05267d0fbd5219d8e6457",
+        "bytes": 2211182,
+        "source": "f_walk_neutral.max.fbx",
+        "bones": 54,
+        "frames": 75,
+        "duration": 1.2333333333333334,
+        "source_fps": 30.0,
+        "source_frame_range": [
+          1.0,
+          38.0
+        ],
+        "hips_first_minus_reference_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "hips_first_vs_reference_deg": 0.0,
+        "hips_delta_first_to_last_m": [
+          0.0,
+          5.960464477539063e-08,
+          1.5966254472732544
+        ]
+      },
+      {
+        "file": "m_walk_neutral.json",
+        "sha256": "09eb3c2cebb90f76800eb48743a82d3d8fe264860f8990d3eef07d9857a13239",
+        "bytes": 1921839,
+        "source": "m_walk_neutral.max.fbx",
+        "bones": 54,
+        "frames": 65,
+        "duration": 1.0666666666666667,
+        "source_fps": 30.0,
+        "source_frame_range": [
+          1.0,
+          33.0
+        ],
+        "hips_first_minus_reference_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "hips_first_vs_reference_deg": 0.0,
+        "hips_delta_first_to_last_m": [
+          0.0,
+          5.960464477539063e-08,
+          1.4958643913269043
+        ]
+      }
+    ],
+    "verifiedFbxDirectory": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-ready-locomotion-data-20261122\\matched-rocketbox\\common-reference\\source",
+    "sourceFbxAssets": [
+      {
+        "filename": "f_idle_neutral_01.max.fbx",
+        "source_path": "Assets/Animations/all_animations_max_motextr_static/f_idle_neutral_01.max.fbx",
+        "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_static/f_idle_neutral_01.max.fbx",
+        "bytes": 2959360,
+        "git_blob_sha1": "aecf1d0089ccfc0c381d5395294bb1c8fe0e63ae",
+        "sha256": "fd68b33ea9e290dc734ca8c3a71ef5842bb2dfe719853ff84f6336d06d39fdcb",
+        "provenance": "downloaded_pinned_source"
+      },
+      {
+        "filename": "f_walk_start.max.fbx",
+        "source_path": "Assets/Animations/all_animations_max_motextr_xy/f_walk_start.max.fbx",
+        "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xy/f_walk_start.max.fbx",
+        "bytes": 922800,
+        "git_blob_sha1": "196cc8b3e03534d91a3a2b3b3b58d6f18948c6a2",
+        "sha256": "509cb6486c0938bdc8ed000041c6c6be82bc7324b8b2ab68515a6bc143b3e24b",
+        "provenance": "verified_cached_source"
+      },
+      {
+        "filename": "f_walk_stop.max.fbx",
+        "source_path": "Assets/Animations/all_animations_max_motextr_xy/f_walk_stop.max.fbx",
+        "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xy/f_walk_stop.max.fbx",
+        "bytes": 1147184,
+        "git_blob_sha1": "fcf5d47314b68b447ad68280c040c936343128e6",
+        "sha256": "e2f7d8dd7b08f53e33befb5515095af54f87effc6491b0774e401c99f497256b",
+        "provenance": "verified_cached_source"
+      },
+      {
+        "filename": "m_idle_neutral_01.max.fbx",
+        "source_path": "Assets/Animations/all_animations_max_motextr_static/m_idle_neutral_01.max.fbx",
+        "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_static/m_idle_neutral_01.max.fbx",
+        "bytes": 2418544,
+        "git_blob_sha1": "a2d92c3326a9c503af677c9fa6082387f060d6c4",
+        "sha256": "818cc185af21390575f7fbfdeb3012ba2ce5969fbcb220ea725a2617b339a6e2",
+        "provenance": "downloaded_pinned_source"
+      },
+      {
+        "filename": "m_walk_start.max.fbx",
+        "source_path": "Assets/Animations/all_animations_max_motextr_xy/m_walk_start.max.fbx",
+        "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xy/m_walk_start.max.fbx",
+        "bytes": 931792,
+        "git_blob_sha1": "ea49c0c4972ad1bf4d0124ea8ecb3d1f451698e9",
+        "sha256": "05243edcc6712bbd526ac2d7022e6a8bd49debaadf012f96d4b81795fb169817",
+        "provenance": "verified_cached_source"
+      },
+      {
+        "filename": "m_walk_stop.max.fbx",
+        "source_path": "Assets/Animations/all_animations_max_motextr_xy/m_walk_stop.max.fbx",
+        "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xy/m_walk_stop.max.fbx",
+        "bytes": 1209760,
+        "git_blob_sha1": "ce2f2359034c5df29f03cd4d645356af3da20881",
+        "sha256": "808f112c37c0db60fd1855fb2785749557ecdb9107e8028cd3f28b11aa9c62b1",
+        "provenance": "verified_cached_source"
+      },
+      {
+        "filename": "f_walk_neutral.max.fbx",
+        "source_path": "Assets/Animations/all_animations_max_motextr_xy/f_walk_neutral.max.fbx",
+        "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xy/f_walk_neutral.max.fbx",
+        "bytes": 1002832,
+        "git_blob_sha1": "94d6f50765e0865eee6dd439b1ab0ca3511c784e",
+        "sha256": "e210c9e34949a4eacad0a85021d4d1a59aab177ca1737e6038309896147ebae2"
+      },
+      {
+        "filename": "m_walk_neutral.max.fbx",
+        "source_path": "Assets/Animations/all_animations_max_motextr_xy/m_walk_neutral.max.fbx",
+        "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xy/m_walk_neutral.max.fbx",
+        "bytes": 958512,
+        "git_blob_sha1": "f8816638330d02fb31920d46851188b920d66ab1",
+        "sha256": "93089851a370e3a117a6bd04c002815f7133fce41c6271e9eb448ca1228b154f"
+      }
+    ],
+    "historicalFirstPrototypeManifest": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-ready-locomotion-data-20261122\\matched-rocketbox\\prototype-manifest.json",
+    "historicalFirstPrototypeManifestSHA256": "5d2e70886b8d00b0127229cc38f964ecf2219110b3b885f32b4f30290bf56cf3",
+    "historicalAuditHelper": {
+      "helperPath": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-ready-locomotion-data-20261122\\native-audit\\native_cpu_audit.py",
+      "helperSHA256": "372505237ed002845efa253f4cfccff097bb52fedca4ddc374345e2fd6da6dd5",
+      "numpy": "2.5.3"
+    },
+    "note": "Large FBX/world samples remain outside Git on the recorded machine. Pinned source retrieval+Blender export rebuilds them. Historical numerical audit still references its external NumPy/SciPy helper; repository checkout alone is not a self-contained historical audit environment."
+  },
+  "portableTools": {
+    "fetch": "tools/fetch_sources.py",
+    "export": "tools/export_matched_world_samples.py",
+    "convert": "tools/retarget_rocketbox_shared_reference.mjs",
+    "instructions": "README.md",
+    "converterBytesEqualSuccessfulExecutedConverter": true,
+    "samplingFunctionASTEqualExecutedExporter": true
+  },
+  "files": [
+    {
+      "path": "checks/base-source-boundary-audit.json",
+      "bytes": 39136,
+      "sha256": "4b2aaba7a75c23505c2a58f9c28a20d1e7f9e196cc2f829a428f695789656d02"
+    },
+    {
+      "path": "checks/common-reference-audit.json",
+      "bytes": 87592,
+      "sha256": "d38674c9d312ee453db0dc6842b22135ff991601397bd68b72a00b78be55b8d6"
+    },
+    {
+      "path": "checks/converter-changes.json",
+      "bytes": 3843,
+      "sha256": "2a000cc6655442fa4c5ce957598cf2aab3a251a438aa4fa8b98e75374e3ac43d"
+    },
+    {
+      "path": "checks/crowd-handoff-feasibility.json",
+      "bytes": 5668,
+      "sha256": "44a4d60c4d90f9f9b3f210f56da8d521057fe237dcde87d6b3fcda4486530530"
+    },
+    {
+      "path": "checks/reference-ab.json",
+      "bytes": 38917,
+      "sha256": "ecaadfc2b4b90dece6696eb2e79ac57c964e2e2426534c1dc6d8ca98a07cb946"
+    },
+    {
+      "path": "checks/root-boundary-kinematics.json",
+      "bytes": 8446,
+      "sha256": "658c4d15897f420c43d8a8aae9b9a7af98821ea9fa2337ef4d45ab1b77e4c0a9"
+    },
+    {
+      "path": "checks/source-copy-shas.json",
+      "bytes": 2348,
+      "sha256": "1ea07a97881e15f1f557d4d9f8191e01b413a58ebbbf1a0e071c016431e965fc"
+    },
+    {
+      "path": "checks/stop-lead-navmesh-feasibility.json",
+      "bytes": 49081,
+      "sha256": "1b10d9b3fd31d7acd8a91802fbb281da1a8543d74ae3acce9007f883fcff55c0"
+    },
+    {
+      "path": "licenses/LICENSE-avatar-studio",
+      "bytes": 1070,
+      "sha256": "463e1d949eadc76ab09d6b47579a137903a0a109527eb8bbf0c68446d72dc7c7"
+    },
+    {
+      "path": "licenses/LICENSE-Microsoft-Rocketbox.md",
+      "bytes": 1066,
+      "sha256": "17474e386e0b9e1a700cc3d06b2b0882a2c376d9c6b49c7f8274409b8f8d2352"
+    },
+    {
+      "path": "licenses/LICENSE-Three",
+      "bytes": 1081,
+      "sha256": "4c40a1ef62450b857c3b2aaf294936304cd552d965fbcd9d32d4c5bcf4ba4454"
+    },
+    {
+      "path": "licenses/LICENSE-UPF",
+      "bytes": 11324,
+      "sha256": "50e6751797c50dedd75ef1b8a0d9e42f5f8472e9fbce91f34718e9f97b0c780a"
+    },
+    {
+      "path": "outputs/emma-matched-locomotion-report.json",
+      "bytes": 79217,
+      "sha256": "b31e561c7bd741e31be7f4388b0d768ee9c1e0726d49d88ee280056f7d75efb9"
+    },
+    {
+      "path": "outputs/emma-matched-locomotion.glb",
+      "bytes": 1383800,
+      "sha256": "0f459cdfabf1fc54588251f6d81d461ad335e0125a042d0b67dc0970fe6aa20e"
+    },
+    {
+      "path": "outputs/ethan-matched-locomotion-report.json",
+      "bytes": 79546,
+      "sha256": "8931ec4a5e0cf0aaa1c7a08bac9873ef88af09372d6b8d13ba783bc81a7daa44"
+    },
+    {
+      "path": "outputs/ethan-matched-locomotion.glb",
+      "bytes": 1134820,
+      "sha256": "68f27bcb6704bee65088c4e6c8a109a052e7b8f8a2c7129cae1dfb6dd154c43c"
+    },
+    {
+      "path": "README.md",
+      "bytes": 15501,
+      "sha256": "cf16193242145dfb58d7c3c58eb0787c2e0ba3032fbfff2b05d5d68cf76d0365"
+    },
+    {
+      "path": "replay.html",
+      "bytes": 1410,
+      "sha256": "34d4756fad72282d662efb8e5a9b58b7fd81b1d7078ea011b2f10eff33ba1795"
+    },
+    {
+      "path": "replay.mjs",
+      "bytes": 7511,
+      "sha256": "f28f22b0f58cc54be4c63faf357385b7ed0ede642a9eee8682bbd16649969eca"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 5453,
+      "sha256": "59bb181c3d67504562be3f5c5b532a3f50767cdd3c3b8cf162426154dec4a205"
+    },
+    {
+      "path": "tools/export_matched_world_samples.py",
+      "bytes": 13367,
+      "sha256": "0a24f0a8c5c10795f333480e195fd670347392aa1b00ea40f1999d1479c2ce9d"
+    },
+    {
+      "path": "tools/fetch_sources.py",
+      "bytes": 2958,
+      "sha256": "a5d76b73ad9c212e23d5ca8aabdfce6f3b6dfd24ad43dc97c39eb2f9f8ba27dd"
+    },
+    {
+      "path": "tools/retarget_rocketbox_shared_reference.mjs",
+      "bytes": 23205,
+      "sha256": "2193ed408d85247a7f407444448e4dfd3c8ba63fccb4dc3a0b88abbe91edad7e"
+    }
+  ],
+  "relatedProofs": [
+    {
+      "path": "checks/crowd-handoff-feasibility.json",
+      "sha256": "44a4d60c4d90f9f9b3f210f56da8d521057fe237dcde87d6b3fcda4486530530",
+      "scope": "Read-only pinned API feasibility; no dynamic handoff acceptance"
+    },
+    {
+      "path": "checks/stop-lead-navmesh-feasibility.json",
+      "sha256": "1b10d9b3fd31d7acd8a91802fbb281da1a8543d74ae3acce9007f883fcff55c0",
+      "scope": "Static placement feasibility only"
+    },
+    {
+      "path": "../../checks/matched-rocketbox-source-reference-video.json",
+      "sha256": "3c1b7e61cec67a033a7523d2da128289b9c2c2fbb81580993f6453e11fe0d9c6",
+      "scope": "Normal-tempo source-only recorded reference; no contact PASS"
+    },
+    {
+      "path": "../../tools/capture_matched_rocketbox_reference.py",
+      "sha256": "0490b8d5000f75af0a34414a45042386d24dc42e30cbcf2b25e6d9a4c4290c5c",
+      "scope": "Portable capture script saved by GPU owner"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "originalSHA256": "aec01c32a16188a764449ba1d3aeec97553909d0c4c03097d73863b5e33d61f4",
+  "outputScriptSHA256": "2193ed408d85247a7f407444448e4dfd3c8ba63fccb4dc3a0b88abbe91edad7e",
+  "edits": [
+    [
+      "const specs = [['Idle', 'idle_neutral_01'], ['Walk', 'walk_neutral_01'], ['Start', 'walk_start'], ['Stop', 'walk_stop']];",
+      "const specs = [['Idle', 'idle_neutral_01'], ['Walk', 'walk_neutral'], ['Start', 'walk_start'], ['Stop', 'walk_stop']];"
+    ],
+    [
+      "const outputClips = [], reports = [];",
+      "const outputClips = [], reports = [];\nlet sharedCalibration;"
+    ],
+    [
+      "  restore(source); restore(target);\n  semanticCanonicalPose(source); semanticCanonicalPose(target);\n  source.root.updateMatrixWorld(true); target.root.updateMatrixWorld(true);\n  const sourceRootY = source.byName.get('hips').getWorldPosition(new THREE.Vector3()).y;\n  const targetRootY = target.byName.get('hips').getWorldPosition(new THREE.Vector3()).y;\n  const ratio = targetRootY / sourceRootY;\n  const mapping = Object.fromEntries(source.bones.map(bone => [bone.name, target.byName.get(normal(bone.name)).name]));\n  const solver = new AnimationRetargeting(source.skeleton, target.skeleton, {\n    srcPoseMode: AnimationRetargeting.BindPoseModes.CURRENT, trgPoseMode: AnimationRetargeting.BindPoseModes.CURRENT,\n    srcEmbedWorldTransforms: false, trgEmbedWorldTransforms: false, boneNameMap: mapping,\n  });",
+      "  const sourceSignature = source.bones.map(bone => [bone.name, bone.parent?.isBone ? bone.parent.name : '']).map(pair => pair.join(':')).join('|');\n  if (!sharedCalibration) {\n    if (name !== 'Idle') throw new Error('Shared reference must be initialized from the pinned Idle source');\n    restore(source); restore(target);\n    semanticCanonicalPose(source); semanticCanonicalPose(target);\n    source.root.updateMatrixWorld(true); target.root.updateMatrixWorld(true);\n    const sourceRootY = source.byName.get('hips').getWorldPosition(new THREE.Vector3()).y;\n    const targetRootY = target.byName.get('hips').getWorldPosition(new THREE.Vector3()).y;\n    const ratio = targetRootY / sourceRootY;\n    const mapping = Object.fromEntries(source.bones.map(bone => [bone.name, target.byName.get(normal(bone.name)).name]));\n    const solver = new AnimationRetargeting(source.skeleton, target.skeleton, {\n      srcPoseMode: AnimationRetargeting.BindPoseModes.CURRENT, trgPoseMode: AnimationRetargeting.BindPoseModes.CURRENT,\n      srcEmbedWorldTransforms: false, trgEmbedWorldTransforms: false, boneNameMap: mapping,\n    });\n    sharedCalibration = { solver, sourceRootY, targetRootY, ratio, sourceSignature, referenceFilename: filename, referenceSHA256: sha256(sourceBytes) };\n  }\n  if (sourceSignature !== sharedCalibration.sourceSignature) throw new Error('Source bone order or hierarchy differs from the shared reference');\n  const { solver, sourceRootY, targetRootY, ratio } = sharedCalibration;"
+    ],
+    [
+      "actor, method: 'FBX world samples including Armature -> common hierarchy -> UPF applyTPose plus explicit common semantic segments on temporary source/target -> CURRENT', targetSHA256:",
+      "actor, method: 'FBX world samples including Armature -> common hierarchy -> existing semantic calibration once from Idle -> one shared UPF CURRENT solver for all clips', calibration: { sourceFile: sharedCalibration.referenceFilename, sourceJSONSHA256: sharedCalibration.referenceSHA256, sourceRootY: sharedCalibration.sourceRootY, targetRootY: sharedCalibration.targetRootY, translationRatio: sharedCalibration.ratio, solverInstances: 1 }, targetSHA256:"
+    ]
+  ],
+  "unchanged": "All solver, semantic calibration function, interpolation, bone mapping and export math unchanged. Only base Walk selection and reuse of one calibrated solver instance changed."
+}

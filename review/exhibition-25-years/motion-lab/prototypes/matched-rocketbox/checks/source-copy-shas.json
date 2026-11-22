@@ -1,0 +1,73 @@
+[
+  {
+    "path": "outputs/emma-matched-locomotion.glb",
+    "bytes": 1383800,
+    "sha256": "0f459cdfabf1fc54588251f6d81d461ad335e0125a042d0b67dc0970fe6aa20e"
+  },
+  {
+    "path": "outputs/emma-matched-locomotion-report.json",
+    "bytes": 79217,
+    "sha256": "b31e561c7bd741e31be7f4388b0d768ee9c1e0726d49d88ee280056f7d75efb9"
+  },
+  {
+    "path": "outputs/ethan-matched-locomotion.glb",
+    "bytes": 1134820,
+    "sha256": "68f27bcb6704bee65088c4e6c8a109a052e7b8f8a2c7129cae1dfb6dd154c43c"
+  },
+  {
+    "path": "outputs/ethan-matched-locomotion-report.json",
+    "bytes": 79546,
+    "sha256": "8931ec4a5e0cf0aaa1c7a08bac9873ef88af09372d6b8d13ba783bc81a7daa44"
+  },
+  {
+    "path": "checks/common-reference-audit.json",
+    "bytes": 87592,
+    "sha256": "d38674c9d312ee453db0dc6842b22135ff991601397bd68b72a00b78be55b8d6"
+  },
+  {
+    "path": "checks/base-source-boundary-audit.json",
+    "bytes": 39136,
+    "sha256": "4b2aaba7a75c23505c2a58f9c28a20d1e7f9e196cc2f829a428f695789656d02"
+  },
+  {
+    "path": "checks/converter-changes.json",
+    "bytes": 3843,
+    "sha256": "2a000cc6655442fa4c5ce957598cf2aab3a251a438aa4fa8b98e75374e3ac43d"
+  },
+  {
+    "path": "source-manifest.json",
+    "bytes": 5453,
+    "sha256": "59bb181c3d67504562be3f5c5b532a3f50767cdd3c3b8cf162426154dec4a205"
+  },
+  {
+    "path": "tools/retarget_rocketbox_shared_reference.mjs",
+    "bytes": 23205,
+    "sha256": "2193ed408d85247a7f407444448e4dfd3c8ba63fccb4dc3a0b88abbe91edad7e"
+  },
+  {
+    "path": "licenses/LICENSE-Microsoft-Rocketbox.md",
+    "bytes": 1066,
+    "sha256": "17474e386e0b9e1a700cc3d06b2b0882a2c376d9c6b49c7f8274409b8f8d2352"
+  },
+  {
+    "path": "licenses/LICENSE-avatar-studio",
+    "bytes": 1070,
+    "sha256": "463e1d949eadc76ab09d6b47579a137903a0a109527eb8bbf0c68446d72dc7c7"
+  },
+  {
+    "path": "licenses/LICENSE-UPF",
+    "bytes": 11324,
+    "sha256": "50e6751797c50dedd75ef1b8a0d9e42f5f8472e9fbce91f34718e9f97b0c780a"
+  },
+  {
+    "path": "licenses/LICENSE-Three",
+    "bytes": 1081,
+    "sha256": "4c40a1ef62450b857c3b2aaf294936304cd552d965fbcd9d32d4c5bcf4ba4454"
+  },
+  {
+    "path": "tools/export_matched_world_samples.py",
+    "bytes": 13367,
+    "sha256": "0a24f0a8c5c10795f333480e195fd670347392aa1b00ea40f1999d1479c2ce9d",
+    "samplingFunctionUnchanged": true
+  }
+]

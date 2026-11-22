@@ -1,0 +1,2045 @@
+{
+  "actor": "ethan",
+  "method": "FBX world samples including Armature -> common hierarchy -> existing semantic calibration once from Idle -> one shared UPF CURRENT solver for all clips",
+  "calibration": {
+    "sourceFile": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-ready-locomotion-data-20261122\\matched-rocketbox\\common-reference\\world-samples\\m_idle_neutral_01.json",
+    "sourceJSONSHA256": "b01cab15d5fade183fe7f19bd8002d5714f22d16d43d6fc86f9e92a2af418d71",
+    "sourceRootY": 0.8951848149299622,
+    "targetRootY": 0.916766644,
+    "translationRatio": 1.0241087970998775,
+    "solverInstances": 1
+  },
+  "targetSHA256": "710096e92e0acbfac10f9680f262514402822dfeda33f9f0dc4117bec24172d9",
+  "dependencies": {
+    "threeRevision": "169",
+    "threeSHA256": "0a3368c165eea773490aec7b77c22de70e3eac288503409256fdbf4d12578416",
+    "upfSHA256": "4fca7f6deab1a912b659b30998595e248d88b1d46d6cca414287139af02506c6"
+  },
+  "outputSHA256": "68f27bcb6704bee65088c4e6c8a109a052e7b8f8a2c7129cae1dfb6dd154c43c",
+  "reports": [
+    {
+      "actor": "ethan",
+      "name": "Idle",
+      "source": "m_idle_neutral_01.json",
+      "sourceJSONSHA256": "b01cab15d5fade183fe7f19bd8002d5714f22d16d43d6fc86f9e92a2af418d71",
+      "sourceRevision": "0943055db6ec570bcef9f2c8b41c9e5467c808f9",
+      "sourceFBXSHA256": "818cc185af21390575f7fbfdeb3012ba2ce5969fbcb220ea725a2617b339a6e2",
+      "clipDuration": 11.666666984558105,
+      "trackCount": 55,
+      "sourceRootY": 0.8951848149299622,
+      "targetRootY": 0.916766644,
+      "translationRatio": 1.0241087970998775,
+      "reconstructionMaxPosition": 3.858282077518082e-7,
+      "reconstructionMaxAngle": 0.0000011246181883879575,
+      "sourceNonRootOffsetVariationM": 0.013463468766700891,
+      "rows": [
+        {
+          "time": 0,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.00048439974747701734,
+              "left-fore": 0.0006703406379754291,
+              "left-thigh": 0.000014539241291064202,
+              "left-shin": 0.0003300539182408502,
+              "left-foot": 0.001914128717174383,
+              "right-upper": 0.0004792766176908324,
+              "right-fore": 0.0006629556486361778,
+              "right-thigh": 0.00044665827417379305,
+              "right-shin": 0.00037152595660975164,
+              "right-foot": 0.001923539519714832
+            },
+            "kneeDeltaDegrees": {
+              "left": -0.0000028804295881812436,
+              "right": 0.000006391090384028075
+            },
+            "wristForwardDeltaM": {
+              "left": -0.010156822430949383,
+              "right": -0.010121498741597297
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.00001010198601586461,
+            "left-fore": 0.000008233494873389921,
+            "left-thigh": 0.000011000103948581645,
+            "left-shin": 0.0000036222548091772005,
+            "left-foot": 0.000020930518217647733,
+            "right-upper": 0.00001076567604966661,
+            "right-fore": 0.000015972642350651045,
+            "right-thigh": 0.000006557959812547712,
+            "right-shin": 0.000013309014001239911,
+            "right-foot": 0.000013606912857609226
+          },
+          "rootYawDeltaDegrees": 0,
+          "rootPositionScaledDeltaError": 0,
+          "sourceRootPosition": [
+            0,
+            0.8951848149299622,
+            -3.9427792586366195e-8
+          ],
+          "targetRootPosition": [
+            2.4200621975140058e-12,
+            0.9167666435241699,
+            -2.8101543314562605e-10
+          ],
+          "sourceRelativeYaw": 0,
+          "targetRelativeYaw": 0
+        },
+        {
+          "time": 1.4583333333333333,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.21196808995995614,
+              "left-fore": 0.17215054199489044,
+              "left-thigh": 0.2022686172629383,
+              "left-shin": 0.21333207138698695,
+              "left-foot": 0.07115169923556908,
+              "right-upper": 0.21085477558873375,
+              "right-fore": 0.17474514149511258,
+              "right-thigh": 0.1896535631287156,
+              "right-shin": 0.2124437099021996,
+              "right-foot": 0.09085279903744706
+            },
+            "kneeDeltaDegrees": {
+              "left": -0.0000071460534361023065,
+              "right": 0.000010415229244387092
+            },
+            "wristForwardDeltaM": {
+              "left": -0.008414705304390886,
+              "right": -0.008437541847543941
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000024656178782490808,
+            "left-fore": 0.000007091976543484069,
+            "left-thigh": 0.00001306022544728445,
+            "left-shin": 0.000009956626120759439,
+            "left-foot": 0.0000424060010623063,
+            "right-upper": 0.000006502146373618259,
+            "right-fore": 0.000016266572668182135,
+            "right-thigh": 0.000009956626120759439,
+            "right-shin": 0.0000047536104815230715,
+            "right-foot": 8.537736462515939e-7
+          },
+          "rootYawDeltaDegrees": -5.388190469709316e-7,
+          "rootPositionScaledDeltaError": 4.707880555069313e-8,
+          "sourceRootPosition": [
+            0.002604619599878788,
+            0.8941755890846252,
+            0.01296916138380766
+          ],
+          "targetRootPosition": [
+            0.002667413791641593,
+            0.9157330393791199,
+            0.013281872496008873
+          ],
+          "sourceRelativeYaw": -0.018953277155894552,
+          "targetRelativeYaw": -0.018953286560060994
+        },
+        {
+          "time": 2.9166666666666665,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.18097300324514976,
+              "left-fore": 0.16056570024756336,
+              "left-thigh": 0.17716392760331667,
+              "left-shin": 0.18113539836193704,
+              "left-foot": 0.08494292020903393,
+              "right-upper": 0.18053716548023852,
+              "right-fore": 0.16103034707694427,
+              "right-thigh": 0.17034817564314758,
+              "right-shin": 0.18096948112491587,
+              "right-foot": 0.09721884279313191
+            },
+            "kneeDeltaDegrees": {
+              "left": -0.000007238877113735498,
+              "right": -0.0000016819916410781843
+            },
+            "wristForwardDeltaM": {
+              "left": -0.009225126444069864,
+              "right": -0.009435768581753313
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000027012189257311024,
+            "left-fore": 0.000024042484171852243,
+            "left-thigh": 0.000015032236230862699,
+            "left-shin": 0.0000031945284701301985,
+            "left-foot": 0.000016946922994434602,
+            "right-upper": 0.0000215651798532619,
+            "right-fore": 0.00001010198601586461,
+            "right-thigh": 0.0000035201989238640496,
+            "right-shin": 0.000004978313060379714,
+            "right-foot": 0.000021103930611372405
+          },
+          "rootYawDeltaDegrees": 8.812654084414299e-7,
+          "rootPositionScaledDeltaError": 1.0923064826878156e-8,
+          "sourceRootPosition": [
+            0.0025411047972738743,
+            0.8946759700775146,
+            0.009221313521265984
+          ],
+          "targetRootPosition": [
+            0.0026023678947240114,
+            0.9162455201148987,
+            0.009443668648600578
+          ],
+          "sourceRelativeYaw": -0.014179877902183882,
+          "targetRelativeYaw": -0.01417986252120092
+        },
+        {
+          "time": 4.375,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.4315196630228584,
+              "left-fore": 0.23672073769767657,
+              "left-thigh": 0.18003816653930965,
+              "left-shin": 0.4033135191000308,
+              "left-foot": 0.9822483773772743,
+              "right-upper": 0.40167214662547585,
+              "right-fore": 0.2188902221182015,
+              "right-thigh": 0.1433431700672448,
+              "right-shin": 0.39327547890627584,
+              "right-foot": 0.9977803789632694
+            },
+            "kneeDeltaDegrees": {
+              "left": -0.000015403932042801216,
+              "right": 9.77948591440736e-7
+            },
+            "wristForwardDeltaM": {
+              "left": -0.00787819943245846,
+              "right": -0.010890464468888826
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000013713635377634418,
+            "left-fore": 0.000011612577070626602,
+            "left-thigh": 0.00002242679898989796,
+            "left-shin": 0.000002561320938754782,
+            "left-foot": 0.00002196705006686931,
+            "right-upper": 0.000007294645231227028,
+            "right-fore": 0.000016018213462801612,
+            "right-thigh": 0.000007588506156264597,
+            "right-shin": 0.000009313570918021479,
+            "right-foot": 0.000012576871163780067
+          },
+          "rootYawDeltaDegrees": 0.000003053367685998907,
+          "rootPositionScaledDeltaError": 4.087463357915862e-8,
+          "sourceRootPosition": [
+            0.002989937085658312,
+            0.8949581384658813,
+            0.008061310276389122
+          ],
+          "targetRootPosition": [
+            0.0030620209872722626,
+            0.9165345430374146,
+            0.008255698718130589
+          ],
+          "sourceRelativeYaw": -0.005103749937470891,
+          "targetRelativeYaw": -0.0051036966461514965
+        },
+        {
+          "time": 5.833333333333333,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.37260901354333964,
+              "left-fore": 0.2386880096912949,
+              "left-thigh": 0.13957904934611493,
+              "left-shin": 0.33213455727288316,
+              "left-foot": 0.9248614302786048,
+              "right-upper": 0.340068103695697,
+              "right-fore": 0.2338444121417278,
+              "right-thigh": 0.14049636797520587,
+              "right-shin": 0.33223399667339876,
+              "right-foot": 0.9393448947099929
+            },
+            "kneeDeltaDegrees": {
+              "left": -0.000014467923667993432,
+              "right": 0.000012492837996092021
+            },
+            "wristForwardDeltaM": {
+              "left": -0.01111996927791428,
+              "right": -0.013961860778367322
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.0000056632936810203185,
+            "left-fore": 0.000007040397847728103,
+            "left-thigh": 0.000014235251457258534,
+            "left-shin": 0.0000050509930079323,
+            "left-foot": 0.00002131016284588239,
+            "right-upper": 0.000028444888421779233,
+            "right-fore": 0.000020825777685961243,
+            "right-thigh": 0.000007393896667355497,
+            "right-shin": 0.000025370153619298495,
+            "right-foot": 0.000007963470424126384
+          },
+          "rootYawDeltaDegrees": 0.0000018707212096110476,
+          "rootPositionScaledDeltaError": 2.8518921233674467e-8,
+          "sourceRootPosition": [
+            0.0037213971372693777,
+            0.8953417539596558,
+            0.0037836262490600348
+          ],
+          "targetRootPosition": [
+            0.0038111156318336725,
+            0.9169273376464844,
+            0.0038748849183321
+          ],
+          "sourceRelativeYaw": 0.0029597662844366153,
+          "targetRelativeYaw": 0.00295979893468111
+        },
+        {
+          "time": 7.291666666666666,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.24858924940603055,
+              "left-fore": 0.10753613332061467,
+              "left-thigh": 0.19010421496030155,
+              "left-shin": 0.23614981702515894,
+              "left-foot": 0.1417131229917748,
+              "right-upper": 0.24483569607403952,
+              "right-fore": 0.11654821924597596,
+              "right-thigh": 0.15209554714980092,
+              "right-shin": 0.2277671970067873,
+              "right-foot": 0.16278972301428968
+            },
+            "kneeDeltaDegrees": {
+              "left": -0.000010527407782845444,
+              "right": 0.000004447893752868026
+            },
+            "wristForwardDeltaM": {
+              "left": -0.01655056570325828,
+              "right": -0.01722575582649203
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.0000037215130446689415,
+            "left-fore": 0.000016221699278780337,
+            "left-thigh": 0.000006156649318399953,
+            "left-shin": 0.000004436338000413295,
+            "left-foot": 0.00002839359011416723,
+            "right-upper": 0.000015858141646064415,
+            "right-fore": 0.000012663509647306462,
+            "right-thigh": 0.0000019090959104164224,
+            "right-shin": 0.000024582158264867245,
+            "right-foot": 0.000010629396175241108
+          },
+          "rootYawDeltaDegrees": 0.000009898684151894031,
+          "rootPositionScaledDeltaError": 1.690497165368797e-8,
+          "sourceRootPosition": [
+            0.002886256668716669,
+            0.8961952924728394,
+            -0.011059368029236794
+          ],
+          "targetRootPosition": [
+            0.002955840900540352,
+            0.9178014993667603,
+            -0.01132595632225275
+          ],
+          "sourceRelativeYaw": -0.015457714467707903,
+          "targetRelativeYaw": -0.015457541703077837
+        },
+        {
+          "time": 8.75,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.37537506186796976,
+              "left-fore": 0.9939671099585143,
+              "left-thigh": 0.5201240808958457,
+              "left-shin": 0.1635713036040726,
+              "left-foot": 1.699222616596182,
+              "right-upper": 0.3712539329868569,
+              "right-fore": 0.9691376736062,
+              "right-thigh": 0.765496643103183,
+              "right-shin": 0.390274047855085,
+              "right-foot": 1.7046398335293758
+            },
+            "kneeDeltaDegrees": {
+              "left": -0.000006918946262146619,
+              "right": 0.000009491208516010374
+            },
+            "wristForwardDeltaM": {
+              "left": -0.018708521833438622,
+              "right": -0.014809098736636307
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000021733528855063326,
+            "left-fore": 0.00001926201143360106,
+            "left-thigh": 0.000013793135379158992,
+            "left-shin": 0.000009155702348202485,
+            "left-foot": 0.000014286365630539097,
+            "right-upper": 0.000026370413057785082,
+            "right-fore": 0.000028161591390912678,
+            "right-thigh": 0.0000024148365394514667,
+            "right-shin": 0.000017600994619320316,
+            "right-foot": 0.000025613209387548028
+          },
+          "rootYawDeltaDegrees": -4.825761791821491e-8,
+          "rootPositionScaledDeltaError": 4.833332240721756e-9,
+          "sourceRootPosition": [
+            0.009487862698733807,
+            0.8952587842941284,
+            -0.00089510582620278
+          ],
+          "targetRootPosition": [
+            0.00971660390496254,
+            0.9168424010276794,
+            -0.0009166456293314695
+          ],
+          "sourceRelativeYaw": -0.18376909379507989,
+          "targetRelativeYaw": -0.1837690946373342
+        },
+        {
+          "time": 10.208333333333332,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.12184786455331094,
+              "left-fore": 0.29872408996379174,
+              "left-thigh": 0.16401217959954065,
+              "left-shin": 0.08744184230288889,
+              "left-foot": 0.493536732629461,
+              "right-upper": 0.1277811707003825,
+              "right-fore": 0.29201040499196035,
+              "right-thigh": 0.23378383110976694,
+              "right-shin": 0.09837621357977729,
+              "right-foot": 0.4918171913679436
+            },
+            "kneeDeltaDegrees": {
+              "left": -0.000011168146455631245,
+              "right": 0.000008799938751025138
+            },
+            "wristForwardDeltaM": {
+              "left": -0.012352270162361803,
+              "right": -0.011164775957436448
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000009075738350724584,
+            "left-fore": 0.000018091139215819242,
+            "left-thigh": 0.000027744359564056373,
+            "left-shin": 0.0000062155659652833185,
+            "left-foot": 0.0000347853829761302,
+            "right-upper": 0.00000984619801707684,
+            "right-fore": 0.000019876613291913996,
+            "right-thigh": 0.000010491346209810032,
+            "right-shin": 0.000007393896667355497,
+            "right-foot": 0.0000057905745997743736
+          },
+          "rootYawDeltaDegrees": -0.0000010130010553488874,
+          "rootPositionScaledDeltaError": 3.331105306841326e-8,
+          "sourceRootPosition": [
+            0.007614114787429571,
+            0.8955097794532776,
+            0.0058254674077034
+          ],
+          "targetRootPosition": [
+            0.00779768219217658,
+            0.9170994758605957,
+            0.005965952295809984
+          ],
+          "sourceRelativeYaw": 0.008163986918110554,
+          "targetRelativeYaw": 0.008163969237906812
+        },
+        {
+          "time": 11.666666666666666,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.0004980904037365632,
+              "left-fore": 0.0006798242018696217,
+              "left-thigh": 0.000022893236264566602,
+              "left-shin": 0.0003314599567223016,
+              "left-foot": 0.0019235472882182473,
+              "right-upper": 0.00047767243050708035,
+              "right-fore": 0.0006461786278813404,
+              "right-thigh": 0.00044464888873828003,
+              "right-shin": 0.0003716622897561945,
+              "right-foot": 0.0019170045681700127
+            },
+            "kneeDeltaDegrees": {
+              "left": -0.000012657453033249055,
+              "right": 3.518302449379007e-8
+            },
+            "wristForwardDeltaM": {
+              "left": -0.010156909319559912,
+              "right": -0.010121594883166895
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000019375207382177376,
+            "left-fore": 0.000009075738350724584,
+            "left-thigh": 0.000016817390473705895,
+            "left-shin": 0.0000017075472925031877,
+            "left-foot": 0.00006135300826504436,
+            "right-upper": 0.000012919939687890483,
+            "right-fore": 0.000019581033806511648,
+            "right-thigh": 0.000007491833340751661,
+            "right-shin": 0.00000984619801707684,
+            "right-foot": 0.000008580318953419392
+          },
+          "rootYawDeltaDegrees": 0.0000016935668495258998,
+          "rootPositionScaledDeltaError": 1.5175664828443425e-16,
+          "sourceRootPosition": [
+            3.800517234253675e-9,
+            0.8951848149299622,
+            -3.800473180604058e-8
+          ],
+          "targetRootPosition": [
+            3.8945633384912526e-9,
+            0.9167666435241699,
+            1.176353681131559e-9
+          ],
+          "sourceRelativeYaw": -7.422135572809918e-8,
+          "targetRelativeYaw": -4.4663038101244855e-8
+        }
+      ],
+      "maxima": {
+        "directions": {
+          "left-upper": 0.4315196630228584,
+          "left-fore": 0.9939671099585143,
+          "left-thigh": 0.5201240808958457,
+          "left-shin": 0.4033135191000308,
+          "left-foot": 1.699222616596182,
+          "right-upper": 0.40167214662547585,
+          "right-fore": 0.9691376736062,
+          "right-thigh": 0.765496643103183,
+          "right-shin": 0.39327547890627584,
+          "right-foot": 1.7046398335293758
+        },
+        "worldDirections": {
+          "left-upper": 0.000027012189257311024,
+          "left-fore": 0.000024042484171852243,
+          "left-thigh": 0.000027744359564056373,
+          "left-shin": 0.000009956626120759439,
+          "left-foot": 0.00006135300826504436,
+          "right-upper": 0.000028444888421779233,
+          "right-fore": 0.000028161591390912678,
+          "right-thigh": 0.000010491346209810032,
+          "right-shin": 0.000025370153619298495,
+          "right-foot": 0.000025613209387548028
+        },
+        "kneeDelta": 0.000015403932042801216,
+        "rootYawDeltaDegrees": 0.000009898684151894031,
+        "rootPositionScaledDeltaError": 4.707880555069313e-8
+      }
+    },
+    {
+      "actor": "ethan",
+      "name": "Walk",
+      "source": "m_walk_neutral.json",
+      "sourceJSONSHA256": "09eb3c2cebb90f76800eb48743a82d3d8fe264860f8990d3eef07d9857a13239",
+      "sourceRevision": "0943055db6ec570bcef9f2c8b41c9e5467c808f9",
+      "sourceFBXSHA256": "93089851a370e3a117a6bd04c002815f7133fce41c6271e9eb448ca1228b154f",
+      "clipDuration": 1.0666667222976685,
+      "trackCount": 55,
+      "sourceRootY": 0.8951848149299622,
+      "targetRootY": 0.916766644,
+      "translationRatio": 1.0241087970998775,
+      "reconstructionMaxPosition": 4.0679467842060573e-7,
+      "reconstructionMaxAngle": 0.000001202478468527336,
+      "sourceNonRootOffsetVariationM": 0.009742070877621587,
+      "rows": [
+        {
+          "time": 0,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.9073249956137553,
+              "left-fore": 0.8363740418626165,
+              "left-thigh": 0.7142749443331433,
+              "left-shin": 0.8744790091613276,
+              "left-foot": 0.7674918351284217,
+              "right-upper": 0.865036820583375,
+              "right-fore": 0.6959038845703054,
+              "right-thigh": 0.9026437057163555,
+              "right-shin": 0.9213090407846365,
+              "right-foot": 0.3770153710791439
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.00004903729798400036,
+              "right": 0.00005141312551515398
+            },
+            "wristForwardDeltaM": {
+              "left": -0.0016191249498195975,
+              "right": -0.009104277277422912
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.00003556251645656677,
+            "left-fore": 0.0000054668187275950014,
+            "left-thigh": 0.00004260321939940807,
+            "left-shin": 0.00001006584283732318,
+            "left-foot": 0.000042491860638087635,
+            "right-upper": 0.000027586270758318184,
+            "right-fore": 0.00004929017975519678,
+            "right-thigh": 0.00003337370496129533,
+            "right-shin": 0.000024298823955437425,
+            "right-foot": 0.00003227445070608088
+          },
+          "rootYawDeltaDegrees": 0,
+          "rootPositionScaledDeltaError": 0,
+          "sourceRootPosition": [
+            0,
+            0.9017562866210938,
+            -3.941702075849207e-8
+          ],
+          "targetRootPosition": [
+            2.4200621975140058e-12,
+            0.9234965443611145,
+            -2.699838963504675e-10
+          ],
+          "sourceRelativeYaw": 0,
+          "targetRelativeYaw": 0
+        },
+        {
+          "time": 0.13333333333333333,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 1.2574131706416485,
+              "left-fore": 1.3407230759967617,
+              "left-thigh": 1.162278433716811,
+              "left-shin": 1.3263908595860514,
+              "left-foot": 0.3734596153110725,
+              "right-upper": 1.2541261300506004,
+              "right-fore": 0.9547637873374555,
+              "right-thigh": 1.3163823466707794,
+              "right-shin": 1.239449559080959,
+              "right-foot": 0.8740274958498008
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.000022234864374581775,
+              "right": 0.000030979483577553424
+            },
+            "wristForwardDeltaM": {
+              "left": 0.005210643257532163,
+              "right": -0.013562813428699583
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.00001716063790683883,
+            "left-fore": 0.00001619921597029155,
+            "left-thigh": 0.000024685724843160217,
+            "left-shin": 0.000006445849674396955,
+            "left-foot": 0.00009924361228928733,
+            "right-upper": 0.000041016693495331245,
+            "right-fore": 0.00004440443820820584,
+            "right-thigh": 0.000027374065524264036,
+            "right-shin": 0.00000977188602642399,
+            "right-foot": 0.000029003182112398563
+          },
+          "rootYawDeltaDegrees": -0.000002766469039104373,
+          "rootPositionScaledDeltaError": 1.989824306580703e-8,
+          "sourceRootPosition": [
+            0.00617713900282979,
+            0.8723464012145996,
+            0.17533709108829498
+          ],
+          "targetRootPosition": [
+            0.0063260626047849655,
+            0.8933776021003723,
+            0.17956429719924927
+          ],
+          "sourceRelativeYaw": -0.0778354507151195,
+          "targetRelativeYaw": -0.07783549899911289
+        },
+        {
+          "time": 0.26666666666666666,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.6297282228020251,
+              "left-fore": 0.7219115782190544,
+              "left-thigh": 0.7764189953508597,
+              "left-shin": 0.7920158221500592,
+              "left-foot": 0.43284786495029137,
+              "right-upper": 0.7917625936876428,
+              "right-fore": 0.6746851140516547,
+              "right-thigh": 0.7102942847714104,
+              "right-shin": 0.43780308132627643,
+              "right-foot": 0.7890831873421223
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.000006765345966108782,
+              "right": 0.000057058610043014824
+            },
+            "wristForwardDeltaM": {
+              "left": 0.007417989651043788,
+              "right": -0.013250530369247226
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000049312357564982754,
+            "left-fore": 0.00002050834674766529,
+            "left-thigh": 0.00002916608741933678,
+            "left-shin": 0.000016489107943111647,
+            "left-foot": 0.00003641322080786622,
+            "right-upper": 0.00006003188441639284,
+            "right-fore": 0.000019581033806511648,
+            "right-thigh": 0.000025499118800815615,
+            "right-shin": 0.00003533632874344531,
+            "right-foot": 0.00003204780147839425
+          },
+          "rootYawDeltaDegrees": -0.0000019268106873728663,
+          "rootPositionScaledDeltaError": 1.9669333192845807e-8,
+          "sourceRootPosition": [
+            0.007346266880631447,
+            0.8609449863433838,
+            0.38419514894485474
+          ],
+          "targetRootPosition": [
+            0.007523376494646072,
+            0.8817013502120972,
+            0.39345768094062805
+          ],
+          "sourceRelativeYaw": -0.04190623163273701,
+          "targetRelativeYaw": -0.04190626526192757
+        },
+        {
+          "time": 0.4,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.08169551024551068,
+              "left-fore": 0.08399305893065416,
+              "left-thigh": 0.08064459304064352,
+              "left-shin": 0.08397079821265392,
+              "left-foot": 0.0540811717704084,
+              "right-upper": 0.0833849362714517,
+              "right-fore": 0.07874351283592484,
+              "right-thigh": 0.08346894850667191,
+              "right-shin": 0.04091075239018135,
+              "right-foot": 0.0812153834560587
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.00003964502691999883,
+              "right": 0.000039873961156899895
+            },
+            "wristForwardDeltaM": {
+              "left": 0.0027949430180609913,
+              "right": -0.005033065414638216
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.00004298646447372268,
+            "left-fore": 0.000015080649355333765,
+            "left-thigh": 0.00003733246693472806,
+            "left-shin": 0.000016773990684003203,
+            "left-foot": 0.000039412544127231426,
+            "right-upper": 0.00003563418418873679,
+            "right-fore": 0.00005794978796879876,
+            "right-thigh": 0.00003317654974437488,
+            "right-shin": 0.000007344438609485204,
+            "right-foot": 0.00001926201143360106
+          },
+          "rootYawDeltaDegrees": -0.000004725458251472792,
+          "rootPositionScaledDeltaError": 1.4141525891020519e-8,
+          "sourceRootPosition": [
+            0.01967575028538704,
+            0.8737107515335083,
+            0.5869735479354858
+          ],
+          "targetRootPosition": [
+            0.020150108262896538,
+            0.894774854183197,
+            0.6011248230934143
+          ],
+          "sourceRelativeYaw": 0.005449636994095484,
+          "targetRelativeYaw": 0.00544955451929033
+        },
+        {
+          "time": 0.5333333333333333,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.5489776002845701,
+              "left-fore": 0.4071885516871297,
+              "left-thigh": 0.5721335082071703,
+              "left-shin": 0.6147977529103835,
+              "left-foot": 0.07739720551878047,
+              "right-upper": 0.5857000834863076,
+              "right-fore": 0.5497865418135469,
+              "right-thigh": 0.34646671476246105,
+              "right-shin": 0.6810425053452492,
+              "right-foot": 0.322596446945655
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.000021730768750671814,
+              "right": 0.000011834542952726679
+            },
+            "wristForwardDeltaM": {
+              "left": -0.004949664817150798,
+              "right": 0.0009621276735074132
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000036172204011721625,
+            "left-fore": 0.000009507220963046152,
+            "left-thigh": 0.00003869394096981287,
+            "left-shin": 0.000024715235582738938,
+            "left-foot": 0.000025966511723876633,
+            "right-upper": 0.00004486984634040212,
+            "right-fore": 0.00007833344124821144,
+            "right-thigh": 0.00002175029208845031,
+            "right-shin": 0.00001344524082641768,
+            "right-foot": 0.000023036072399968078
+          },
+          "rootYawDeltaDegrees": -0.0000022324837289673426,
+          "rootPositionScaledDeltaError": 2.659695690257548e-8,
+          "sourceRootPosition": [
+            0.00868141371756792,
+            0.9010926485061646,
+            0.7662816643714905
+          ],
+          "targetRootPosition": [
+            0.008890711702406406,
+            0.9228169322013855,
+            0.7847558259963989
+          ],
+          "sourceRelativeYaw": 0.0765846135131433,
+          "targetRelativeYaw": 0.07658457454895173
+        },
+        {
+          "time": 0.6666666666666666,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.6140072153480713,
+              "left-fore": 0.7594482579770099,
+              "left-thigh": 0.2713286463989677,
+              "left-shin": 0.15296488608096062,
+              "left-foot": 0.7728735295824586,
+              "right-upper": 0.18589214314591074,
+              "right-fore": 0.3388806174885331,
+              "right-thigh": 0.720836122796791,
+              "right-shin": 0.564313099381579,
+              "right-foot": 0.7281750351433092
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.000015214638795058022,
+              "right": 0.000019352403921146788
+            },
+            "wristForwardDeltaM": {
+              "left": -0.012819330489593384,
+              "right": 0.0030949881573267973
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000015007971104097566,
+            "left-fore": 0.000032555543373672774,
+            "left-thigh": 0.000020579310097245937,
+            "left-shin": 0.000012634696163675251,
+            "left-foot": 0.00003086601329645802,
+            "right-upper": 0.00002432880400873432,
+            "right-fore": 0.00010202862989790473,
+            "right-thigh": 0.000007294645231227028,
+            "right-shin": 0.000026315071101596265,
+            "right-foot": 0.00003991791269252218
+          },
+          "rootYawDeltaDegrees": -0.000004296128093540617,
+          "rootPositionScaledDeltaError": 1.0943117439004632e-8,
+          "sourceRootPosition": [
+            0.014257124625146389,
+            0.877369225025177,
+            0.9278948307037354
+          ],
+          "targetRootPosition": [
+            0.014600846916437149,
+            0.8985215425491333,
+            0.9502652883529663
+          ],
+          "sourceRelativeYaw": 0.12064762871249984,
+          "targetRelativeYaw": 0.12064755373091952
+        },
+        {
+          "time": 0.8,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.1699984150528019,
+              "left-fore": 0.5324953170006811,
+              "left-thigh": 0.451553874084403,
+              "left-shin": 0.6930951803092388,
+              "left-foot": 0.2754045559233925,
+              "right-upper": 0.488898155614801,
+              "right-fore": 0.3338155889835728,
+              "right-thigh": 0.2630064660561993,
+              "right-shin": 0.10955893931420088,
+              "right-foot": 0.6818915678503455
+            },
+            "kneeDeltaDegrees": {
+              "left": -0.000005263223258111793,
+              "right": 0.000036487563409792756
+            },
+            "wristForwardDeltaM": {
+              "left": -0.015493243191161299,
+              "right": 0.0018617534422328413
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000022263692832568243,
+            "left-fore": 0.00001426083144456925,
+            "left-thigh": 0.00000879013768592829,
+            "left-shin": 0.000022877310533063834,
+            "left-foot": 0.00003722492261379722,
+            "right-upper": 0.000045818301849995364,
+            "right-fore": 0.0000555871558191663,
+            "right-thigh": 0.00002422371149147403,
+            "right-shin": 0.000018724717893074728,
+            "right-foot": 0.000016266572668182135
+          },
+          "rootYawDeltaDegrees": -0.000005118632614993348,
+          "rootPositionScaledDeltaError": 5.4203813100054354e-8,
+          "sourceRootPosition": [
+            0.010676957666873932,
+            0.8557161092758179,
+            1.1275616884231567
+          ],
+          "targetRootPosition": [
+            0.010934365913271904,
+            0.8763464093208313,
+            1.1547459363937378
+          ],
+          "sourceRelativeYaw": 0.16688001899189886,
+          "targetRelativeYaw": 0.16687992965490653
+        },
+        {
+          "time": 0.9333333333333333,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 1.1798138728247711,
+              "left-fore": 0.681537332436792,
+              "left-thigh": 1.2296530560310999,
+              "left-shin": 1.2980476792463131,
+              "left-foot": 1.3975238352037904,
+              "right-upper": 1.3951575824167655,
+              "right-fore": 1.2730944498237928,
+              "right-thigh": 0.986884498652136,
+              "right-shin": 1.350856305723482,
+              "right-foot": 0.27967449224923907
+            },
+            "kneeDeltaDegrees": {
+              "left": -0.0000025562578827020843,
+              "right": -0.00001159020376206854
+            },
+            "wristForwardDeltaM": {
+              "left": -0.011698417690083035,
+              "right": -0.000693301574485738
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.0000059764155237611605,
+            "left-fore": 0.000045032007499022005,
+            "left-thigh": 0.00003606119963667651,
+            "left-shin": 0.000013004292747236537,
+            "left-foot": 0.00009163262633053504,
+            "right-upper": 0.00006185588594053504,
+            "right-fore": 0.0000677554249269757,
+            "right-thigh": 0.00001374018648744405,
+            "right-shin": 0.000009883144480908979,
+            "right-foot": 0.000017329712313881727
+          },
+          "rootYawDeltaDegrees": -0.00000685081182613682,
+          "rootPositionScaledDeltaError": 2.85939353716476e-8,
+          "sourceRootPosition": [
+            -0.004367828369140625,
+            0.8739923238754272,
+            1.3248412609100342
+          ],
+          "targetRootPosition": [
+            -0.004473131615668535,
+            0.8950632214546204,
+            1.3567816019058228
+          ],
+          "sourceRelativeYaw": 0.08365775177508021,
+          "targetRelativeYaw": 0.08365763220585741
+        },
+        {
+          "time": 1.0666666666666667,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.9073430760729256,
+              "left-fore": 0.8363849278860501,
+              "left-thigh": 0.714235353123208,
+              "left-shin": 0.8744825382717117,
+              "left-foot": 0.767495469997615,
+              "right-upper": 0.8650604918819342,
+              "right-fore": 0.6958947584588826,
+              "right-thigh": 0.9026406375148529,
+              "right-shin": 0.9213164875114891,
+              "right-foot": 0.3770152096401902
+            },
+            "kneeDeltaDegrees": {
+              "left": -0.00001592437250508283,
+              "right": 0.000027529070379728182
+            },
+            "wristForwardDeltaM": {
+              "left": -0.0016191145470170754,
+              "right": -0.009104573220306778
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000028902476314888416,
+            "left-fore": 0.000032409679443765716,
+            "left-thigh": 0.00003539815963717665,
+            "left-shin": 0.000013004292747236537,
+            "left-foot": 0.000011675179017869927,
+            "right-upper": 0.00005060364729271697,
+            "right-fore": 0.00003430003082506624,
+            "right-thigh": 0.00003424686069416181,
+            "right-shin": 0.000016063655294419955,
+            "right-foot": 0.000025413214731393306
+          },
+          "rootYawDeltaDegrees": -0.00001105271377153393,
+          "rootPositionScaledDeltaError": 2.362374338199396e-8,
+          "sourceRootPosition": [
+            -1.9365387071701434e-9,
+            0.9017563462257385,
+            1.4958642721176147
+          ],
+          "targetRootPosition": [
+            -1.9808061857418124e-9,
+            0.9234966039657593,
+            1.5319278240203857
+          ],
+          "sourceRelativeYaw": 0.000016941996182172074,
+          "targetRelativeYaw": 0.000016749089935578287
+        }
+      ],
+      "maxima": {
+        "directions": {
+          "left-upper": 1.2574131706416485,
+          "left-fore": 1.3407230759967617,
+          "left-thigh": 1.2296530560310999,
+          "left-shin": 1.3263908595860514,
+          "left-foot": 1.3975238352037904,
+          "right-upper": 1.3951575824167655,
+          "right-fore": 1.2730944498237928,
+          "right-thigh": 1.3163823466707794,
+          "right-shin": 1.350856305723482,
+          "right-foot": 0.8740274958498008
+        },
+        "worldDirections": {
+          "left-upper": 0.000049312357564982754,
+          "left-fore": 0.000045032007499022005,
+          "left-thigh": 0.00004260321939940807,
+          "left-shin": 0.000024715235582738938,
+          "left-foot": 0.00009924361228928733,
+          "right-upper": 0.00006185588594053504,
+          "right-fore": 0.00010202862989790473,
+          "right-thigh": 0.00003424686069416181,
+          "right-shin": 0.00003533632874344531,
+          "right-foot": 0.00003991791269252218
+        },
+        "kneeDelta": 0.000057058610043014824,
+        "rootYawDeltaDegrees": 0.00001105271377153393,
+        "rootPositionScaledDeltaError": 5.4203813100054354e-8
+      }
+    },
+    {
+      "actor": "ethan",
+      "name": "Start",
+      "source": "m_walk_start.json",
+      "sourceJSONSHA256": "896f69803f579d8d7aa54df9272683c333892b470bd5348e8be9aed25b93dc06",
+      "sourceRevision": "0943055db6ec570bcef9f2c8b41c9e5467c808f9",
+      "sourceFBXSHA256": "05243edcc6712bbd526ac2d7022e6a8bd49debaadf012f96d4b81795fb169817",
+      "clipDuration": 0.9666666388511658,
+      "trackCount": 55,
+      "sourceRootY": 0.8951848149299622,
+      "targetRootY": 0.916766644,
+      "translationRatio": 1.0241087970998775,
+      "reconstructionMaxPosition": 2.202992224316084e-7,
+      "reconstructionMaxAngle": 5.832429465884267e-7,
+      "sourceNonRootOffsetVariationM": 0.008892403867456062,
+      "rows": [
+        {
+          "time": 0,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.0005006448874512781,
+              "left-fore": 0.0006820353018432312,
+              "left-thigh": 0.000012431131930566654,
+              "left-shin": 0.00033391828427259103,
+              "left-foot": 0.0019019785154453198,
+              "right-upper": 0.0004786084790490922,
+              "right-fore": 0.0006582766451014597,
+              "right-thigh": 0.00046446149538460145,
+              "right-shin": 0.0003855466339187487,
+              "right-foot": 0.0019418264673961346
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.000010580764963741274,
+              "right": 0.000010945997907185756
+            },
+            "wristForwardDeltaM": {
+              "left": -0.010156757533640207,
+              "right": -0.010121374316475213
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000047205267662902564,
+            "left-fore": 0.000022940947124789083,
+            "left-thigh": 0.000018030599818338033,
+            "left-shin": 0.000011830234667768806,
+            "left-foot": 0.000021241641244543496,
+            "right-upper": 0.00001604095046993514,
+            "right-fore": 0.00002417853200889313,
+            "right-thigh": 0.00002131016284588239,
+            "right-shin": 0.000010833173112455683,
+            "right-foot": 0.000018171544675186196
+          },
+          "rootYawDeltaDegrees": 0,
+          "rootPositionScaledDeltaError": 0,
+          "sourceRootPosition": [
+            0,
+            0.8951848149299622,
+            -3.9427792586366195e-8
+          ],
+          "targetRootPosition": [
+            2.4200621975140058e-12,
+            0.9167666435241699,
+            -2.8101543314562605e-10
+          ],
+          "sourceRelativeYaw": 0,
+          "targetRelativeYaw": 0
+        },
+        {
+          "time": 0.12083333333333333,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.01240273904577761,
+              "left-fore": 0.0368950745808484,
+              "left-thigh": 0.014511775602683866,
+              "left-shin": 0.003721463783916503,
+              "left-foot": 0.06762665699026346,
+              "right-upper": 0.012841906506349204,
+              "right-fore": 0.032836290809633246,
+              "right-thigh": 0.029937397682329718,
+              "right-shin": 0.004512226111577655,
+              "right-foot": 0.06599782087343029
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.00002036837840790895,
+              "right": 0.000016968780350623547
+            },
+            "wristForwardDeltaM": {
+              "left": -0.009744781358474654,
+              "right": -0.008836597511769979
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.00005677434261537045,
+            "left-fore": 0.000010866764427531615,
+            "left-thigh": 0.00001726650342613705,
+            "left-shin": 0.000013606912857609226,
+            "left-foot": 0.000044083170081835664,
+            "right-upper": 0.000015177012312529228,
+            "right-fore": 0.000015438909500480757,
+            "right-thigh": 0.000023303485406267986,
+            "right-shin": 0.000019337549023190945,
+            "right-foot": 0.000016221699278780337
+          },
+          "rootYawDeltaDegrees": 0.0000031553182741542905,
+          "rootPositionScaledDeltaError": 3.414714897630253e-8,
+          "sourceRootPosition": [
+            0.005445586051791906,
+            0.8941750526428223,
+            0.010294887237250805
+          ],
+          "targetRootPosition": [
+            0.005576872266829014,
+            0.9157325029373169,
+            0.010543124750256538
+          ],
+          "sourceRelativeYaw": 0.018564273226838728,
+          "targetRelativeYaw": 0.01856432829753156
+        },
+        {
+          "time": 0.24166666666666667,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.24217427958018414,
+              "left-fore": 0.2942112143295399,
+              "left-thigh": 0.2359433709256067,
+              "left-shin": 0.22828738869262696,
+              "left-foot": 0.28523881653036526,
+              "right-upper": 0.20573998124425522,
+              "right-fore": 0.26761211422379316,
+              "right-thigh": 0.29719452775196753,
+              "right-shin": 0.1764208280446259,
+              "right-foot": 0.2969242836399256
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.000026148991650654096,
+              "right": -8.127985324790643e-7
+            },
+            "wristForwardDeltaM": {
+              "left": -0.010546666754840353,
+              "right": -0.0052946453965039275
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.00005914501143734134,
+            "left-fore": 0.000021767042412140833,
+            "left-thigh": 0.000020614700166548047,
+            "left-shin": 0.00002049056751003836,
+            "left-foot": 0.000023272184538673578,
+            "right-upper": 0.000009883144480908979,
+            "right-fore": 0.00002732075668005126,
+            "right-thigh": 0.000011033187042674264,
+            "right-shin": 0.00001277811388052082,
+            "right-foot": 0.000024715235582738938
+          },
+          "rootYawDeltaDegrees": -0.000003617956163921858,
+          "rootPositionScaledDeltaError": 4.722071758905807e-8,
+          "sourceRootPosition": [
+            0.017756007611751556,
+            0.8924499154090881,
+            0.0227087140083313
+          ],
+          "targetRootPosition": [
+            0.018184084445238113,
+            0.9139657616615295,
+            0.02325623296201229
+          ],
+          "sourceRelativeYaw": 0.056781285102484286,
+          "targetRelativeYaw": 0.05678122195723703
+        },
+        {
+          "time": 0.3625,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.04486555623281708,
+              "left-fore": 0.1396929236676821,
+              "left-thigh": 0.035113180489922464,
+              "left-shin": 0.08467708943184149,
+              "left-foot": 0.24511761227108572,
+              "right-upper": 0.12148372863997328,
+              "right-fore": 0.06543873400955855,
+              "right-thigh": 0.16387906865454022,
+              "right-shin": 0.03356162170708667,
+              "right-foot": 0.2378440413318417
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.000014639420937712089,
+              "right": 0.000018136566311000024
+            },
+            "wristForwardDeltaM": {
+              "left": -0.012219120881022505,
+              "right": -0.0015022885118789048
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000051055378502023,
+            "left-fore": 0.000016773990684003203,
+            "left-thigh": 0.0000221158688183767,
+            "left-shin": 0.000012134403433412637,
+            "left-foot": 0.00003236466597837084,
+            "right-upper": 0.00003841981408132245,
+            "right-fore": 0.00004992203673786277,
+            "right-thigh": 0.000025008427753278702,
+            "right-shin": 0.000007344438609485204,
+            "right-foot": 0.00001210433051621537
+          },
+          "rootYawDeltaDegrees": -0.00000629802976145378,
+          "rootPositionScaledDeltaError": 1.6026883485340456e-8,
+          "sourceRootPosition": [
+            0.029936956241726875,
+            0.8879687786102295,
+            0.0502411425113678
+          ],
+          "targetRootPosition": [
+            0.030658699572086334,
+            0.9093766212463379,
+            0.05145243555307388
+          ],
+          "sourceRelativeYaw": 0.07526087450072277,
+          "targetRelativeYaw": 0.07526076457936705
+        },
+        {
+          "time": 0.48333333333333334,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.06913036284241282,
+              "left-fore": 0.21618847786442355,
+              "left-thigh": 0.08685161267065931,
+              "left-shin": 0.23760261503816787,
+              "left-foot": 0.35711980836378093,
+              "right-upper": 0.24572455341195457,
+              "right-fore": 0.1740654864830429,
+              "right-thigh": 0.1964331881849596,
+              "right-shin": 0.05685029020517178,
+              "right-foot": 0.4466497741981031
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.000013557538178332607,
+              "right": 0.0000014504058825082211
+            },
+            "wristForwardDeltaM": {
+              "left": -0.012945313925275426,
+              "right": 0.0018396188176144912
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.0000727262814230835,
+            "left-fore": 0.000013793135379158992,
+            "left-thigh": 0.00001961822478742201,
+            "left-shin": 0.000011197136397927998,
+            "left-foot": 0.000035899126009022806,
+            "right-upper": 0.000035222690204404714,
+            "right-fore": 0.000046528705483070683,
+            "right-thigh": 0.000015626623502097472,
+            "right-shin": 0.000016176701413239816,
+            "right-foot": 0.00002029396789822208
+          },
+          "rootYawDeltaDegrees": -0.0000010618184320064964,
+          "rootPositionScaledDeltaError": 1.9211680397606964e-8,
+          "sourceRootPosition": [
+            0.03487662225961685,
+            0.8756963014602661,
+            0.10505381971597672
+          ],
+          "targetRootPosition": [
+            0.03571745753288269,
+            0.8968082666397095,
+            0.1075865775346756
+          ],
+          "sourceRelativeYaw": 0.09706615337802316,
+          "targetRelativeYaw": 0.09706613484579546
+        },
+        {
+          "time": 0.6041666666666666,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.053936966438849016,
+              "left-fore": 0.24842147336172077,
+              "left-thigh": 0.08808945503633339,
+              "left-shin": 0.30869431457151303,
+              "left-foot": 0.3745509990201416,
+              "right-upper": 0.24996871755049835,
+              "right-fore": 0.19576802599548662,
+              "right-thigh": 0.21533719990735997,
+              "right-shin": 0.049472705230876,
+              "right-foot": 0.4808763857885932
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.00002235186978438719,
+              "right": 0.000011299448793522515
+            },
+            "wristForwardDeltaM": {
+              "left": -0.011484665646272624,
+              "right": 0.005115235524609227
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.00005043049486956171,
+            "left-fore": 0.00003147403862943045,
+            "left-thigh": 0.000017497153036827848,
+            "left-shin": 0.000012164402004367092,
+            "left-foot": 0.000028031873559903006,
+            "right-upper": 0.000031865321410179254,
+            "right-fore": 0.000044551934441603984,
+            "right-thigh": 0.000017329712313881727,
+            "right-shin": 0.000015696437506434578,
+            "right-foot": 0.000023146557793542595
+          },
+          "rootYawDeltaDegrees": -3.683165810695141e-7,
+          "rootPositionScaledDeltaError": 4.143483598291893e-8,
+          "sourceRootPosition": [
+            0.03118458390235901,
+            0.8551101684570312,
+            0.19095052778720856
+          ],
+          "targetRootPosition": [
+            0.0319364070892334,
+            0.8757258057594299,
+            0.19555416703224182
+          ],
+          "sourceRelativeYaw": 0.1597144183091723,
+          "targetRelativeYaw": 0.15971441188083527
+        },
+        {
+          "time": 0.725,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.3294872853581901,
+              "left-fore": 0.18150610831586558,
+              "left-thigh": 0.4250787902877567,
+              "left-shin": 0.556239295564099,
+              "left-foot": 0.062198018035489196,
+              "right-upper": 0.4674340992495744,
+              "right-fore": 0.42875545969515255,
+              "right-thigh": 0.08790639873109714,
+              "right-shin": 0.3759236838973228,
+              "right-foot": 0.15886557484408065
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.000024892906026252604,
+              "right": -0.000010531425949977802
+            },
+            "wristForwardDeltaM": {
+              "left": -0.008651769239661378,
+              "right": 0.004287675871269658
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.00004051603505655576,
+            "left-fore": 0.000030806916911985116,
+            "left-thigh": 0.000012460416145305404,
+            "left-shin": 0.00001912910291662789,
+            "left-foot": 0.00004162529611406122,
+            "right-upper": 0.000014539241291064202,
+            "right-fore": 0.0000397073592250863,
+            "right-thigh": 0.000012283663699401131,
+            "right-shin": 0.000027119915265078892,
+            "right-foot": 0.00003176221565984849
+          },
+          "rootYawDeltaDegrees": 0.000004772265887808159,
+          "rootPositionScaledDeltaError": 4.62176393344896e-8,
+          "sourceRootPosition": [
+            0.018771464005112648,
+            0.8450591564178467,
+            0.3144175410270691
+          ],
+          "targetRootPosition": [
+            0.019224021583795547,
+            0.8654325604438782,
+            0.32199782133102417
+          ],
+          "sourceRelativeYaw": 0.1433494549924536,
+          "targetRelativeYaw": 0.14334953828420613
+        },
+        {
+          "time": 0.8458333333333333,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 1.17262886273835,
+              "left-fore": 1.021672060167459,
+              "left-thigh": 1.2027522195166218,
+              "left-shin": 1.031445703035213,
+              "left-foot": 1.1959218343050741,
+              "right-upper": 1.1975043651038866,
+              "right-fore": 1.1358717450516103,
+              "right-thigh": 0.99463868645161,
+              "right-shin": 1.219281194590643,
+              "right-foot": 0.4262503094055978
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.000024011441652760368,
+              "right": 2.945116044372753e-7
+            },
+            "wristForwardDeltaM": {
+              "left": -0.0042456310964627125,
+              "right": -0.00024915908387797975
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.00006357031390518282,
+            "left-fore": 0.00002632891749618849,
+            "left-thigh": 0.000016086328072527303,
+            "left-shin": 0.000012749559400407728,
+            "left-foot": 0.00004563498008457449,
+            "right-upper": 0.00004129123342672141,
+            "right-fore": 0.000024641392467048535,
+            "right-thigh": 0.00002066767164616705,
+            "right-shin": 0.000022296409518597792,
+            "right-foot": 0.00003106610012989557
+          },
+          "rootYawDeltaDegrees": 0.0000060090995405739514,
+          "rootPositionScaledDeltaError": 1.5977755575296993e-8,
+          "sourceRootPosition": [
+            0.0010311551159247756,
+            0.8752115964889526,
+            0.4643593728542328
+          ],
+          "targetRootPosition": [
+            0.0010560150258243084,
+            0.89631187915802,
+            0.47555455565452576
+          ],
+          "sourceRelativeYaw": 0.06420419244934389,
+          "targetRelativeYaw": 0.06420429732791595
+        },
+        {
+          "time": 0.9666666666666667,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.9073172043347552,
+              "left-fore": 0.8364086887632821,
+              "left-thigh": 0.714269908167171,
+              "left-shin": 0.8744567322521052,
+              "left-foot": 0.7675171449243493,
+              "right-upper": 0.8650290445796388,
+              "right-fore": 0.6959028090722532,
+              "right-thigh": 0.9026483456298028,
+              "right-shin": 0.9213121761790366,
+              "right-foot": 0.37705346148373364
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.00006129583094605096,
+              "right": 0.000019415989077842255
+            },
+            "wristForwardDeltaM": {
+              "left": -0.0016191996736032027,
+              "right": -0.009104046720433218
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000046190653470717184,
+            "left-fore": 0.00002175029208845031,
+            "left-thigh": 0.000030257815113229855,
+            "left-shin": 0.00003574651460808719,
+            "left-foot": 0.000054827958256489724,
+            "right-upper": 0.000034837731211880276,
+            "right-fore": 0.000047597402203450136,
+            "right-thigh": 0.000025153742327560286,
+            "right-shin": 0.000010697753125226707,
+            "right-foot": 0.00003106610012989557
+          },
+          "rootYawDeltaDegrees": -0.000005147502280444145,
+          "rootPositionScaledDeltaError": 1.2180433446169772e-8,
+          "sourceRootPosition": [
+            0,
+            0.9017562866210938,
+            0.6070214509963989
+          ],
+          "targetRootPosition": [
+            2.4200621975140058e-12,
+            0.9234965443611145,
+            0.621656060218811
+          ],
+          "sourceRelativeYaw": -0.00021079344942821093,
+          "targetRelativeYaw": -0.0002108832902912586
+        }
+      ],
+      "maxima": {
+        "directions": {
+          "left-upper": 1.17262886273835,
+          "left-fore": 1.021672060167459,
+          "left-thigh": 1.2027522195166218,
+          "left-shin": 1.031445703035213,
+          "left-foot": 1.1959218343050741,
+          "right-upper": 1.1975043651038866,
+          "right-fore": 1.1358717450516103,
+          "right-thigh": 0.99463868645161,
+          "right-shin": 1.219281194590643,
+          "right-foot": 0.4808763857885932
+        },
+        "worldDirections": {
+          "left-upper": 0.0000727262814230835,
+          "left-fore": 0.00003147403862943045,
+          "left-thigh": 0.000030257815113229855,
+          "left-shin": 0.00003574651460808719,
+          "left-foot": 0.000054827958256489724,
+          "right-upper": 0.00004129123342672141,
+          "right-fore": 0.00004992203673786277,
+          "right-thigh": 0.000025153742327560286,
+          "right-shin": 0.000027119915265078892,
+          "right-foot": 0.00003176221565984849
+        },
+        "kneeDelta": 0.00006129583094605096,
+        "rootYawDeltaDegrees": 0.00000629802976145378,
+        "rootPositionScaledDeltaError": 4.722071758905807e-8
+      }
+    },
+    {
+      "actor": "ethan",
+      "name": "Stop",
+      "source": "m_walk_stop.json",
+      "sourceJSONSHA256": "d69e3ff449c0e57dfae6269f55ce8d22b643223a6e6619336f022cf62418c34b",
+      "sourceRevision": "0943055db6ec570bcef9f2c8b41c9e5467c808f9",
+      "sourceFBXSHA256": "808f112c37c0db60fd1855fb2785749557ecdb9107e8028cd3f28b11aa9c62b1",
+      "clipDuration": 2,
+      "trackCount": 55,
+      "sourceRootY": 0.8951848149299622,
+      "targetRootY": 0.916766644,
+      "translationRatio": 1.0241087970998775,
+      "reconstructionMaxPosition": 2.580410436238873e-7,
+      "reconstructionMaxAngle": 5.187659020879644e-7,
+      "sourceNonRootOffsetVariationM": 0.013159963042066968,
+      "rows": [
+        {
+          "time": 0,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.9073452659649831,
+              "left-fore": 0.8363658693209515,
+              "left-thigh": 0.7142412100462874,
+              "left-shin": 0.8744562341753852,
+              "left-foot": 0.7674989032199956,
+              "right-upper": 0.8650032275949697,
+              "right-fore": 0.6960149544752707,
+              "right-thigh": 0.9026497222859828,
+              "right-shin": 0.9213366848779431,
+              "right-foot": 0.3770388748852634
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.000062292303113054,
+              "right": 0.00005990611806971913
+            },
+            "wristForwardDeltaM": {
+              "left": -0.001619343455064856,
+              "right": -0.009103818910898204
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.00001619921597029155,
+            "left-fore": 0.000025095717469822675,
+            "left-thigh": 0.0000421041137625546,
+            "left-shin": 0.00004275692965001941,
+            "left-foot": 0.000033055487125613644,
+            "right-upper": 0.00007622530130172535,
+            "right-fore": 0.00010943966197301164,
+            "right-thigh": 0.000052428932037534696,
+            "right-shin": 0.00003423621675895705,
+            "right-foot": 0.000029612533075669348
+          },
+          "rootYawDeltaDegrees": 0,
+          "rootPositionScaledDeltaError": 0,
+          "sourceRootPosition": [
+            0,
+            0.9017562866210938,
+            -3.941702075849207e-8
+          ],
+          "targetRootPosition": [
+            2.4200621975140058e-12,
+            0.9234965443611145,
+            -2.699838963504675e-10
+          ],
+          "sourceRelativeYaw": 0,
+          "targetRelativeYaw": 0
+        },
+        {
+          "time": 0.25,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 1.2356638738525894,
+              "left-fore": 1.2762362180104123,
+              "left-thigh": 1.1647627414815653,
+              "left-shin": 1.2714932797686789,
+              "left-foot": 0.17158654722745645,
+              "right-upper": 1.2827439837087722,
+              "right-fore": 0.9912664209030616,
+              "right-thigh": 1.2670253080904654,
+              "right-shin": 0.9231450819155362,
+              "right-foot": 1.2722063892092137
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.00002721632846380828,
+              "right": 0.00004552854491990388
+            },
+            "wristForwardDeltaM": {
+              "left": 0.008315787254986232,
+              "right": -0.014024222811610199
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000043366322794389,
+            "left-fore": 0.00001272094082469891,
+            "left-thigh": 0.000037672610976659776,
+            "left-shin": 0.000032217937879139246,
+            "left-foot": 0.000051240646360089106,
+            "right-upper": 0.00007059009594295286,
+            "right-fore": 0.00008621423020492885,
+            "right-thigh": 0.000047135728807084014,
+            "right-shin": 0.000024656178782490808,
+            "right-foot": 0.00004313880918445977
+          },
+          "rootYawDeltaDegrees": 0.000007663719296570802,
+          "rootPositionScaledDeltaError": 1.718133498892768e-8,
+          "sourceRootPosition": [
+            -0.0026339897885918617,
+            0.8580981492996216,
+            0.3569881021976471
+          ],
+          "targetRootPosition": [
+            -0.002697492018342018,
+            0.8787858486175537,
+            0.36559468507766724
+          ],
+          "sourceRelativeYaw": -0.07797590215614203,
+          "targetRelativeYaw": -0.07797576839900736
+        },
+        {
+          "time": 0.5,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.9444529658094473,
+              "left-fore": 0.8101701214955256,
+              "left-thigh": 0.8628192171528689,
+              "left-shin": 0.9685172358360147,
+              "left-foot": 0.3749145818887193,
+              "right-upper": 0.9315459509958375,
+              "right-fore": 0.8671083513288432,
+              "right-thigh": 0.7109349606168778,
+              "right-shin": 0.9697843700021581,
+              "right-foot": 0.5942443625334923
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.000048024438257243673,
+              "right": 0.00005642120169113696
+            },
+            "wristForwardDeltaM": {
+              "left": -0.005433518713931801,
+              "right": -0.002644817220915252
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.00001628896300592164,
+            "left-fore": 0.000011518036199983981,
+            "left-thigh": 0.00005023498499984822,
+            "left-shin": 0.000026522008005948065,
+            "left-foot": 0.00003897549167036095,
+            "right-upper": 0.00009913337831959202,
+            "right-fore": 0.00013122309300691556,
+            "right-thigh": 0.00006995215024739494,
+            "right-shin": 0.000036121789765603266,
+            "right-foot": 0.000028915083720641714
+          },
+          "rootYawDeltaDegrees": 0.0000013462473203942316,
+          "rootPositionScaledDeltaError": 3.1012767291785377e-8,
+          "sourceRootPosition": [
+            -0.0008154457900673151,
+            0.8856081962585449,
+            0.7205020785331726
+          ],
+          "targetRootPosition": [
+            -0.0008351051947101951,
+            0.9069591164588928,
+            0.7378725409507751
+          ],
+          "sourceRelativeYaw": 0.0329458840067386,
+          "targetRelativeYaw": 0.032945907503186884
+        },
+        {
+          "time": 0.75,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.14389277597552555,
+              "left-fore": 0.17248987688019252,
+              "left-thigh": 0.13945889216237922,
+              "left-shin": 0.32274881023639745,
+              "left-foot": 0.02727710622653408,
+              "right-upper": 0.21747892749828776,
+              "right-fore": 0.16632405479267565,
+              "right-thigh": 0.05642736924617974,
+              "right-shin": 0.06709179172539902,
+              "right-foot": 0.22316908562313065
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.000018289137514670983,
+              "right": 0.0000440609522112112
+            },
+            "wristForwardDeltaM": {
+              "left": -0.020421563809910948,
+              "right": -0.00019719820174586566
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000030221657583747783,
+            "left-fore": 0.00001950643912085486,
+            "left-thigh": 0.00005316754992072753,
+            "left-shin": 0.000006776618231767655,
+            "left-foot": 0.00004029956315107204,
+            "right-upper": 0.00010826105694212956,
+            "right-fore": 0.00010930970389057284,
+            "right-thigh": 0.00005561337617714293,
+            "right-shin": 0.00003004021713509729,
+            "right-foot": 0.000026259612512867202
+          },
+          "rootYawDeltaDegrees": 0.000005934435239395559,
+          "rootPositionScaledDeltaError": 5.63095484224961e-8,
+          "sourceRootPosition": [
+            -0.010111644864082336,
+            0.8574339747428894,
+            1.0336227416992188
+          ],
+          "targetRootPosition": [
+            -0.010355424135923386,
+            0.8781057000160217,
+            1.0585421323776245
+          ],
+          "sourceRelativeYaw": 0.14990513939207795,
+          "targetRelativeYaw": 0.14990524296751212
+        },
+        {
+          "time": 1,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 1.015551149825248,
+              "left-fore": 0.9113874611902838,
+              "left-thigh": 1.0176740166140756,
+              "left-shin": 0.8118168102080852,
+              "left-foot": 0.8304124681625381,
+              "right-upper": 1.0066155725887223,
+              "right-fore": 1.0117241041735523,
+              "right-thigh": 1.0080821312021704,
+              "right-shin": 1.0122676421115993,
+              "right-foot": 0.8497998977007298
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.00005776672147561612,
+              "right": 0.00006152842886564258
+            },
+            "wristForwardDeltaM": {
+              "left": -0.016978222827874312,
+              "right": -0.00955351264974183
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.00003077140460402894,
+            "left-fore": 0.000028902476314888416,
+            "left-thigh": 0.00004821364932338912,
+            "left-shin": 0.000026944641791599684,
+            "left-foot": 0.000014489019236708836,
+            "right-upper": 0.00007243000188269041,
+            "right-fore": 0.00007480635871009115,
+            "right-thigh": 0.00006743730992656839,
+            "right-shin": 0.00003418294736811211,
+            "right-foot": 0.000044132748170698074
+          },
+          "rootYawDeltaDegrees": 0.00000584890394419326,
+          "rootPositionScaledDeltaError": 3.436732608377225e-8,
+          "sourceRootPosition": [
+            -0.017369484528899193,
+            0.8719713091850281,
+            1.2442364692687988
+          ],
+          "targetRootPosition": [
+            -0.017788242548704147,
+            0.8929935097694397,
+            1.2742335796356201
+          ],
+          "sourceRelativeYaw": 0.15460130583046042,
+          "targetRelativeYaw": 0.15460140791309188
+        },
+        {
+          "time": 1.25,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.1625278044488943,
+              "left-fore": 0.1683983968518279,
+              "left-thigh": 0.17131397461136832,
+              "left-shin": 0.15764473373239044,
+              "left-foot": 0.14628800311040363,
+              "right-upper": 0.1657027628105866,
+              "right-fore": 0.16530596566123382,
+              "right-thigh": 0.17146272172976051,
+              "right-shin": 0.16147360924072995,
+              "right-foot": 0.14589618317705355
+            },
+            "kneeDeltaDegrees": {
+              "left": -0.000020643230445926974,
+              "right": 0.00005919020662048524
+            },
+            "wristForwardDeltaM": {
+              "left": -0.013246849549916964,
+              "right": -0.015483669805667163
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.00003528472023227151,
+            "left-fore": 0.00003995441742140609,
+            "left-thigh": 0.000043784522661082355,
+            "left-shin": 0.000006776618231767655,
+            "left-foot": 0.00008126561829978782,
+            "right-upper": 0.00009105406876999798,
+            "right-fore": 0.00011219898133279439,
+            "right-thigh": 0.00006190889266042308,
+            "right-shin": 0.00002305188844879319,
+            "right-foot": 0.00006322538290640434
+          },
+          "rootYawDeltaDegrees": 0.000003537829171022521,
+          "rootPositionScaledDeltaError": 3.354604354160516e-8,
+          "sourceRootPosition": [
+            0.01219326350837946,
+            0.8955566883087158,
+            1.3450844287872314
+          ],
+          "targetRootPosition": [
+            0.012487228028476238,
+            0.9171474575996399,
+            1.377512812614441
+          ],
+          "sourceRelativeYaw": 0.07565861856811867,
+          "targetRelativeYaw": 0.07565868031488608
+        },
+        {
+          "time": 1.5,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.010295182646869317,
+              "left-fore": 0.009072785935841945,
+              "left-thigh": 0.010137145490108093,
+              "left-shin": 0.010204673366814522,
+              "left-foot": 0.0063168371380306326,
+              "right-upper": 0.010309365437934129,
+              "right-fore": 0.009379890328610098,
+              "right-thigh": 0.010016353263969003,
+              "right-shin": 0.010230162630603501,
+              "right-foot": 0.006751017941843117
+            },
+            "kneeDeltaDegrees": {
+              "left": -0.000004125147889055825,
+              "right": 0.000002667118941701574
+            },
+            "wristForwardDeltaM": {
+              "left": -0.012289616938509454,
+              "right": -0.010213809918644637
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000029328087869137223,
+            "left-fore": 0.000022925054537412443,
+            "left-thigh": 0.00004434694607876775,
+            "left-shin": 0.000012919939687890483,
+            "left-foot": 0.000025513408025137336,
+            "right-upper": 0.00007431755081782119,
+            "right-fore": 0.00010679681143444432,
+            "right-thigh": 0.000032195304973023756,
+            "right-shin": 0.00003431065496372123,
+            "right-foot": 0.00003961546519024747
+          },
+          "rootYawDeltaDegrees": 0.000007096105481644432,
+          "rootPositionScaledDeltaError": 1.5022486475382746e-8,
+          "sourceRootPosition": [
+            0.026552245020866394,
+            0.895988941192627,
+            1.382277250289917
+          ],
+          "targetRootPosition": [
+            0.027192387729883194,
+            0.9175901412963867,
+            1.4156023263931274
+          ],
+          "sourceRelativeYaw": 0.05342831505336814,
+          "targetRelativeYaw": 0.053428438903772864
+        },
+        {
+          "time": 1.75,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.02684950744238912,
+              "left-fore": 0.03162714936060525,
+              "left-thigh": 0.029179214268679348,
+              "left-shin": 0.025694274765125858,
+              "left-foot": 0.029379819479409555,
+              "right-upper": 0.02715073121840045,
+              "right-fore": 0.0312947309959258,
+              "right-thigh": 0.03035060507258081,
+              "right-shin": 0.026175648730725674,
+              "right-foot": 0.029758491871849417
+            },
+            "kneeDeltaDegrees": {
+              "left": -0.000007371128702970964,
+              "right": 0.00003316856716750749
+            },
+            "wristForwardDeltaM": {
+              "left": -0.010713509425733125,
+              "right": -0.008916966783560541
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000021983635233495314,
+            "left-fore": 0.00001567320072462458,
+            "left-thigh": 0.000031945284701302396,
+            "left-shin": 0.00001210433051621537,
+            "left-foot": 0.000020878213633885978,
+            "right-upper": 0.00008402191152933294,
+            "right-fore": 0.00011624183847209705,
+            "right-thigh": 0.00004172149925892707,
+            "right-shin": 0.000036533132946283516,
+            "right-foot": 0.000052108177481090964
+          },
+          "rootYawDeltaDegrees": 0.000005824033139458036,
+          "rootPositionScaledDeltaError": 3.0031547397123124e-8,
+          "sourceRootPosition": [
+            0.032525353133678436,
+            0.8955965042114258,
+            1.3890711069107056
+          ],
+          "targetRootPosition": [
+            0.03330950066447258,
+            0.917188286781311,
+            1.4225599765777588
+          ],
+          "sourceRelativeYaw": 0.02775998218318873,
+          "targetRelativeYaw": 0.02776008383174276
+        },
+        {
+          "time": 2,
+          "difference": {
+            "directionDegrees": {
+              "left-upper": 0.00045907862280946624,
+              "left-fore": 0.000627528276368047,
+              "left-thigh": 0.00002845769855006732,
+              "left-shin": 0.0003184220895462128,
+              "left-foot": 0.0018408326025953826,
+              "right-upper": 0.0005285169198959904,
+              "right-fore": 0.0007379207656265202,
+              "right-thigh": 0.0004886219005266155,
+              "right-shin": 0.00034418727969331015,
+              "right-foot": 0.001910573742382855
+            },
+            "kneeDeltaDegrees": {
+              "left": 0.000008196278272087909,
+              "right": 0.00007409293617754997
+            },
+            "wristForwardDeltaM": {
+              "left": -0.010156202650683899,
+              "right": -0.010120729948887196
+            }
+          },
+          "worldDirectionDegrees": {
+            "left-upper": 0.000023490414754715385,
+            "left-fore": 0.0000534819513365828,
+            "left-thigh": 0.00003710724606239038,
+            "left-shin": 0.00001722423530049259,
+            "left-foot": 0.000024656178782490808,
+            "right-upper": 0.00006972775170873973,
+            "right-fore": 0.00010978878450855371,
+            "right-thigh": 0.00007844502740342314,
+            "right-shin": 0.000032644981848170165,
+            "right-foot": 0.000041202872029867745
+          },
+          "rootYawDeltaDegrees": 0.000004642006498670216,
+          "rootPositionScaledDeltaError": 5.900548962081618e-8,
+          "sourceRootPosition": [
+            0.0354996882379055,
+            0.8951848745346069,
+            1.3908485174179077
+          ],
+          "targetRootPosition": [
+            0.03635554388165474,
+            0.9167667031288147,
+            1.4243801832199097
+          ],
+          "sourceRelativeYaw": 0.0002105543343799714,
+          "targetRelativeYaw": 0.00021063535267727216
+        }
+      ],
+      "maxima": {
+        "directions": {
+          "left-upper": 1.2356638738525894,
+          "left-fore": 1.2762362180104123,
+          "left-thigh": 1.1647627414815653,
+          "left-shin": 1.2714932797686789,
+          "left-foot": 0.8304124681625381,
+          "right-upper": 1.2827439837087722,
+          "right-fore": 1.0117241041735523,
+          "right-thigh": 1.2670253080904654,
+          "right-shin": 1.0122676421115993,
+          "right-foot": 1.2722063892092137
+        },
+        "worldDirections": {
+          "left-upper": 0.000043366322794389,
+          "left-fore": 0.0000534819513365828,
+          "left-thigh": 0.00005316754992072753,
+          "left-shin": 0.00004275692965001941,
+          "left-foot": 0.00008126561829978782,
+          "right-upper": 0.00010826105694212956,
+          "right-fore": 0.00013122309300691556,
+          "right-thigh": 0.00007844502740342314,
+          "right-shin": 0.000036533132946283516,
+          "right-foot": 0.00006322538290640434
+        },
+        "kneeDelta": 0.00007409293617754997,
+        "rootYawDeltaDegrees": 0.000007663719296570802,
+        "rootPositionScaledDeltaError": 5.900548962081618e-8
+      }
+    }
+  ]
+}

@@ -1,0 +1,549 @@
+{
+  "schema": "matched-rocketbox-source-reference-video-v1",
+  "status": "CAPTURED_FOR_REVIEW",
+  "date": "2026-11-22",
+  "scope": "Separate exact-source reference on current appearances; not integrated into v44 or public scene; no Crowd/dynamic navigation gate.",
+  "video": {
+    "path": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-ready-locomotion-data-20261122\\matched-rocketbox\\source-reference-video\\matched-rocketbox-source-reference.mp4",
+    "bytes": 6633410,
+    "sha256": "585f8a21bf4a862af527a567197d4bb9f7c971a39f922a04af891265dca0475b",
+    "durationSeconds": 28.666666666666668,
+    "fps": 30
+  },
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 1280,
+        "height": 720,
+        "r_frame_rate": "30/1",
+        "nb_read_frames": "860",
+        "side_data_list": [
+          {}
+        ]
+      }
+    ],
+    "format": {
+      "duration": "28.666667",
+      "size": "6633410"
+    }
+  },
+  "sections": [
+    {
+      "name": "emma-side",
+      "videoStart": 0,
+      "videoEnd": 7.2,
+      "frames": 216,
+      "sequenceDuration": 7.166666686534882,
+      "floorY": -0.00707567729729147,
+      "segments": [
+        {
+          "index": 0,
+          "name": "Idle",
+          "from": 14.533333778381348,
+          "to": 15.533333778381348,
+          "start": 0,
+          "end": 1,
+          "offset": [
+            0.0015611053677275777,
+            0,
+            -0.0037714086938649416
+          ],
+          "rootDelta": [
+            0.001561105366644094,
+            0.00005042552947998047,
+            -0.0037714086974030576
+          ]
+        },
+        {
+          "index": 1,
+          "name": "Start",
+          "from": 0,
+          "to": 0.9333333373069763,
+          "start": 1,
+          "end": 1.9333333373069763,
+          "offset": [
+            0.0015611053677275777,
+            0,
+            -0.0037714086938649416
+          ],
+          "rootDelta": [
+            0,
+            -0.00583726167678833,
+            0.7730155587231732
+          ]
+        },
+        {
+          "index": 2,
+          "name": "Walk",
+          "from": 0,
+          "to": 1.2333333492279053,
+          "start": 1.9333333373069763,
+          "end": 3.1666666865348816,
+          "offset": [
+            0.0015611053677275777,
+            0,
+            0.7692441545110498
+          ],
+          "rootDelta": [
+            0,
+            5.960464477539063e-8,
+            1.606523279860646
+          ]
+        },
+        {
+          "index": 3,
+          "name": "Walk",
+          "from": 0,
+          "to": 1.2333333492279053,
+          "start": 3.1666666865348816,
+          "end": 4.400000035762787,
+          "offset": [
+            0.0015611053677275777,
+            0,
+            2.3757674343716957
+          ],
+          "rootDelta": [
+            0,
+            5.960464477539063e-8,
+            1.606523279860646
+          ]
+        },
+        {
+          "index": 4,
+          "name": "Stop",
+          "from": 0,
+          "to": 1.7666666507720947,
+          "start": 4.400000035762787,
+          "end": 6.166666686534882,
+          "offset": [
+            0.0015611053677275777,
+            0,
+            3.9822907142323416
+          ],
+          "rootDelta": [
+            -0.03208768740188016,
+            0.0058373212814331055,
+            0.6770009443313185
+          ]
+        },
+        {
+          "index": 5,
+          "name": "Idle",
+          "from": 0,
+          "to": 1,
+          "start": 6.166666686534882,
+          "end": 7.166666686534882,
+          "offset": [
+            -0.03052658203415258,
+            0,
+            4.659291654081919
+          ],
+          "rootDelta": [
+            -0.0044801244501365516,
+            0.00012969970703125,
+            0.00010981365984680399
+          ]
+        }
+      ]
+    },
+    {
+      "name": "emma-front",
+      "videoStart": 7.2,
+      "videoEnd": 14.4,
+      "frames": 216,
+      "sequenceDuration": 7.166666686534882,
+      "floorY": -0.00707567729729147,
+      "segments": [
+        {
+          "index": 0,
+          "name": "Idle",
+          "from": 14.533333778381348,
+          "to": 15.533333778381348,
+          "start": 0,
+          "end": 1,
+          "offset": [
+            0.0015611053677275777,
+            0,
+            -0.0037714086938649416
+          ],
+          "rootDelta": [
+            0.001561105366644094,
+            0.00005042552947998047,
+            -0.0037714086974030576
+          ]
+        },
+        {
+          "index": 1,
+          "name": "Start",
+          "from": 0,
+          "to": 0.9333333373069763,
+          "start": 1,
+          "end": 1.9333333373069763,
+          "offset": [
+            0.0015611053677275777,
+            0,
+            -0.0037714086938649416
+          ],
+          "rootDelta": [
+            0,
+            -0.00583726167678833,
+            0.7730155587231732
+          ]
+        },
+        {
+          "index": 2,
+          "name": "Walk",
+          "from": 0,
+          "to": 1.2333333492279053,
+          "start": 1.9333333373069763,
+          "end": 3.1666666865348816,
+          "offset": [
+            0.0015611053677275777,
+            0,
+            0.7692441545110498
+          ],
+          "rootDelta": [
+            0,
+            5.960464477539063e-8,
+            1.606523279860646
+          ]
+        },
+        {
+          "index": 3,
+          "name": "Walk",
+          "from": 0,
+          "to": 1.2333333492279053,
+          "start": 3.1666666865348816,
+          "end": 4.400000035762787,
+          "offset": [
+            0.0015611053677275777,
+            0,
+            2.3757674343716957
+          ],
+          "rootDelta": [
+            0,
+            5.960464477539063e-8,
+            1.606523279860646
+          ]
+        },
+        {
+          "index": 4,
+          "name": "Stop",
+          "from": 0,
+          "to": 1.7666666507720947,
+          "start": 4.400000035762787,
+          "end": 6.166666686534882,
+          "offset": [
+            0.0015611053677275777,
+            0,
+            3.9822907142323416
+          ],
+          "rootDelta": [
+            -0.03208768740188016,
+            0.0058373212814331055,
+            0.6770009443313185
+          ]
+        },
+        {
+          "index": 5,
+          "name": "Idle",
+          "from": 0,
+          "to": 1,
+          "start": 6.166666686534882,
+          "end": 7.166666686534882,
+          "offset": [
+            -0.03052658203415258,
+            0,
+            4.659291654081919
+          ],
+          "rootDelta": [
+            -0.0044801244501365516,
+            0.00012969970703125,
+            0.00010981365984680399
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ethan-side",
+      "videoStart": 14.4,
+      "videoEnd": 21.533333333333335,
+      "frames": 214,
+      "sequenceDuration": 7.100000083446503,
+      "floorY": -0.00014167169257051426,
+      "segments": [
+        {
+          "index": 0,
+          "name": "Idle",
+          "from": 10.666666984558105,
+          "to": 11.666666984558105,
+          "start": 0,
+          "end": 1,
+          "offset": [
+            -0.006151393987238407,
+            0,
+            -0.006814213935285807
+          ],
+          "rootDelta": [
+            -0.006151393984818345,
+            -0.00047510862350463867,
+            -0.00681421421630124
+          ]
+        },
+        {
+          "index": 1,
+          "name": "Start",
+          "from": 0,
+          "to": 0.9666666388511658,
+          "start": 1,
+          "end": 1.9666666388511658,
+          "offset": [
+            -0.006151393987238407,
+            0,
+            -0.006814213935285807
+          ],
+          "rootDelta": [
+            0,
+            0.00672990083694458,
+            0.6216560604998265
+          ]
+        },
+        {
+          "index": 2,
+          "name": "Walk",
+          "from": 0,
+          "to": 1.0666667222976685,
+          "start": 1.9666666388511658,
+          "end": 3.0333333611488342,
+          "offset": [
+            -0.006151393987238407,
+            0,
+            0.6148418465535092
+          ],
+          "rootDelta": [
+            0,
+            5.960464477539063e-8,
+            1.531927943499659
+          ]
+        },
+        {
+          "index": 3,
+          "name": "Walk",
+          "from": 0,
+          "to": 1.0666667222976685,
+          "start": 3.0333333611488342,
+          "end": 4.100000083446503,
+          "offset": [
+            -0.006151393987238407,
+            0,
+            2.1467697900531686
+          ],
+          "rootDelta": [
+            0,
+            5.960464477539063e-8,
+            1.531927943499659
+          ]
+        },
+        {
+          "index": 4,
+          "name": "Stop",
+          "from": 0,
+          "to": 2,
+          "start": 4.100000083446503,
+          "end": 6.100000083446503,
+          "offset": [
+            -0.006151393987238407,
+            0,
+            3.678697733552828
+          ],
+          "rootDelta": [
+            0.036355543879234675,
+            -0.006729841232299805,
+            1.4243801834898935
+          ]
+        },
+        {
+          "index": 5,
+          "name": "Idle",
+          "from": 0,
+          "to": 1,
+          "start": 6.100000083446503,
+          "end": 7.100000083446503,
+          "offset": [
+            0.03020414989199627,
+            0,
+            5.103077917053753
+          ],
+          "rootDelta": [
+            0.0010991528373225387,
+            -0.0010802745819091797,
+            0.011424721499661006
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ethan-front",
+      "videoStart": 21.533333333333335,
+      "videoEnd": 28.666666666666668,
+      "frames": 214,
+      "sequenceDuration": 7.100000083446503,
+      "floorY": -0.00014167169257051426,
+      "segments": [
+        {
+          "index": 0,
+          "name": "Idle",
+          "from": 10.666666984558105,
+          "to": 11.666666984558105,
+          "start": 0,
+          "end": 1,
+          "offset": [
+            -0.006151393987238407,
+            0,
+            -0.006814213935285807
+          ],
+          "rootDelta": [
+            -0.006151393984818345,
+            -0.00047510862350463867,
+            -0.00681421421630124
+          ]
+        },
+        {
+          "index": 1,
+          "name": "Start",
+          "from": 0,
+          "to": 0.9666666388511658,
+          "start": 1,
+          "end": 1.9666666388511658,
+          "offset": [
+            -0.006151393987238407,
+            0,
+            -0.006814213935285807
+          ],
+          "rootDelta": [
+            0,
+            0.00672990083694458,
+            0.6216560604998265
+          ]
+        },
+        {
+          "index": 2,
+          "name": "Walk",
+          "from": 0,
+          "to": 1.0666667222976685,
+          "start": 1.9666666388511658,
+          "end": 3.0333333611488342,
+          "offset": [
+            -0.006151393987238407,
+            0,
+            0.6148418465535092
+          ],
+          "rootDelta": [
+            0,
+            5.960464477539063e-8,
+            1.531927943499659
+          ]
+        },
+        {
+          "index": 3,
+          "name": "Walk",
+          "from": 0,
+          "to": 1.0666667222976685,
+          "start": 3.0333333611488342,
+          "end": 4.100000083446503,
+          "offset": [
+            -0.006151393987238407,
+            0,
+            2.1467697900531686
+          ],
+          "rootDelta": [
+            0,
+            5.960464477539063e-8,
+            1.531927943499659
+          ]
+        },
+        {
+          "index": 4,
+          "name": "Stop",
+          "from": 0,
+          "to": 2,
+          "start": 4.100000083446503,
+          "end": 6.100000083446503,
+          "offset": [
+            -0.006151393987238407,
+            0,
+            3.678697733552828
+          ],
+          "rootDelta": [
+            0.036355543879234675,
+            -0.006729841232299805,
+            1.4243801834898935
+          ]
+        },
+        {
+          "index": 5,
+          "name": "Idle",
+          "from": 0,
+          "to": 1,
+          "start": 6.100000083446503,
+          "end": 7.100000083446503,
+          "offset": [
+            0.03020414989199627,
+            0,
+            5.103077917053753
+          ],
+          "rootDelta": [
+            0.0010991528373225387,
+            -0.0010802745819091797,
+            0.011424721499661006
+          ]
+        }
+      ]
+    }
+  ],
+  "inputs": {
+    "motion-lab\\prototypes\\matched-rocketbox\\replay.html": "34d4756fad72282d662efb8e5a9b58b7fd81b1d7078ea011b2f10eff33ba1795",
+    "motion-lab\\prototypes\\matched-rocketbox\\replay.mjs": "f28f22b0f58cc54be4c63faf357385b7ed0ede642a9eee8682bbd16649969eca",
+    "motion-lab\\prototypes\\matched-rocketbox\\outputs\\emma-matched-locomotion.glb": "0f459cdfabf1fc54588251f6d81d461ad335e0125a042d0b67dc0970fe6aa20e",
+    "motion-lab\\prototypes\\matched-rocketbox\\outputs\\ethan-matched-locomotion.glb": "68f27bcb6704bee65088c4e6c8a109a052e7b8f8a2c7129cae1dfb6dd154c43c",
+    "motion-lab\\prototypes\\matched-rocketbox\\source-manifest.json": "59bb181c3d67504562be3f5c5b532a3f50767cdd3c3b8cf162426154dec4a205",
+    "assets\\models\\visitors\\walking-woman.glb": "be518e47c6e418c3a3dc4cf0692bbcc324ff9b70af23c0c539376f1e6debb957",
+    "assets\\models\\visitors\\walking-man.glb": "710096e92e0acbfac10f9680f262514402822dfeda33f9f0dc4117bec24172d9",
+    "motion-lab\\tools\\capture_matched_rocketbox_reference.py": "0490b8d5000f75af0a34414a45042386d24dc42e30cbcf2b25e6d9a4c4290c5c",
+    "commonReferenceManifestSha256": "d38674c9d312ee453db0dc6842b22135ff991601397bd68b72a00b78be55b8d6"
+  },
+  "sequence": "Idle last 1s -> Start -> full Walk x2 -> Stop -> Idle first 1s. Normal 1x source time, 30fps frames. Each final section may hold final source frame for less than 1/30s.",
+  "transforms": "Unedited AnimationMixer clips, weight1. Holder XZ offset only concatenates original root deltas across clip boundaries. Source root Y and rotations retained. Floor is a single constant derived from IdleEnd, no per-frame grounding. Hips-follow camera, stationary ground grid.",
+  "inspection": {
+    "renderedErrors": [],
+    "sampledViews": [
+      "side",
+      "front"
+    ],
+    "observations": [
+      "Both complete models and feet visible in all four sections.",
+      "Inspected Start/Walk/Stop frame sequences: no gross knee hyperextension or inverse joint deformation in sampled poses.",
+      "Dedicated Stop contains continuing steps before settled Idle."
+    ],
+    "limits": [
+      "This is an encoded reference, not a contact-speed or artistic-acceptance PASS.",
+      "Emma retains authored right-leg C0 seam: 13.835mm RightFoot/RightToeBase bone position difference, approximately1.303deg; not a measured sole-material displacement.",
+      "Ethan near-zero pose seams do not prove derivative continuity or foot contact.",
+      "Reference new base Walk has different phase/source than v44; same-fraction comparison is not isolated quality A/B."
+    ]
+  },
+  "frozenRuntime": {
+    "sha256Before": "bccc1feea2548202027e98de18c65f8aa5f93acefe704817f742eff724bdfab6",
+    "sha256After": "bccc1feea2548202027e98de18c65f8aa5f93acefe704817f742eff724bdfab6",
+    "changed": false
+  },
+  "ownedProcessesClosed": true,
+  "reproducibility": {
+    "script": "motion-lab/tools/capture_matched_rocketbox_reference.py",
+    "scriptSha256": "0490b8d5000f75af0a34414a45042386d24dc42e30cbcf2b25e6d9a4c4290c5c",
+    "manifest": "Gnew/matched-rocketbox/source-reference-video/reference-capture-manifest.json"
+  }
+}

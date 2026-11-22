@@ -1,0 +1,1607 @@
+{
+  "scope": "Static query only: read existing common-reference Stop GLB keys, then query the unchanged upstream navmesh for straight leads. No Crowd.update, no animation replay, no dynamic peer, no material contact, no full-scene/runtime acceptance, no browser or GPU.",
+  "input": {
+    "manifestSha256": "d38674c9d312ee453db0dc6842b22135ff991601397bd68b72a00b78be55b8d6",
+    "adapterSha256": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de",
+    "navmeshSha256": "f8d89a591b7824a77242bfbaadb564938c078ff1aa7f8177e1224215cf4348ef",
+    "runtimeSha256": "bccc1feea2548202027e98de18c65f8aa5f93acefe704817f742eff724bdfab6",
+    "layoutSha256": "870a54289223ad67a47bad37e82017b10afeca34dc2de0949519395c60f4e35a"
+  },
+  "heading": "body viewYaw from frozen bccc station targets and projected station centres; no old Walk forwardYaw offset",
+  "gates": {
+    "radius": 0.7,
+    "maxProjectionXZ": 0.01,
+    "maxPathLateralDeviation": 0.02,
+    "extraLead": 0.12
+  },
+  "actors": [
+    {
+      "id": "emma",
+      "glbSha256": "0f459cdfabf1fc54588251f6d81d461ad335e0125a042d0b67dc0970fe6aa20e",
+      "manifestOutputSha256": "0f459cdfabf1fc54588251f6d81d461ad335e0125a042d0b67dc0970fe6aa20e",
+      "root": {
+        "clipName": "UPF · Stop",
+        "node": "mixamorigHips",
+        "interpolation": "LINEAR",
+        "samples": 107,
+        "duration": 1.7666666507720947,
+        "delta": {
+          "x": -0.03208768740188016,
+          "y": 0.0058373212814331055,
+          "z": 0.6770009443313185
+        },
+        "net": 0.6777609448089332,
+        "path": 0.723878348653929,
+        "minForward": 0,
+        "maxForward": 0.6948761388808791,
+        "minLateral": -0.03208768740188016,
+        "maxLateral": 0,
+        "minimumY": -0.03684109449386597,
+        "maximumY": 0.01051473617553711
+      },
+      "cases": [
+        {
+          "variant": "requested-net-plus-margin",
+          "station": 0,
+          "name": "robot/reactor",
+          "lead": 0.7977609448089332,
+          "bodyYaw": -2.1287367979462408e-8,
+          "from": {
+            "x": -3.5499999353340534,
+            "y": 0,
+            "z": -0.4877614788665502
+          },
+          "goal": {
+            "x": -3.549999952316284,
+            "y": 0,
+            "z": 0.3099994659423828
+          },
+          "querySuccess": true,
+          "startProjection": 2.0327184183056492e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 1.6982230494957072e-8,
+          "minProgress": 1.1171314346488158e-8,
+          "maxProgress": 0.7977609448089332,
+          "rawClearance": {
+            "name": "technology",
+            "distance": 0.8300005340576171
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -3.549999952316284,
+              "z": -0.4877614676952362
+            },
+            {
+              "x": -3.549999952316284,
+              "z": 0.3099994659423828
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "requested-net-plus-margin",
+          "station": 1,
+          "name": "train",
+          "lead": 0.7977609448089332,
+          "bodyYaw": 2.07320502794247e-8,
+          "from": {
+            "x": 3.549999935777064,
+            "y": 0,
+            "z": -0.547760944808933
+          },
+          "goal": {
+            "x": 3.549999952316284,
+            "y": 0,
+            "z": 0.25
+          },
+          "querySuccess": true,
+          "startProjection": 2.4913054398092224e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 1.653922060186461e-8,
+          "minProgress": -1.863100805982219e-8,
+          "maxProgress": 0.7977609448089331,
+          "rawClearance": {
+            "name": "train",
+            "distance": 0.8200000000000001
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 3.549999952316284,
+              "z": -0.5477609634399414
+            },
+            {
+              "x": 3.549999952316284,
+              "z": 0.25
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "requested-net-plus-margin",
+          "station": 2,
+          "name": "MoscowCity",
+          "lead": 0.7977609448089332,
+          "bodyYaw": 0,
+          "from": {
+            "x": 0,
+            "y": 0,
+            "z": 2.75223924592593
+          },
+          "goal": {
+            "x": 0,
+            "y": 0,
+            "z": 3.5500001907348633
+          },
+          "querySuccess": true,
+          "startProjection": 1.8631008291691842e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 0,
+          "minProgress": -1.863100829169184e-8,
+          "maxProgress": 0.7977609448089331,
+          "rawClearance": {
+            "name": "MoscowCity",
+            "distance": 0.7899998092651366
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 0,
+              "z": 2.752239227294922
+            },
+            {
+              "x": 0,
+              "z": 3.5500001907348633
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "requested-net-plus-margin",
+          "station": 3,
+          "name": "residential",
+          "lead": 0.7977609448089332,
+          "bodyYaw": -3.1415925964835467,
+          "from": {
+            "x": -3.349999859075435,
+            "y": 0,
+            "z": -1.0822390504226966
+          },
+          "goal": {
+            "x": -3.3499999046325684,
+            "y": 0,
+            "z": -1.8799999952316284
+          },
+          "querySuccess": true,
+          "startProjection": 4.9219578451210624e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 4.555713424094578e-8,
+          "minProgress": -1.863100702236256e-8,
+          "maxProgress": 0.7977609448089329,
+          "rawClearance": {
+            "name": "residential",
+            "distance": 0.8500000047683716
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -3.3499999046325684,
+              "z": -1.082239031791687
+            },
+            {
+              "x": -3.3499999046325684,
+              "z": -1.8799999952316284
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "requested-net-plus-margin",
+          "station": 4,
+          "name": "arena",
+          "lead": 0.7977609448089332,
+          "bodyYaw": 3.1415925964835467,
+          "from": {
+            "x": 3.349999859075435,
+            "y": 0,
+            "z": -1.0822390504226966
+          },
+          "goal": {
+            "x": 3.3499999046325684,
+            "y": 0,
+            "z": -1.8799999952316284
+          },
+          "querySuccess": true,
+          "startProjection": 4.9219578451210624e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 4.555713424094578e-8,
+          "minProgress": -1.863100702236256e-8,
+          "maxProgress": 0.7977609448089329,
+          "rawClearance": {
+            "name": "arena",
+            "distance": 0.8500000047683716
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 3.3499999046325684,
+              "z": -1.082239031791687
+            },
+            {
+              "x": 3.3499999046325684,
+              "z": -1.8799999952316284
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "requested-net-plus-margin",
+          "station": 5,
+          "name": "cube",
+          "lead": 0.7977609448089332,
+          "bodyYaw": 1.5707963152211788,
+          "from": {
+            "x": -2.857760887588474,
+            "y": 0,
+            "z": -0.35000003307491795
+          },
+          "goal": {
+            "x": -2.059999942779541,
+            "y": 0,
+            "z": -0.3500000238418579
+          },
+          "querySuccess": true,
+          "startProjection": 2.0793361143505304e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 9.233060254379161e-9,
+          "minProgress": -1.8631008184831006e-8,
+          "maxProgress": 0.7977609448089332,
+          "rawClearance": {
+            "name": "cube",
+            "distance": 0.839999942779541
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -2.8577609062194824,
+              "z": -0.3500000238418579
+            },
+            {
+              "x": -2.059999942779541,
+              "z": -0.3500000238418579
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "max-forward-range-plus-margin",
+          "station": 0,
+          "name": "robot/reactor",
+          "lead": 0.8148761388808791,
+          "bodyYaw": -2.1287367979462408e-8,
+          "from": {
+            "x": -3.549999934969716,
+            "y": 0,
+            "z": -0.504876672938496
+          },
+          "goal": {
+            "x": -3.549999952316284,
+            "y": 0,
+            "z": 0.3099994659423828
+          },
+          "querySuccess": true,
+          "startProjection": 1.734887802793455e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 1.7346568187890368e-8,
+          "minProgress": -2.830917360504082e-10,
+          "maxProgress": 0.814876138880879,
+          "rawClearance": {
+            "name": "technology",
+            "distance": 0.8300005340576171
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -3.549999952316284,
+              "z": -0.5048766732215881
+            },
+            {
+              "x": -3.549999952316284,
+              "z": 0.3099994659423828
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "max-forward-range-plus-margin",
+          "station": 1,
+          "name": "train",
+          "lead": 0.8148761388808791,
+          "bodyYaw": 2.07320502794247e-8,
+          "from": {
+            "x": 3.549999935422231,
+            "y": 0,
+            "z": -0.5648761388808788
+          },
+          "goal": {
+            "x": 3.549999952316284,
+            "y": 0,
+            "z": 0.25
+          },
+          "querySuccess": true,
+          "startProjection": 1.6896424975214136e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 1.6894053273304613e-8,
+          "minProgress": -2.8309175506482176e-10,
+          "maxProgress": 0.814876138880879,
+          "rawClearance": {
+            "name": "train",
+            "distance": 0.8200000000000001
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 3.549999952316284,
+              "z": -0.564876139163971
+            },
+            {
+              "x": 3.549999952316284,
+              "z": 0.25
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "max-forward-range-plus-margin",
+          "station": 2,
+          "name": "MoscowCity",
+          "lead": 0.8148761388808791,
+          "bodyYaw": 0,
+          "from": {
+            "x": 0,
+            "y": 0,
+            "z": 2.735124051853984
+          },
+          "goal": {
+            "x": 0,
+            "y": 0,
+            "z": 3.5500001907348633
+          },
+          "querySuccess": true,
+          "startProjection": 5.9321553003144345e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 0,
+          "minProgress": 5.932155300314436e-8,
+          "maxProgress": 0.8148761388808793,
+          "rawClearance": {
+            "name": "MoscowCity",
+            "distance": 0.7899998092651366
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 0,
+              "z": 2.735124111175537
+            },
+            {
+              "x": 0,
+              "z": 3.5500001907348633
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "max-forward-range-plus-margin",
+          "station": 3,
+          "name": "residential",
+          "lead": 0.8148761388808791,
+          "bodyYaw": -3.1415925964835467,
+          "from": {
+            "x": -3.349999858098051,
+            "y": 0,
+            "z": -1.0651238563507506
+          },
+          "goal": {
+            "x": -3.3499999046325684,
+            "y": 0,
+            "z": -1.8799999952316284
+          },
+          "querySuccess": true,
+          "startProjection": 7.539567506401602e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 4.653451418500716e-8,
+          "minProgress": 5.932155432828826e-8,
+          "maxProgress": 0.8148761388808794,
+          "rawClearance": {
+            "name": "residential",
+            "distance": 0.8500000047683716
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -3.3499999046325684,
+              "z": -1.0651239156723022
+            },
+            {
+              "x": -3.3499999046325684,
+              "z": -1.8799999952316284
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "max-forward-range-plus-margin",
+          "station": 4,
+          "name": "arena",
+          "lead": 0.8148761388808791,
+          "bodyYaw": 3.1415925964835467,
+          "from": {
+            "x": 3.349999858098051,
+            "y": 0,
+            "z": -1.0651238563507506
+          },
+          "goal": {
+            "x": 3.3499999046325684,
+            "y": 0,
+            "z": -1.8799999952316284
+          },
+          "querySuccess": true,
+          "startProjection": 7.539567506401602e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 4.653451418500716e-8,
+          "minProgress": 5.932155432828826e-8,
+          "maxProgress": 0.8148761388808794,
+          "rawClearance": {
+            "name": "arena",
+            "distance": 0.8500000047683716
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 3.3499999046325684,
+              "z": -1.0651239156723022
+            },
+            {
+              "x": 3.3499999046325684,
+              "z": -1.8799999952316284
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "max-forward-range-plus-margin",
+          "station": 5,
+          "name": "cube",
+          "lead": 0.8148761388808791,
+          "bodyYaw": 1.5707963152211788,
+          "from": {
+            "x": -2.87487608166042,
+            "y": 0,
+            "z": -0.3500000332730044
+          },
+          "goal": {
+            "x": -2.059999942779541,
+            "y": 0,
+            "z": -0.3500000238418579
+          },
+          "querySuccess": true,
+          "startProjection": 6.006657285492266e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 9.431145788321047e-9,
+          "minProgress": 5.932155311229779e-8,
+          "maxProgress": 0.8148761388808794,
+          "rawClearance": {
+            "name": "cube",
+            "distance": 0.839999942779541
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -2.874876022338867,
+              "z": -0.3500000238418579
+            },
+            {
+              "x": -2.059999942779541,
+              "z": -0.3500000238418579
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "conservative-path-length-plus-margin",
+          "station": 0,
+          "name": "robot/reactor",
+          "lead": 0.843878348653929,
+          "bodyYaw": -2.1287367979462408e-8,
+          "from": {
+            "x": -3.549999934352335,
+            "y": 0,
+            "z": -0.5338788827115459
+          },
+          "goal": {
+            "x": -3.549999952316284,
+            "y": 0,
+            "z": 0.3099994659423828
+          },
+          "querySuccess": true,
+          "startProjection": 2.677450190652132e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 1.7963948572369816e-8,
+          "minProgress": 1.9853727711227588e-8,
+          "maxProgress": 0.8438783486539289,
+          "rawClearance": {
+            "name": "technology",
+            "distance": 0.8300005340576171
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -3.549999952316284,
+              "z": -0.5338788628578186
+            },
+            {
+              "x": -3.549999952316284,
+              "z": 0.3099994659423828
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "conservative-path-length-plus-margin",
+          "station": 1,
+          "name": "train",
+          "lead": 0.843878348653929,
+          "bodyYaw": 2.07320502794247e-8,
+          "from": {
+            "x": 3.549999934820956,
+            "y": 0,
+            "z": -0.5938783486539287
+          },
+          "goal": {
+            "x": 3.549999952316284,
+            "y": 0,
+            "z": 0.25
+          },
+          "querySuccess": true,
+          "startProjection": 2.646236952871152e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 1.7495327885592763e-8,
+          "minProgress": 1.985372769153642e-8,
+          "maxProgress": 0.8438783486539289,
+          "rawClearance": {
+            "name": "train",
+            "distance": 0.8200000000000001
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 3.549999952316284,
+              "z": -0.5938783288002014
+            },
+            {
+              "x": 3.549999952316284,
+              "z": 0.25
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "conservative-path-length-plus-margin",
+          "station": 2,
+          "name": "MoscowCity",
+          "lead": 0.843878348653929,
+          "bodyYaw": 0,
+          "from": {
+            "x": 0,
+            "y": 0,
+            "z": 2.7061218420809343
+          },
+          "goal": {
+            "x": 0,
+            "y": 0,
+            "z": 3.5500001907348633
+          },
+          "querySuccess": true,
+          "startProjection": 7.945837232625763e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 0,
+          "minProgress": 7.945837232625763e-8,
+          "maxProgress": 0.843878348653929,
+          "rawClearance": {
+            "name": "MoscowCity",
+            "distance": 0.7899998092651366
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 0,
+              "z": 2.7061219215393066
+            },
+            {
+              "x": 0,
+              "z": 3.5500001907348633
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "conservative-path-length-plus-margin",
+          "station": 3,
+          "name": "residential",
+          "lead": 0.843878348653929,
+          "bodyYaw": -3.1415925964835467,
+          "from": {
+            "x": -3.349999856441843,
+            "y": 0,
+            "z": -1.0361216465777008
+          },
+          "goal": {
+            "x": -3.3499999046325684,
+            "y": 0,
+            "z": -1.8799999952316284
+          },
+          "querySuccess": true,
+          "startProjection": 6.246984488748972e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 4.819072745816096e-8,
+          "minProgress": -3.975091580479974e-8,
+          "maxProgress": 0.843878348653929,
+          "rawClearance": {
+            "name": "residential",
+            "distance": 0.8500000047683716
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -3.3499999046325684,
+              "z": -1.0361216068267822
+            },
+            {
+              "x": -3.3499999046325684,
+              "z": -1.8799999952316284
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "conservative-path-length-plus-margin",
+          "station": 4,
+          "name": "arena",
+          "lead": 0.843878348653929,
+          "bodyYaw": 3.1415925964835467,
+          "from": {
+            "x": 3.349999856441843,
+            "y": 0,
+            "z": -1.0361216465777008
+          },
+          "goal": {
+            "x": 3.3499999046325684,
+            "y": 0,
+            "z": -1.8799999952316284
+          },
+          "querySuccess": true,
+          "startProjection": 6.246984488748972e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 4.819072745816096e-8,
+          "minProgress": -3.975091580479974e-8,
+          "maxProgress": 0.843878348653929,
+          "rawClearance": {
+            "name": "arena",
+            "distance": 0.8500000047683716
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 3.3499999046325684,
+              "z": -1.0361216068267822
+            },
+            {
+              "x": 3.3499999046325684,
+              "z": -1.8799999952316284
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "conservative-path-length-plus-margin",
+          "station": 5,
+          "name": "cube",
+          "lead": 0.843878348653929,
+          "bodyYaw": 1.5707963152211788,
+          "from": {
+            "x": -2.90387829143347,
+            "y": 0,
+            "z": -0.35000003360866777
+          },
+          "goal": {
+            "x": -2.059999942779541,
+            "y": 0,
+            "z": -0.3500000238418579
+          },
+          "querySuccess": true,
+          "startProjection": 8.005637705764929e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 9.76680894123842e-9,
+          "minProgress": 7.945837243929594e-8,
+          "maxProgress": 0.8438783486539292,
+          "rawClearance": {
+            "name": "cube",
+            "distance": 0.839999942779541
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -2.9038782119750977,
+              "z": -0.3500000238418579
+            },
+            {
+              "x": -2.059999942779541,
+              "z": -0.3500000238418579
+            }
+          ],
+          "error": null
+        }
+      ],
+      "packagedGLBSha256": "0f459cdfabf1fc54588251f6d81d461ad335e0125a042d0b67dc0970fe6aa20e",
+      "packagedMatchesMeasuredGLB": true,
+      "worldHorizontalStopMeasures": {
+        "netDisplacementMeters": 0.6777609448089332,
+        "pathLengthFromStoredGLBKeysMeters": 0.723878348653929,
+        "maximumForwardDisplacementMeters": 0.6948761388808791,
+        "minimumForwardDisplacementMeters": 0,
+        "finalRootDeltaXYZMeters": {
+          "x": -0.03208768740188016,
+          "y": 0.0058373212814331055,
+          "z": 0.6770009443313185
+        },
+        "nativeManifestTargetNetHorizontalMeters": 0.6777609448089332,
+        "nativeManifestTargetPathHorizontalMeters": 0.7238783481280728,
+        "glbPathLengthMinusManifestMeters": 5.258561364129832e-10,
+        "requestedLeadNetPlusMarginMeters": 0.7977609448089332,
+        "conservativeLeadPathPlusMarginMeters": 0.843878348653929
+      }
+    },
+    {
+      "id": "ethan",
+      "glbSha256": "68f27bcb6704bee65088c4e6c8a109a052e7b8f8a2c7129cae1dfb6dd154c43c",
+      "manifestOutputSha256": "68f27bcb6704bee65088c4e6c8a109a052e7b8f8a2c7129cae1dfb6dd154c43c",
+      "root": {
+        "clipName": "UPF · Stop",
+        "node": "mixamorigHips",
+        "interpolation": "LINEAR",
+        "samples": 121,
+        "duration": 2,
+        "delta": {
+          "x": 0.036355543879234675,
+          "y": -0.006729841232299805,
+          "z": 1.4243801834898935
+        },
+        "net": 1.4248440731144785,
+        "path": 1.439465987574036,
+        "minForward": 0,
+        "maxForward": 1.4243801834898935,
+        "minLateral": -0.023849980908072107,
+        "maxLateral": 0.036355543879234675,
+        "minimumY": -0.06611424684524536,
+        "maximumY": 0
+      },
+      "cases": [
+        {
+          "variant": "requested-net-plus-margin",
+          "station": 0,
+          "name": "robot/reactor",
+          "lead": 1.5448440731144784,
+          "bodyYaw": -2.1287367979462408e-8,
+          "from": {
+            "x": -3.5499999194306198,
+            "y": 0,
+            "z": -1.234844607172095
+          },
+          "goal": {
+            "x": -3.549999952316284,
+            "y": 0,
+            "z": 0.3099994659423828
+          },
+          "querySuccess": true,
+          "startProjection": 5.3170308107536025e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 3.288566352444172e-8,
+          "minProgress": 4.1780555271651357e-8,
+          "maxProgress": 1.544844073114478,
+          "rawClearance": {
+            "name": "technology",
+            "distance": 0.8300005340576171
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -3.549999952316284,
+              "z": -1.2348445653915405
+            },
+            {
+              "x": -3.549999952316284,
+              "z": 0.3099994659423828
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "requested-net-plus-margin",
+          "station": 1,
+          "name": "train",
+          "lead": 1.5448440731144784,
+          "bodyYaw": 2.07320502794247e-8,
+          "from": {
+            "x": 3.5499999202884993,
+            "y": 0,
+            "z": -1.294844073114478
+          },
+          "goal": {
+            "x": 3.549999952316284,
+            "y": 0,
+            "z": 0.25
+          },
+          "querySuccess": true,
+          "startProjection": 5.264402856833618e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 3.202778400246353e-8,
+          "minProgress": 4.178055523560376e-8,
+          "maxProgress": 1.544844073114478,
+          "rawClearance": {
+            "name": "train",
+            "distance": 0.8200000000000001
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 3.549999952316284,
+              "z": -1.2948440313339233
+            },
+            {
+              "x": 3.549999952316284,
+              "z": 0.25
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "requested-net-plus-margin",
+          "station": 2,
+          "name": "MoscowCity",
+          "lead": 1.5448440731144784,
+          "bodyYaw": 0,
+          "from": {
+            "x": 0,
+            "y": 0,
+            "z": 2.005156117620385
+          },
+          "goal": {
+            "x": 0,
+            "y": 0,
+            "z": 3.5500001907348633
+          },
+          "querySuccess": true,
+          "startProjection": 7.742873453508992e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 0,
+          "minProgress": -7.742873453508992e-8,
+          "maxProgress": 1.5448440731144786,
+          "rawClearance": {
+            "name": "MoscowCity",
+            "distance": 0.7899998092651366
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 0,
+              "z": 2.0051560401916504
+            },
+            {
+              "x": 0,
+              "z": 3.5500001907348633
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "requested-net-plus-margin",
+          "station": 3,
+          "name": "residential",
+          "lead": 1.5448440731144784,
+          "bodyYaw": -3.1415925964835467,
+          "from": {
+            "x": -3.3499998164123217,
+            "y": 0,
+            "z": -0.3351559221171527
+          },
+          "goal": {
+            "x": -3.3499999046325684,
+            "y": 0,
+            "z": -1.8799999952316284
+          },
+          "querySuccess": true,
+          "startProjection": 8.902971366019146e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 8.822024597940773e-8,
+          "minProgress": 1.1978235001387907e-8,
+          "maxProgress": 1.5448440731144781,
+          "rawClearance": {
+            "name": "residential",
+            "distance": 0.8500000047683716
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -3.3499999046325684,
+              "z": -0.3351559340953827
+            },
+            {
+              "x": -3.3499999046325684,
+              "z": -1.8799999952316284
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "requested-net-plus-margin",
+          "station": 4,
+          "name": "arena",
+          "lead": 1.5448440731144784,
+          "bodyYaw": 3.1415925964835467,
+          "from": {
+            "x": 3.3499998164123217,
+            "y": 0,
+            "z": -0.3351559221171527
+          },
+          "goal": {
+            "x": 3.3499999046325684,
+            "y": 0,
+            "z": -1.8799999952316284
+          },
+          "querySuccess": true,
+          "startProjection": 8.902971366019146e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 8.822024597940773e-8,
+          "minProgress": 1.1978235001387907e-8,
+          "maxProgress": 1.5448440731144781,
+          "rawClearance": {
+            "name": "arena",
+            "distance": 0.8500000047683716
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 3.3499999046325684,
+              "z": -0.3351559340953827
+            },
+            {
+              "x": 3.3499999046325684,
+              "z": -1.8799999952316284
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "requested-net-plus-margin",
+          "station": 5,
+          "name": "cube",
+          "lead": 1.5448440731144784,
+          "bodyYaw": 1.5707963152211788,
+          "from": {
+            "x": -3.6048440158940194,
+            "y": 0,
+            "z": -0.3500000417214473
+          },
+          "goal": {
+            "x": -2.059999942779541,
+            "y": 0,
+            "z": -0.3500000238418579
+          },
+          "querySuccess": true,
+          "startProjection": 7.834130771467356e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 1.1922732126945896e-8,
+          "minProgress": -7.742873467308027e-8,
+          "maxProgress": 1.5448440731144788,
+          "rawClearance": {
+            "name": "cube",
+            "distance": 0.839999942779541
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -3.604844093322754,
+              "z": -0.3500000536441803
+            },
+            {
+              "x": -2.059999942779541,
+              "z": -0.3500000238418579
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "max-forward-range-plus-margin",
+          "station": 0,
+          "name": "robot/reactor",
+          "lead": 1.5443801834898934,
+          "bodyYaw": -2.1287367979462408e-8,
+          "from": {
+            "x": -3.549999919440495,
+            "y": 0,
+            "z": -1.23438071754751
+          },
+          "goal": {
+            "x": -3.549999952316284,
+            "y": 0,
+            "z": 0.3099994659423828
+          },
+          "querySuccess": true,
+          "startProjection": 3.318211887769686e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 3.2875789297839176e-8,
+          "minProgress": -4.498387628660892e-9,
+          "maxProgress": 1.544380183489893,
+          "rawClearance": {
+            "name": "technology",
+            "distance": 0.8300005340576171
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -3.549999952316284,
+              "z": -1.2343807220458984
+            },
+            {
+              "x": -3.549999952316284,
+              "z": 0.3099994659423828
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "max-forward-range-plus-margin",
+          "station": 1,
+          "name": "train",
+          "lead": 1.5443801834898934,
+          "bodyYaw": 2.07320502794247e-8,
+          "from": {
+            "x": 3.5499999202981165,
+            "y": 0,
+            "z": -1.294380183489893
+          },
+          "goal": {
+            "x": 3.549999952316284,
+            "y": 0,
+            "z": 0.25
+          },
+          "querySuccess": true,
+          "startProjection": 3.2332623751764066e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 3.201816776599238e-8,
+          "minProgress": -4.49838766469765e-9,
+          "maxProgress": 1.544380183489893,
+          "rawClearance": {
+            "name": "train",
+            "distance": 0.8200000000000001
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 3.549999952316284,
+              "z": -1.2943801879882812
+            },
+            {
+              "x": 3.549999952316284,
+              "z": 0.25
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "max-forward-range-plus-margin",
+          "station": 2,
+          "name": "MoscowCity",
+          "lead": 1.5443801834898934,
+          "bodyYaw": 0,
+          "from": {
+            "x": 0,
+            "y": 0,
+            "z": 2.00562000724497
+          },
+          "goal": {
+            "x": 0,
+            "y": 0,
+            "z": 3.5500001907348633
+          },
+          "querySuccess": true,
+          "startProjection": 4.498387884410704e-9,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 0,
+          "minProgress": -4.498387884410704e-9,
+          "maxProgress": 1.5443801834898936,
+          "rawClearance": {
+            "name": "MoscowCity",
+            "distance": 0.7899998092651366
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 0,
+              "z": 2.005620002746582
+            },
+            {
+              "x": 0,
+              "z": 3.5500001907348633
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "max-forward-range-plus-margin",
+          "station": 3,
+          "name": "residential",
+          "lead": 1.5443801834898934,
+          "bodyYaw": -3.1415925964835467,
+          "from": {
+            "x": -3.349999816438813,
+            "y": 0,
+            "z": -0.3356198117417377
+          },
+          "goal": {
+            "x": -3.3499999046325684,
+            "y": 0,
+            "z": -1.8799999952316284
+          },
+          "querySuccess": true,
+          "startProjection": 8.830840283243299e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 8.81937556666905e-8,
+          "minProgress": -4.498385512531621e-9,
+          "maxProgress": 1.5443801834898931,
+          "rawClearance": {
+            "name": "residential",
+            "distance": 0.8500000047683716
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -3.3499999046325684,
+              "z": -0.33561980724334717
+            },
+            {
+              "x": -3.3499999046325684,
+              "z": -1.8799999952316284
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "max-forward-range-plus-margin",
+          "station": 4,
+          "name": "arena",
+          "lead": 1.5443801834898934,
+          "bodyYaw": 3.1415925964835467,
+          "from": {
+            "x": 3.349999816438813,
+            "y": 0,
+            "z": -0.3356198117417377
+          },
+          "goal": {
+            "x": 3.3499999046325684,
+            "y": 0,
+            "z": -1.8799999952316284
+          },
+          "querySuccess": true,
+          "startProjection": 8.830840283243299e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 8.81937556666905e-8,
+          "minProgress": -4.498385512531621e-9,
+          "maxProgress": 1.5443801834898931,
+          "rawClearance": {
+            "name": "arena",
+            "distance": 0.8500000047683716
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 3.3499999046325684,
+              "z": -0.33561980724334717
+            },
+            {
+              "x": 3.3499999046325684,
+              "z": -1.8799999952316284
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "max-forward-range-plus-margin",
+          "station": 5,
+          "name": "cube",
+          "lead": 1.5443801834898934,
+          "bodyYaw": 1.5707963152211788,
+          "from": {
+            "x": -3.604380126269434,
+            "y": 0,
+            "z": -0.35000004171607835
+          },
+          "goal": {
+            "x": -2.059999942779541,
+            "y": 0,
+            "z": -0.3500000238418579
+          },
+          "querySuccess": true,
+          "startProjection": 1.2748141578210785e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 1.1928101898545924e-8,
+          "minProgress": -4.498388466552398e-9,
+          "maxProgress": 1.5443801834898927,
+          "rawClearance": {
+            "name": "cube",
+            "distance": 0.839999942779541
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -3.6043801307678223,
+              "z": -0.3500000536441803
+            },
+            {
+              "x": -2.059999942779541,
+              "z": -0.3500000238418579
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "conservative-path-length-plus-margin",
+          "station": 0,
+          "name": "robot/reactor",
+          "lead": 1.5594659875740362,
+          "bodyYaw": -2.1287367979462408e-8,
+          "from": {
+            "x": -3.5499999191193576,
+            "y": 0,
+            "z": -1.249466521631653
+          },
+          "goal": {
+            "x": -3.549999952316284,
+            "y": 0,
+            "z": 0.3099994659423828
+          },
+          "querySuccess": true,
+          "startProjection": 3.720477849613861e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 3.3196926898600524e-8,
+          "minProgress": -1.679760659843273e-8,
+          "maxProgress": 1.5594659875740358,
+          "rawClearance": {
+            "name": "technology",
+            "distance": 0.8300005340576171
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -3.549999952316284,
+              "z": -1.2494665384292603
+            },
+            {
+              "x": -3.549999952316284,
+              "z": 0.3099994659423828
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "conservative-path-length-plus-margin",
+          "station": 1,
+          "name": "train",
+          "lead": 1.5594659875740362,
+          "bodyYaw": 2.07320502794247e-8,
+          "from": {
+            "x": 3.549999919985357,
+            "y": 0,
+            "z": -1.3094659875740358
+          },
+          "goal": {
+            "x": 3.549999952316284,
+            "y": 0,
+            "z": 0.25
+          },
+          "querySuccess": true,
+          "startProjection": 3.6434166234903684e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 3.233092761697993e-8,
+          "minProgress": -1.6797606634821517e-8,
+          "maxProgress": 1.5594659875740358,
+          "rawClearance": {
+            "name": "train",
+            "distance": 0.8200000000000001
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 3.549999952316284,
+              "z": -1.309466004371643
+            },
+            {
+              "x": 3.549999952316284,
+              "z": 0.25
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "conservative-path-length-plus-margin",
+          "station": 2,
+          "name": "MoscowCity",
+          "lead": 1.5594659875740362,
+          "bodyYaw": 0,
+          "from": {
+            "x": 0,
+            "y": 0,
+            "z": 1.990534203160827
+          },
+          "goal": {
+            "x": 0,
+            "y": 0,
+            "z": 3.5500001907348633
+          },
+          "querySuccess": true,
+          "startProjection": 1.679760686101872e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 0,
+          "minProgress": -1.679760686101872e-8,
+          "maxProgress": 1.559465987574036,
+          "rawClearance": {
+            "name": "MoscowCity",
+            "distance": 0.7899998092651366
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 0,
+              "z": 1.9905341863632202
+            },
+            {
+              "x": 0,
+              "z": 3.5500001907348633
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "conservative-path-length-plus-margin",
+          "station": 3,
+          "name": "residential",
+          "lead": 1.5594659875740362,
+          "bodyYaw": -3.1415925964835467,
+          "from": {
+            "x": -3.3499998155773194,
+            "y": 0,
+            "z": -0.3205340076575949
+          },
+          "goal": {
+            "x": -3.3499999046325684,
+            "y": 0,
+            "z": -1.8799999952316284
+          },
+          "querySuccess": true,
+          "startProjection": 8.999977734807405e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 8.905524821032341e-8,
+          "minProgress": 1.30047179477523e-8,
+          "maxProgress": 1.559465987574036,
+          "rawClearance": {
+            "name": "residential",
+            "distance": 0.8500000047683716
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -3.3499999046325684,
+              "z": -0.32053402066230774
+            },
+            {
+              "x": -3.3499999046325684,
+              "z": -1.8799999952316284
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "conservative-path-length-plus-margin",
+          "station": 4,
+          "name": "arena",
+          "lead": 1.5594659875740362,
+          "bodyYaw": 3.1415925964835467,
+          "from": {
+            "x": 3.3499998155773194,
+            "y": 0,
+            "z": -0.3205340076575949
+          },
+          "goal": {
+            "x": 3.3499999046325684,
+            "y": 0,
+            "z": -1.8799999952316284
+          },
+          "querySuccess": true,
+          "startProjection": 8.999977734807405e-8,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 8.905524821032341e-8,
+          "minProgress": 1.30047179477523e-8,
+          "maxProgress": 1.559465987574036,
+          "rawClearance": {
+            "name": "arena",
+            "distance": 0.8500000047683716
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": 3.3499999046325684,
+              "z": -0.32053402066230774
+            },
+            {
+              "x": 3.3499999046325684,
+              "z": -1.8799999952316284
+            }
+          ],
+          "error": null
+        },
+        {
+          "variant": "conservative-path-length-plus-margin",
+          "station": 5,
+          "name": "cube",
+          "lead": 1.5594659875740362,
+          "bodyYaw": 1.5707963152211788,
+          "from": {
+            "x": -3.619465930353577,
+            "y": 0,
+            "z": -0.3500000418906772
+          },
+          "goal": {
+            "x": -2.059999942779541,
+            "y": 0,
+            "z": -0.3500000238418579
+          },
+          "querySuccess": true,
+          "startProjection": 1.0308393466892926e-7,
+          "targetProjection": 0,
+          "pathCorners": 2,
+          "maxPathOffset": 1.1753504300503304e-8,
+          "minProgress": 1.024116825537308e-7,
+          "maxProgress": 1.5594659875740364,
+          "rawClearance": {
+            "name": "cube",
+            "distance": 0.839999942779541
+          },
+          "pass": true,
+          "path": [
+            {
+              "x": -3.6194658279418945,
+              "z": -0.3500000536441803
+            },
+            {
+              "x": -2.059999942779541,
+              "z": -0.3500000238418579
+            }
+          ],
+          "error": null
+        }
+      ],
+      "packagedGLBSha256": "68f27bcb6704bee65088c4e6c8a109a052e7b8f8a2c7129cae1dfb6dd154c43c",
+      "packagedMatchesMeasuredGLB": true,
+      "worldHorizontalStopMeasures": {
+        "netDisplacementMeters": 1.4248440731144785,
+        "pathLengthFromStoredGLBKeysMeters": 1.439465987574036,
+        "maximumForwardDisplacementMeters": 1.4243801834898935,
+        "minimumForwardDisplacementMeters": 0,
+        "finalRootDeltaXYZMeters": {
+          "x": 0.036355543879234675,
+          "y": -0.006729841232299805,
+          "z": 1.4243801834898935
+        },
+        "nativeManifestTargetNetHorizontalMeters": 1.4248440731144785,
+        "nativeManifestTargetPathHorizontalMeters": 1.439465984613442,
+        "glbPathLengthMinusManifestMeters": 2.9605939921850677e-9,
+        "requestedLeadNetPlusMarginMeters": 1.5448440731144784,
+        "conservativeLeadPathPlusMarginMeters": 1.5594659875740362
+      }
+    }
+  ],
+  "status": "STATIC_STOP_LEAD_FEASIBLE_AT_ALL_SIX_STATIONS; NO_PEER_CONTACT_OR_RUNTIME_ACCEPTANCE",
+  "createdFromExistingQueryTask": {
+    "taskId": "task_FsQMZqLzB976mihA",
+    "operationKey": "crowd-v45-stop-static-query-prefixedclip-20261122",
+    "newSimulationOrTestsForSaving": false
+  },
+  "sourceRevision": "0943055db6ec570bcef9f2c8b41c9e5467c808f9",
+  "sourceRepository": "microsoft/Microsoft-Rocketbox",
+  "sourceVariant": "common-reference with base walk_neutral; current d38674c9 manifest, not the preceding per-clip-reference prototype",
+  "fileReferences": {
+    "sourceManifest": "common-reference-audit.json",
+    "emma": "../outputs/emma-matched-locomotion.glb",
+    "ethan": "../outputs/ethan-matched-locomotion.glb",
+    "adapter": "../../../../ready-crowd-v1.js",
+    "layout": "../../../../ready-crowd-layout-v1.json",
+    "navmesh": "../../../../ready-crowd-navmesh-v1.bin",
+    "frozenRuntime": "../../../../visitors-v44.js"
+  },
+  "method": {
+    "stationStart": "projectedGoal - unit(bodyViewYaw) * leadLength",
+    "stationHeading": "atan2(stationInfo.targetX - projectedGoal.x, stationInfo.targetZ - projectedGoal.z); frozen bccc station targets",
+    "directness": "Upstream queryPath success, both XZ projection shifts <=.01 m, every path corner within .02 m lateral distance of the requested straight segment and progress in [-.02,length+.02].",
+    "clearance": "Exact 2D straight-segment distance to each raw rectangular obstacle (minimum over its four edges, with inside/intersection rejection) and floor boundary; minimum must be >=.70 m.",
+    "rootLength": "Hips translation keys of the actual packaged UPF · Stop GLB, subtract initial XZ. Net is end-to-start horizontal distance. Path length is the sum of consecutive key-segment horizontal distances. At unit holder scale, a pure body yaw preserves both lengths in world XZ.",
+    "lengthVariants": [
+      "net horizontal displacement +.12 m",
+      "max forward range +.12 m",
+      "full horizontal path length +.12 m"
+    ],
+    "noCrowdUpdate": true
+  },
+  "limitations": [
+    "Static circle radius .70 m is the requested feasibility envelope. The full skinned envelope of the new Stop poses/blends was not measured here.",
+    "Other visitors, moving obstacles, station conflicts and dynamic avoidance are excluded. This is not a dynamic PASS.",
+    "The incoming path, velocity/phase handoff into Stop, stopping contact and final station ownership are not executed or accepted.",
+    "A scalar straight lead is only reserved space. Authored Stop has lateral root motion and, for Emma, forward overshoot; applying the clip unchanged requires separate endpoint and whole-root-path handling.",
+    "Raw root net/path figures below are from current common-reference outputs. Do not reuse the older prototype values around .682/1.414 m.",
+    "Manifest path-length and raw-GLB-key sums are both retained. Their differences are below3e-9 m; no source trajectories were rescaled or altered.",
+    "No repository runtime, adapter, animation asset or frozen integration document was changed. This JSON only packages the already-computed query result."
+  ],
+  "summary": {
+    "requestedNetLeadStationsPerActor": 6,
+    "requestedNetLeadFeasible": {
+      "emma": true,
+      "ethan": true
+    },
+    "conservativeFullPathLeadFeasible": {
+      "emma": true,
+      "ethan": true
+    },
+    "rejectedMaleStations": [],
+    "minimumRawClearanceMeters": 0.7899998092651366,
+    "maximumProjectionShiftMeters": 1.0308393466892926e-7,
+    "maximumLateralPathDeviationMeters": 8.905524821032341e-8,
+    "peerAcceptance": false,
+    "contactAcceptance": false,
+    "runtimeAcceptance": false
+  }
+}
