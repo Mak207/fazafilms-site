@@ -1,4 +1,4 @@
-import { addWalkers } from "./visitors-v40.js?v=41";
+import { addWalkers } from "./visitors-v40.js?v=42";
 import { mountRailPanel, signPlinth } from "./plinths.js?v=33";
 import { createWallProgram } from "./wall-program.js?v=32";
 import * as THREE from "three";
