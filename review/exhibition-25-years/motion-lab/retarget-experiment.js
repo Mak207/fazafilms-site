@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
-import { AnimationRetargeting } from './vendor/upf/retargeting.js';
+import { AnimationRetargeting, applyTPose } from './vendor/upf/retargeting.js';
 
 // UPF GTI, pinned 82f1b8218813547224dd96df1638c950d241824d.
 // The exhibition mesh and its skin remain unchanged. This adapter makes the
@@ -16,6 +16,29 @@ const pose = (bones) => bones.map((b) => ({ p: b.position.clone(), q: b.quaterni
 const restore = (bones, saved) => bones.forEach((b, i) => {
   b.position.copy(saved[i].p); b.quaternion.copy(saved[i].q); b.scale.copy(saved[i].s);
 });
+
+function calibrateCanonicalPose(skeleton) {
+  const names = new Map(skeleton.bones.map((bone) => [normal(bone.name), bone.name]));
+  const roles = {
+    Hips: 'hips', BelowStomach: 'spine', Stomach: 'spine1', ShouldersUnion: 'spine2', Neck: 'neck', Head: 'head',
+    LShoulder: 'leftshoulder', LArm: 'leftarm', LElbow: 'leftforearm', LWrist: 'lefthand',
+    RShoulder: 'rightshoulder', RArm: 'rightarm', RElbow: 'rightforearm', RWrist: 'righthand',
+    LUpLeg: 'leftupleg', LLeg: 'leftleg', LFoot: 'leftfoot', RUpLeg: 'rightupleg', RLeg: 'rightleg', RFoot: 'rightfoot',
+  };
+  const map = Object.fromEntries(Object.entries(roles).map(([role, name]) => {
+    if (!names.has(name)) throw new Error(`Missing canonical-pose bone: ${name}`);
+    return [role, names.get(name)];
+  }));
+  const offsets = skeleton.bones.map((bone) => bone.position.clone());
+  // CURRENT alone retains the anatomical difference between the two rest
+  // stances. A shared calibration pose is required by UPF's retarget formula.
+  // Only temporary skeletons are changed; mesh, IBM and target offsets stay put.
+  applyTPose(skeleton, map);
+  skeleton.bones[0].updateWorldMatrix(true, true);
+  const maxOffsetDeltaM = Math.max(...skeleton.bones.map((bone, i) => bone.position.distanceTo(offsets[i])));
+  if (maxOffsetDeltaM > 1e-8) throw new Error('Canonical-pose calibration changed a target bone offset');
+  return { method: 'UPF applyTPose with explicit anatomical map', maxOffsetDeltaM };
+}
 
 function prepareSource(sourceRoot, targetRoot, clips) {
   const animatedRoot = cloneSkinned(sourceRoot);
@@ -101,12 +124,17 @@ function prepareSource(sourceRoot, targetRoot, clips) {
 }
 
 export function retargetNativeClips({ sourceRoot, targetRoot, sourceClips, prefix = 'UPF · ' }) {
-  // Caller must supply unanimated default/rest poses. CURRENT deliberately avoids
+  // Caller supplies unanimated default/rest poses. Temporary source and target
+  // skeletons are then put in a shared anatomical reference pose. CURRENT avoids
   // treating the compressed mesh's coordinate transform as skeleton scale.
   const targetClone = cloneSkinned(targetRoot);
   targetClone.updateMatrixWorld(true);
   const source = prepareSource(sourceRoot, targetClone, sourceClips);
   const targetSkeleton = firstSkeleton(targetClone);
+  const calibration = {
+    source: calibrateCanonicalPose(source.skeleton),
+    target: calibrateCanonicalPose(targetSkeleton),
+  };
   const solver = new AnimationRetargeting(source.skeleton, targetSkeleton, {
     srcPoseMode: AnimationRetargeting.BindPoseModes.CURRENT,
     trgPoseMode: AnimationRetargeting.BindPoseModes.CURRENT,
@@ -141,7 +169,8 @@ export function retargetNativeClips({ sourceRoot, targetRoot, sourceClips, prefi
       reconstruction: source.reconstruction, sourceClips: sourceClips.map((c) => c.name),
       quaternionNormalization: { maxInputNormDeviation: maxQuaternionNormDeviation, count: normalizedQuaternionCount },
       targetClips: clips.map((c) => ({ name: c.name, duration: c.duration, tracks: c.tracks.length })),
-      poseModes: 'CURRENT from verified default bone TRS',
+      poseModes: 'CURRENT after shared canonical T-pose calibration on temporary skeletons',
+      calibration,
       targetGeometryModified: false,
       limitations: ['UPF retains target bone offsets; non-root translation animation is not transferred.',
         'Reparented source motion is baked at 60 Hz plus authored key times.',

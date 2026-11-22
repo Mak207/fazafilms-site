@@ -1,4 +1,4 @@
-import { addWalkers } from "./visitors-v40.js?v=42";
+import { addWalkers } from "./visitors-v43.js?v=43";
 import { mountRailPanel, signPlinth } from "./plinths.js?v=33";
 import { createWallProgram } from "./wall-program.js?v=32";
 import * as THREE from "three";
@@ -272,6 +272,49 @@ function init() {
   const cubeStart = performance.now();
   let lastTick = cubeStart;
   let visitorTime = 0;
+  const visitorQaEnabled = new URLSearchParams(location.search).has("visitorQA");
+  let visitorPaused = visitorQaEnabled;
+  if (visitorQaEnabled) {
+    // Explicit diagnostic mode runs the same production updater and renderer.
+    // No alternative character controller or pose correction is installed here.
+    window.__EXHIBITION_VISITOR_QA__ = {
+      ready: async () => { await updateWalkers.ready; return true; },
+      pause: () => { visitorPaused = true; },
+      resume: () => { visitorPaused = false; },
+      get time() { return visitorTime; },
+      snapshot: () => updateWalkers.snapshot?.() ?? null,
+      reset: () => {
+        visitorPaused = true;
+        visitorTime = 0;
+        updateWalkers.reset?.();
+        updateWalkers(0);
+      },
+      step: (delta, options = {}) => {
+        if (!Number.isFinite(delta) || delta <= 0 || delta > 0.1) throw new Error("QA step must be in (0, 0.1]");
+        visitorPaused = true;
+        visitorTime += delta;
+        updateWalkers(visitorTime);
+        if (options.render !== false) {
+          controls.update();
+          renderer.render(scene, camera);
+        }
+        return visitorTime;
+      },
+      setCamera: (position, target, fov = 42) => {
+        cameraMotion = null;
+        state.walking = false;
+        controls.enableDamping = false;
+        camera.position.fromArray(position);
+        controls.target.fromArray(target);
+        camera.fov = fov;
+        camera.updateProjectionMatrix();
+        controls.update();
+        renderer.render(scene, camera);
+      },
+      render: () => renderer.render(scene, camera),
+      refs: { THREE, scene, camera, controls, renderer, updateWalkers }
+    };
+  }
   let lastPaint = -Infinity;
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
@@ -297,8 +340,10 @@ function init() {
     trainPanel.update(Math.min(elapsed,.15), camera, state.walking);
     // Keep the real five-minute visitor schedule at low frame rates. A long
     // background-tab suspension is intentionally ignored.
-    if (elapsed < 1) visitorTime += elapsed;
-    updateWalkers(visitorTime);
+    if (!visitorPaused) {
+      if (elapsed < 1) visitorTime += elapsed;
+      updateWalkers(visitorTime);
+    }
     controls.update();
     exhibits.update(camera, performance.now(), selectedModelId);
     renderer.render(scene, camera);

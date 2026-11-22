@@ -1,0 +1,107 @@
+{
+  "format": "rocketbox-turns-source-manifest-v1",
+  "source_repository": "https://github.com/microsoft/Microsoft-Rocketbox",
+  "source_revision": "0943055db6ec570bcef9f2c8b41c9e5467c808f9",
+  "asset_count": 8,
+  "total_asset_bytes": 10101344,
+  "license": {
+    "spdx": "MIT",
+    "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/LICENSE.md",
+    "sha256": "17474e386e0b9e1a700cc3d06b2b0882a2c376d9c6b49c7f8274409b8f8d2352",
+    "text": "MIT License\n\nCopyright (c) 2020 Microsoft\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n"
+  },
+  "converter_mapping_reference": {
+    "repository": "https://github.com/memoriesrohit/avatar-studio",
+    "revision": "2fd9ec82fbe1613d40ae38aadcca3f410725f740",
+    "url": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/tools/rocketbox/rb_build.py",
+    "sha256": "2b86fac73262ccabeee1807fc28922174056efe497952ecc98e053fd3065ac23",
+    "license": {
+      "spdx": "MIT",
+      "url": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/LICENSE",
+      "sha256": "463e1d949eadc76ab09d6b47579a137903a0a109527eb8bbf0c68446d72dc7c7",
+      "text": "MIT License\n\nCopyright (c) 2026 Rohit Biradar\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n"
+    }
+  },
+  "exporter": {
+    "tool": "export_rocketbox_world_samples.py",
+    "format": "rocketbox-world-samples-v1",
+    "blender_series": "4.5",
+    "verified_blender_version": "4.5.10 LTS",
+    "verified_blender_build": "6dc0b208d1b5",
+    "sampling_fps": 60,
+    "original_verified_exporter_sha256": "4bd7fa6b7572513fa7e4458794b16cf1d9817647eaf675f2dee31d183dc118d3"
+  },
+  "assets": [
+    {
+      "filename": "f_turn_left_180.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xyz/f_turn_left_180.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xyz/f_turn_left_180.max.fbx",
+      "bytes": 1175568,
+      "git_blob_sha1": "f2545cc1888667d23b5e551251b8fcac7e52a739",
+      "sha256": "c8de395f622eb6816de5f0250f05eb1ac9d2440dcdbf472927d0daad71773211"
+    },
+    {
+      "filename": "f_turn_left_90.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xyz/f_turn_left_90.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xyz/f_turn_left_90.max.fbx",
+      "bytes": 1299280,
+      "git_blob_sha1": "11d36f20f09571a8ed0b31cd7ed7e6303e5c2b54",
+      "sha256": "240d68bd4ef3ab65a7307256fb733b16bd66b8e2c0e6a437d412cd157e1096c9"
+    },
+    {
+      "filename": "f_turn_right_180.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xyz/f_turn_right_180.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xyz/f_turn_right_180.max.fbx",
+      "bytes": 1139344,
+      "git_blob_sha1": "a5fbc2d63a8a2eef6675d9a477181de4647bd0d9",
+      "sha256": "983f9f89312c901b49cbe0bec0a7179f4e6c86e6bfec9f15b3eb1a36e622cd4a"
+    },
+    {
+      "filename": "f_turn_right_90.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xyz/f_turn_right_90.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xyz/f_turn_right_90.max.fbx",
+      "bytes": 1299280,
+      "git_blob_sha1": "bf136ec45209290edb5ab2e64a03eed30c5aed61",
+      "sha256": "63bdb1b5e3bf2206b37ff22aada0bde668ae06c48820d7bd9b1f68001227e860"
+    },
+    {
+      "filename": "m_turn_left_180.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xyz/m_turn_left_180.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xyz/m_turn_left_180.max.fbx",
+      "bytes": 1325984,
+      "git_blob_sha1": "09aa11644b77d7944fa79bd42c8054c6592723de",
+      "sha256": "07abd95c0ea314a8c6f81b0265a2b02fb16949b896bb2a36d0e3e950701be4d1"
+    },
+    {
+      "filename": "m_turn_left_90.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xyz/m_turn_left_90.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xyz/m_turn_left_90.max.fbx",
+      "bytes": 1299184,
+      "git_blob_sha1": "20cc2e386451461657cef25cb385e5267b096316",
+      "sha256": "da138838ea930b29c9996c6633e588b5352fe1f4d74f5cfa5c7acb22798dc97f"
+    },
+    {
+      "filename": "m_turn_right_180.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xyz/m_turn_right_180.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xyz/m_turn_right_180.max.fbx",
+      "bytes": 1308256,
+      "git_blob_sha1": "42739df43aad8cc539b8376e3084461de421600d",
+      "sha256": "adb7a89b30df8d93885f1a4dfad5bc7f76ade9af4264a09c7150717818f4888c"
+    },
+    {
+      "filename": "m_turn_right_90.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xyz/m_turn_right_90.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xyz/m_turn_right_90.max.fbx",
+      "bytes": 1254448,
+      "git_blob_sha1": "948d02d7f32111cd5a363992fcf357e4e87a9e8c",
+      "sha256": "721ac18eb4cc5278b479734e185423fe05a4bf6b2ae95514e02d049b4ce70b3a"
+    }
+  ],
+  "notes": [
+    "Only eight turns actually used: female/male left/right 90/180. Walk start/stop are excluded.",
+    "FBX files and large world-sample JSON are external build inputs/outputs, not repository assets.",
+    "Preserve the copyright and permission notices above with redistributed source or derived motion data.",
+    "World samples include animated Armature motion. Separate use_anim=False import is an FBX static reference, not an asserted canonical bind pose.",
+    "Retarget using the existing pinned Three/UPF vendor and saved current exhibition rigs; matching bone names alone does not establish bind compatibility."
+  ]
+}
