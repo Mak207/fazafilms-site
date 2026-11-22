@@ -1,0 +1,147 @@
+{
+  "status": "Review candidate, NOT a full foot-contact/naturalness PASS.",
+  "media": {
+    "path": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-ready-locomotion-data-20261122\\v44-final-review\\avatar-v44-review-bccc-120s-and-close.mp4",
+    "bytes": 10915090,
+    "sha256": "5af95cec354ea9aa655b11955aadf3731a016be393625ebdce93767bb20d3cc9",
+    "seconds": 152.0,
+    "fps": 30
+  },
+  "container": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 1280,
+        "height": 720,
+        "r_frame_rate": "30/1",
+        "nb_frames": "4560",
+        "side_data_list": [
+          {}
+        ]
+      }
+    ],
+    "format": {
+      "duration": "152.000000",
+      "size": "10915090"
+    }
+  },
+  "sections": [
+    {
+      "name": "overview",
+      "videoStart": 0,
+      "videoEnd": 120.0,
+      "sceneTime": [
+        0,
+        120
+      ],
+      "tempo": 1,
+      "continuous": true
+    },
+    {
+      "name": "emma-side",
+      "videoStart": 120.0,
+      "videoEnd": 128.0,
+      "sceneTime": [
+        13,
+        21
+      ],
+      "tempo": 1,
+      "continuous": true
+    },
+    {
+      "name": "emma-front",
+      "videoStart": 128.0,
+      "videoEnd": 136.0,
+      "sceneTime": [
+        13,
+        21
+      ],
+      "tempo": 1,
+      "continuous": true
+    },
+    {
+      "name": "ethan-side",
+      "videoStart": 136.0,
+      "videoEnd": 144.0,
+      "sceneTime": [
+        17,
+        25
+      ],
+      "tempo": 1,
+      "continuous": true
+    },
+    {
+      "name": "ethan-front",
+      "videoStart": 144.0,
+      "videoEnd": 152.0,
+      "sceneTime": [
+        17,
+        25
+      ],
+      "tempo": 1,
+      "continuous": true
+    }
+  ],
+  "inputSha256": {
+    "visitors-v44.js": "bccc1feea2548202027e98de18c65f8aa5f93acefe704817f742eff724bdfab6",
+    "visitor-motion-v43.js": "25bba4041399a033aee1ff259f083d81897da8588bdd90d53f3667bbc365e6ab",
+    "ready-crowd-v1.js": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de",
+    "index.html": "29f2d9a8d5b1ab50d8751fcaa77f3e15c96c28bcd0a55b28f6ad2f042191789b",
+    "exhibition-3d.js": "c6d2a346775d09a6049501d1223c081b5e5ba767760374675a8fecb26b6e461d"
+  },
+  "captureScript": "tools/capture_visitors_v44_review.py",
+  "captureScriptSha256": "2e9c75013a8eccc604e58d9c9b71f5bb1f2d7f60eab3153d1bffeca308402e5d",
+  "captureReportSha256": "3dd60ab86d5ffb8ebc8ac11dd7910d59783de9b693aabc8a2c80c7cf512ed16d",
+  "method": "Deterministic simulation at60Hz encoded30fps, 1x scene tempo. This is not browser performance/FPS measurement. Geometry and native joint clips unchanged.",
+  "cameraConfig": {
+    "overview": [
+      [
+        -5.7,
+        3.2,
+        6.8
+      ],
+      [
+        0,
+        0.9,
+        -0.8
+      ],
+      55
+    ],
+    "geometryHidden": false
+  },
+  "geometryHidden": false,
+  "encoding": {
+    "overview": {
+      "exitCode": 0,
+      "frames": 3600
+    },
+    "emma-side": {
+      "exitCode": 0,
+      "frames": 240
+    },
+    "emma-front": {
+      "exitCode": 0,
+      "frames": 240
+    },
+    "ethan-side": {
+      "exitCode": 0,
+      "frames": 240
+    },
+    "ethan-front": {
+      "exitCode": 0,
+      "frames": 240
+    }
+  },
+  "pageErrors": [],
+  "runtimeErrors": [],
+  "completedJourneys": {
+    "emma": 5,
+    "ethan": 5
+  },
+  "finalSimulationTime": 119.99999999999447,
+  "browserClosed": true,
+  "ownedServerClosed": true,
+  "limitations": "Continuous source sections include start/stop and heading contact defects. Dedicated start/stop and curved-walk clips are not installed. Controlled30fps output is not a browser FPS benchmark."
+}

@@ -1,0 +1,92 @@
+{
+  "source_repository": "microsoft/Microsoft-Rocketbox",
+  "source_revision": "0943055db6ec570bcef9f2c8b41c9e5467c808f9",
+  "source_tree_sha256": "484bcfd5c41d6aadeeab9e7d5c25d6659f24807ed8fc98c0bef0e701ac943b7f",
+  "assets": [
+    {
+      "filename": "f_idle_neutral_01.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_static/f_idle_neutral_01.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_static/f_idle_neutral_01.max.fbx",
+      "bytes": 2959360,
+      "git_blob_sha1": "aecf1d0089ccfc0c381d5395294bb1c8fe0e63ae",
+      "sha256": "fd68b33ea9e290dc734ca8c3a71ef5842bb2dfe719853ff84f6336d06d39fdcb",
+      "provenance": "downloaded_pinned_source"
+    },
+    {
+      "filename": "f_walk_start.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xy/f_walk_start.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xy/f_walk_start.max.fbx",
+      "bytes": 922800,
+      "git_blob_sha1": "196cc8b3e03534d91a3a2b3b3b58d6f18948c6a2",
+      "sha256": "509cb6486c0938bdc8ed000041c6c6be82bc7324b8b2ab68515a6bc143b3e24b",
+      "provenance": "verified_cached_source"
+    },
+    {
+      "filename": "f_walk_stop.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xy/f_walk_stop.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xy/f_walk_stop.max.fbx",
+      "bytes": 1147184,
+      "git_blob_sha1": "fcf5d47314b68b447ad68280c040c936343128e6",
+      "sha256": "e2f7d8dd7b08f53e33befb5515095af54f87effc6491b0774e401c99f497256b",
+      "provenance": "verified_cached_source"
+    },
+    {
+      "filename": "m_idle_neutral_01.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_static/m_idle_neutral_01.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_static/m_idle_neutral_01.max.fbx",
+      "bytes": 2418544,
+      "git_blob_sha1": "a2d92c3326a9c503af677c9fa6082387f060d6c4",
+      "sha256": "818cc185af21390575f7fbfdeb3012ba2ce5969fbcb220ea725a2617b339a6e2",
+      "provenance": "downloaded_pinned_source"
+    },
+    {
+      "filename": "m_walk_start.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xy/m_walk_start.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xy/m_walk_start.max.fbx",
+      "bytes": 931792,
+      "git_blob_sha1": "ea49c0c4972ad1bf4d0124ea8ecb3d1f451698e9",
+      "sha256": "05243edcc6712bbd526ac2d7022e6a8bd49debaadf012f96d4b81795fb169817",
+      "provenance": "verified_cached_source"
+    },
+    {
+      "filename": "m_walk_stop.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xy/m_walk_stop.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xy/m_walk_stop.max.fbx",
+      "bytes": 1209760,
+      "git_blob_sha1": "ce2f2359034c5df29f03cd4d645356af3da20881",
+      "sha256": "808f112c37c0db60fd1855fb2785749557ecdb9107e8028cd3f28b11aa9c62b1",
+      "provenance": "verified_cached_source"
+    },
+    {
+      "filename": "f_walk_neutral.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xy/f_walk_neutral.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xy/f_walk_neutral.max.fbx",
+      "bytes": 1002832,
+      "git_blob_sha1": "94d6f50765e0865eee6dd439b1ab0ca3511c784e",
+      "sha256": "e210c9e34949a4eacad0a85021d4d1a59aab177ca1737e6038309896147ebae2"
+    },
+    {
+      "filename": "m_walk_neutral.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xy/m_walk_neutral.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xy/m_walk_neutral.max.fbx",
+      "bytes": 958512,
+      "git_blob_sha1": "f8816638330d02fb31920d46851188b920d66ab1",
+      "sha256": "93089851a370e3a117a6bd04c002815f7133fce41c6271e9eb448ca1228b154f"
+    }
+  ],
+  "licenses": [
+    {
+      "file": "LICENSE-Microsoft-Rocketbox.md",
+      "sha256": "17474e386e0b9e1a700cc3d06b2b0882a2c376d9c6b49c7f8274409b8f8d2352"
+    },
+    {
+      "file": "LICENSE-avatar-studio",
+      "sha256": "463e1d949eadc76ab09d6b47579a137903a0a109527eb8bbf0c68446d72dc7c7"
+    }
+  ],
+  "avatar_studio_revision": "2fd9ec82fbe1613d40ae38aadcca3f410725f740",
+  "created_utc": "2026-11-22T15:14:48.729815+00:00",
+  "status": "common_reference_base_cycle_sources;not_runtime_acceptance",
+  "base_cycle_manifest_sha256": "2091ff3e2b89af4566a3406250252c38c76b4129e351c81ba248b442ad40b43e",
+  "parent_prototype_manifest_sha256": "5d2e70886b8d00b0127229cc38f964ecf2219110b3b885f32b4f30290bf56cf3"
+}

@@ -1,0 +1,323 @@
+{
+  "method": "Full LBS from actual recorded world bone matrices (rounded to 1e-7), current model POSITION/JOINTS/WEIGHTS/IBM. Metadata verified attached mode, bindMatrix identity and meshWorld*bindMatrixInverse identity. Weighted shoe min cross-checked to the renderer runtime for every frame. Static distances use the 2D footprint of layout AABBs conservatively at all heights. Positive center-clearance minus actual radius proves the whole projected skin and its triangles clear those AABBs; vertex clearance is reported separately. Positive pair centerDistance-rA-rB proves skin disjointness by enclosing circles at each captured frame; no between-frame collision claim.",
+  "frames": 5401,
+  "traceRecords": 5401,
+  "sampleTimes": null,
+  "duration": 89.99999999999618,
+  "inputs": {
+    "framesSha256": "025e4701b81802a765bfa05b62dd0cc43734a73900f828793c8731ba50f1c4a7",
+    "metadataSha256": "5a41fecab89446b332a9084039198fdca9b0ee833d8ef1978faf3f9252b68e15",
+    "continuityReportSha256": "c789cc666767c073b1abef5fe219f57e6077792e4512755b58c7ea5ab3ba2e9e"
+  },
+  "summary": {
+    "emma": {
+      "vertices": 52209,
+      "shoeVertices": 6310,
+      "maxRadius": 0.4052387177488835,
+      "minVertexStaticClearance": 0.569667757436496,
+      "minCircleStaticClearanceBound": 0.5282183255433961,
+      "minShoeY": -0.0023333258546542404,
+      "maxShoeY": 5.2613868622986004e-08,
+      "maxShoeVsRuntimeMinimumError": 5.2613868622986004e-08,
+      "maxYawRateDegreesPerSecond": 137.50987083151085,
+      "maxYawRateUnder015mpsDegreesPerSecond": 137.50987083142232,
+      "maxNonAuthoredYawRateDegreesPerSecond": 137.50987083151085,
+      "nonAuthoredYawLimitViolations": 0,
+      "movingIdleFrames": 0,
+      "movingIdleDistanceApprox": 0,
+      "states": {
+        "observe": 2198,
+        "turn": 644,
+        "yield": 803,
+        "walk": 1403,
+        "waiting": 353
+      },
+      "maxRadiusWitness": {
+        "time": 33.16666666666607,
+        "state": "walk",
+        "phase": 0.6662151861060333,
+        "walkWeight": 0.5063327107190921,
+        "vertexIndex": 13714,
+        "vertex": [
+          -2.9326053942634873,
+          0.06909480471024898,
+          -1.2852597647120132
+        ],
+        "holder": [
+          -2.6566715240478516,
+          0.0,
+          -0.9884788393974304
+        ]
+      },
+      "minStaticWitness": {
+        "time": 10.383333333333429,
+        "state": "yield",
+        "vertexIndex": 394,
+        "vertex": [
+          -3.4701824341178567,
+          0.8373762213940622,
+          0.5703322425635039
+        ],
+        "holder": [
+          -3.4921987056732178,
+          0.0,
+          0.2807845175266266
+        ]
+      },
+      "lowSpeedYawWitness": {
+        "time": 75.91666666666364,
+        "state": "walk",
+        "actualSpeed": 0.1045069779490204,
+        "walkWeight": 0.02367088211940348,
+        "phase": 0.9821258692288,
+        "holder": [
+          -2.194978952407837,
+          0.0,
+          -0.3200380206108093
+        ],
+        "yawRateDegreesPerSecond": 137.50987083142232
+      }
+    },
+    "ethan": {
+      "vertices": 48517,
+      "shoeVertices": 8335,
+      "maxRadius": 0.6433910836557089,
+      "minVertexStaticClearance": 0.41610393487194597,
+      "minCircleStaticClearanceBound": 0.13812424703149428,
+      "minShoeY": -5.791623582107608e-08,
+      "maxShoeY": 5.530439043232177e-08,
+      "maxShoeVsRuntimeMinimumError": 5.791623582107608e-08,
+      "maxYawRateDegreesPerSecond": 180.28953672788342,
+      "maxYawRateUnder015mpsDegreesPerSecond": 157.1970769554192,
+      "maxNonAuthoredYawRateDegreesPerSecond": 137.5098708314725,
+      "nonAuthoredYawLimitViolations": 0,
+      "movingIdleFrames": 0,
+      "movingIdleDistanceApprox": 0,
+      "states": {
+        "observe": 1650,
+        "turn": 648,
+        "walk": 2555,
+        "yield": 548
+      },
+      "maxRadiusWitness": {
+        "time": 21.23333333333341,
+        "state": "walk",
+        "phase": 0.6667290221829214,
+        "walkWeight": 1,
+        "vertexIndex": 39925,
+        "vertex": [
+          2.30890184134477,
+          0.17398473607979853,
+          0.20627507247968518
+        ],
+        "holder": [
+          2.1085684299468994,
+          0.0,
+          0.817682147026062
+        ]
+      },
+      "minStaticWitness": {
+        "time": 40.94999999999896,
+        "state": "walk",
+        "vertexIndex": 643,
+        "vertex": [
+          1.5588437630959207,
+          1.1349247052307756,
+          1.1015106391588416
+        ],
+        "holder": [
+          1.81852388381958,
+          0.0,
+          1.2940177917480469
+        ]
+      },
+      "lowSpeedYawWitness": {
+        "time": 79.18333333333013,
+        "state": "turn",
+        "actualSpeed": 0.14149920213552758,
+        "walkWeight": 0,
+        "phase": 0.5154178338446656,
+        "holder": [
+          -3.3002500534057617,
+          0.0,
+          -1.630711555480957
+        ],
+        "yawRateDegreesPerSecond": 157.1970769554192
+      }
+    }
+  },
+  "minimumPairCircleLowerBound": 0.5440673896200034,
+  "pairWitness": {
+    "time": 68.04999999999742,
+    "centerDistance": 1.4013437776831525,
+    "radii": [
+      0.2987971667697615,
+      0.5584792212933876
+    ],
+    "states": [
+      "yield",
+      "walk"
+    ]
+  },
+  "elapsedSeconds": 273.9744070000015,
+  "captureInputManifest": {
+    "visitors-v44.js": "39948c10b257436f659fba2521ba9dac03a53669e62ea7805e291a5047f4887a",
+    "visitor-motion-v43.js": "25bba4041399a033aee1ff259f083d81897da8588bdd90d53f3667bbc365e6ab",
+    "ready-crowd-v1.js": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de",
+    "index.html": "29f2d9a8d5b1ab50d8751fcaa77f3e15c96c28bcd0a55b28f6ad2f042191789b",
+    "exhibition-3d.js": "c6d2a346775d09a6049501d1223c081b5e5ba767760374675a8fecb26b6e461d"
+  },
+  "geometrySha256": {
+    "emma": "125adf09e8309f895fbbc39b479b311ff05832a0dc6d40c055a2df3ed29557bd",
+    "ethan": "b02c7ffa01347060b3668c9073776c0081c86412d37931acae2b56c05c4d4616"
+  },
+  "layoutSha256": "870a54289223ad67a47bad37e82017b10afeca34dc2de0949519395c60f4e35a",
+  "auditorSha256": "87db935c30c9c55df2e92a2e8273cef5a6c4a5e2537489888191c667c50bbb44",
+  "geometryReaderSha256": "22818981124105b2762a33b5e4decbbc4394de1af0fd623fb139ab116cc4e151",
+  "status": "HISTORICAL_GEOMETRY_ONLY; REJECTED_AS_FINAL_GAIT_ACCEPTANCE",
+  "reason": "The same capture has substantial material-sole sliding in17..20s. Numerical geometry/source-quaternion agreement cannot validate natural locomotion.",
+  "contactRejectionProof": "v44-rejected-speed-blend-contact.json",
+  "runtimeSha256": "39948c10b257436f659fba2521ba9dac03a53669e62ea7805e291a5047f4887a",
+  "adapterSha256": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de",
+  "seed": 20261122,
+  "fixedHz": 60,
+  "measuredChecks": {
+    "allFullSkinRadiusAtOrBelow068m": true,
+    "fullSkinStaticEnclosingCircleBoundsPositive": true,
+    "fullSkinPairEnclosingCircleBoundsPositive": true,
+    "nonAuthoredYawAtOrBelow24RadiansPerSecond": true,
+    "noMovingIdleFramesAbove002mps": true
+  },
+  "floorExceptions": {
+    "emma": {
+      "thresholdMeters": -1e-05,
+      "frames": 11,
+      "episodes": [
+        {
+          "start": 18.683333333333554,
+          "end": 18.783333333333548,
+          "frames": 7,
+          "minimumShoeY": -0.0023333258546542404
+        },
+        {
+          "start": 51.58333333333169,
+          "end": 51.633333333331684,
+          "frames": 4,
+          "minimumShoeY": -0.0014829433340968722
+        }
+      ]
+    },
+    "ethan": {
+      "thresholdMeters": -1e-05,
+      "frames": 0,
+      "episodes": []
+    }
+  },
+  "limits": [
+    "Single recorded90-second seed only; not all routes or perpetual liveness.",
+    "Complete skin clearance is bounded at captured frames only; between-frame collisions and self-intersection are not tested.",
+    "Minimum sole height does not measure horizontal support slip. Emma has up to2.333mm floor penetration from the35mm grounding cap.",
+    "No overall artistic or gait acceptance follows; contact rejection is separate explicit evidence."
+  ],
+  "reproduction": {
+    "code": "motion-lab/tools/audit_recorded_skin.py",
+    "guide": "motion-lab/tools/RECORDED-SKIN-AUDIT.md",
+    "command": [
+      "python",
+      "review/exhibition-25-years/motion-lab/tools/audit_recorded_skin.py",
+      "--trace-dir",
+      "PATH_TO_v44-90s-gate",
+      "--decoded-dir",
+      "PATH_TO_decoded",
+      "--runtime-sha",
+      "39948c10b257436f659fba2521ba9dac03a53669e62ea7805e291a5047f4887a",
+      "--adapter-sha",
+      "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de",
+      "--expected-frames",
+      "5401",
+      "--output",
+      "NEW_OUTPUT.json"
+    ],
+    "dataBoundary": "The utility and model decoder are portable repository files. Historical trace/metadata/decoded data are retained separately on Lenovo under the external paths below. A checkout alone is NOT a self-contained historical reproduction dataset.",
+    "requiredArtifacts": [
+      {
+        "base": "repository",
+        "path": "review\\exhibition-25-years\\motion-lab\\tools\\audit_recorded_skin.py",
+        "sha256": "87db935c30c9c55df2e92a2e8273cef5a6c4a5e2537489888191c667c50bbb44",
+        "bytes": 10013
+      },
+      {
+        "base": "repository",
+        "path": "review\\exhibition-25-years\\motion-lab\\tools\\recorded_skin_geometry.py",
+        "sha256": "22818981124105b2762a33b5e4decbbc4394de1af0fd623fb139ab116cc4e151",
+        "bytes": 3838
+      },
+      {
+        "base": "repository",
+        "path": "review\\exhibition-25-years\\motion-lab\\tools\\decode_meshopt_glb.mjs",
+        "sha256": "9a5feb6d308b873503f3748aa5e85053cd170e6638784dc03ae51e99948de53c",
+        "bytes": 2945
+      },
+      {
+        "base": "repository",
+        "path": "review\\exhibition-25-years\\motion-lab\\vendor\\three\\examples\\jsm\\libs\\meshopt_decoder.module.js",
+        "sha256": "01f48524f4bac6141eaba07e94cc36e7ee56f311796fa6117c159842941b0468",
+        "bytes": 24850
+      },
+      {
+        "base": "external-work-directory",
+        "path": "avatar-motion-data-20261122\\decoded\\emma-current-decoded.glb",
+        "sha256": "125adf09e8309f895fbbc39b479b311ff05832a0dc6d40c055a2df3ed29557bd",
+        "bytes": 2481620
+      },
+      {
+        "base": "external-work-directory",
+        "path": "avatar-motion-data-20261122\\decoded\\ethan-current-decoded.glb",
+        "sha256": "b02c7ffa01347060b3668c9073776c0081c86412d37931acae2b56c05c4d4616",
+        "bytes": 2451832
+      },
+      {
+        "base": "repository",
+        "path": "review\\exhibition-25-years\\assets\\models\\visitors\\walking-woman.glb",
+        "sha256": "be518e47c6e418c3a3dc4cf0692bbcc324ff9b70af23c0c539376f1e6debb957",
+        "bytes": 734400
+      },
+      {
+        "base": "repository",
+        "path": "review\\exhibition-25-years\\assets\\models\\visitors\\walking-man.glb",
+        "sha256": "710096e92e0acbfac10f9680f262514402822dfeda33f9f0dc4117bec24172d9",
+        "bytes": 804428
+      },
+      {
+        "base": "repository",
+        "path": "review\\exhibition-25-years\\ready-crowd-layout-v1.json",
+        "sha256": "870a54289223ad67a47bad37e82017b10afeca34dc2de0949519395c60f4e35a",
+        "bytes": 2763
+      },
+      {
+        "base": "external-work-directory",
+        "path": "avatar-ready-locomotion-data-20261122\\v44-90s-gate\\frames.ndjson.gz",
+        "sha256": "025e4701b81802a765bfa05b62dd0cc43734a73900f828793c8731ba50f1c4a7",
+        "bytes": 46834126
+      },
+      {
+        "base": "external-work-directory",
+        "path": "avatar-ready-locomotion-data-20261122\\v44-90s-gate\\skin-metadata.json",
+        "sha256": "5a41fecab89446b332a9084039198fdca9b0ee833d8ef1978faf3f9252b68e15",
+        "bytes": 92892
+      },
+      {
+        "base": "external-work-directory",
+        "path": "avatar-ready-locomotion-data-20261122\\v44-90s-gate\\continuity-report.json",
+        "sha256": "c789cc666767c073b1abef5fe219f57e6077792e4512755b58c7ea5ab3ba2e9e",
+        "bytes": 2377113
+      },
+      {
+        "base": "external-work-directory",
+        "path": "avatar-ready-locomotion-data-20261122\\v44-90s-gate\\actual-skin-envelope-clearance.json",
+        "sha256": "c74d2a665946a6eedcb71edec6efea2cd7dfef01fbfcda19195fdc0c0f483739",
+        "bytes": 4799454
+      }
+    ]
+  }
+}

@@ -1,0 +1,257 @@
+{
+  "acceptanceStatus": "REJECTED",
+  "reason": "The 90-second trace ended before an unresolved mutual waiting episode. Continuing the same scenario to96.133333s produced navigation-wait-timeout for Emma. Geometry/source-pose passes did not constitute complete movement acceptance.",
+  "failureAtSeconds": 96.13333333332916,
+  "inputSha256": {
+    "visitors-v44.js": "39948c10b257436f659fba2521ba9dac03a53669e62ea7805e291a5047f4887a",
+    "visitor-motion-v43.js": "25bba4041399a033aee1ff259f083d81897da8588bdd90d53f3667bbc365e6ab",
+    "ready-crowd-v1.js": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de",
+    "index.html": "29f2d9a8d5b1ab50d8751fcaa77f3e15c96c28bcd0a55b28f6ad2f042191789b",
+    "exhibition-3d.js": "c6d2a346775d09a6049501d1223c081b5e5ba767760374675a8fecb26b6e461d"
+  },
+  "sourceReportSha256": "274230e8e93c6c534cb2a49b5fdb342291f0d07728319af29fe4ba92a5442bf8",
+  "failures": [
+    {
+      "id": "emma",
+      "code": "navigation-wait-timeout",
+      "detail": "no-safe-authored-turn-or-navmesh-route",
+      "time": 96.13333333332916
+    }
+  ],
+  "diagnostics": {
+    "fixedSteps": 5768,
+    "minimumPairDistance": 1.4006878813198238,
+    "minimumStaticClearance": 0.7332181412009411,
+    "maximumRenderedWorldDeviation": 0,
+    "maximumRootMotionDeviation": 0,
+    "rejectedRootSteps": 0,
+    "appliedRootSteps": 1300,
+    "rootPoseAdvancedWithoutApplication": 0,
+    "navigationPreflightFailures": 33,
+    "completedJourneys": 7,
+    "maximumYawStep": 0.05244410037994385,
+    "maximumFacingVelocityAngle": 1.1225562077104476,
+    "maximumFacingVelocityLagSeconds": 0.06666666666666667,
+    "facingVelocityOver45DegreesTime": 0.06666666666666667,
+    "reversedExitCandidates": 36,
+    "reversedEntryCandidates": 8,
+    "maximumRecoverySeconds": 15.249999999999133,
+    "recoveryCompletions": 2,
+    "yieldCount": 4,
+    "yieldResumes": 2,
+    "yieldReplans": 1,
+    "totalYieldSeconds": 28.63333333333299,
+    "maximumYieldSeconds": 12.000000000000176,
+    "secondaryYieldSignals": 0,
+    "droppedTime": 0,
+    "fixedAccumulator": 0,
+    "engine": "recast-navigation@0.44.0",
+    "worldTranslationAuthority": "DetourCrowd snapshot",
+    "intermediateLookahead": 0.18,
+    "finalArrivalUsesEngine": true,
+    "yieldingId": "ethan",
+    "yieldPause": 0.6,
+    "lateYieldReplanAfter": 3,
+    "recoveryTotalLimit": 24,
+    "recoveryReplanLimit": 3,
+    "facingAngularSpeed": 2.4,
+    "facingVelocityThreshold": 0.1,
+    "facingMethod": "THREE.Quaternion.rotateTowards; authored turns bypass it",
+    "sourceWalkHasNonzeroContactSlip": true,
+    "startStop": "Standard Idle/Walk blend; dedicated start/stop clips are not installed."
+  },
+  "actors": [
+    {
+      "id": "emma",
+      "state": "failed",
+      "failure": {
+        "code": "navigation-wait-timeout",
+        "detail": "no-safe-authored-turn-or-navmesh-route",
+        "time": 96.13333333332916
+      },
+      "completedJourneys": 4,
+      "position": [
+        -2.17549204826355,
+        0,
+        -0.32436367869377136
+      ],
+      "navigation": {
+        "engine": "DetourCrowd",
+        "stage": null,
+        "yawWarp": 0,
+        "rootMotionDoubleApplied": false,
+        "facingTargetYaw": 1.7364714903143799,
+        "facingVelocityAngle": 0,
+        "facingLagSeconds": 0,
+        "exitDirectionDot": 0.38688620264621837,
+        "entryDirectionDot": 0.3676323024575319,
+        "recoveryTime": 0,
+        "recoveryReplans": 0,
+        "yieldCount": 2,
+        "yieldReplans": 0,
+        "yieldKind": "pre-departure",
+        "yieldReason": "exit-overlaps-active-upstream-corridor",
+        "yieldPeer": "ethan",
+        "yieldTime": 6.866666666666648,
+        "yieldHeldYaw": 1.5915873538051122,
+        "turnName": null,
+        "turnEndpoint": [
+          -3.5015082743521333,
+          0,
+          0.16174522528673407
+        ],
+        "turnPreflight": {
+          "clear": true,
+          "sampleCount": 141,
+          "minimumClearance": 0.9431430036334874,
+          "minimumPeerDistance": 4.446172940933272,
+          "maximumProjectionShift": 1.1882717123291894e-07
+        },
+        "turnElapsed": 2.6933332538604735,
+        "turnBlockedTime": 0,
+        "approachLead": 0.65,
+        "exitLead": 0.65,
+        "retries": 12,
+        "waitTime": 12.000000000000176,
+        "waitReason": "no-safe-authored-turn-or-navmesh-route",
+        "arrivalYawError": null,
+        "requestedPath": [
+          [
+            {
+              "x": -3.5015082359313965,
+              "y": 0,
+              "z": 0.16174522042274475
+            },
+            {
+              "x": -2.8532655239105225,
+              "y": 0,
+              "z": 0.11398275941610336
+            }
+          ],
+          [
+            {
+              "x": -2.8532655239105225,
+              "y": 0,
+              "z": 0.11398275941610336
+            },
+            {
+              "x": -2.7090957164764404,
+              "y": 0,
+              "z": -0.31572455167770386
+            }
+          ],
+          [
+            {
+              "x": -2.7090957164764404,
+              "y": 0,
+              "z": -0.31572455167770386
+            },
+            {
+              "x": -2.059999942779541,
+              "y": 0,
+              "z": -0.3500000238418579
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": "ethan",
+      "state": "yield",
+      "failure": null,
+      "completedJourneys": 3,
+      "position": [
+        -3.3297829627990723,
+        0,
+        -1.7648073434829712
+      ],
+      "navigation": {
+        "engine": "DetourCrowd",
+        "stage": 0,
+        "yawWarp": 0,
+        "rootMotionDoubleApplied": false,
+        "facingTargetYaw": 0.2935562040698736,
+        "facingVelocityAngle": 0,
+        "facingLagSeconds": 0,
+        "exitDirectionDot": 0.7895564257848118,
+        "entryDirectionDot": 0.9333526330468196,
+        "recoveryTime": 15.249999999999133,
+        "recoveryReplans": 1,
+        "yieldCount": 2,
+        "yieldReplans": 1,
+        "yieldKind": "pre-departure",
+        "yieldReason": "exit-lead-current-agent-volume",
+        "yieldPeer": "emma",
+        "yieldTime": 3.2499999999999933,
+        "yieldHeldYaw": 0.2935562040698736,
+        "turnName": null,
+        "turnEndpoint": [
+          -3.3297829627990723,
+          0,
+          -1.7648073434829712
+        ],
+        "turnPreflight": {
+          "clear": true,
+          "sampleCount": 1,
+          "minimumClearance": 0.9651926565170288,
+          "minimumPeerDistance": 1.845877966391764,
+          "maximumProjectionShift": 0
+        },
+        "turnElapsed": 2.793333396911621,
+        "turnBlockedTime": 0,
+        "approachLead": 0.65,
+        "exitLead": 0.65,
+        "retries": 0,
+        "waitTime": 0,
+        "waitReason": null,
+        "arrivalYawError": null,
+        "requestedPath": [
+          [
+            {
+              "x": -3.3297829627990723,
+              "y": 0,
+              "z": -1.7648073434829712
+            },
+            {
+              "x": -3.1707849502563477,
+              "y": 0,
+              "z": -1.1345537900924683
+            }
+          ],
+          [
+            {
+              "x": -3.1707849502563477,
+              "y": 0,
+              "z": -1.1345537900924683
+            },
+            {
+              "x": -3.519827127456665,
+              "y": 0,
+              "z": -0.33929985761642456
+            }
+          ],
+          [
+            {
+              "x": -3.519827127456665,
+              "y": 0,
+              "z": -0.33929985761642456
+            },
+            {
+              "x": -3.549999952316284,
+              "y": 0,
+              "z": 0.3099994659423828
+            }
+          ]
+        ]
+      }
+    }
+  ],
+  "originalVideo": {
+    "localEvidenceDirectory": "avatar-ready-locomotion-data-20261122/v44-render-review",
+    "file": "overview.mp4",
+    "sha256": "28efeea734a01d4aac4d116ff1166d723e97ff7793393f39e7cd3e8a5c1bb1e7",
+    "bytes": 3018714,
+    "status": "Rejected evidence; must not be presented as the final corrected animation."
+  },
+  "cause": "Candidate selection tested static navmesh for the exit lead but did not reject a lead occupied by a stationary peer until after selecting/playing a turn. Preferred destination history could exclude every feasible alternative even when other free stations remained."
+}

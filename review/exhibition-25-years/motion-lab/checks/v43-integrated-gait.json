@@ -1,0 +1,526 @@
+{
+  "schema": "exhibition-v43-integrated-gait/1",
+  "status": "qualified_gait_contact_acceptance",
+  "strictNumericalGatesPass": false,
+  "strictZeroCapGatePass": false,
+  "qualification": {
+    "maximumAllowedShoePenetrationM": 0.002,
+    "observedMaximumShoePenetrationM": 0.0015785796007706174,
+    "penetrationToleranceSatisfied": true,
+    "upperCorrectionCapM": 0.035,
+    "lowerCorrectionCapM": -0.03,
+    "capRetainedWithoutTuning": true,
+    "residualActor": "emma",
+    "residualFrames": 4,
+    "description": "Four start-blend frames exceed the upward correction cap; the cap remains35mm and actual residual penetration remains below1.6mm. This is qualified acceptance, not all-gates-pass."
+  },
+  "measurement": {
+    "scene": "Actual exhibition entry with visitorQA=1",
+    "seed": 424242,
+    "physicalSecondsPerViewport": 45,
+    "fixedStepSeconds": 0.016666666666666666,
+    "samplesPerActorPerViewport": 2701,
+    "runtimeFullFootUnionFrequencyHz": 60,
+    "independentFullFootUnionFrequencyHz": 10,
+    "independentFullFootUnionSamplesPerActorPerViewport": 451,
+    "weightedVerticesCriterion": "Sum of skin weights on either Foot/Toe descendant union >=.25; actual deformed vertex positions",
+    "verticesPerActor": {
+      "emma": 6310,
+      "ethan": 8335
+    },
+    "allBoneReference": "Independent mixer on cloned current rig, starting from actual currentGLB default bone TRS with official GLTFLoader name sanitization; actual action clips/times/weights",
+    "sourceReference": "Prepared Native sourceWalk on current target rig, same phase with independent linear HipsXZ detrend; true donor comparison is a separate CPU report",
+    "rendererAnimationLoop": "Stopped after visitor ready; render is explicit and background animation frozen",
+    "realTimePerformanceClaim": false,
+    "gestureDemoPeriod": 9999
+  },
+  "coverage": {
+    "observedStates": [
+      "observe",
+      "turn",
+      "walk"
+    ],
+    "motionPhases": [
+      "departure",
+      "authored turn",
+      "walk acceleration",
+      "cruise",
+      "deceleration",
+      "arrival observe"
+    ],
+    "completeJourneysPerActor": 2,
+    "thirdJourneyStarted": true,
+    "gesturesExcludedFromArtisticAcceptance": true,
+    "viewports": {
+      "desktop": {
+        "width": 1440,
+        "height": 1000
+      },
+      "mobile": {
+        "width": 390,
+        "height": 844
+      }
+    }
+  },
+  "actors": {
+    "emma": {
+      "events": [
+        {
+          "frame": 0,
+          "time": 0,
+          "state": "observe"
+        },
+        {
+          "frame": 463,
+          "time": 7.716666666666645,
+          "state": "turn"
+        },
+        {
+          "frame": 625,
+          "time": 10.416666666666764,
+          "state": "walk"
+        },
+        {
+          "frame": 996,
+          "time": 16.60000000000034,
+          "state": "observe"
+        },
+        {
+          "frame": 1574,
+          "time": 26.233333333333125,
+          "state": "turn"
+        },
+        {
+          "frame": 1736,
+          "time": 28.93333333333297,
+          "state": "walk"
+        },
+        {
+          "frame": 2156,
+          "time": 35.93333333333258,
+          "state": "observe"
+        },
+        {
+          "frame": 2497,
+          "time": 41.61666666666559,
+          "state": "turn"
+        },
+        {
+          "frame": 2623,
+          "time": 43.71666666666547,
+          "state": "walk"
+        }
+      ],
+      "completedFirstJourney": true,
+      "maxCanonicalLocalPositionErrorM": 0,
+      "maxCanonicalLocalRotationErrorDegrees": 0.0000034150945850063755,
+      "maxNativeSourceRotationDeltaDegrees": 0.0000034150945850063755,
+      "maxRootStepM": 0.018999289215125822,
+      "maxTravelVsFacingDegrees": 11.003183291962825,
+      "maxTravelVsPelvisForwardDegrees": 15.220604699145783,
+      "maxAbsPelvisYawSpeedDegreesPerSecond": 253.0884628027016,
+      "minSignedGroundingOffsetM": -0.01511967411830779,
+      "maxSignedGroundingOffsetM": 0.035,
+      "maxAbsGroundingOffsetSpeedMps": 0.4515577704795461,
+      "runtimeUnionMinAt60HzM": -0.0015785796007706174,
+      "runtimeUnionMaxAt60HzM": 0,
+      "positiveGapOver2mmFramesByState": {
+        "observe": 0,
+        "turn": 0,
+        "walk": 0
+      },
+      "fullUnionMinYM": -0.0008666083557289789,
+      "maxRuntimeIndependentUnionDeltaM": 1.6566609195578508e-16,
+      "unionVertexCountMatchesRuntime": true,
+      "liftCapExceededFrames": 4,
+      "dropCapExceededFrames": 0,
+      "feet": {
+        "Left": {
+          "kneeMinDegrees": 0.06254440101096748,
+          "kneeMaxDegrees": 66.85542146809597,
+          "maxKneeAngularSpeedDegreesPerSecond": 370.03463671679583,
+          "maxFootHorizontalSpeedMps": 3.3639798773131346,
+          "maxAbsFootHolderX": 0.17463562516054765,
+          "lengthRangeM": {
+            "thighLengthM": 0.0000668381563066478,
+            "shinLengthM": 0.000060647277049630244
+          },
+          "fullWeightedMinYM": -1.3877787807814457e-16
+        },
+        "Right": {
+          "kneeMinDegrees": 9.759832368129821,
+          "kneeMaxDegrees": 64.19505437027928,
+          "maxKneeAngularSpeedDegreesPerSecond": 311.64950239382347,
+          "maxFootHorizontalSpeedMps": 3.8511087469554894,
+          "maxAbsFootHolderX": 0.1766855772720195,
+          "lengthRangeM": {
+            "thighLengthM": 0.00006998258243878785,
+            "shinLengthM": 0.00005222576604091422
+          },
+          "fullWeightedMinYM": -0.0008666083557289789
+        }
+      }
+    },
+    "ethan": {
+      "events": [
+        {
+          "frame": 0,
+          "time": 0,
+          "state": "observe"
+        },
+        {
+          "frame": 364,
+          "time": 6.06666666666665,
+          "state": "turn"
+        },
+        {
+          "frame": 528,
+          "time": 8.800000000000017,
+          "state": "walk"
+        },
+        {
+          "frame": 724,
+          "time": 12.066666666666846,
+          "state": "observe"
+        },
+        {
+          "frame": 1384,
+          "time": 23.066666666666638,
+          "state": "turn"
+        },
+        {
+          "frame": 1536,
+          "time": 25.599999999999827,
+          "state": "walk"
+        },
+        {
+          "frame": 2154,
+          "time": 35.899999999999245,
+          "state": "observe"
+        },
+        {
+          "frame": 2506,
+          "time": 41.76666666666558,
+          "state": "turn"
+        },
+        {
+          "frame": 2658,
+          "time": 44.29999999999877,
+          "state": "walk"
+        }
+      ],
+      "completedFirstJourney": true,
+      "maxCanonicalLocalPositionErrorM": 0,
+      "maxCanonicalLocalRotationErrorDegrees": 0.000003818191820832845,
+      "maxNativeSourceRotationDeltaDegrees": 0.0000034150945850063755,
+      "maxRootStepM": 0.017333150892888834,
+      "maxTravelVsFacingDegrees": 21.387868012423677,
+      "maxTravelVsPelvisForwardDegrees": 20.95062645333021,
+      "maxAbsPelvisYawSpeedDegreesPerSecond": 180.48599452384713,
+      "minSignedGroundingOffsetM": -0.013703286039445298,
+      "maxSignedGroundingOffsetM": 0.027343075683986463,
+      "maxAbsGroundingOffsetSpeedMps": 0.5781074683625371,
+      "runtimeUnionMinAt60HzM": 0,
+      "runtimeUnionMaxAt60HzM": 0,
+      "positiveGapOver2mmFramesByState": {
+        "observe": 0,
+        "turn": 0,
+        "walk": 0
+      },
+      "fullUnionMinYM": -1.6555767173853653e-16,
+      "maxRuntimeIndependentUnionDeltaM": 1.6555767173853653e-16,
+      "unionVertexCountMatchesRuntime": true,
+      "liftCapExceededFrames": 0,
+      "dropCapExceededFrames": 0,
+      "feet": {
+        "Left": {
+          "kneeMinDegrees": 6.504174247417353,
+          "kneeMaxDegrees": 74.60207779040921,
+          "maxKneeAngularSpeedDegreesPerSecond": 307.96506870885185,
+          "maxFootHorizontalSpeedMps": 3.5160150195552196,
+          "maxAbsFootHolderX": 0.16759562987627863,
+          "lengthRangeM": {
+            "thighLengthM": 0.000058415811273471174,
+            "shinLengthM": 0.00005569263270155389
+          },
+          "fullWeightedMinYM": -1.6555767173853653e-16
+        },
+        "Right": {
+          "kneeMinDegrees": 5.223072086086631,
+          "kneeMaxDegrees": 71.92104791478398,
+          "maxKneeAngularSpeedDegreesPerSecond": 249.83373742312503,
+          "maxFootHorizontalSpeedMps": 3.4225881104984346,
+          "maxAbsFootHolderX": 0.1807457828475636,
+          "lengthRangeM": {
+            "thighLengthM": 0.00006485156030588968,
+            "shinLengthM": 0.00005823607631855188
+          },
+          "fullWeightedMinYM": -1.214306433183765e-16
+        }
+      }
+    }
+  },
+  "boundedResidualFrames": [
+    {
+      "actor": "emma",
+      "frame": 2643,
+      "timeSeconds": 44.04999999999878,
+      "state": "walk",
+      "walkPhase": 0.3598477805460991,
+      "walkWeight": 0.4300293527612754,
+      "idleWeight": 0.5699706472387246,
+      "requestedOffsetM": 0.03569868854033851,
+      "appliedOffsetM": 0.035,
+      "remainingShoeMinYM": -0.000698688540338506
+    },
+    {
+      "actor": "emma",
+      "frame": 2644,
+      "timeSeconds": 44.06666666666545,
+      "state": "walk",
+      "walkPhase": 0.3658955340747525,
+      "walkWeight": 0.46384386407014594,
+      "idleWeight": 0.5361561359298541,
+      "requestedOffsetM": 0.036415522941871274,
+      "appliedOffsetM": 0.035,
+      "remainingShoeMinYM": -0.0014155229418712709
+    },
+    {
+      "actor": "emma",
+      "frame": 2645,
+      "timeSeconds": 44.083333333332114,
+      "state": "walk",
+      "walkPhase": 0.3722382999706575,
+      "walkWeight": 0.4978070237935537,
+      "idleWeight": 0.5021929762064463,
+      "requestedOffsetM": 0.03657857960077062,
+      "appliedOffsetM": 0.035,
+      "remainingShoeMinYM": -0.0015785796007706174
+    },
+    {
+      "actor": "emma",
+      "frame": 2646,
+      "timeSeconds": 44.09999999999878,
+      "state": "walk",
+      "walkPhase": 0.3788760782338123,
+      "walkWeight": 0.5317791925117819,
+      "idleWeight": 0.46822080748821815,
+      "requestedOffsetM": 0.035866608355729,
+      "appliedOffsetM": 0.035,
+      "remainingShoeMinYM": -0.0008666083557289997
+    }
+  ],
+  "navigation": {
+    "yawOwnership": "Recorded turn root yaw is extracted to holder, without angle warp; walking holder follows route tangent",
+    "maximumAbsoluteYawWarp": 0,
+    "maximumArrivalYawErrorRadians": 1.5314274795707798e-15,
+    "maximumNavigationRetries": 0,
+    "arrivalApproachLeadM": 0.65
+  },
+  "errors": {
+    "desktop": {
+      "page": [],
+      "console": []
+    },
+    "mobile": {
+      "page": [],
+      "console": []
+    }
+  },
+  "sourceFilesUnchangedDuringRun": true,
+  "sourceHashes": {
+    "review/exhibition-25-years/index.html": "353539a914193322dce55a6dad9899d8d09002f294c6aba77d9ccc8c5d0d3ddb",
+    "review/exhibition-25-years/exhibition-3d.js": "33c809ec55dd2ff5f97cde2dd45c896f7d0b50616cf34cd84510c015430437a6",
+    "review/exhibition-25-years/visitors-v43.js": "4e2f0de2a82700dac8f527d3dbcfb765d4ed4ac2313e87f8b1f9cb32afadbb42",
+    "review/exhibition-25-years/visitor-motion-v43.js": "25bba4041399a033aee1ff259f083d81897da8588bdd90d53f3667bbc365e6ab",
+    "review/exhibition-25-years/assets/models/visitors/walking-woman.glb": "be518e47c6e418c3a3dc4cf0692bbcc324ff9b70af23c0c539376f1e6debb957",
+    "review/exhibition-25-years/assets/models/visitors/walking-man.glb": "710096e92e0acbfac10f9680f262514402822dfeda33f9f0dc4117bec24172d9",
+    "review/exhibition-25-years/assets/models/visitors/motions/emma-native-motions.glb": "ff0d24ed039371840a06f6dc1045fffc8e62345f96cd3d295ec3fab6fc4c25f4",
+    "review/exhibition-25-years/assets/models/visitors/motions/ethan-native-motions.glb": "34980ee3e9ce4e24c18cf5835d8a34f6e5e742ca7b12ed082cc6ad365cd9f397",
+    "review/exhibition-25-years/assets/models/visitors/motions/emma-native-turns.glb": "167cfe59e23167a05139d317c1bb118db888127b2bf3a48827bf40e9090e4fe3",
+    "review/exhibition-25-years/assets/models/visitors/motions/ethan-native-turns.glb": "14e62618fb556d22e4177ec4d60b2b2a1b992918db6282d93b3bf7433ab85b6d"
+  },
+  "toolHashes": {
+    "review/exhibition-25-years/motion-lab/tools/qa_integrated_gait.py": "a997b091ab57464d5758f5a550817f9bc1c3210ccc6318edce5a4c425dec8404",
+    "review/exhibition-25-years/motion-lab/tools/record_integrated_gait.py": "1ced3a45269f3984393f29b9643a60e434ee1b0c35b5f932dbf7527708dc970d"
+  },
+  "evidence": {
+    "numericReport": "final-freeze-45s-valid/integrated-gait-report.json",
+    "desktopSamples": "final-freeze-45s-valid/desktop-samples.json",
+    "mobileSamples": "final-freeze-45s-valid/mobile-samples.json",
+    "boundedFrames": "final-freeze-45s-valid/bounded-cap-frames.json",
+    "turnSmoke": "authored-turn-smoke/authored-turn-smoke.json",
+    "videoReport": "evidence/v43-gait-video/video-proof-report.json",
+    "video": "evidence/v43-gait-video/exhibition-v43-gait-proof.mp4",
+    "videoStatus": "recorded_and_reviewed",
+    "mobileVisualStatus": "reviewed_actual_390px_ui_and_closeup",
+    "mobileOverview": "evidence/v43-gait-video/mobile-overview-ui.png",
+    "mobileCloseup": "evidence/v43-gait-video/mobile-ethan-ui.png",
+    "videoMetadata": "evidence/v43-gait-video/final-video-ffprobe.json",
+    "hashes": {
+      "evidence/v43-gait-video/video-proof-report.json": "fab7955314479a5bad2e05ffb45fc52f42c7beee8b37054c39bc3bdcb7efab47",
+      "evidence/v43-gait-video/final-video-ffprobe.json": "b0d2b6787032ce1b4c202154c66f6a0865016f0066aae6ee8f4d5c2c2a3f9293",
+      "evidence/v43-gait-video/mobile-overview-ui.png": "b667959d46c83ed3984fe6e0b5526b211b22d5c818e9f7b7e3d64780f772018b",
+      "evidence/v43-gait-video/mobile-ethan-ui.png": "673558fba54936f13dd2bac7746f0db2492e057e89f81dc3aac91a7855d08125",
+      "evidence/v43-gait-video/emma-full-journey-contactsheet.jpg": "b153690ece126e12dcb517c841a36ac85ec35ab4444b9b4eaf9fdb41c30bab85",
+      "evidence/v43-gait-video/ethan-full-journey-contactsheet.jpg": "1dbdf3ee789591647927b56358a0a67a16d71681b94415b33010f0a611c52ffd"
+    }
+  },
+  "recording": {
+    "script": "review/exhibition-25-years/motion-lab/tools/record_integrated_gait.py",
+    "notUsedForFinalRecording": "qa_integrated_gait.py --video",
+    "commandArguments": [
+      "--repo",
+      "<repo>",
+      "--reference-report",
+      "<evidence-root>/final-freeze-45s-valid/integrated-gait-report.json",
+      "--evidence",
+      "<evidence-root>/evidence/v43-gait-video"
+    ],
+    "fps": 30,
+    "simulationStepsPerVideoFrame": 2,
+    "views": [
+      "Original user overview from5.5667s to11.5667s",
+      "Complete Emma first journey",
+      "Complete Ethan first journey"
+    ],
+    "camera": "Overview fixed; closeups translate with actor while orientation stays fixed in world",
+    "maximumBrowserSegmentPhysicalSeconds": 4,
+    "segmentContinuity": "First holder/hip/knee/ankle/toe coordinates and action times checked against the same saved60Hz trajectory to1e-7",
+    "webglGuard": "Context health before every PNG; central image variance rejects blanks",
+    "timeContinuity": "Continuous within each labelled view; views intentionally revisit the same simulation timeline",
+    "actualEncodedFrames": 716,
+    "plannedCapturedFrames": 717,
+    "allSegmentFirstPoseErrors": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "maximumCameraOrientationDriftDegrees": 0.0000024148365394514667,
+    "allWebglContextsHealthy": true,
+    "minimumCentralImageRgbStddev": 46.26365578586546,
+    "mobileCaptureValidation": [
+      {
+        "file": "evidence/v43-gait-video/mobile-overview-ui.png",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "poseDifference": 0,
+        "imageQuality": {
+          "width": 356,
+          "height": 345,
+          "centralRgbStddev": 54.237876331658015
+        },
+        "health": {
+          "lost": false,
+          "events": []
+        }
+      },
+      {
+        "file": "evidence/v43-gait-video/mobile-ethan-ui.png",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "poseDifference": 0,
+        "imageQuality": {
+          "width": 356,
+          "height": 345,
+          "centralRgbStddev": 57.784706694995435
+        },
+        "health": {
+          "lost": false,
+          "events": []
+        }
+      }
+    ],
+    "mobileErrors": [],
+    "mobileConsole": []
+  },
+  "limitations": [
+    "Flat exhibition floor only; no stair/slope validation.",
+    "Full foot locking and zero lateral contact slip are not claimed. Heel/toe centroids are trajectories, not confirmed stance labels.",
+    "Four Emma start-blend frames retain<1.6mm penetration; strict zero-cap gate remainsFAIL.",
+    "Only locomotion and its transitions are accepted; all13 gestures are not an artistic pass.",
+    "Synthetic30fps recording and frozen background are not a real-time performance benchmark.",
+    "Raw source Walk has a small loop seam; C0 endpoints alone do not prove velocity continuity."
+  ],
+  "desktopMobileMetricsExactlyEqual": true,
+  "visualReview": {
+    "scope": "Recorded first/middle/last frames across both full journeys and actual390px overview/close-up UI; parent also reviewed extracted MP4 frames.",
+    "locomotion": "Qualified visual acceptance: original gross leg distortion absent, authored turn readable, both full journeys end in observe.",
+    "mobile390": "Real scene, both shoes in close-up and controls visible; no blank context.",
+    "contact": "Qualified with the existing four Emma residual frames<1.6mm. Full foot locking/no-slip not claimed.",
+    "fullMotion": "Continuous physical-time capture within each labelled view; camera world orientation preserved; segment start pose errors exactly0."
+  },
+  "video": {
+    "file": "evidence/v43-gait-video/exhibition-v43-gait-proof.mp4",
+    "bytes": 2910902,
+    "sha256": "f7f3951e426aa3d58f8ea06d25700a0322e75c28f9bdce785b5a8bbd262bfa3a",
+    "fps": 30,
+    "frames": 716,
+    "durationSeconds": 23.9,
+    "plannedCapturedFrames": 717,
+    "encodedFrames": 716,
+    "codec": "h264",
+    "width": 908,
+    "height": 586,
+    "nominalFrameRate": "30/1",
+    "averageFrameRate": "7160/239",
+    "averageFps": 29.9581589958159,
+    "containerFrameCountNote": "717 planned/captured frames were supplied across7segments; final MP4 reports716 encoded frames,23.9seconds, nominal30/1 and average7160/239. File retained unchanged after review; no reshoot or retiming.",
+    "chapters": [
+      {
+        "view": "overview",
+        "videoStartSeconds": 0,
+        "videoEndSeconds": 6,
+        "simulationStartSeconds": 5.566666666666666,
+        "simulationEndSeconds": 11.566666666666666
+      },
+      {
+        "view": "emma",
+        "videoStartSeconds": 6,
+        "videoEndSeconds": 16.4,
+        "simulationStartSeconds": 7.2,
+        "simulationEndSeconds": 17.6
+      },
+      {
+        "view": "ethan",
+        "videoStartSeconds": 16.4,
+        "videoEndSeconds": 23.9,
+        "simulationStartSeconds": 5.566666666666666,
+        "simulationEndSeconds": 13.066666666666666
+      }
+    ]
+  },
+  "sourceHashScope": "Observed Windows working-tree bytes used during QA and capture. Git repository blobs are listed separately below; only CRLF-to-LF normalization differs.",
+  "repositorySourceHashes": {
+    "review/exhibition-25-years/index.html": "a3f86fa6912628d3775d371aae6acf99a600de0e0b7cf7ef694d1628415cea51",
+    "review/exhibition-25-years/exhibition-3d.js": "03af3fbe8819887451f332363359368b14d26e34ddf11f4e651d09dc0a119587",
+    "review/exhibition-25-years/visitors-v43.js": "4e2f0de2a82700dac8f527d3dbcfb765d4ed4ac2313e87f8b1f9cb32afadbb42",
+    "review/exhibition-25-years/visitor-motion-v43.js": "25bba4041399a033aee1ff259f083d81897da8588bdd90d53f3667bbc365e6ab",
+    "review/exhibition-25-years/assets/models/visitors/walking-woman.glb": "be518e47c6e418c3a3dc4cf0692bbcc324ff9b70af23c0c539376f1e6debb957",
+    "review/exhibition-25-years/assets/models/visitors/walking-man.glb": "710096e92e0acbfac10f9680f262514402822dfeda33f9f0dc4117bec24172d9",
+    "review/exhibition-25-years/assets/models/visitors/motions/emma-native-motions.glb": "ff0d24ed039371840a06f6dc1045fffc8e62345f96cd3d295ec3fab6fc4c25f4",
+    "review/exhibition-25-years/assets/models/visitors/motions/ethan-native-motions.glb": "34980ee3e9ce4e24c18cf5835d8a34f6e5e742ca7b12ed082cc6ad365cd9f397",
+    "review/exhibition-25-years/assets/models/visitors/motions/emma-native-turns.glb": "167cfe59e23167a05139d317c1bb118db888127b2bf3a48827bf40e9090e4fe3",
+    "review/exhibition-25-years/assets/models/visitors/motions/ethan-native-turns.glb": "14e62618fb556d22e4177ec4d60b2b2a1b992918db6282d93b3bf7433ab85b6d"
+  },
+  "repositoryNormalization": [
+    {
+      "path": "review/exhibition-25-years/index.html",
+      "method": "CRLF to LF only",
+      "verifiedByteEqualityAfterNormalization": true
+    },
+    {
+      "path": "review/exhibition-25-years/exhibition-3d.js",
+      "method": "CRLF to LF only",
+      "verifiedByteEqualityAfterNormalization": true
+    }
+  ]
+}

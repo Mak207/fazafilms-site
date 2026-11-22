@@ -1,0 +1,127 @@
+{
+  "scope": "Exact actual-runtime fixed60Hz FSM completion through120s, seed20261122. Not a full foot-contact or naturalness acceptance.",
+  "inputSha256": {
+    "visitors-v44.js": "bccc1feea2548202027e98de18c65f8aa5f93acefe704817f742eff724bdfab6",
+    "visitor-motion-v43.js": "25bba4041399a033aee1ff259f083d81897da8588bdd90d53f3667bbc365e6ab",
+    "ready-crowd-v1.js": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de"
+  },
+  "sourceReportSha256": "8104345b9875847ee858434788d03ec76ff4728cd3a9ef197b005ae71df19a08",
+  "sourceReport": "avatar-ready-locomotion-data-20261122/v44-egress-continuation/continuation-report.json",
+  "time": 119.99999999999447,
+  "pageErrors": [],
+  "errors": [],
+  "failures": [],
+  "actors": [
+    {
+      "id": "emma",
+      "state": "observe",
+      "completedJourneys": 5,
+      "position": [
+        -3.3252205848693848,
+        0,
+        -1.7652667760849
+      ]
+    },
+    {
+      "id": "ethan",
+      "state": "turn",
+      "completedJourneys": 5,
+      "position": [
+        -3.5334339141845703,
+        0,
+        0.18671943247318268
+      ]
+    }
+  ],
+  "diagnostics": {
+    "fixedSteps": 7200,
+    "minimumPairDistance": 1.3999866020572678,
+    "minimumStaticClearance": 0.7339906059408375,
+    "maximumRenderedWorldDeviation": 0,
+    "maximumRootMotionDeviation": 0,
+    "rejectedRootSteps": 0,
+    "appliedRootSteps": 1897,
+    "rootPoseAdvancedWithoutApplication": 0,
+    "navigationPreflightFailures": 11,
+    "completedJourneys": 10,
+    "maximumYawStep": 0.05244410037994385,
+    "maximumFacingVelocityAngle": 1.4381720748623428,
+    "maximumFacingVelocityLagSeconds": 0.2833333333333333,
+    "facingVelocityOver45DegreesTime": 0.5333333333333333,
+    "reversedExitCandidates": 39,
+    "reversedEntryCandidates": 11,
+    "occupiedExitCandidates": 0,
+    "recentHistoryFallbacks": 0,
+    "recoveryBlockedCandidates": 5,
+    "egressGrants": 1,
+    "maximumRecoverySeconds": 15.599999999999113,
+    "recoveryCompletions": 2,
+    "yieldCount": 2,
+    "yieldResumes": 1,
+    "yieldReplans": 1,
+    "totalYieldSeconds": 15.616666666667022,
+    "maximumYieldSeconds": 12.000000000000176,
+    "secondaryYieldSignals": 2,
+    "droppedTime": 0,
+    "fixedAccumulator": 0,
+    "engine": "recast-navigation@0.44.0",
+    "worldTranslationAuthority": "DetourCrowd snapshot",
+    "intermediateLookahead": 0.18,
+    "finalArrivalUsesEngine": true,
+    "routeStages": [
+      "ready-path-to-approach",
+      "reserved-station"
+    ],
+    "mandatoryExitWaypoint": false,
+    "departurePrefixLength": 0.65,
+    "egressEvents": [
+      {
+        "time": 102.98333333332877,
+        "actor": "ethan",
+        "destination": 0,
+        "checks": [
+          {
+            "peer": "emma",
+            "actorCorridorGap": 0.5615864928475354,
+            "minimumCurrentCapsuleGap": 1.5009940841273948,
+            "initialDistance": 1.5009940841273948,
+            "finalDistance": 1.6929434004876336,
+            "nonDecreasing": true,
+            "prefix": [
+              {
+                "x": -2.173924446105957,
+                "y": 0,
+                "z": -0.38001763820648193
+              },
+              {
+                "x": -2.823627193104774,
+                "y": 0,
+                "z": -0.360362090842161
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "egressPolicy": "Only leave an already occupied peer corridor along a physically clear, monotonically distancing ready-path prefix.",
+    "yieldingId": null,
+    "yieldPause": 0.6,
+    "lateYieldReplanAfter": 3,
+    "recoveryTotalLimit": 24,
+    "recoveryReplanLimit": 3,
+    "facingAngularSpeed": 2.4,
+    "facingVelocityThreshold": 0.1,
+    "facingMethod": "THREE.Quaternion.rotateTowards; authored turns bypass it",
+    "sourceWalkHasNonzeroContactSlip": true,
+    "locomotionBlendDuration": 0.18,
+    "startStop": "Temporal .18 s Idle/Walk crossfade; full native Walk during physical movement. Dedicated start/stop clips are not installed."
+  },
+  "reviewStatus": "FSM120 completion PASS; source-pose and geometry evidence have their stated separate scopes. Overall start/stop/heading foot-contact gate NOT PASSED.",
+  "numericCaveats": {
+    "minimumPairDistanceBelowNominalDiameterMeters": 1.3397942732140677e-05,
+    "facingLagOver45DegreesMaxSeconds": 0.2833333333333333,
+    "facingLagOver45DegreesTotalSeconds": 0.5333333333333333
+  },
+  "browserClosed": true,
+  "ownedServerClosed": true
+}

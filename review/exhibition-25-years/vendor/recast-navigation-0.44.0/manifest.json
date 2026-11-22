@@ -1,0 +1,225 @@
+{
+  "package": "recast-navigation",
+  "version": "0.44.0",
+  "source": "https://github.com/isaac-mason/recast-navigation-js",
+  "tag": "recast-navigation@0.44.0",
+  "gitCommit": "8a2ece9f8b4947fcb328e17c7ac76c41744021b3",
+  "licence": "MIT (JS/WASM port), Zlib (upstream Recast), MIT (FastLZ)",
+  "runtimeMode": "Unmodified core and wasm-compat modules; explicit init(RecastWasm); embedded WASM; no CDN; no runtime navmesh generation",
+  "files": [
+    {
+      "path": "core.mjs",
+      "bytes": 102681,
+      "sha256": "cef1b0ffe4ff60bb7ec607475e0e17d38f200a121e884761f308eb2fbd5c3285"
+    },
+    {
+      "path": "wasm-compat.mjs",
+      "bytes": 1013548,
+      "sha256": "8bc6efc4b50ac191e9a2eae6f2650560af66f62808e04780216f4a3404155ffb"
+    },
+    {
+      "path": "LICENSE-MIT.txt",
+      "bytes": 1071,
+      "sha256": "319340bb218c8a01bf041dc8f6f2390f176d7c332920695b0774b972b4e99162"
+    },
+    {
+      "path": "LICENSE-Recast-Zlib.txt",
+      "bytes": 895,
+      "sha256": "a70989c918205441fc56ff47766ab2f1340b42bb1752874a899e011e92a09ea4"
+    },
+    {
+      "path": "LICENSE-FastLZ.txt",
+      "bytes": 1270,
+      "sha256": "c876026b99f2bb37def9e45880418e0371e5ded953e6f723dce0dfe3a9b1ec55"
+    }
+  ],
+  "packageIntegrityProof": "package-provenance.json records official tarball URLs, SHA-256 and npm SHA512 SRI. The retrieved tarballs were verified before extraction.",
+  "nativeEnvelope": {
+    "radius": 0.7,
+    "guard": 0.68,
+    "supportedClips": [
+      "Idle",
+      "Walk",
+      "TurnLeft90",
+      "TurnRight90",
+      "TurnLeft180",
+      "TurnRight180",
+      "Clap",
+      "Think",
+      "Shrug"
+    ],
+    "currentRigPureWalkMaximum": 0.634192,
+    "currentRigPureTurnMaximum": 0.453875,
+    "compactGesturePureMaximum": 0.513107,
+    "compactGestureSampledBlendMaximum": 0.398786,
+    "note": "Bounds refer to the existing exhibition rigs and the explicitly audited clips/blends. Broad Wave/Cheer and Ethan Talk are not enabled by the runtime policy. Full gameplay validation is recorded separately."
+  },
+  "cpuProof": {
+    "allScenariosPass": true,
+    "testedAdapterSha256": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de",
+    "regression": "../../motion-lab/checks/v44-crowd-regression.json",
+    "authoredRoot": "../../motion-lab/checks/v44-authored-root-crowd.json",
+    "scope": "Ready navigation, station lifecycle and authored root composition. Visual movement acceptance is a separate scene gate.",
+    "capsuleDistanceTolerance": 0.0001,
+    "renderDtPattern": [
+      0.008333333333333333,
+      0.016666666666666666,
+      0.03333333333333333
+    ]
+  },
+  "navmesh": {
+    "path": "../../ready-crowd-navmesh-v1.bin",
+    "bytes": 19324,
+    "sha256": "f8d89a591b7824a77242bfbaadb564938c078ff1aa7f8177e1224215cf4348ef"
+  },
+  "cpuProofHistory": {
+    "separationWeight1": {
+      "allScenariosPass": true,
+      "cases": [
+        {
+          "name": "head-on",
+          "minimumCenterDistance": 1.400845,
+          "minimumObstacleDistance": 1.230777,
+          "seconds": 9.25
+        },
+        {
+          "name": "crossing",
+          "minimumCenterDistance": 1.549031,
+          "minimumObstacleDistance": 0.840556,
+          "seconds": 8.483333
+        },
+        {
+          "name": "occupied-station-reroute",
+          "minimumCenterDistance": 1.4017,
+          "minimumObstacleDistance": 0.771014,
+          "seconds": 13.583333
+        },
+        {
+          "name": "exhibition-station-swap",
+          "minimumCenterDistance": 1.401382,
+          "minimumObstacleDistance": 0.747824,
+          "seconds": 15.7
+        }
+      ]
+    },
+    "reasonForDefault": "Additional separationWeight1 caused a reproduced completion failure at a valid short waypoint near an idle neighbour; original JSON retained.",
+    "initialSeparation0": {
+      "allScenariosPass": true,
+      "separationWeight": 0,
+      "cases": [
+        {
+          "name": "head-on",
+          "minimumCenterDistance": 1.40048,
+          "minimumObstacleDistance": 1.358249,
+          "seconds": 8.766667
+        },
+        {
+          "name": "crossing",
+          "minimumCenterDistance": 1.39997,
+          "minimumObstacleDistance": 0.840556,
+          "seconds": 7.95
+        },
+        {
+          "name": "occupied-station-reroute",
+          "minimumCenterDistance": 1.404356,
+          "minimumObstacleDistance": 0.770104,
+          "seconds": 11.883333
+        },
+        {
+          "name": "exhibition-station-swap",
+          "minimumCenterDistance": 1.400338,
+          "minimumObstacleDistance": 0.745567,
+          "seconds": 16.683333
+        }
+      ],
+      "closeStations": [
+        {
+          "name": "close-waypoint-near-idle-station3",
+          "minimumCenterDistance": 2.0744983554094247,
+          "minimumObstacleDistance": 0.8303933584690093,
+          "seconds": 1.0166666666666666,
+          "pass": true
+        },
+        {
+          "name": "station5-next-to-occupied-station0",
+          "minimumCenterDistance": 1.4624944280484808,
+          "minimumObstacleDistance": 0.7430146195831059,
+          "seconds": 11.65,
+          "pass": true
+        },
+        {
+          "name": "station0-next-to-occupied-station5",
+          "minimumCenterDistance": 1.422202271307238,
+          "minimumObstacleDistance": 0.839999942779541,
+          "seconds": 4.183333333333334,
+          "pass": true
+        },
+        {
+          "name": "simultaneous-stations0-and5",
+          "minimumCenterDistance": 1.4499760979242011,
+          "minimumObstacleDistance": 0.7428513936394655,
+          "seconds": 11.616666666666667,
+          "pass": true
+        }
+      ],
+      "authoredRoot": {
+        "caseCount": 9,
+        "allCompleted": true,
+        "minCenterDistance": 1.4000999250079056,
+        "maxPostCrowdDeviation": 0,
+        "maxObservedRootStep": 0.010722467983549819,
+        "blockedPhaseResumePass": true,
+        "upstreamVelocityAfterTeleport": 0
+      }
+    }
+  },
+  "engineSettings": {
+    "params": [
+      {
+        "radius": 0.7,
+        "height": 1.8,
+        "maxAcceleration": 2,
+        "maxSpeed": 1.14,
+        "collisionQueryRange": 2.5,
+        "pathOptimizationRange": 21,
+        "separationWeight": 0,
+        "updateFlags": 31,
+        "obstacleAvoidanceType": 0
+      },
+      {
+        "radius": 0.7,
+        "height": 1.8,
+        "maxAcceleration": 2,
+        "maxSpeed": 1.04,
+        "collisionQueryRange": 2.5,
+        "pathOptimizationRange": 21,
+        "separationWeight": 0,
+        "updateFlags": 31,
+        "obstacleAvoidanceType": 0
+      }
+    ],
+    "avoidance": {
+      "velBias": 0.5,
+      "adaptiveDivs": 7,
+      "adaptiveRings": 3,
+      "adaptiveDepth": 3
+    },
+    "source": "separationWeight0 is the upstream documented default; obstacle avoidance remains enabled with flags31."
+  },
+  "rootMotionContract": {
+    "maximumStepXZ": 0.08,
+    "maximumNavmeshProjectionXZ": 0.01,
+    "rawObstacleClearance": 0.7,
+    "pairCenterDistance": 1.4,
+    "positionOwner": "Queue validated root step -> upstream resetMoveTarget+teleport -> exactly one shared Crowd.update -> snapshot is the only final world position.",
+    "phaseCommit": "Only after applied event with authoredTrajectoryPreserved=true; rejected queue or commit holds source phase.",
+    "caveat": "Teleport clears upstream velocity. Nearby agents see the current position, not the authored future velocity. Whole-turn preflight and post-step deviation QA remain required."
+  },
+  "proofFiles": [
+    "../../motion-lab/checks/v44-crowd-regression.json",
+    "../../motion-lab/checks/v44-authored-root-crowd.json",
+    "../../motion-lab/checks/v44-close-station-proof.json",
+    "../../motion-lab/checks/v44-current-skin-envelope.json",
+    "../../motion-lab/checks/v44-compact-gesture-blend-envelope.json"
+  ]
+}

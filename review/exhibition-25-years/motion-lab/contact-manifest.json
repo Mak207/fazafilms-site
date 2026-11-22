@@ -1,0 +1,13 @@
+{
+  "title": "Контактный A/B/C · одинаковые текущие модели",
+  "units": "metres",
+  "models": [
+    {"id":"emma-raw","actor":"Emma","kind":"current","label":"Emma A · без внешнего IK","shortLabel":"A · исходный","url":"../assets/models/visitors/walking-woman.glb","clip":"Observe"},
+    {"id":"emma-ik","actor":"Emma","kind":"current","label":"Emma B · готовый FootIK","shortLabel":"B · FootIK","url":"../assets/models/visitors/walking-woman.glb","clip":"Observe"},
+    {"id":"emma-lift","actor":"Emma","kind":"current","label":"Emma C · общий подъём","shortLabel":"C · подъём","url":"../assets/models/visitors/walking-woman.glb","clip":"Observe"},
+    {"id":"ethan-raw","actor":"Ethan","kind":"current","label":"Ethan A · без внешнего IK","shortLabel":"A · исходный","url":"../assets/models/visitors/walking-man.glb","clip":"Observe"},
+    {"id":"ethan-ik","actor":"Ethan","kind":"current","label":"Ethan B · готовый FootIK","shortLabel":"B · FootIK","url":"../assets/models/visitors/walking-man.glb","clip":"Observe"},
+    {"id":"ethan-lift","actor":"Ethan","kind":"current","label":"Ethan C · общий подъём","shortLabel":"C · подъём","url":"../assets/models/visitors/walking-man.glb","clip":"Observe"}
+  ],
+  "defaultIds": ["emma-raw", "emma-ik", "emma-lift"]
+}

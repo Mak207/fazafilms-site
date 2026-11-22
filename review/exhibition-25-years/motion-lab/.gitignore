@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.log
+*.mp4
+*.webm
+node_modules/
+.DS_Store

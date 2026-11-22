@@ -1,0 +1,39 @@
+{
+  "title": "Avatar Motion Lab · ЕР",
+  "units": "metres",
+  "sourceRevision": "2fd9ec82fbe1613d40ae38aadcca3f410725f740",
+  "models": [
+    {
+      "id": "emma-source",
+      "label": "Emma · родной скелет",
+      "actor": "Emma",
+      "kind": "source",
+      "url": "./assets/emma-native-original.glb"
+    },
+    {
+      "id": "ethan-source",
+      "label": "Ethan · родной скелет",
+      "actor": "Ethan",
+      "kind": "source",
+      "url": "./assets/ethan-native-original.glb"
+    },
+    {
+      "id": "emma-current",
+      "label": "Emma · выставочная",
+      "actor": "Emma",
+      "kind": "current",
+      "url": "../assets/models/visitors/walking-woman.glb"
+    },
+    {
+      "id": "ethan-current",
+      "label": "Ethan · выставочный",
+      "actor": "Ethan",
+      "kind": "current",
+      "url": "../assets/models/visitors/walking-man.glb"
+    }
+  ],
+  "defaultIds": [
+    "emma-source",
+    "ethan-source"
+  ]
+}

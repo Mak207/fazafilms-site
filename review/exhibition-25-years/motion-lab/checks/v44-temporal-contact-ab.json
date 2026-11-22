@@ -1,0 +1,491 @@
+{
+  "status": "PARTIAL_IMPROVEMENT; NOT_ACCEPTED_AS_COMPLETE_FOOT_CONTACT_FIX",
+  "oldRuntimeSha256": "39948c10b257436f659fba2521ba9dac03a53669e62ea7805e291a5047f4887a",
+  "newRuntimeSha256": "616c3e361875d214a552cd0e461b1af77acd5c9943e87c8791c1bbc7a66fb2fb",
+  "trajectoryAndPhaseComparison": {
+    "oldTraceSha256": "025e4701b81802a765bfa05b62dd0cc43734a73900f828793c8731ba50f1c4a7",
+    "newTraceSha256": "a6cbfcc82d0160cf6cddccd4c167983d31c0279db4cdc93a441f1023fbeab0a8",
+    "oldRuntime": "39948c10b257436f659fba2521ba9dac03a53669e62ea7805e291a5047f4887a",
+    "newRuntime": "616c3e361875d214a552cd0e461b1af77acd5c9943e87c8791c1bbc7a66fb2fb",
+    "oldFrames": 181,
+    "newFrames": 181,
+    "timeRange": [
+      17.000000000000316,
+      20.000000000000146
+    ],
+    "metrics": {
+      "emma": {
+        "maxHolderXZDifference": 0,
+        "maxWorldXZDifference": 0,
+        "maxHolderYawRadians": 0,
+        "maxWalkPhaseCircularDifference": 0,
+        "maxHolderSpeedDifference": 0,
+        "statesDiffer": 0,
+        "frames": 181,
+        "oldWeightMin": 0.05952459529947542,
+        "oldWeightMax": 0.38297505803178494,
+        "newWeightMin": 0.8333333333333333,
+        "newWeightMax": 1
+      },
+      "ethan": {
+        "maxHolderXZDifference": 0,
+        "maxWorldXZDifference": 0,
+        "maxHolderYawRadians": 0,
+        "maxWalkPhaseCircularDifference": 0,
+        "maxHolderSpeedDifference": 0,
+        "statesDiffer": 0,
+        "frames": 181,
+        "oldWeightMin": 0.9997419867306562,
+        "oldWeightMax": 1,
+        "newWeightMin": 1,
+        "newWeightMax": 1
+      }
+    },
+    "isExactTrajectoryPhaseContrast": true
+  },
+  "contactScope": {
+    "recordedWindowSeconds": [
+      17,
+      20
+    ],
+    "evaluatedInteriorWindowSeconds": [
+      17.016666666666666,
+      19.983333333333334
+    ],
+    "framesPerActor": 179,
+    "derivative": "Central material-vertex finite differences; two endpoint frames excluded symmetrically.",
+    "heightMaximumMeters": 0.02,
+    "verticalSpeedMaximumMps": 0.1,
+    "minimumContinuousContactSeconds": 0.08,
+    "horizontalSpeedUsedToSelectContact": false
+  },
+  "comparisons": [
+    {
+      "actor": "emma",
+      "foot": "Left",
+      "activeMaterialContact": {
+        "before": {
+          "median": 0.23301458539679332,
+          "p95": 0.8374626575531373,
+          "max": 1.0446399933067512,
+          "fractionAbove015": 0.869281045751634,
+          "fractionAbove025": 0.41830065359477125
+        },
+        "after": {
+          "median": 0.044615962247701875,
+          "p95": 0.9351443424062723,
+          "max": 0.96204363872852,
+          "fractionAbove015": 0.27586206896551724,
+          "fractionAbove025": 0.25
+        },
+        "sameRigUnchangedAuthoredWalk": {
+          "median": 0.03454678734519973,
+          "p95": 0.08157827164453801,
+          "max": 0.09219762655879345,
+          "fractionAbove015": 0.0,
+          "fractionAbove025": 0.0
+        }
+      },
+      "fixedMaterialVertices": {
+        "heel": {
+          "globalVertexIndex": 48396,
+          "before": {
+            "median": 0.1946898385007179,
+            "p95": 0.47397014300329016,
+            "max": 0.534444987469832,
+            "fractionAbove015": 0.825,
+            "fractionAbove025": 0.23333333333333334
+          },
+          "after": {
+            "median": 0.04926061446784152,
+            "p95": 0.6124586735916988,
+            "max": 0.6227117623010395,
+            "fractionAbove015": 0.3146067415730337,
+            "fractionAbove025": 0.25842696629213485
+          },
+          "sameRigUnchangedAuthoredWalk": {
+            "median": 0.03889030237297757,
+            "p95": 0.0870787952608087,
+            "max": 0.24210178996494072,
+            "fractionAbove015": 0.043478260869565216,
+            "fractionAbove025": 0.0
+          }
+        },
+        "toe": {
+          "globalVertexIndex": 48802,
+          "before": {
+            "median": 0.2432919716717418,
+            "p95": 0.8364273544601665,
+            "max": 1.0646234747881616,
+            "fractionAbove015": 0.869281045751634,
+            "fractionAbove025": 0.43790849673202614
+          },
+          "after": {
+            "median": 0.011324941460088308,
+            "p95": 1.0738167439133797,
+            "max": 1.0831965441907487,
+            "fractionAbove015": 0.29411764705882354,
+            "fractionAbove025": 0.25882352941176473
+          },
+          "sameRigUnchangedAuthoredWalk": {
+            "median": 0.03443541434005984,
+            "p95": 0.08323040725396161,
+            "max": 0.09307342350679872,
+            "fractionAbove015": 0.0,
+            "fractionAbove025": 0.0
+          }
+        }
+      },
+      "medianReductionFraction": 0.8085271693541126
+    },
+    {
+      "actor": "emma",
+      "foot": "Right",
+      "activeMaterialContact": {
+        "before": {
+          "median": 0.2934012241352901,
+          "p95": 1.0248006107100363,
+          "max": 1.7732053263381833,
+          "fractionAbove015": 0.9831460674157303,
+          "fractionAbove025": 0.6966292134831461
+        },
+        "after": {
+          "median": 0.04581572203674214,
+          "p95": 1.212633632278811,
+          "max": 1.5327752768917582,
+          "fractionAbove015": 0.26851851851851855,
+          "fractionAbove025": 0.24074074074074073
+        },
+        "sameRigUnchangedAuthoredWalk": {
+          "median": 0.09730674893539329,
+          "p95": 0.16694728395256594,
+          "max": 0.17609784211072407,
+          "fractionAbove015": 0.14285714285714285,
+          "fractionAbove025": 0.0
+        }
+      },
+      "fixedMaterialVertices": {
+        "heel": {
+          "globalVertexIndex": 6629,
+          "before": {
+            "median": 0.2569750182901258,
+            "p95": 0.40158301429361165,
+            "max": 0.995093350259284,
+            "fractionAbove015": 0.9649122807017544,
+            "fractionAbove025": 0.5614035087719298
+          },
+          "after": {
+            "median": 0.03932995154304229,
+            "p95": 0.1627231906244539,
+            "max": 0.3148123444405058,
+            "fractionAbove015": 0.09523809523809523,
+            "fractionAbove025": 0.047619047619047616
+          },
+          "sameRigUnchangedAuthoredWalk": {
+            "median": 0.06713083785908722,
+            "p95": 0.11206472091074325,
+            "max": 0.11711369176467483,
+            "fractionAbove015": 0.0,
+            "fractionAbove025": 0.0
+          }
+        },
+        "toe": {
+          "globalVertexIndex": 14084,
+          "before": {
+            "median": 0.292870340705117,
+            "p95": 1.062637099699463,
+            "max": 1.8173040563671496,
+            "fractionAbove015": 0.9831460674157303,
+            "fractionAbove025": 0.6853932584269663
+          },
+          "after": {
+            "median": 0.04124488862166369,
+            "p95": 1.1741378540819853,
+            "max": 1.338843388060177,
+            "fractionAbove015": 0.2641509433962264,
+            "fractionAbove025": 0.22641509433962265
+          },
+          "sameRigUnchangedAuthoredWalk": {
+            "median": 0.09374378064525414,
+            "p95": 0.15137851288895574,
+            "max": 0.15861549873207353,
+            "fractionAbove015": 0.06,
+            "fractionAbove025": 0.0
+          }
+        }
+      },
+      "medianReductionFraction": 0.8438461796750512
+    },
+    {
+      "actor": "ethan",
+      "foot": "Left",
+      "activeMaterialContact": {
+        "before": {
+          "median": 0.020303396058393614,
+          "p95": 0.3325901740028112,
+          "max": 0.5186770556160473,
+          "fractionAbove015": 0.13580246913580246,
+          "fractionAbove025": 0.09876543209876543
+        },
+        "after": {
+          "median": 0.020303396058393614,
+          "p95": 0.3326032004396681,
+          "max": 0.5188861775935013,
+          "fractionAbove015": 0.13580246913580246,
+          "fractionAbove025": 0.09876543209876543
+        },
+        "sameRigUnchangedAuthoredWalk": {
+          "median": 0.019583543288491108,
+          "p95": 0.03845427923248805,
+          "max": 0.04551291933455801,
+          "fractionAbove015": 0.0,
+          "fractionAbove025": 0.0
+        }
+      },
+      "fixedMaterialVertices": {
+        "heel": {
+          "globalVertexIndex": 32612,
+          "before": {
+            "median": 0.021625249089068675,
+            "p95": 0.03151196030090688,
+            "max": 0.03401509000441832,
+            "fractionAbove015": 0.0,
+            "fractionAbove025": 0.0
+          },
+          "after": {
+            "median": 0.021625249089068675,
+            "p95": 0.03151196030090688,
+            "max": 0.03401509000441832,
+            "fractionAbove015": 0.0,
+            "fractionAbove025": 0.0
+          },
+          "sameRigUnchangedAuthoredWalk": {
+            "median": 0.024926441828436417,
+            "p95": 0.041664594915202025,
+            "max": 0.04506800658631139,
+            "fractionAbove015": 0.0,
+            "fractionAbove025": 0.0
+          }
+        },
+        "toe": {
+          "globalVertexIndex": 41078,
+          "before": {
+            "median": 0.028160395212751016,
+            "p95": 0.30742776749244477,
+            "max": 0.43742855652345625,
+            "fractionAbove015": 0.125,
+            "fractionAbove025": 0.06944444444444445
+          },
+          "after": {
+            "median": 0.027799004820113535,
+            "p95": 0.3074279044481622,
+            "max": 0.4369526111263646,
+            "fractionAbove015": 0.125,
+            "fractionAbove025": 0.06944444444444445
+          },
+          "sameRigUnchangedAuthoredWalk": {
+            "median": 0.013461136878837616,
+            "p95": 0.02878887789018086,
+            "max": 0.03182820062272158,
+            "fractionAbove015": 0.0,
+            "fractionAbove025": 0.0
+          }
+        }
+      },
+      "medianReductionFraction": 0.0
+    },
+    {
+      "actor": "ethan",
+      "foot": "Right",
+      "activeMaterialContact": {
+        "before": {
+          "median": 0.05942597446417465,
+          "p95": 0.44388647958139926,
+          "max": 0.5086286751488351,
+          "fractionAbove015": 0.3191489361702128,
+          "fractionAbove025": 0.2553191489361702
+        },
+        "after": {
+          "median": 0.05942597446417465,
+          "p95": 0.44388647958139926,
+          "max": 0.5086286751488351,
+          "fractionAbove015": 0.3191489361702128,
+          "fractionAbove025": 0.2553191489361702
+        },
+        "sameRigUnchangedAuthoredWalk": {
+          "median": 0.009123734783121515,
+          "p95": 0.016510842295941214,
+          "max": 0.0184399873266403,
+          "fractionAbove015": 0.0,
+          "fractionAbove025": 0.0
+        }
+      },
+      "fixedMaterialVertices": {
+        "heel": {
+          "globalVertexIndex": 7578,
+          "before": {
+            "median": 0.05816511873734258,
+            "p95": 0.3736813360660993,
+            "max": 0.39129138266340474,
+            "fractionAbove015": 0.3541666666666667,
+            "fractionAbove025": 0.3333333333333333
+          },
+          "after": {
+            "median": 0.05816511873734258,
+            "p95": 0.3736813360660993,
+            "max": 0.39129138266340474,
+            "fractionAbove015": 0.3541666666666667,
+            "fractionAbove025": 0.3333333333333333
+          },
+          "sameRigUnchangedAuthoredWalk": {
+            "median": 0.01312350639393376,
+            "p95": 0.021978484326078032,
+            "max": 0.026883858345500843,
+            "fractionAbove015": 0.0,
+            "fractionAbove025": 0.0
+          }
+        },
+        "toe": {
+          "globalVertexIndex": 4744,
+          "before": {
+            "median": 0.06039538779579606,
+            "p95": 0.5429439113202148,
+            "max": 0.56661230098218,
+            "fractionAbove015": 0.35,
+            "fractionAbove025": 0.225
+          },
+          "after": {
+            "median": 0.06039538779579606,
+            "p95": 0.5429439113202148,
+            "max": 0.56661230098218,
+            "fractionAbove015": 0.35,
+            "fractionAbove025": 0.225
+          },
+          "sameRigUnchangedAuthoredWalk": {
+            "median": 0.00801238126640722,
+            "p95": 0.043496274563979184,
+            "max": 0.05852815083677399,
+            "fractionAbove015": 0.0,
+            "fractionAbove025": 0.0
+          }
+        }
+      },
+      "medianReductionFraction": 0.0
+    }
+  ],
+  "remainingYawWitness": {
+    "time": 18.750000000000217,
+    "actor": "emma",
+    "foot": "Left",
+    "globalVertexIndex": 47027,
+    "inferredContact": true,
+    "holderYawRateRadiansPerSecond": 2.400000000000125,
+    "holderPosition": [
+      -2.9666647911071777,
+      0,
+      0.18120665848255157
+    ],
+    "pointRelativeToHolder": [
+      0.10533251110751651,
+      2.2229097089844323e-08,
+      -0.26834728927684304
+    ],
+    "measuredWorldVelocity": [
+      -0.7978489815986931,
+      -0.0008739065890948952,
+      -0.35432301873208893
+    ],
+    "holderTranslationVelocity": [
+      0.21489143371583252,
+      0.0,
+      -0.4145921766758201
+    ],
+    "instantaneousRigidYawContribution": [
+      -0.6440334942644569,
+      0.0,
+      -0.2527980266580528
+    ],
+    "remainingArticulatedAndGroundingVelocityApprox": [
+      -0.36870692105006875,
+      -0.0008739065890948952,
+      0.31306718460178395
+    ],
+    "horizontalNorms": {
+      "world": 0.8729878573276332,
+      "translation": 0.466974304694852,
+      "rigidYaw": 0.6918713637784786,
+      "articulated": 0.48368983419616035,
+      "worldMinusInstantaneousRigidYaw": 0.1843001035254774
+    },
+    "limit": "Local first-order decomposition at one observed material point; subtracting yaw is diagnostic, not a newly evaluated counterfactual pose or a proposed runtime correction."
+  },
+  "bothFeetInferredContactSeconds": {
+    "emma": {
+      "before": 2.5333333333331893,
+      "after": 0.7666666666666231
+    },
+    "ethan": {
+      "before": 0.0,
+      "after": 0.0
+    }
+  },
+  "interpretation": [
+    "World translation, holder yaw, phase, speed and state match exactly over181frames, so differences in this window isolate the changed pose weight/crossfade under the same recorded motion.",
+    "Temporal blending substantially reduces Emma median low-height support-point motion, but contact-speed tails and the18.75s stance-foot witness remain large. Do not label this overall foot PASS.",
+    "At18.75s the remaining left stance-point speed is0.873m/s and the instantaneous rigid-holder yaw contribution is0.692m/s. Subtracting it is a local diagnostic decomposition, not a corrected pose or proposed runtime compensation.",
+    "Source Walk itself has nonzero measured contact motion. The contact rule is inferred rather than an authored support annotation. No ideal zero-slip or self-intersection-free claim is made."
+  ],
+  "dataBoundary": "Exact narrow scripts and traces remain in the external audit directories; source data are not all included in Git.",
+  "requiredArtifacts": [
+    {
+      "path": "avatar-ready-locomotion-data-20261122\\v44-90s-gate\\actual-support-slip-17-20s-core.json",
+      "sha256": "a6380599ab7e4e73c28e7d1379836533d033c5ba3d38dcab4ccab935fabe0d96",
+      "bytes": 35207
+    },
+    {
+      "path": "avatar-ready-locomotion-data-20261122\\v44-contact-temporal-gate\\actual-support-slip-17-20s-core.json",
+      "sha256": "084eb72b99f390880a348df15dc32346df9a9a1c696e2d18781208c476277b03",
+      "bytes": 34316
+    },
+    {
+      "path": "avatar-ready-locomotion-data-20261122\\v44-90s-gate\\audit_support_17_20s_core.py",
+      "sha256": "d6405b6d24cc927bb3058f2f6ca854924d5afc2181e377288ca3191a3106cce8",
+      "bytes": 11009
+    },
+    {
+      "path": "avatar-ready-locomotion-data-20261122\\v44-contact-temporal-gate\\audit_support_17_20s_core.py",
+      "sha256": "b07e4f0ce5f303da51cd93594f9720f0378f90df6ede56eaa1221a3d7a570f60",
+      "bytes": 11022
+    },
+    {
+      "path": "avatar-ready-locomotion-data-20261122\\v44-90s-gate\\frames.ndjson.gz",
+      "sha256": "025e4701b81802a765bfa05b62dd0cc43734a73900f828793c8731ba50f1c4a7",
+      "bytes": 46834126
+    },
+    {
+      "path": "avatar-ready-locomotion-data-20261122\\v44-contact-temporal-gate\\frames.ndjson.gz",
+      "sha256": "a6cbfcc82d0160cf6cddccd4c167983d31c0279db4cdc93a441f1023fbeab0a8",
+      "bytes": 1611441
+    },
+    {
+      "path": "avatar-ready-locomotion-data-20261122\\v44-90s-gate\\skin-metadata.json",
+      "sha256": "5a41fecab89446b332a9084039198fdca9b0ee833d8ef1978faf3f9252b68e15",
+      "bytes": 92892
+    },
+    {
+      "path": "avatar-ready-locomotion-data-20261122\\v44-contact-temporal-gate\\skin-metadata.json",
+      "sha256": "416cc1d53a541cb85bec516bde19bb7dbf9476c704199f6d9564ce465d060127",
+      "bytes": 93334
+    },
+    {
+      "path": "avatar-ready-locomotion-data-20261122\\v44-contact-temporal-gate\\trajectory-phase-comparison.json",
+      "sha256": "680e0b4ef219b51796140e5e6253177d5b8a045499c7b1f36c9198c859ceec0c",
+      "bytes": 1317
+    },
+    {
+      "path": "avatar-ready-locomotion-data-20261122\\v44-contact-temporal-gate\\support-yaw-decomposition-18_75s.json",
+      "sha256": "e6097aa81ed1210ebecfea1d447f3ee4bab25935eab9a17c05f7be1e99a47894",
+      "bytes": 1287
+    }
+  ]
+}

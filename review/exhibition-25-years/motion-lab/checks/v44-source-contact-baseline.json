@@ -1,0 +1,725 @@
+{
+  "method": "Independent NumPy full skin world positions using original native root translation. Sole candidates are original-bind vertices no more than25mm above each shoe minimum. Active material vertex is the lowest sole point in each pose. Its velocity is a fixed-vertex central finite difference, so switching nearest vertices is not counted as motion. Contact gate: height<=20mm and |vertical speed|<=0.10m/s, with no horizontal-velocity filter. Discard isolated low-height samples unless their contiguous (cyclic) contact interval lasts at least80ms; this avoids labeling a swing-foot low pass as support. These are inferred support windows, not authored contact annotations; numbers depend on the stated gate. Horizontal slip is not corrected.",
+  "avatars": [
+    {
+      "person": "emma",
+      "duration": 1.2000000476837158,
+      "frames": 146,
+      "maxFrameInterval": 0.00827586239781873,
+      "feet": {
+        "Left": {
+          "soleCandidateCount": 98,
+          "rawContactSampleCount": 71,
+          "minimumPersistentContactSeconds": 0.08,
+          "contactWindowsSeconds": [
+            [
+              0.397241395095299,
+              0.8689655517709666
+            ]
+          ],
+          "contactWindowsPhase": [
+            [
+              0.33103448275862063,
+              0.7241379310344828
+            ]
+          ],
+          "contactSampleCount": 58,
+          "contactSecondsApprox": 0.48000001907348633,
+          "horizontalContactPointSpeedMetersPerSecond": {
+            "median": 0.042414236413116924,
+            "p95": 0.09242313639626666,
+            "max": 0.26865967495863835
+          },
+          "integralAbsoluteContactSpeedMeters": 0.02548051685660032,
+          "heelContactWindowsPhase": [],
+          "toeContactWindowsPhase": [
+            [
+              0.45517241379310347,
+              0.7241379310344828
+            ]
+          ],
+          "samples": [
+            {
+              "phase": 0.0,
+              "pointY": 0.03801927848806902,
+              "heightSpeed": -0.6457733098211105,
+              "horizontalSpeed": 4.706736916907981,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.06206896551724138,
+              "pointY": 0.03510346728149269,
+              "heightSpeed": 0.17209698150624458,
+              "horizontalSpeed": 4.231275292101103,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.12413793103448276,
+              "pointY": 0.048483991666180545,
+              "heightSpeed": -0.46048860911206885,
+              "horizontalSpeed": 3.424844642694669,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "heel"
+            },
+            {
+              "phase": 0.18620689655172415,
+              "pointY": 0.02973697356595162,
+              "heightSpeed": -0.3114149696120675,
+              "horizontalSpeed": 1.4678253462212119,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "heel"
+            },
+            {
+              "phase": 0.2482758620689655,
+              "pointY": 0.010041489385882708,
+              "heightSpeed": -0.23446376592809404,
+              "horizontalSpeed": 0.36432978015491324,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "heel"
+            },
+            {
+              "phase": 0.31034482758620685,
+              "pointY": 0.0029204920029040696,
+              "heightSpeed": 0.06658962346970491,
+              "horizontalSpeed": 0.35266144535956456,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "midsole"
+            },
+            {
+              "phase": 0.3724137931034483,
+              "pointY": 0.004212074843551928,
+              "heightSpeed": -0.09070703871606131,
+              "horizontalSpeed": 0.07897368553364077,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "midsole"
+            },
+            {
+              "phase": 0.43448275862068964,
+              "pointY": 0.001102620564395962,
+              "heightSpeed": 0.018799377156371026,
+              "horizontalSpeed": 0.0502650959133727,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "midsole"
+            },
+            {
+              "phase": 0.496551724137931,
+              "pointY": 0.002816479491718359,
+              "heightSpeed": 0.041461737333175534,
+              "horizontalSpeed": 0.018347758378761795,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "toe"
+            },
+            {
+              "phase": 0.5586206896551724,
+              "pointY": 0.004142968207526323,
+              "heightSpeed": -0.007498248989254698,
+              "horizontalSpeed": 0.04589024504892773,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "toe"
+            },
+            {
+              "phase": 0.6206896551724137,
+              "pointY": 0.005051245341123862,
+              "heightSpeed": -0.017781863792613282,
+              "horizontalSpeed": 0.07105403223177018,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "toe"
+            },
+            {
+              "phase": 0.6827586206896551,
+              "pointY": 0.006097119195152488,
+              "heightSpeed": 0.0009352517695271759,
+              "horizontalSpeed": 0.023240491590300318,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "toe"
+            },
+            {
+              "phase": 0.7448275862068966,
+              "pointY": 0.004609336912296138,
+              "heightSpeed": -0.08180617530641895,
+              "horizontalSpeed": 0.5076352803811588,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.806896551724138,
+              "pointY": 0.009317703149542965,
+              "heightSpeed": 0.28391729113426956,
+              "horizontalSpeed": 0.38286542599520273,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.8689655172413793,
+              "pointY": 0.03644227397752425,
+              "heightSpeed": 0.49359153364940883,
+              "horizontalSpeed": 1.3809192141076545,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.9310344827586208,
+              "pointY": 0.046294357188867666,
+              "heightSpeed": 0.05236761124009131,
+              "horizontalSpeed": 3.3980422946110367,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.993103448275862,
+              "pointY": 0.03800646771346641,
+              "heightSpeed": 0.0026960379372998264,
+              "horizontalSpeed": 3.5829365124206523,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            }
+          ]
+        },
+        "Right": {
+          "soleCandidateCount": 95,
+          "rawContactSampleCount": 60,
+          "minimumPersistentContactSeconds": 0.08,
+          "contactWindowsSeconds": [
+            [
+              0.0,
+              0.2565517343323806
+            ],
+            [
+              1.1337931485011659,
+              1.2000000476837158
+            ]
+          ],
+          "contactWindowsPhase": [
+            [
+              0.0,
+              0.21379310344827585
+            ],
+            [
+              0.9448275862068964,
+              1.0
+            ]
+          ],
+          "contactSampleCount": 41,
+          "contactSecondsApprox": 0.3393103583105679,
+          "horizontalContactPointSpeedMetersPerSecond": {
+            "median": 0.10238606190930188,
+            "p95": 0.15778636140168267,
+            "max": 0.1635589775669074
+          },
+          "integralAbsoluteContactSpeedMeters": 0.03574089023545869,
+          "heelContactWindowsPhase": [],
+          "toeContactWindowsPhase": [
+            [
+              0.0,
+              0.21379310344827585
+            ],
+            [
+              0.9448275862068964,
+              1.0
+            ]
+          ],
+          "samples": [
+            {
+              "phase": 0.0,
+              "pointY": -0.0013881158087883632,
+              "heightSpeed": -0.030553811854973467,
+              "horizontalSpeed": 0.11366831162467732,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "toe"
+            },
+            {
+              "phase": 0.06206896551724138,
+              "pointY": 0.0009643534478652044,
+              "heightSpeed": -0.01101155549282635,
+              "horizontalSpeed": 0.10377761493542753,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "toe"
+            },
+            {
+              "phase": 0.12413793103448276,
+              "pointY": 0.0032241786220728093,
+              "heightSpeed": 0.005249936877876953,
+              "horizontalSpeed": 0.11671739679551259,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "toe"
+            },
+            {
+              "phase": 0.18620689655172415,
+              "pointY": 0.00481749829791011,
+              "heightSpeed": -0.038681129500175875,
+              "horizontalSpeed": 0.15130946109248025,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "toe"
+            },
+            {
+              "phase": 0.2482758620689655,
+              "pointY": -0.0039880541237015885,
+              "heightSpeed": -0.14438825911788472,
+              "horizontalSpeed": 0.25470768344024897,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.31034482758620685,
+              "pointY": 0.003903812485537353,
+              "heightSpeed": 0.3926459913361999,
+              "horizontalSpeed": 0.191425248390604,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.3724137931034483,
+              "pointY": 0.042858148120357376,
+              "heightSpeed": 0.6166035555492708,
+              "horizontalSpeed": 0.6687740749991147,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.43448275862068964,
+              "pointY": 0.05916758237843667,
+              "heightSpeed": 0.1602688399351171,
+              "horizontalSpeed": 2.8314793982113997,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.496551724137931,
+              "pointY": 0.03389312242916345,
+              "heightSpeed": -0.36037906554077415,
+              "horizontalSpeed": 4.341606621080726,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.5586206896551724,
+              "pointY": 0.01002342961733177,
+              "heightSpeed": 0.4245165797297167,
+              "horizontalSpeed": 5.193713979829987,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.6206896551724137,
+              "pointY": 0.047235523359807116,
+              "heightSpeed": -0.4428299251289898,
+              "horizontalSpeed": 4.059336905181645,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "midsole"
+            },
+            {
+              "phase": 0.6827586206896551,
+              "pointY": 0.03859811691153448,
+              "heightSpeed": -0.2792655590302014,
+              "horizontalSpeed": 1.2063987904830784,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "heel"
+            },
+            {
+              "phase": 0.7448275862068966,
+              "pointY": 0.011590620818056098,
+              "heightSpeed": -0.477911113439168,
+              "horizontalSpeed": 0.3652813361518231,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "heel"
+            },
+            {
+              "phase": 0.806896551724138,
+              "pointY": -0.004302477092444714,
+              "heightSpeed": 0.0824070876730452,
+              "horizontalSpeed": 0.133106665406458,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "midsole"
+            },
+            {
+              "phase": 0.8689655172413793,
+              "pointY": -0.004007224048001775,
+              "heightSpeed": -0.13103754997588085,
+              "horizontalSpeed": 0.04090716778106564,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.9310344827586208,
+              "pointY": -0.004717633644878856,
+              "heightSpeed": 0.09481886783167533,
+              "horizontalSpeed": 0.05024946455583577,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.993103448275862,
+              "pointY": -0.0018987077103663546,
+              "heightSpeed": 0.06782279850456195,
+              "horizontalSpeed": 0.0660247848812261,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "toe"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "person": "ethan",
+      "duration": 1.2000000476837158,
+      "frames": 146,
+      "maxFrameInterval": 0.00827586239781873,
+      "feet": {
+        "Left": {
+          "soleCandidateCount": 95,
+          "rawContactSampleCount": 71,
+          "minimumPersistentContactSeconds": 0.08,
+          "contactWindowsSeconds": [
+            [
+              0.0,
+              0.12413793596728094
+            ],
+            [
+              0.97655176294261,
+              1.2000000476837158
+            ]
+          ],
+          "contactWindowsPhase": [
+            [
+              0.0,
+              0.10344827586206896
+            ],
+            [
+              0.8137931034482758,
+              1.0
+            ]
+          ],
+          "contactSampleCount": 44,
+          "contactSecondsApprox": 0.3641379455040241,
+          "horizontalContactPointSpeedMetersPerSecond": {
+            "median": 0.023192352505700377,
+            "p95": 0.04745093485226437,
+            "max": 0.04989380154289995
+          },
+          "integralAbsoluteContactSpeedMeters": 0.008278561116460395,
+          "heelContactWindowsPhase": [
+            [
+              0.0,
+              0.10344827586206896
+            ],
+            [
+              0.8137931034482758,
+              1.0
+            ]
+          ],
+          "toeContactWindowsPhase": [],
+          "samples": [
+            {
+              "phase": 0.0,
+              "pointY": -0.0034334173263677673,
+              "heightSpeed": -0.07512826857431065,
+              "horizontalSpeed": 0.04989380154289995,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "heel"
+            },
+            {
+              "phase": 0.06206896551724138,
+              "pointY": -0.005144636514980709,
+              "heightSpeed": -0.04378660242607957,
+              "horizontalSpeed": 0.03285665754544802,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "heel"
+            },
+            {
+              "phase": 0.12413793103448276,
+              "pointY": -0.0033253953681419467,
+              "heightSpeed": -0.012505441381931562,
+              "horizontalSpeed": 0.01643741410409873,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "midsole"
+            },
+            {
+              "phase": 0.18620689655172415,
+              "pointY": -0.0072080820570841,
+              "heightSpeed": -0.07516791320542525,
+              "horizontalSpeed": 0.05399420163510491,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "midsole"
+            },
+            {
+              "phase": 0.2482758620689655,
+              "pointY": -0.011756969684222298,
+              "heightSpeed": -0.055841079385932045,
+              "horizontalSpeed": 0.07990909158851986,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "midsole"
+            },
+            {
+              "phase": 0.31034482758620685,
+              "pointY": -0.004773710567484463,
+              "heightSpeed": 0.06868040459383307,
+              "horizontalSpeed": 0.10489335364754745,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.3724137931034483,
+              "pointY": 0.019046210485161197,
+              "heightSpeed": 0.6046974825522492,
+              "horizontalSpeed": 1.7936399823185865,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.43448275862068964,
+              "pointY": 0.03998923146591718,
+              "heightSpeed": 0.4585895410335528,
+              "horizontalSpeed": 4.096925626603569,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.496551724137931,
+              "pointY": 0.04552895929912246,
+              "heightSpeed": 0.4135226973015002,
+              "horizontalSpeed": 4.24119053789144,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.5586206896551724,
+              "pointY": 0.0645859130682088,
+              "heightSpeed": -0.47096635255285013,
+              "horizontalSpeed": 3.323575254246434,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "heel"
+            },
+            {
+              "phase": 0.6206896551724137,
+              "pointY": 0.04373152424055668,
+              "heightSpeed": -0.2851191378674145,
+              "horizontalSpeed": 1.6184165436757683,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "heel"
+            },
+            {
+              "phase": 0.6827586206896551,
+              "pointY": 0.02590356615792825,
+              "heightSpeed": -0.2915546126653718,
+              "horizontalSpeed": 0.3525976999680248,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "heel"
+            },
+            {
+              "phase": 0.7448275862068966,
+              "pointY": 0.011506188764038913,
+              "heightSpeed": -0.09873906455502389,
+              "horizontalSpeed": 0.2587167257099162,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "heel"
+            },
+            {
+              "phase": 0.806896551724138,
+              "pointY": 0.005001707632210915,
+              "heightSpeed": -0.10137551567534116,
+              "horizontalSpeed": 0.041813738324237064,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "heel"
+            },
+            {
+              "phase": 0.8689655172413793,
+              "pointY": 0.0002868922775571608,
+              "heightSpeed": -0.029475025194703193,
+              "horizontalSpeed": 0.017504027149131005,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "heel"
+            },
+            {
+              "phase": 0.9310344827586208,
+              "pointY": -0.0018382101873685233,
+              "heightSpeed": -0.006342826086737109,
+              "horizontalSpeed": 0.018079231286793066,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "heel"
+            },
+            {
+              "phase": 0.993103448275862,
+              "pointY": -0.0037799916008834336,
+              "heightSpeed": 0.032439348605840315,
+              "horizontalSpeed": 0.02643368465996109,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "heel"
+            }
+          ]
+        },
+        "Right": {
+          "soleCandidateCount": 95,
+          "rawContactSampleCount": 71,
+          "minimumPersistentContactSeconds": 0.08,
+          "contactWindowsSeconds": [
+            [
+              0.3889655326974803,
+              0.6620689918254984
+            ]
+          ],
+          "contactWindowsPhase": [
+            [
+              0.32413793103448274,
+              0.5517241379310345
+            ]
+          ],
+          "contactSampleCount": 34,
+          "contactSecondsApprox": 0.2813793215258368,
+          "horizontalContactPointSpeedMetersPerSecond": {
+            "median": 0.028848842598297238,
+            "p95": 0.054543170968040615,
+            "max": 0.058257350936056884
+          },
+          "integralAbsoluteContactSpeedMeters": 0.00931028611275767,
+          "heelContactWindowsPhase": [
+            [
+              0.32413793103448274,
+              0.5310344827586206
+            ]
+          ],
+          "toeContactWindowsPhase": [],
+          "samples": [
+            {
+              "phase": 0.0,
+              "pointY": 0.030885577487924698,
+              "heightSpeed": -0.05647234684888369,
+              "horizontalSpeed": 3.9320214194649,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.06206896551724138,
+              "pointY": 0.06004913663386058,
+              "heightSpeed": -0.23074157921286867,
+              "horizontalSpeed": 3.456577624498348,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "heel"
+            },
+            {
+              "phase": 0.12413793103448276,
+              "pointY": 0.04633213758675464,
+              "heightSpeed": -0.3721165680317927,
+              "horizontalSpeed": 1.9498736665300191,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "heel"
+            },
+            {
+              "phase": 0.18620689655172415,
+              "pointY": 0.026633665689230368,
+              "heightSpeed": -0.26220383219481574,
+              "horizontalSpeed": 0.3648305956992786,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "heel"
+            },
+            {
+              "phase": 0.2482758620689655,
+              "pointY": 0.014051002996807739,
+              "heightSpeed": -0.06106152839329673,
+              "horizontalSpeed": 0.1160902288770523,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "heel"
+            },
+            {
+              "phase": 0.31034482758620685,
+              "pointY": 0.005424006251506077,
+              "heightSpeed": -0.13539744190074532,
+              "horizontalSpeed": 0.061157238845185445,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "heel"
+            },
+            {
+              "phase": 0.3724137931034483,
+              "pointY": 0.0008312922068037963,
+              "heightSpeed": -0.014675922951250071,
+              "horizontalSpeed": 0.022161495763486347,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "heel"
+            },
+            {
+              "phase": 0.43448275862068964,
+              "pointY": -2.486746092518347e-05,
+              "heightSpeed": 0.020069620072280824,
+              "horizontalSpeed": 0.05042041707235863,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "heel"
+            },
+            {
+              "phase": 0.496551724137931,
+              "pointY": -0.0015410752433697612,
+              "heightSpeed": 0.020002800788997386,
+              "horizontalSpeed": 0.014677555402952432,
+              "contactByHeightAndVerticalVelocity": true,
+              "region": "heel"
+            },
+            {
+              "phase": 0.5586206896551724,
+              "pointY": -0.0004967743152751199,
+              "heightSpeed": -0.11029256880061111,
+              "horizontalSpeed": 0.04891254470606659,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "midsole"
+            },
+            {
+              "phase": 0.6206896551724137,
+              "pointY": -0.007932528182840253,
+              "heightSpeed": -0.10673344792658587,
+              "horizontalSpeed": 0.03595722436220055,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "midsole"
+            },
+            {
+              "phase": 0.6827586206896551,
+              "pointY": -0.013161688920405413,
+              "heightSpeed": -0.08689671317119425,
+              "horizontalSpeed": 0.031328151232424925,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "midsole"
+            },
+            {
+              "phase": 0.7448275862068966,
+              "pointY": -0.017725008248071113,
+              "heightSpeed": -0.05971112257911165,
+              "horizontalSpeed": 0.06917528725012487,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "midsole"
+            },
+            {
+              "phase": 0.806896551724138,
+              "pointY": -0.005030675477685485,
+              "heightSpeed": 0.43411098548815463,
+              "horizontalSpeed": 0.14718800754848288,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "midsole"
+            },
+            {
+              "phase": 0.8689655172413793,
+              "pointY": 0.003831025129685528,
+              "heightSpeed": 0.2847991314961279,
+              "horizontalSpeed": 1.3658282654881897,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.9310344827586208,
+              "pointY": 0.022372804960279852,
+              "heightSpeed": 0.40390612072473026,
+              "horizontalSpeed": 3.3260629350810063,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            },
+            {
+              "phase": 0.993103448275862,
+              "pointY": 0.027049498648098358,
+              "heightSpeed": 0.4001397068694093,
+              "horizontalSpeed": 4.0276688373559955,
+              "contactByHeightAndVerticalVelocity": false,
+              "region": "toe"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

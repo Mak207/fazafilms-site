@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "@recast-navigation/core": "./vendor/recast-navigation-0.44.0/core.mjs",
+    "@recast-navigation/wasm": "./vendor/recast-navigation-0.44.0/wasm-compat.mjs"
+  }
+}

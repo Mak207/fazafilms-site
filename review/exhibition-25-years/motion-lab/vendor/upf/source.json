@@ -1,0 +1,14 @@
+{
+  "commit": "82f1b8218813547224dd96df1638c950d241824d",
+  "files": [
+    "LICENSE",
+    "README.md",
+    "demo/BVHExporter.js",
+    "demo/BVHeLoader.js",
+    "demo/app.js",
+    "demo/boneMapping.js",
+    "demo/gui.js",
+    "demo/skeletonHelper.js",
+    "retargeting.js"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "baselineCommit": "2be1b5b1567716e4b9b47fb252953431bc352be7",
+  "runtimeSHA256LF": "10e7a2e5a60461d377669733d8315b367e77b3ae24747cafd3478fe6c2b6968d",
+  "runtimeSHA256CRLF": "db1673c0cf29181dd33d31ff9041c234aee16f26da9b1e28a0edffa8058435fa",
+  "seed": 424242,
+  "stepSeconds": 0.016666666666666666,
+  "totalSteps": 1800,
+  "totalSamples": 1801,
+  "floorY": 0,
+  "floorVerifiedAgainst": "exhibition-3d.js buildPavilion creates PlaneGeometry rotated -PI/2 with default y=0",
+  "toePenetration": {
+    "actor": "woman",
+    "state": "walk",
+    "frame": 507,
+    "timeSeconds": 8.45,
+    "side": "left",
+    "vertexIndex": 48828,
+    "totalVertices": 52209,
+    "positionAccessor": 0,
+    "skinJoint": 5,
+    "skinBone": "mixamorigLeftToeBase",
+    "skinWeight": 1,
+    "bindWorld": [
+      0.16501655,
+      0.00656293,
+      0.13627698
+    ],
+    "posedWorld": [
+      -3.67099408,
+      -0.0805183,
+      0.04972709
+    ],
+    "ankleY": 0.1220089,
+    "toeBaseY": -0.03690622,
+    "neighbourFrames": [
+      {
+        "frame": 501,
+        "time": 8.35,
+        "soleY": -0.046598
+      },
+      {
+        "frame": 513,
+        "time": 8.55,
+        "soleY": -0.052651
+      }
+    ],
+    "repeatReplayMaxPositionErrorM": 0
+  },
+  "actorOverlap": {
+    "timeSeconds": 30,
+    "station": "Moscow City",
+    "holderBoth": [
+      0,
+      0,
+      3.62
+    ],
+    "states": [
+      "observe",
+      "observe"
+    ]
+  },
+  "scope": "Preserved runtime v42, current meshes, same floor level. Observational baseline; no v42 production changes.",
+  "evidence": "Full traces and six inspected front/side frames saved in the session's avatar-motion-data-20261122/evidence/v42."
+}

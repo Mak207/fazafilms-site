@@ -1,0 +1,92 @@
+{
+  "sourceRepository": "https://github.com/microsoft/Microsoft-Rocketbox",
+  "sourceRevision": "0943055db6ec570bcef9f2c8b41c9e5467c808f9",
+  "license": "MIT",
+  "method": "World samples include animated external Armature; common semantic reference pose; UPF applyTPose and CURRENT retarget; original target joint offsets retained. Root yaw and XZ extracted once at runtime; no yaw warp.",
+  "retargeter": "https://github.com/upf-gti/retargeting-threejs/tree/82f1b8218813547224dd96df1638c950d241824d",
+  "clips": [
+    "TurnLeft90",
+    "TurnRight90",
+    "TurnLeft180",
+    "TurnRight180"
+  ],
+  "artifacts": [
+    {
+      "file": "emma-native-turns.glb",
+      "bytes": 647080,
+      "sha256": "167cfe59e23167a05139d317c1bb118db888127b2bf3a48827bf40e9090e4fe3"
+    },
+    {
+      "file": "ethan-native-turns.glb",
+      "bytes": 714880,
+      "sha256": "14e62618fb556d22e4177ec4d60b2b2a1b992918db6282d93b3bf7433ab85b6d"
+    }
+  ],
+  "sources": [
+    {
+      "filename": "f_turn_left_180.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xyz/f_turn_left_180.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xyz/f_turn_left_180.max.fbx",
+      "bytes": 1175568,
+      "git_blob_sha1": "f2545cc1888667d23b5e551251b8fcac7e52a739",
+      "sha256": "c8de395f622eb6816de5f0250f05eb1ac9d2440dcdbf472927d0daad71773211"
+    },
+    {
+      "filename": "f_turn_left_90.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xyz/f_turn_left_90.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xyz/f_turn_left_90.max.fbx",
+      "bytes": 1299280,
+      "git_blob_sha1": "11d36f20f09571a8ed0b31cd7ed7e6303e5c2b54",
+      "sha256": "240d68bd4ef3ab65a7307256fb733b16bd66b8e2c0e6a437d412cd157e1096c9"
+    },
+    {
+      "filename": "f_turn_right_180.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xyz/f_turn_right_180.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xyz/f_turn_right_180.max.fbx",
+      "bytes": 1139344,
+      "git_blob_sha1": "a5fbc2d63a8a2eef6675d9a477181de4647bd0d9",
+      "sha256": "983f9f89312c901b49cbe0bec0a7179f4e6c86e6bfec9f15b3eb1a36e622cd4a"
+    },
+    {
+      "filename": "f_turn_right_90.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xyz/f_turn_right_90.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xyz/f_turn_right_90.max.fbx",
+      "bytes": 1299280,
+      "git_blob_sha1": "bf136ec45209290edb5ab2e64a03eed30c5aed61",
+      "sha256": "63bdb1b5e3bf2206b37ff22aada0bde668ae06c48820d7bd9b1f68001227e860"
+    },
+    {
+      "filename": "m_turn_left_180.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xyz/m_turn_left_180.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xyz/m_turn_left_180.max.fbx",
+      "bytes": 1325984,
+      "git_blob_sha1": "09aa11644b77d7944fa79bd42c8054c6592723de",
+      "sha256": "07abd95c0ea314a8c6f81b0265a2b02fb16949b896bb2a36d0e3e950701be4d1"
+    },
+    {
+      "filename": "m_turn_left_90.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xyz/m_turn_left_90.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xyz/m_turn_left_90.max.fbx",
+      "bytes": 1299184,
+      "git_blob_sha1": "20cc2e386451461657cef25cb385e5267b096316",
+      "sha256": "da138838ea930b29c9996c6633e588b5352fe1f4d74f5cfa5c7acb22798dc97f"
+    },
+    {
+      "filename": "m_turn_right_180.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xyz/m_turn_right_180.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xyz/m_turn_right_180.max.fbx",
+      "bytes": 1308256,
+      "git_blob_sha1": "42739df43aad8cc539b8376e3084461de421600d",
+      "sha256": "adb7a89b30df8d93885f1a4dfad5bc7f76ade9af4264a09c7150717818f4888c"
+    },
+    {
+      "filename": "m_turn_right_90.max.fbx",
+      "source_path": "Assets/Animations/all_animations_max_motextr_xyz/m_turn_right_90.max.fbx",
+      "url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/0943055db6ec570bcef9f2c8b41c9e5467c808f9/Assets/Animations/all_animations_max_motextr_xyz/m_turn_right_90.max.fbx",
+      "bytes": 1254448,
+      "git_blob_sha1": "948d02d7f32111cd5a363992fcf357e4e87a9e8c",
+      "sha256": "721ac18eb4cc5278b479734e185423fe05a4bf6b2ae95514e02d049b4ce70b3a"
+    }
+  ],
+  "validation": "CPU9phases perclip: all mapped arm/leg/foot worlddirections error<.0002deg; knee error<.00005deg; yaw<.00001deg; scaledrootposition<.00000007m. Browser contact/runtime acceptance is separate."
+}

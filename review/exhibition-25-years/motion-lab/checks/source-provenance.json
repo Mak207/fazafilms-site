@@ -1,0 +1,64 @@
+[
+  {
+    "file": "emma_casual.glb",
+    "source": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/emma_casual.glb",
+    "revision": "2fd9ec82fbe1613d40ae38aadcca3f410725f740",
+    "git_blob": "17f922a84643c38dee8771f9613d6c883672f539",
+    "sha256": "dc825893bdb47fa25fe3017ab0c923018b57003a7d734a5206366fb95036769a",
+    "bytes": 12722000,
+    "nodes": 93,
+    "skins": 1,
+    "animations": [
+      "Idle",
+      "Walk",
+      "Wave",
+      "Talk",
+      "Confident",
+      "Argue",
+      "Cheer",
+      "Laugh",
+      "Drink",
+      "Clap",
+      "Think",
+      "Shrug",
+      "Phone"
+    ],
+    "extensionsUsed": [
+      "EXT_texture_webp"
+    ],
+    "extensionsRequired": [
+      "EXT_texture_webp"
+    ]
+  },
+  {
+    "file": "ethan_casual.glb",
+    "source": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/ethan_casual.glb",
+    "revision": "2fd9ec82fbe1613d40ae38aadcca3f410725f740",
+    "git_blob": "c91c29eb512d6b459547432de81937d42ef1132c",
+    "sha256": "88b282a080bc1d35d17f9b428afdd14404abda84e0f651424db4fa7e1dbb6ce5",
+    "bytes": 13101540,
+    "nodes": 93,
+    "skins": 1,
+    "animations": [
+      "Idle",
+      "Walk",
+      "Wave",
+      "Talk",
+      "Confident",
+      "Argue",
+      "Cheer",
+      "Laugh",
+      "Drink",
+      "Clap",
+      "Think",
+      "Shrug",
+      "Phone"
+    ],
+    "extensionsUsed": [
+      "EXT_texture_webp"
+    ],
+    "extensionsRequired": [
+      "EXT_texture_webp"
+    ]
+  }
+]
