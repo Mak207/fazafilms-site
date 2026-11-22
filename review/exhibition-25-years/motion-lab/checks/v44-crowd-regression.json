@@ -1,0 +1,179 @@
+{
+  "pass": true,
+  "scope": "Navigation and measured conservative envelopes; not an artistic gait or foot-contact acceptance.",
+  "engine": "recast-navigation@0.44.0",
+  "radius": 0.7,
+  "envelopeRadius": 0.68,
+  "adapterSha256": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de",
+  "navMeshSha256": "f8d89a591b7824a77242bfbaadb564938c078ff1aa7f8177e1224215cf4348ef",
+  "renderDtPattern": [
+    0.008333333333333333,
+    0.016666666666666666,
+    0.03333333333333333
+  ],
+  "cases": [
+    {
+      "name": "head-on",
+      "pass": true,
+      "completed": true,
+      "simulationSeconds": 8.800000000000017,
+      "ticks": 528,
+      "minCenterDistance": 1.4004797397205515,
+      "minObstacleDistance": 1.358249199614025,
+      "minBoundaryDistance": 2.1109814643859863,
+      "overlapTicks": 0,
+      "skinEnvelopeOverlapTicks": 0,
+      "obstacleTicks": 0,
+      "occupiedResult": null,
+      "end": [
+        {
+          "id": "emma",
+          "position": {
+            "x": 2.8861477375030518,
+            "y": 0,
+            "z": -6.031612396240234
+          },
+          "currentStation": null,
+          "arrived": true
+        },
+        {
+          "id": "ethan",
+          "position": {
+            "x": -2.8868539333343506,
+            "y": 0,
+            "z": -5.9661993980407715
+          },
+          "currentStation": null,
+          "arrived": true
+        }
+      ]
+    },
+    {
+      "name": "crossing",
+      "pass": true,
+      "completed": true,
+      "simulationSeconds": 7.98333333333331,
+      "ticks": 479,
+      "minCenterDistance": 1.3999697327134344,
+      "minObstacleDistance": 1.4732646786233716,
+      "minBoundaryDistance": 0.8405556678771973,
+      "overlapTicks": 0,
+      "skinEnvelopeOverlapTicks": 0,
+      "obstacleTicks": 0,
+      "occupiedResult": null,
+      "end": [
+        {
+          "id": "emma",
+          "position": {
+            "x": 2.88224196434021,
+            "y": 0,
+            "z": -6.01483154296875
+          },
+          "currentStation": null,
+          "arrived": true
+        },
+        {
+          "id": "ethan",
+          "position": {
+            "x": 0.11748913675546646,
+            "y": 0,
+            "z": -4.803098201751709
+          },
+          "currentStation": null,
+          "arrived": true
+        }
+      ]
+    },
+    {
+      "name": "occupied-station",
+      "pass": true,
+      "completed": true,
+      "simulationSeconds": 9.383333333333379,
+      "ticks": 563,
+      "minCenterDistance": 1.4042154545023309,
+      "minObstacleDistance": 0.7700999291814674,
+      "minBoundaryDistance": 1.6300000476837155,
+      "overlapTicks": 0,
+      "skinEnvelopeOverlapTicks": 0,
+      "obstacleTicks": 0,
+      "occupiedResult": {
+        "accepted": false,
+        "reason": "occupied",
+        "owner": "emma",
+        "station": 0
+      },
+      "end": [
+        {
+          "id": "emma",
+          "position": {
+            "x": -3.549999952316284,
+            "y": 0,
+            "z": 0.3099994659423828
+          },
+          "currentStation": 0,
+          "arrived": true
+        },
+        {
+          "id": "ethan",
+          "position": {
+            "x": -0.07416023313999176,
+            "y": 0,
+            "z": 3.4572250843048096
+          },
+          "currentStation": 2,
+          "arrived": true
+        }
+      ]
+    },
+    {
+      "name": "exhibition-crossing",
+      "pass": true,
+      "completed": true,
+      "simulationSeconds": 15.916666666667037,
+      "ticks": 955,
+      "minCenterDistance": 1.4005830960500976,
+      "minObstacleDistance": 0.7389780724373644,
+      "minBoundaryDistance": 1.630339078903198,
+      "overlapTicks": 0,
+      "skinEnvelopeOverlapTicks": 0,
+      "obstacleTicks": 0,
+      "occupiedResult": null,
+      "end": [
+        {
+          "id": "emma",
+          "position": {
+            "x": 3.2946219444274902,
+            "y": 0,
+            "z": -1.7760833501815796
+          },
+          "currentStation": 4,
+          "arrived": true
+        },
+        {
+          "id": "ethan",
+          "position": {
+            "x": -3.3047406673431396,
+            "y": 0,
+            "z": -1.769948959350586
+          },
+          "currentStation": 3,
+          "arrived": true
+        }
+      ]
+    },
+    {
+      "name": "station-claim-retirement",
+      "pass": true,
+      "currentStation": 1,
+      "retiredOwner": null,
+      "occupiedOwner": "emma",
+      "physicalOccupancyStillBlocks": {
+        "accepted": false,
+        "reason": "physically-occupied",
+        "owner": "emma",
+        "station": 0
+      }
+    }
+  ],
+  "testedAdapterSha256": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de"
+}

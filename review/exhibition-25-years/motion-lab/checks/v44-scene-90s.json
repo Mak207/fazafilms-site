@@ -1,0 +1,439 @@
+{
+  "acceptanceStatus": "QUALIFIED_NUMERIC_RESULT_END_WAITING_EPISODE_REQUIRES_CONTINUATION",
+  "scope": "90-second deterministic exhibition trace; final waiting/yield episode must be resolved by the continuous recording tail. Not a universal naturalness, zero-slip, self-intersection or FPS proof.",
+  "urlParameters": "zone=technology&camera=overview&mode=film&visitorQA=1&visitorSeed=20261122&visitorDemoEvery=9999",
+  "durationSeconds": 90,
+  "fixedStepSeconds": 0.016666666666666666,
+  "fixedSteps": 5400,
+  "inputSha256": {
+    "visitors-v44.js": "39948c10b257436f659fba2521ba9dac03a53669e62ea7805e291a5047f4887a",
+    "visitor-motion-v43.js": "25bba4041399a033aee1ff259f083d81897da8588bdd90d53f3667bbc365e6ab",
+    "ready-crowd-v1.js": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de",
+    "index.html": "29f2d9a8d5b1ab50d8751fcaa77f3e15c96c28bcd0a55b28f6ad2f042191789b",
+    "exhibition-3d.js": "c6d2a346775d09a6049501d1223c081b5e5ba767760374675a8fecb26b6e461d"
+  },
+  "traceSha256": "025e4701b81802a765bfa05b62dd0cc43734a73900f828793c8731ba50f1c4a7",
+  "sourceReportSha256": "c789cc666767c073b1abef5fe219f57e6077792e4512755b58c7ea5ab3ba2e9e",
+  "pageErrors": [],
+  "requestFailed": [],
+  "sceneErrors": [],
+  "sceneFailures": [],
+  "sourcePoseReference": "Independent fresh GLTF loaded before any mixer action; same clips, weights and times.",
+  "poseAndDistance": {
+    "maxBoneQuaternionRadians": 7.300048299977715e-08,
+    "maxBonePositionDelta": 0,
+    "maxWorldJump": 0.017333449455148933,
+    "maxWalkPhaseDistanceError": 1.1102230246251565e-16,
+    "maxRootPoseAdvanceWithoutApplication": 0
+  },
+  "navigation": {
+    "fixedSteps": 5400,
+    "minimumPairDistance": 1.4006878813198238,
+    "minimumStaticClearance": 0.7332181412009411,
+    "maximumRenderedWorldDeviation": 0,
+    "maximumRootMotionDeviation": 0,
+    "rejectedRootSteps": 0,
+    "appliedRootSteps": 1300,
+    "rootPoseAdvancedWithoutApplication": 0,
+    "navigationPreflightFailures": 21,
+    "completedJourneys": 7,
+    "maximumYawStep": 0.05244410037994385,
+    "maximumFacingVelocityAngle": 1.1225562077104476,
+    "maximumFacingVelocityLagSeconds": 0.06666666666666667,
+    "facingVelocityOver45DegreesTime": 0.06666666666666667,
+    "reversedExitCandidates": 19,
+    "reversedEntryCandidates": 7,
+    "maximumRecoverySeconds": 9.199999999999484,
+    "recoveryCompletions": 2,
+    "yieldCount": 3,
+    "yieldResumes": 2,
+    "yieldReplans": 0,
+    "totalYieldSeconds": 22.500000000000004,
+    "maximumYieldSeconds": 9.1166666666667,
+    "secondaryYieldSignals": 0,
+    "droppedTime": 0,
+    "fixedAccumulator": 0,
+    "engine": "recast-navigation@0.44.0",
+    "worldTranslationAuthority": "DetourCrowd snapshot",
+    "intermediateLookahead": 0.18,
+    "finalArrivalUsesEngine": true,
+    "yieldingId": "ethan",
+    "yieldPause": 0.6,
+    "lateYieldReplanAfter": 3,
+    "recoveryTotalLimit": 24,
+    "recoveryReplanLimit": 3,
+    "facingAngularSpeed": 2.4,
+    "facingVelocityThreshold": 0.1,
+    "facingMethod": "THREE.Quaternion.rotateTowards; authored turns bypass it",
+    "sourceWalkHasNonzeroContactSlip": true,
+    "startStop": "Standard Idle/Walk blend; dedicated start/stop clips are not installed."
+  },
+  "actors": [
+    {
+      "id": "emma",
+      "completedJourneys": 4,
+      "endState": "waiting",
+      "failure": null,
+      "endNavigation": {
+        "engine": "DetourCrowd",
+        "stage": null,
+        "yawWarp": 0,
+        "rootMotionDoubleApplied": false,
+        "facingTargetYaw": 1.7364714903143799,
+        "facingVelocityAngle": 0,
+        "facingLagSeconds": 0,
+        "exitDirectionDot": 0.38688620264621837,
+        "entryDirectionDot": 0.3676323024575319,
+        "recoveryTime": 0,
+        "recoveryReplans": 0,
+        "yieldCount": 2,
+        "yieldReplans": 0,
+        "yieldKind": "pre-departure",
+        "yieldReason": "exit-overlaps-active-upstream-corridor",
+        "yieldPeer": "ethan",
+        "yieldTime": 6.866666666666648,
+        "yieldHeldYaw": 1.5915873538051122,
+        "turnName": null,
+        "turnEndpoint": [
+          -3.5015082743521333,
+          0,
+          0.16174522528673407
+        ],
+        "turnPreflight": {
+          "clear": true,
+          "sampleCount": 141,
+          "minimumClearance": 0.9431430036334874,
+          "minimumPeerDistance": 4.446172940933272,
+          "maximumProjectionShift": 1.1882717123291894e-07
+        },
+        "turnElapsed": 2.6933332538604735,
+        "turnBlockedTime": 0,
+        "approachLead": 0.65,
+        "exitLead": 0.65,
+        "retries": 6,
+        "waitTime": 5.866666666666651,
+        "waitReason": "no-safe-authored-turn-or-navmesh-route",
+        "arrivalYawError": null,
+        "requestedPath": [
+          [
+            {
+              "x": -3.5015082359313965,
+              "y": 0,
+              "z": 0.16174522042274475
+            },
+            {
+              "x": -2.8532655239105225,
+              "y": 0,
+              "z": 0.11398275941610336
+            }
+          ],
+          [
+            {
+              "x": -2.8532655239105225,
+              "y": 0,
+              "z": 0.11398275941610336
+            },
+            {
+              "x": -2.7090957164764404,
+              "y": 0,
+              "z": -0.31572455167770386
+            }
+          ],
+          [
+            {
+              "x": -2.7090957164764404,
+              "y": 0,
+              "z": -0.31572455167770386
+            },
+            {
+              "x": -2.059999942779541,
+              "y": 0,
+              "z": -0.3500000238418579
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": "ethan",
+      "completedJourneys": 3,
+      "endState": "yield",
+      "failure": null,
+      "endNavigation": {
+        "engine": "DetourCrowd",
+        "stage": 0,
+        "yawWarp": 0,
+        "rootMotionDoubleApplied": false,
+        "facingTargetYaw": 0.2935562040698736,
+        "facingVelocityAngle": 0,
+        "facingLagSeconds": 0,
+        "exitDirectionDot": 0.9700064043536636,
+        "entryDirectionDot": 0.8833163719871842,
+        "recoveryTime": 9.116666666666148,
+        "recoveryReplans": 0,
+        "yieldCount": 1,
+        "yieldReplans": 0,
+        "yieldKind": "pre-departure",
+        "yieldReason": "exit-lead-current-agent-volume",
+        "yieldPeer": "emma",
+        "yieldTime": 9.1166666666667,
+        "yieldHeldYaw": 0.2935562040698736,
+        "turnName": "TurnLeft180",
+        "turnEndpoint": [
+          -3.3297829627990723,
+          0,
+          -1.7648073434829712
+        ],
+        "turnPreflight": {
+          "clear": true,
+          "sampleCount": 148,
+          "minimumClearance": 0.9605156853091938,
+          "minimumPeerDistance": 1.721618891893444,
+          "maximumProjectionShift": 1.2800745801085262e-07
+        },
+        "turnElapsed": 2.793333396911621,
+        "turnBlockedTime": 0,
+        "approachLead": 0.65,
+        "exitLead": 0.65,
+        "retries": 0,
+        "waitTime": 0,
+        "waitReason": null,
+        "arrivalYawError": null,
+        "requestedPath": [
+          [
+            {
+              "x": -3.3297829627990723,
+              "y": 0,
+              "z": -1.7648073434829712
+            },
+            {
+              "x": -3.1707849502563477,
+              "y": 0,
+              "z": -1.1345537900924683
+            }
+          ],
+          [
+            {
+              "x": -3.1707849502563477,
+              "y": 0,
+              "z": -1.1345537900924683
+            },
+            {
+              "x": -1.8799998760223389,
+              "y": 0,
+              "z": 1.2699995040893555
+            },
+            {
+              "x": -1.8199999332427979,
+              "y": 0,
+              "z": 1.3299999237060547
+            },
+            {
+              "x": -1.6399998664855957,
+              "y": 0,
+              "z": 1.510000228881836
+            },
+            {
+              "x": -1.2799999713897705,
+              "y": 0,
+              "z": 1.6899995803833008
+            },
+            {
+              "x": 1.2400002479553223,
+              "y": 0,
+              "z": 1.6899995803833008
+            },
+            {
+              "x": 1.3600001335144043,
+              "y": 0,
+              "z": 1.630000114440918
+            },
+            {
+              "x": 1.5999999046325684,
+              "y": 0,
+              "z": 1.510000228881836
+            },
+            {
+              "x": 1.8400001525878906,
+              "y": 0,
+              "z": 1.2699995040893555
+            },
+            {
+              "x": 3.319827079772949,
+              "y": 0,
+              "z": -1.2307007312774658
+            }
+          ],
+          [
+            {
+              "x": 3.319827079772949,
+              "y": 0,
+              "z": -1.2307007312774658
+            },
+            {
+              "x": 3.3499999046325684,
+              "y": 0,
+              "z": -1.8799999952316284
+            }
+          ]
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "time": 8.91666666666669,
+      "id": "ethan",
+      "from": "turn",
+      "to": "walk",
+      "image": "event-00535-ethan-turn-walk.png"
+    },
+    {
+      "time": 10.350000000000094,
+      "id": "emma",
+      "from": "turn",
+      "to": "yield",
+      "image": "event-00621-emma-turn-yield.png"
+    },
+    {
+      "time": 16.86666666666699,
+      "id": "emma",
+      "from": "yield",
+      "to": "walk",
+      "image": "event-01012-emma-yield-walk.png"
+    },
+    {
+      "time": 22.366666666666678,
+      "id": "emma",
+      "from": "walk",
+      "to": "observe",
+      "image": "event-01342-emma-walk-observe.png"
+    },
+    {
+      "time": 27.349999999999728,
+      "id": "ethan",
+      "from": "walk",
+      "to": "observe",
+      "image": "event-01641-ethan-walk-observe.png"
+    },
+    {
+      "time": 30.866666666666195,
+      "id": "emma",
+      "from": "turn",
+      "to": "walk",
+      "image": "event-01852-emma-turn-walk.png"
+    },
+    {
+      "time": 36.04999999999924,
+      "id": "ethan",
+      "from": "turn",
+      "to": "walk",
+      "image": "event-02163-ethan-turn-walk.png"
+    },
+    {
+      "time": 36.96666666666585,
+      "id": "emma",
+      "from": "walk",
+      "to": "observe",
+      "image": "event-02218-emma-walk-observe.png"
+    },
+    {
+      "time": 47.06666666666528,
+      "id": "ethan",
+      "from": "walk",
+      "to": "observe",
+      "image": "event-02824-ethan-walk-observe.png"
+    },
+    {
+      "time": 49.69999999999846,
+      "id": "emma",
+      "from": "turn",
+      "to": "walk",
+      "image": "event-02982-emma-turn-walk.png"
+    },
+    {
+      "time": 56.183333333331426,
+      "id": "emma",
+      "from": "walk",
+      "to": "observe",
+      "image": "event-03371-emma-walk-observe.png"
+    },
+    {
+      "time": 59.69999999999789,
+      "id": "ethan",
+      "from": "turn",
+      "to": "walk",
+      "image": "event-03582-ethan-turn-walk.png"
+    },
+    {
+      "time": 63.933333333330985,
+      "id": "emma",
+      "from": "turn",
+      "to": "yield",
+      "image": "event-03836-emma-turn-yield.png"
+    },
+    {
+      "time": 70.79999999999727,
+      "id": "emma",
+      "from": "yield",
+      "to": "walk",
+      "image": "event-04248-emma-yield-walk.png"
+    },
+    {
+      "time": 72.83333333333049,
+      "id": "ethan",
+      "from": "walk",
+      "to": "observe",
+      "image": "event-04370-ethan-walk-observe.png"
+    },
+    {
+      "time": 76.09999999999697,
+      "id": "emma",
+      "from": "walk",
+      "to": "observe",
+      "image": "event-04566-emma-walk-observe.png"
+    },
+    {
+      "time": 80.88333333333003,
+      "id": "ethan",
+      "from": "turn",
+      "to": "yield",
+      "image": "event-04853-ethan-turn-yield.png"
+    }
+  ],
+  "gateResults": {
+    "bothArrivedAtLeastThreeTimes": true,
+    "noErrors": true,
+    "sourcePoseWithin1eMinus6Radians": true,
+    "strictZeroFacingOver45Degrees": false,
+    "noRootPhaseWithoutApplication": true,
+    "noEnvelopeOverlap": true,
+    "noObstacleEnvelopeOverlap": true
+  },
+  "facingQualification": {
+    "timeRangeSeconds": [
+      65.25,
+      65.3
+    ],
+    "samples": 4,
+    "durationSeconds": 0.06666666666666667,
+    "peakDegrees": 64.3177326297,
+    "distanceMetres": 0.01897,
+    "speedRangeMetresPerSecond": [
+      0.2562,
+      0.3129
+    ],
+    "walkWeightRange": [
+      0.152,
+      0.217
+    ],
+    "context": "Ethan turns around upstream corridor corner. The zero-duration diagnostic is NOT passed. This short event is disclosed separately from the earlier rejected prolonged reverse-facing walk."
+  },
+  "limitations": [
+    "The final mutual waiting episode is not resolved within this trace; see subsequent continuous recording.",
+    "Original source Walk has contact drift; no foot-locking claim.",
+    "Start/stop are Idle/Walk blends; no dedicated start/stop clips.",
+    "Exact full-skin and sole audit is a separate report.",
+    "Recovery reset checks net displacement while in forward Walk. Root turn displacement can contribute to that net displacement; this is not a proof about all route sequences."
+  ]
+}

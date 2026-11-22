@@ -1,0 +1,208 @@
+{
+  "acceptanceStatus": "REJECTED",
+  "reason": "Motion direction and body facing diverge during an avoidance backstep and an immediate reversal after an artificial exit waypoint. Geometry and mixer agreement alone are insufficient.",
+  "sourcePath": "Codex/2026-11-20/10-12-36/work/avatar-ready-locomotion-data-20261122/v44-final-gate/gate-summary.json",
+  "sourceSha256": "a7ddafd42321fa5f3af871a1bb44089971fb891cf54bc4475311e0084ce773d2",
+  "original": {
+    "duration": 59.999999999997875,
+    "inputSha256": {
+      "visitors-v44.js": "0f99815a02596e32d2615aa4b1e3ea53b051f6771f30cd55c5295ac49da0eda1",
+      "visitor-motion-v43.js": "25bba4041399a033aee1ff259f083d81897da8588bdd90d53f3667bbc365e6ab",
+      "ready-crowd-v1.js": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de",
+      "index.html": "29f2d9a8d5b1ab50d8751fcaa77f3e15c96c28bcd0a55b28f6ad2f042191789b",
+      "exhibition-3d.js": "c6d2a346775d09a6049501d1223c081b5e5ba767760374675a8fecb26b6e461d"
+    },
+    "diagnostics": {
+      "fixedSteps": 3600,
+      "minimumPairDistance": 1.399998299858074,
+      "minimumStaticClearance": 0.7332257867384051,
+      "maximumRenderedWorldDeviation": 0,
+      "maximumRootMotionDeviation": 0,
+      "rejectedRootSteps": 0,
+      "appliedRootSteps": 900,
+      "rootPoseAdvancedWithoutApplication": 0,
+      "navigationPreflightFailures": 7,
+      "completedJourneys": 4,
+      "maximumYawStep": 0.05244410037994385,
+      "maximumFacingVelocityAngle": 2.5633887656339533,
+      "maximumFacingVelocityLagSeconds": 0.8166666666666675,
+      "facingVelocityOver45DegreesTime": 1.100000000000001,
+      "droppedTime": 0,
+      "fixedAccumulator": 0,
+      "engine": "recast-navigation@0.44.0",
+      "worldTranslationAuthority": "DetourCrowd snapshot",
+      "intermediateLookahead": 0.18,
+      "finalArrivalUsesEngine": true,
+      "facingAngularSpeed": 2.4,
+      "facingVelocityThreshold": 0.1,
+      "facingMethod": "THREE.Quaternion.rotateTowards; authored turns bypass it",
+      "sourceWalkHasNonzeroContactSlip": true,
+      "startStop": "Standard Idle/Walk blend; dedicated start/stop clips are not installed."
+    },
+    "completedJourneys": {
+      "emma": 2,
+      "ethan": 2
+    },
+    "errors": [],
+    "sourceMatcher": {
+      "maxBoneQuaternionRadians": 7.300048299977715e-8,
+      "maxBonePositionDelta": 0,
+      "maxWorldJump": 0.019000091775296827,
+      "maxWalkPhaseDistanceError": 1.1102230246251565e-16,
+      "maxRootPoseAdvanceWithoutApplication": 0
+    },
+    "maxYawStep": {
+      "angle": 0.05244410037994385,
+      "time": 36.18333333333256,
+      "id": "ethan",
+      "state": "turn",
+      "speed": 0.2745578358967786
+    },
+    "peakFacingGap": {
+      "time": 17.65000000000028,
+      "id": "emma",
+      "state": "walk",
+      "speed": 0.2947838440239321,
+      "angle": 2.5633887656339533,
+      "yaw": -2.080669568328771,
+      "velocityHeading": 1.6391269732168618,
+      "position": [
+        -3.439272880554199,
+        0,
+        0.26159435510635376
+      ],
+      "target": {
+        "x": -2.8431031703948975,
+        "y": 0.019999995827674866,
+        "z": 0.2465091049671173
+      },
+      "walkWeight": 0.16601432925934906,
+      "worldTargetState": 2
+    },
+    "facingGapIntervals": [
+      {
+        "start": 17.616666666666948,
+        "end": 18.416666666666902,
+        "id": "emma",
+        "peak": {
+          "time": 17.65000000000028,
+          "id": "emma",
+          "state": "walk",
+          "speed": 0.2947838440239321,
+          "angle": 2.5633887656339533,
+          "yaw": -2.080669568328771,
+          "velocityHeading": 1.6391269732168618,
+          "position": [
+            -3.439272880554199,
+            0,
+            0.26159435510635376
+          ],
+          "target": {
+            "x": -2.8431031703948975,
+            "y": 0.019999995827674866,
+            "z": 0.2465091049671173
+          },
+          "walkWeight": 0.16601432925934906,
+          "worldTargetState": 2
+        },
+        "samples": 49,
+        "distance": 0.2915566576705677,
+        "duration": 0.8166666666666667
+      },
+      {
+        "start": 52.06666666666499,
+        "end": 52.333333333331645,
+        "id": "emma",
+        "peak": {
+          "time": 52.133333333331656,
+          "id": "emma",
+          "state": "walk",
+          "speed": 0.37153087793561834,
+          "angle": 1.0378301945476636,
+          "yaw": -0.738482848570547,
+          "velocityHeading": 0.2993473459771165,
+          "position": [
+            -3.7982726097106934,
+            0,
+            -1.479685664176941
+          ],
+          "target": {
+            "x": 3.5157244205474854,
+            "y": 0.019999995827674866,
+            "z": -0.39909568428993225
+          },
+          "walkWeight": 0.24940986421757202,
+          "worldTargetState": 2
+        },
+        "samples": 17,
+        "distance": 0.1412347840032459,
+        "duration": 0.2833333333333333
+      }
+    ],
+    "renderEvents": [
+      {
+        "time": 8.91666666666669,
+        "id": "ethan",
+        "from": "turn",
+        "to": "walk",
+        "image": "event-00535-ethan-turn-walk.png"
+      },
+      {
+        "time": 10.350000000000094,
+        "id": "emma",
+        "from": "turn",
+        "to": "walk",
+        "image": "event-00621-emma-turn-walk.png"
+      },
+      {
+        "time": 22.966666666666644,
+        "id": "emma",
+        "from": "walk",
+        "to": "observe",
+        "image": "event-01378-emma-walk-observe.png"
+      },
+      {
+        "time": 28.81666666666631,
+        "id": "ethan",
+        "from": "walk",
+        "to": "observe",
+        "image": "event-01729-ethan-walk-observe.png"
+      },
+      {
+        "time": 31.46666666666616,
+        "id": "emma",
+        "from": "turn",
+        "to": "walk",
+        "image": "event-01888-emma-turn-walk.png"
+      },
+      {
+        "time": 37.51666666666582,
+        "id": "ethan",
+        "from": "turn",
+        "to": "walk",
+        "image": "event-02251-ethan-turn-walk.png"
+      },
+      {
+        "time": 37.56666666666582,
+        "id": "emma",
+        "from": "walk",
+        "to": "observe",
+        "image": "event-02254-emma-walk-observe.png"
+      },
+      {
+        "time": 48.53333333333186,
+        "id": "ethan",
+        "from": "walk",
+        "to": "observe",
+        "image": "event-02912-ethan-walk-observe.png"
+      },
+      {
+        "time": 50.29999999999843,
+        "id": "emma",
+        "from": "turn",
+        "to": "walk",
+        "image": "event-03018-emma-turn-walk.png"
+      }
+    ]
+  }
+}

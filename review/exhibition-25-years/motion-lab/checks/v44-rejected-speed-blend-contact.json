@@ -1,0 +1,1058 @@
+{
+  "runtimeSha256": "39948c10b257436f659fba2521ba9dac03a53669e62ea7805e291a5047f4887a",
+  "inputTraceSha256": "025e4701b81802a765bfa05b62dd0cc43734a73900f828793c8731ba50f1c4a7",
+  "method": "Actual17..20s world-bone matrices; same fixed material sole vertices throughout, central finite differences with one frame of context on each side. Fixed heel/toe vertices are selected once from bind-pose sole geometry. Separately, the lowest sole material point uses the derivative of that SAME vertex, not the derivative of a changing minimum selector. Contact inference uses height<=20mm and abs(vertical speed)<=0.10m/s for contiguous>=80ms, NEVER horizontal speed. The same-current-rig reference uses unchanged authored Walk including native Hips translation at120Hz; no Idle blend or world-path follower. Raw source vertical placement is retained. No motion is modified.",
+  "limitations": [
+    "Contacts are inferred rather than authored annotations. Foot rocking, yaw, shoe shape and vertical grounding affect the result; source and actual clock/trajectory differ. A numerical increase is evidence of actual support motion, not an isolated causal experiment proving that blend weight alone caused it.",
+    "Current-rig reference controls geometry. The older native-source baseline below uses different original clothing/geometry and is supplementary.",
+    "This is only17..20s. It does not assert results for the remainder of the90s capture."
+  ],
+  "avatars": [
+    {
+      "person": "emma",
+      "currentGeometrySha256": "125adf09e8309f895fbbc39b479b311ff05832a0dc6d40c055a2df3ed29557bd",
+      "materialPointCount": 2057,
+      "actualWindow": [
+        17.0,
+        20.0
+      ],
+      "actualScopeFrames": 181,
+      "gradientContextFrames": 183,
+      "sourceDuration": 1.2000000476837158,
+      "sourceAverageRootSpeed": 1.216207596250545,
+      "sourceMotionBundleSha256": "a4467fa620d2c6cba21548c0f1690c6740128a5aaf8a87ef3ed82ad3381fd8a1",
+      "feet": {
+        "Left": {
+          "soleCandidates": 958,
+          "activeLowestMaterialPoint": {
+            "actual": {
+              "rawContactSamples": 155,
+              "contactSamples": 155,
+              "contactSecondsApprox": 2.5833333333331865,
+              "windowsSeconds": [
+                [
+                  17.000000000000316,
+                  18.533333333333562
+                ],
+                [
+                  18.983333333333537,
+                  20.000000000000146
+                ]
+              ],
+              "horizontalSpeedMetersPerSecond": {
+                "median": 0.23301458539679332,
+                "p95": 0.8360043713573607,
+                "max": 1.0446399933067512,
+                "fractionAbove015": 0.8709677419354839,
+                "fractionAbove025": 0.41935483870967744
+              },
+              "integralAbsoluteContactSpeedMeters": 0.7879575381347839,
+              "walkWeightDuringContact": {
+                "min": 0.05952459529947542,
+                "median": 0.13564589881780467,
+                "max": 0.38297505803178494
+              },
+              "holderSpeedDuringContact": {
+                "min": 0.16916579310143098,
+                "median": 0.263570618325814,
+                "max": 0.4803210983620636
+              }
+            },
+            "authoredSameRig": {
+              "rawContactSamples": 68,
+              "contactSamples": 53,
+              "contactSecondsApprox": 0.4386207070843935,
+              "windowsSeconds": [
+                [
+                  0.4303448446865739,
+                  0.8606896893731478
+                ]
+              ],
+              "horizontalSpeedMetersPerSecond": {
+                "median": 0.03454678734519973,
+                "p95": 0.08157827164453801,
+                "max": 0.09219762655879345,
+                "fractionAbove015": 0.0,
+                "fractionAbove025": 0.0
+              },
+              "integralAbsoluteContactSpeedMeters": 0.019110906684135346
+            }
+          },
+          "fixedMaterialVertices": {
+            "heel": {
+              "globalVertexIndex": 48396,
+              "originalBindWorldPosition": [
+                0.14255906561210868,
+                0.0014357712438562674,
+                -0.08747689844026284
+              ],
+              "actual": {
+                "rawContactSamples": 121,
+                "contactSamples": 121,
+                "contactSecondsApprox": 2.016666666666552,
+                "windowsSeconds": [
+                  [
+                    17.3000000000003,
+                    18.550000000000228
+                  ],
+                  [
+                    19.266666666666854,
+                    20.000000000000146
+                  ]
+                ],
+                "horizontalSpeedMetersPerSecond": {
+                  "median": 0.1903403255630439,
+                  "p95": 0.47356605458147777,
+                  "max": 0.534444987469832,
+                  "fractionAbove015": 0.8264462809917356,
+                  "fractionAbove025": 0.23140495867768596
+                },
+                "integralAbsoluteContactSpeedMeters": 0.4722932791787767,
+                "walkWeightDuringContact": {
+                  "min": 0.05952459529947542,
+                  "median": 0.12130357101283014,
+                  "max": 0.2956517992399302
+                },
+                "holderSpeedDuringContact": {
+                  "min": 0.16916579310143098,
+                  "median": 0.24790873604627228,
+                  "max": 0.41053506777696586
+                }
+              },
+              "authoredSameRig": {
+                "rawContactSamples": 33,
+                "contactSamples": 23,
+                "contactSecondsApprox": 0.19034483514983114,
+                "windowsSeconds": [
+                  [
+                    0.397241395095299,
+                    0.579310367847311
+                  ]
+                ],
+                "horizontalSpeedMetersPerSecond": {
+                  "median": 0.03889030237297757,
+                  "p95": 0.0870787952608087,
+                  "max": 0.24210178996494072,
+                  "fractionAbove015": 0.043478260869565216,
+                  "fractionAbove025": 0.0
+                },
+                "integralAbsoluteContactSpeedMeters": 0.009279497853977576
+              }
+            },
+            "toe": {
+              "globalVertexIndex": 48802,
+              "originalBindWorldPosition": [
+                0.18275682570171592,
+                1.2806554201637535e-07,
+                0.10684648255383805
+              ],
+              "actual": {
+                "rawContactSamples": 155,
+                "contactSamples": 155,
+                "contactSecondsApprox": 2.5833333333331865,
+                "windowsSeconds": [
+                  [
+                    17.000000000000316,
+                    18.533333333333562
+                  ],
+                  [
+                    18.983333333333537,
+                    20.000000000000146
+                  ]
+                ],
+                "horizontalSpeedMetersPerSecond": {
+                  "median": 0.2432919716717418,
+                  "p95": 0.8349776240322803,
+                  "max": 1.0646234747881616,
+                  "fractionAbove015": 0.8709677419354839,
+                  "fractionAbove025": 0.43870967741935485
+                },
+                "integralAbsoluteContactSpeedMeters": 0.8018770647667901,
+                "walkWeightDuringContact": {
+                  "min": 0.05952459529947542,
+                  "median": 0.13564589881780467,
+                  "max": 0.38297505803178494
+                },
+                "holderSpeedDuringContact": {
+                  "min": 0.16916579310143098,
+                  "median": 0.263570618325814,
+                  "max": 0.4803210983620636
+                }
+              },
+              "authoredSameRig": {
+                "rawContactSamples": 53,
+                "contactSamples": 49,
+                "contactSecondsApprox": 0.4055172574931185,
+                "windowsSeconds": [
+                  [
+                    0.46344829427784884,
+                    0.8606896893731478
+                  ]
+                ],
+                "horizontalSpeedMetersPerSecond": {
+                  "median": 0.03443541434005984,
+                  "p95": 0.08323040725396161,
+                  "max": 0.09307342350679872,
+                  "fractionAbove015": 0.0,
+                  "fractionAbove025": 0.0
+                },
+                "integralAbsoluteContactSpeedMeters": 0.016925422963151155
+              }
+            }
+          },
+          "witnessAt18_75": {
+            "time": 18.750000000000217,
+            "globalVertexIndex": 47030,
+            "point": [
+              -2.940308913253091,
+              0.028789379448071296,
+              -0.02294190906552325
+            ],
+            "velocity": [
+              -0.44387282568484426,
+              0.019518879707897986,
+              -0.3183536473790076
+            ],
+            "horizontalSpeed": 0.5462345010899309,
+            "inferredPersistentContact": false,
+            "walkWeight": 0.3679392585121198,
+            "holderSpeed": 0.4685630125535947,
+            "walkPhase": 0.38676000595093085
+          }
+        },
+        "Right": {
+          "soleCandidates": 1099,
+          "activeLowestMaterialPoint": {
+            "actual": {
+              "rawContactSamples": 179,
+              "contactSamples": 179,
+              "contactSecondsApprox": 2.9833333333331638,
+              "windowsSeconds": [
+                [
+                  17.016666666666982,
+                  17.10000000000031
+                ],
+                [
+                  17.133333333333642,
+                  20.000000000000146
+                ]
+              ],
+              "horizontalSpeedMetersPerSecond": {
+                "median": 0.2932624551035744,
+                "p95": 1.0224537914999077,
+                "max": 1.7732053263381833,
+                "fractionAbove015": 0.9832402234636871,
+                "fractionAbove025": 0.6927374301675978
+              },
+              "integralAbsoluteContactSpeedMeters": 1.2015790886992181,
+              "walkWeightDuringContact": {
+                "min": 0.05952459529947542,
+                "median": 0.15799108104956724,
+                "max": 0.382778734626577
+              },
+              "holderSpeedDuringContact": {
+                "min": 0.16916579310143098,
+                "median": 0.28676067721729953,
+                "max": 0.4801680988868845
+              }
+            },
+            "authoredSameRig": {
+              "rawContactSamples": 58,
+              "contactSamples": 49,
+              "contactSecondsApprox": 0.4055172574931185,
+              "windowsSeconds": [
+                [
+                  0.0,
+                  0.2565517343323806
+                ],
+                [
+                  1.0675862493186161,
+                  1.2000000476837158
+                ]
+              ],
+              "horizontalSpeedMetersPerSecond": {
+                "median": 0.09730674893539329,
+                "p95": 0.16694728395256594,
+                "max": 0.17609784211072407,
+                "fractionAbove015": 0.14285714285714285,
+                "fractionAbove025": 0.0
+              },
+              "integralAbsoluteContactSpeedMeters": 0.03853414814053635
+            }
+          },
+          "fixedMaterialVertices": {
+            "heel": {
+              "globalVertexIndex": 6629,
+              "originalBindWorldPosition": [
+                -0.15195108160120901,
+                0.0019483628962520044,
+                -0.06317363429402718
+              ],
+              "actual": {
+                "rawContactSamples": 115,
+                "contactSamples": 115,
+                "contactSecondsApprox": 1.9166666666665577,
+                "windowsSeconds": [
+                  [
+                    17.200000000000305,
+                    18.483333333333565
+                  ],
+                  [
+                    19.40000000000018,
+                    20.000000000000146
+                  ]
+                ],
+                "horizontalSpeedMetersPerSecond": {
+                  "median": 0.2564618219724339,
+                  "p95": 0.3984783123415372,
+                  "max": 0.995093350259284,
+                  "fractionAbove015": 0.9652173913043478,
+                  "fractionAbove025": 0.5565217391304348
+                },
+                "integralAbsoluteContactSpeedMeters": 0.515723817687676,
+                "walkWeightDuringContact": {
+                  "min": 0.05952459529947542,
+                  "median": 0.1227222908385985,
+                  "max": 0.35608816698865275
+                },
+                "holderSpeedDuringContact": {
+                  "min": 0.16916579310143098,
+                  "median": 0.24948911780547967,
+                  "max": 0.4592326821061506
+                }
+              },
+              "authoredSameRig": {
+                "rawContactSamples": 43,
+                "contactSamples": 43,
+                "contactSecondsApprox": 0.35586208310620604,
+                "windowsSeconds": [
+                  [
+                    0.0,
+                    0.10758621117164348
+                  ],
+                  [
+                    0.9517241757491539,
+                    1.1834483228880783
+                  ]
+                ],
+                "horizontalSpeedMetersPerSecond": {
+                  "median": 0.06713083785908722,
+                  "p95": 0.11206472091074325,
+                  "max": 0.11711369176467483,
+                  "fractionAbove015": 0.0,
+                  "fractionAbove025": 0.0
+                },
+                "integralAbsoluteContactSpeedMeters": 0.025506341200517566
+              }
+            },
+            "toe": {
+              "globalVertexIndex": 14084,
+              "originalBindWorldPosition": [
+                -0.1875343086483499,
+                0.00010252494510520858,
+                0.1042828487706739
+              ],
+              "actual": {
+                "rawContactSamples": 179,
+                "contactSamples": 179,
+                "contactSecondsApprox": 2.9833333333331638,
+                "windowsSeconds": [
+                  [
+                    17.016666666666982,
+                    17.10000000000031
+                  ],
+                  [
+                    17.133333333333642,
+                    20.000000000000146
+                  ]
+                ],
+                "horizontalSpeedMetersPerSecond": {
+                  "median": 0.292832956349161,
+                  "p95": 1.0602662494675583,
+                  "max": 1.8173040563671496,
+                  "fractionAbove015": 0.9832402234636871,
+                  "fractionAbove025": 0.6815642458100558
+                },
+                "integralAbsoluteContactSpeedMeters": 1.1974444611156,
+                "walkWeightDuringContact": {
+                  "min": 0.05952459529947542,
+                  "median": 0.15799108104956724,
+                  "max": 0.382778734626577
+                },
+                "holderSpeedDuringContact": {
+                  "min": 0.16916579310143098,
+                  "median": 0.28676067721729953,
+                  "max": 0.4801680988868845
+                }
+              },
+              "authoredSameRig": {
+                "rawContactSamples": 55,
+                "contactSamples": 50,
+                "contactSecondsApprox": 0.41379311989093726,
+                "windowsSeconds": [
+                  [
+                    0.0,
+                    0.26482759673019934
+                  ],
+                  [
+                    1.0675862493186161,
+                    1.2000000476837158
+                  ]
+                ],
+                "horizontalSpeedMetersPerSecond": {
+                  "median": 0.09374378064525414,
+                  "p95": 0.15137851288895574,
+                  "max": 0.15861549873207353,
+                  "fractionAbove015": 0.06,
+                  "fractionAbove025": 0.0
+                },
+                "integralAbsoluteContactSpeedMeters": 0.0378742243729932
+              }
+            }
+          },
+          "witnessAt18_75": {
+            "time": 18.750000000000217,
+            "globalVertexIndex": 14038,
+            "point": [
+              -2.9473198735387847,
+              -0.0023333258546542404,
+              0.3224003915871106
+            ],
+            "velocity": [
+              0.687109172261561,
+              0.010884137895995136,
+              -0.507785373853516
+            ],
+            "horizontalSpeed": 0.8543798923813238,
+            "inferredPersistentContact": true,
+            "walkWeight": 0.3679392585121198,
+            "holderSpeed": 0.4685630125535947,
+            "walkPhase": 0.38676000595093085
+          }
+        }
+      },
+      "actualWalkWeightRange": [
+        0.05952459529947542,
+        0.38297505803178494
+      ],
+      "actualHolderSpeedRange": [
+        0.16916579310143098,
+        0.4803210983620636
+      ],
+      "bothFeetInferredContactSecondsApprox": 2.549999999999855
+    },
+    {
+      "person": "ethan",
+      "currentGeometrySha256": "b02c7ffa01347060b3668c9073776c0081c86412d37931acae2b56c05c4d4616",
+      "materialPointCount": 2285,
+      "actualWindow": [
+        17.0,
+        20.0
+      ],
+      "actualScopeFrames": 181,
+      "gradientContextFrames": 183,
+      "sourceDuration": 1.2000000476837158,
+      "sourceAverageRootSpeed": 1.036091189179163,
+      "sourceMotionBundleSha256": "a9885f1dfb40fcda5e6c5a8eccc4d51332db237f593c683dc22345af7d6fb0f7",
+      "feet": {
+        "Left": {
+          "soleCandidates": 1185,
+          "activeLowestMaterialPoint": {
+            "actual": {
+              "rawContactSamples": 82,
+              "contactSamples": 82,
+              "contactSecondsApprox": 1.366666666666589,
+              "windowsSeconds": [
+                [
+                  17.000000000000316,
+                  17.21666666666697
+                ],
+                [
+                  17.866666666666934,
+                  18.416666666666902
+                ],
+                [
+                  19.0500000000002,
+                  19.60000000000017
+                ]
+              ],
+              "horizontalSpeedMetersPerSecond": {
+                "median": 0.020328673237095498,
+                "p95": 0.33145720648227256,
+                "max": 0.5186770556160473,
+                "fractionAbove015": 0.13414634146341464,
+                "fractionAbove025": 0.0975609756097561
+              },
+              "integralAbsoluteContactSpeedMeters": 0.08560381850285143,
+              "walkWeightDuringContact": {
+                "min": 0.9999055802354613,
+                "median": 0.999999999999886,
+                "max": 1.0
+              },
+              "holderSpeedDuringContact": {
+                "min": 1.0341545309121585,
+                "median": 1.0399997975551747,
+                "max": 1.0400038471133777
+              }
+            },
+            "authoredSameRig": {
+              "rawContactSamples": 73,
+              "contactSamples": 63,
+              "contactSecondsApprox": 0.5213793310625809,
+              "windowsSeconds": [
+                [
+                  0.0,
+                  0.26482759673019934
+                ],
+                [
+                  0.9600000381469727,
+                  1.2000000476837158
+                ]
+              ],
+              "horizontalSpeedMetersPerSecond": {
+                "median": 0.019583543288491108,
+                "p95": 0.03845427923248805,
+                "max": 0.04551291933455801,
+                "fractionAbove015": 0.0,
+                "fractionAbove025": 0.0
+              },
+              "integralAbsoluteContactSpeedMeters": 0.010473074635197078
+            }
+          },
+          "fixedMaterialVertices": {
+            "heel": {
+              "globalVertexIndex": 32612,
+              "originalBindWorldPosition": [
+                0.17037524892671674,
+                0.006336943278547405,
+                -0.05073882476163406
+              ],
+              "actual": {
+                "rawContactSamples": 39,
+                "contactSamples": 39,
+                "contactSecondsApprox": 0.649999999999963,
+                "windowsSeconds": [
+                  [
+                    17.866666666666934,
+                    18.166666666666917
+                  ],
+                  [
+                    19.0500000000002,
+                    19.36666666666685
+                  ]
+                ],
+                "horizontalSpeedMetersPerSecond": {
+                  "median": 0.021625249089068675,
+                  "p95": 0.03151196030090688,
+                  "max": 0.03401509000441832,
+                  "fractionAbove015": 0.0,
+                  "fractionAbove025": 0.0
+                },
+                "integralAbsoluteContactSpeedMeters": 0.013830329466626757,
+                "walkWeightDuringContact": {
+                  "min": 0.9999999999922483,
+                  "median": 1.0,
+                  "max": 1.0
+                },
+                "holderSpeedDuringContact": {
+                  "min": 1.0399983282599334,
+                  "median": 1.0400001947128679,
+                  "max": 1.0400017078580146
+                }
+              },
+              "authoredSameRig": {
+                "rawContactSamples": 45,
+                "contactSamples": 45,
+                "contactSecondsApprox": 0.37241380790184353,
+                "windowsSeconds": [
+                  [
+                    0.0,
+                    0.12413793596728094
+                  ],
+                  [
+                    0.9600000381469727,
+                    1.1337931485011659
+                  ],
+                  [
+                    1.1503448732968033,
+                    1.2000000476837158
+                  ]
+                ],
+                "horizontalSpeedMetersPerSecond": {
+                  "median": 0.024926441828436417,
+                  "p95": 0.041664594915202025,
+                  "max": 0.04506800658631139,
+                  "fractionAbove015": 0.0,
+                  "fractionAbove025": 0.0
+                },
+                "integralAbsoluteContactSpeedMeters": 0.00917780629419765
+              }
+            },
+            "toe": {
+              "globalVertexIndex": 41078,
+              "originalBindWorldPosition": [
+                0.19911052223055975,
+                0.006009174296689467,
+                0.09621534958082995
+              ],
+              "actual": {
+                "rawContactSamples": 73,
+                "contactSamples": 73,
+                "contactSecondsApprox": 1.2166666666665975,
+                "windowsSeconds": [
+                  [
+                    17.000000000000316,
+                    17.166666666666973
+                  ],
+                  [
+                    17.866666666666934,
+                    18.366666666666905
+                  ],
+                  [
+                    19.0500000000002,
+                    19.55000000000017
+                  ]
+                ],
+                "horizontalSpeedMetersPerSecond": {
+                  "median": 0.028295910973452527,
+                  "p95": 0.30584108740622545,
+                  "max": 0.43742855652345625,
+                  "fractionAbove015": 0.136986301369863,
+                  "fractionAbove025": 0.0684931506849315
+                },
+                "integralAbsoluteContactSpeedMeters": 0.0700959931584678,
+                "walkWeightDuringContact": {
+                  "min": 0.9999582298949075,
+                  "median": 0.9999999999999795,
+                  "max": 1.0
+                },
+                "holderSpeedDuringContact": {
+                  "min": 1.0361144990412465,
+                  "median": 1.0399999139036604,
+                  "max": 1.0400038471133777
+                }
+              },
+              "authoredSameRig": {
+                "rawContactSamples": 50,
+                "contactSamples": 32,
+                "contactSecondsApprox": 0.26482759673019984,
+                "windowsSeconds": [
+                  [
+                    0.00827586239781873,
+                    0.26482759673019934
+                  ]
+                ],
+                "horizontalSpeedMetersPerSecond": {
+                  "median": 0.013461136878837616,
+                  "p95": 0.02878887789018086,
+                  "max": 0.03182820062272158,
+                  "fractionAbove015": 0.0,
+                  "fractionAbove025": 0.0
+                },
+                "integralAbsoluteContactSpeedMeters": 0.0038139522706003865
+              }
+            }
+          },
+          "witnessAt18_75": {
+            "time": 18.750000000000217,
+            "globalVertexIndex": 33178,
+            "point": [
+              0.2289664325390153,
+              0.061181381155039835,
+              1.5999934410154537
+            ],
+            "velocity": [
+              3.2594217071867453,
+              -0.28259395231886636,
+              0.05708029124111272
+            ],
+            "horizontalSpeed": 3.2599214752702754,
+            "inferredPersistentContact": false,
+            "walkWeight": 0.9999999999999989,
+            "holderSpeed": 1.0399999802161,
+            "walkPhase": 0.5916280088634132
+          }
+        },
+        "Right": {
+          "soleCandidates": 1100,
+          "activeLowestMaterialPoint": {
+            "actual": {
+              "rawContactSamples": 95,
+              "contactSamples": 95,
+              "contactSecondsApprox": 1.5833333333332433,
+              "windowsSeconds": [
+                [
+                  17.250000000000302,
+                  17.833333333333602
+                ],
+                [
+                  18.450000000000234,
+                  19.033333333333534
+                ],
+                [
+                  19.6333333333335,
+                  20.000000000000146
+                ]
+              ],
+              "horizontalSpeedMetersPerSecond": {
+                "median": 0.06168581334159407,
+                "p95": 0.4433691725106985,
+                "max": 0.5086286751488351,
+                "fractionAbove015": 0.3263157894736842,
+                "fractionAbove025": 0.2631578947368421
+              },
+              "integralAbsoluteContactSpeedMeters": 0.2125340380788765,
+              "walkWeightDuringContact": {
+                "min": 0.9997419867306562,
+                "median": 0.9999999999994007,
+                "max": 1.0
+              },
+              "holderSpeedDuringContact": {
+                "min": 1.030325141162991,
+                "median": 1.0399995351742044,
+                "max": 1.040003389536379
+              }
+            },
+            "authoredSameRig": {
+              "rawContactSamples": 61,
+              "contactSamples": 51,
+              "contactSecondsApprox": 0.422068982288756,
+              "windowsSeconds": [
+                [
+                  0.38068967029966155,
+                  0.5379310558582174
+                ],
+                [
+                  0.5544827806538549,
+                  0.8027586525884167
+                ]
+              ],
+              "horizontalSpeedMetersPerSecond": {
+                "median": 0.009123734783121515,
+                "p95": 0.016510842295941214,
+                "max": 0.0184399873266403,
+                "fractionAbove015": 0.0,
+                "fractionAbove025": 0.0
+              },
+              "integralAbsoluteContactSpeedMeters": 0.004002618720792095
+            }
+          },
+          "fixedMaterialVertices": {
+            "heel": {
+              "globalVertexIndex": 7578,
+              "originalBindWorldPosition": [
+                -0.17269995967342006,
+                0.005463029671532476,
+                -0.04877211977203369
+              ],
+              "actual": {
+                "rawContactSamples": 48,
+                "contactSamples": 48,
+                "contactSecondsApprox": 0.7999999999999545,
+                "windowsSeconds": [
+                  [
+                    17.250000000000302,
+                    17.500000000000288
+                  ],
+                  [
+                    18.450000000000234,
+                    18.70000000000022
+                  ],
+                  [
+                    19.650000000000166,
+                    19.90000000000015
+                  ]
+                ],
+                "horizontalSpeedMetersPerSecond": {
+                  "median": 0.05816511873734258,
+                  "p95": 0.3736813360660993,
+                  "max": 0.39129138266340474,
+                  "fractionAbove015": 0.3541666666666667,
+                  "fractionAbove025": 0.3333333333333333
+                },
+                "integralAbsoluteContactSpeedMeters": 0.10775202158505637,
+                "walkWeightDuringContact": {
+                  "min": 0.9999761218619667,
+                  "median": 0.9999999999988647,
+                  "max": 1.0
+                },
+                "holderSpeedDuringContact": {
+                  "min": 1.0370631475527607,
+                  "median": 1.0399993794456046,
+                  "max": 1.040003328145685
+                }
+              },
+              "authoredSameRig": {
+                "rawContactSamples": 41,
+                "contactSamples": 41,
+                "contactSecondsApprox": 0.33931035831056855,
+                "windowsSeconds": [
+                  [
+                    0.38068967029966155,
+                    0.7117241662124107
+                  ]
+                ],
+                "horizontalSpeedMetersPerSecond": {
+                  "median": 0.01312350639393376,
+                  "p95": 0.021978484326078032,
+                  "max": 0.026883858345500843,
+                  "fractionAbove015": 0.0,
+                  "fractionAbove025": 0.0
+                },
+                "integralAbsoluteContactSpeedMeters": 0.004517110840597766
+              }
+            },
+            "toe": {
+              "globalVertexIndex": 4744,
+              "originalBindWorldPosition": [
+                -0.18930743284713453,
+                0.006883413064596356,
+                0.09282832189903995
+              ],
+              "actual": {
+                "rawContactSamples": 87,
+                "contactSamples": 81,
+                "contactSecondsApprox": 1.3499999999999233,
+                "windowsSeconds": [
+                  [
+                    17.250000000000302,
+                    17.716666666666942
+                  ],
+                  [
+                    18.450000000000234,
+                    18.916666666666874
+                  ],
+                  [
+                    19.6333333333335,
+                    20.000000000000146
+                  ]
+                ],
+                "horizontalSpeedMetersPerSecond": {
+                  "median": 0.06441632065127578,
+                  "p95": 0.5426568733415708,
+                  "max": 0.56661230098218,
+                  "fractionAbove015": 0.35802469135802467,
+                  "fractionAbove025": 0.2222222222222222
+                },
+                "integralAbsoluteContactSpeedMeters": 0.20478907045244743,
+                "walkWeightDuringContact": {
+                  "min": 0.9997419867306562,
+                  "median": 0.9999999999977738,
+                  "max": 1.0
+                },
+                "holderSpeedDuringContact": {
+                  "min": 1.030325141162991,
+                  "median": 1.0399991041079701,
+                  "max": 1.040003328145685
+                }
+              },
+              "authoredSameRig": {
+                "rawContactSamples": 61,
+                "contactSamples": 61,
+                "contactSecondsApprox": 0.5048276062669435,
+                "windowsSeconds": [
+                  [
+                    0.4220689822887552,
+                    0.9186207261578789
+                  ]
+                ],
+                "horizontalSpeedMetersPerSecond": {
+                  "median": 0.00801238126640722,
+                  "p95": 0.043496274563979184,
+                  "max": 0.05852815083677399,
+                  "fractionAbove015": 0.0,
+                  "fractionAbove025": 0.0
+                },
+                "integralAbsoluteContactSpeedMeters": 0.006977006019790328
+              }
+            }
+          },
+          "witnessAt18_75": {
+            "time": 18.750000000000217,
+            "globalVertexIndex": 4760,
+            "point": [
+              -0.03749323441313711,
+              -8.932136306181798e-09,
+              1.8759152129935392
+            ],
+            "velocity": [
+              0.004936156530419153,
+              0.0010480135185576614,
+              0.005033997509787122
+            ],
+            "horizontalSpeed": 0.007050302987910703,
+            "inferredPersistentContact": true,
+            "walkWeight": 0.9999999999999989,
+            "holderSpeed": 1.0399999802161,
+            "walkPhase": 0.5916280088634132
+          }
+        }
+      },
+      "actualWalkWeightRange": [
+        0.9997419867306562,
+        1.0
+      ],
+      "actualHolderSpeedRange": [
+        1.030325141162991,
+        1.0400038471133777
+      ],
+      "bothFeetInferredContactSecondsApprox": 0.0
+    }
+  ],
+  "olderOriginalNativeBaseline": [
+    {
+      "person": "emma",
+      "feet": {
+        "Left": {
+          "median": 0.042414236413116924,
+          "p95": 0.09242313639626666,
+          "max": 0.26865967495863835
+        },
+        "Right": {
+          "median": 0.10238606190930188,
+          "p95": 0.15778636140168267,
+          "max": 0.1635589775669074
+        }
+      }
+    },
+    {
+      "person": "ethan",
+      "feet": {
+        "Left": {
+          "median": 0.023192352505700377,
+          "p95": 0.04745093485226437,
+          "max": 0.04989380154289995
+        },
+        "Right": {
+          "median": 0.028848842598297238,
+          "p95": 0.054543170968040615,
+          "max": 0.058257350936056884
+        }
+      }
+    }
+  ],
+  "scriptSha256": "858578fb43f468d4c5438f0573712684ff002cb00f3b734bb0837ce9fb78fc4a",
+  "status": "REJECTED",
+  "decision": "Reject this runtime as a natural-gait fix: sustained low-height material-sole translation is substantially higher than the unchanged authored Walk on the SAME current rig.",
+  "parentGeometryHistory": "v44-actual-skin-90s-history.json",
+  "captureInputManifest": {
+    "visitors-v44.js": "39948c10b257436f659fba2521ba9dac03a53669e62ea7805e291a5047f4887a",
+    "visitor-motion-v43.js": "25bba4041399a033aee1ff259f083d81897da8588bdd90d53f3667bbc365e6ab",
+    "ready-crowd-v1.js": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de",
+    "index.html": "29f2d9a8d5b1ab50d8751fcaa77f3e15c96c28bcd0a55b28f6ad2f042191789b",
+    "exhibition-3d.js": "c6d2a346775d09a6049501d1223c081b5e5ba767760374675a8fecb26b6e461d"
+  },
+  "explicitCausalLimit": "Actual support-point motion includes whole-holder yaw and world translation as well as skeletal blending. This observation confirms sliding and a low-weight mixed stance; it does not isolate the Idle weight as the only causal contribution.",
+  "reproduction": {
+    "command": [
+      "py",
+      "-3",
+      "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-ready-locomotion-data-20261122\\v44-90s-gate\\audit_support_17_20s.py"
+    ],
+    "dataBoundary": "The exact one-off contact script and source-model evaluator currently remain in the external audit directory with the historical data. They have not been presented as a self-contained portable contact runner.",
+    "requiredArtifacts": [
+      {
+        "base": "external-work-directory",
+        "path": "avatar-ready-locomotion-data-20261122\\v44-90s-gate\\audit_support_17_20s.py",
+        "sha256": "858578fb43f468d4c5438f0573712684ff002cb00f3b734bb0837ce9fb78fc4a",
+        "bytes": 10917
+      },
+      {
+        "base": "external-work-directory",
+        "path": "avatar-ready-locomotion-data-20261122\\native-audit\\native_cpu_audit.py",
+        "sha256": "372505237ed002845efa253f4cfccff097bb52fedca4ddc374345e2fd6da6dd5",
+        "bytes": 10115
+      },
+      {
+        "base": "external-work-directory",
+        "path": "avatar-ready-locomotion-data-20261122\\native-audit\\emma-v43-motions-decoded.glb",
+        "sha256": "a4467fa620d2c6cba21548c0f1690c6740128a5aaf8a87ef3ed82ad3381fd8a1",
+        "bytes": 2932940
+      },
+      {
+        "base": "external-work-directory",
+        "path": "avatar-ready-locomotion-data-20261122\\native-audit\\ethan-v43-motions-decoded.glb",
+        "sha256": "a9885f1dfb40fcda5e6c5a8eccc4d51332db237f593c683dc22345af7d6fb0f7",
+        "bytes": 3721552
+      },
+      {
+        "base": "external-work-directory",
+        "path": "avatar-ready-locomotion-data-20261122\\native-audit\\native-support-slip-persistent-audit.json",
+        "sha256": "a1034076f3a11c9a3f0ef6a8f342ea2569675bf51e71d0324e55a2279983b4b4",
+        "bytes": 27503
+      },
+      {
+        "base": "external-work-directory",
+        "path": "avatar-motion-data-20261122\\decoded\\emma-current-decoded.glb",
+        "sha256": "125adf09e8309f895fbbc39b479b311ff05832a0dc6d40c055a2df3ed29557bd",
+        "bytes": 2481620
+      },
+      {
+        "base": "external-work-directory",
+        "path": "avatar-motion-data-20261122\\decoded\\ethan-current-decoded.glb",
+        "sha256": "b02c7ffa01347060b3668c9073776c0081c86412d37931acae2b56c05c4d4616",
+        "bytes": 2451832
+      },
+      {
+        "base": "external-work-directory",
+        "path": "avatar-ready-locomotion-data-20261122\\v44-90s-gate\\frames.ndjson.gz",
+        "sha256": "025e4701b81802a765bfa05b62dd0cc43734a73900f828793c8731ba50f1c4a7",
+        "bytes": 46834126
+      },
+      {
+        "base": "external-work-directory",
+        "path": "avatar-ready-locomotion-data-20261122\\v44-90s-gate\\skin-metadata.json",
+        "sha256": "5a41fecab89446b332a9084039198fdca9b0ee833d8ef1978faf3f9252b68e15",
+        "bytes": 92892
+      },
+      {
+        "base": "external-work-directory",
+        "path": "avatar-ready-locomotion-data-20261122\\v44-90s-gate\\actual-support-slip-17-20s.json",
+        "sha256": "a4f83d2517e5cb36f62c11f5b2e1fef549aeec4fb4e512d309f965f965eb929d",
+        "bytes": 35024
+      }
+    ]
+  },
+  "compactComparison": [
+    {
+      "actor": "emma",
+      "foot": "Left",
+      "actualMedianMps": 0.23301458539679332,
+      "sameRigAuthoredMedianMps": 0.03454678734519973,
+      "actualP95Mps": 0.8360043713573607,
+      "sameRigAuthoredP95Mps": 0.08157827164453801,
+      "fixedHeelActualMedianMps": 0.1903403255630439,
+      "fixedHeelAuthoredMedianMps": 0.03889030237297757
+    },
+    {
+      "actor": "emma",
+      "foot": "Right",
+      "actualMedianMps": 0.2932624551035744,
+      "sameRigAuthoredMedianMps": 0.09730674893539329,
+      "actualP95Mps": 1.0224537914999077,
+      "sameRigAuthoredP95Mps": 0.16694728395256594,
+      "fixedHeelActualMedianMps": 0.2564618219724339,
+      "fixedHeelAuthoredMedianMps": 0.06713083785908722
+    },
+    {
+      "actor": "ethan",
+      "foot": "Left",
+      "actualMedianMps": 0.020328673237095498,
+      "sameRigAuthoredMedianMps": 0.019583543288491108,
+      "actualP95Mps": 0.33145720648227256,
+      "sameRigAuthoredP95Mps": 0.03845427923248805,
+      "fixedHeelActualMedianMps": 0.021625249089068675,
+      "fixedHeelAuthoredMedianMps": 0.024926441828436417
+    },
+    {
+      "actor": "ethan",
+      "foot": "Right",
+      "actualMedianMps": 0.06168581334159407,
+      "sameRigAuthoredMedianMps": 0.009123734783121515,
+      "actualP95Mps": 0.4433691725106985,
+      "sameRigAuthoredP95Mps": 0.016510842295941214,
+      "fixedHeelActualMedianMps": 0.05816511873734258,
+      "fixedHeelAuthoredMedianMps": 0.01312350639393376
+    }
+  ]
+}

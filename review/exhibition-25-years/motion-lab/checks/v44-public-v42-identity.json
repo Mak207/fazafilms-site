@@ -1,0 +1,32 @@
+{
+  "checkedAtUtc": "2026-11-22T14:21:56.943705+00:00",
+  "pages": [
+    {
+      "url": "https://fazafilms.ru/review/exhibition-25-years/?zone=technology&camera=overview&mode=film",
+      "status": 200,
+      "htmlSha256": "8d18fae43598cfede5ba7908ac9a0b3a7f2f97518d8597ef79645a9109c32246",
+      "mainModule": "./exhibition-3d.js?v=42",
+      "etag": "\"6b024a1a-4546\"",
+      "lastModified": "Sun, 22 Nov 2026 01:49:14 GMT"
+    },
+    {
+      "url": "https://fazafilms.ru/review/exhibition-25-years/?zone=transport&camera=overview&mode=film",
+      "status": 200,
+      "htmlSha256": "8d18fae43598cfede5ba7908ac9a0b3a7f2f97518d8597ef79645a9109c32246",
+      "mainModule": "./exhibition-3d.js?v=42",
+      "etag": "\"6b024a1a-4546\"",
+      "lastModified": "Sun, 22 Nov 2026 01:49:14 GMT"
+    }
+  ],
+  "mainModule": {
+    "url": "https://fazafilms.ru/review/exhibition-25-years/exhibition-3d.js?v=42",
+    "status": 200,
+    "sha256": "376db48fdb756925a701898793f796996c776a26e4a7b4d7562f33c48352680e",
+    "visitorImport": "./visitors-v40.js?v=42"
+  },
+  "visitorModule": {
+    "url": "https://fazafilms.ru/review/exhibition-25-years/visitors-v40.js?v=42",
+    "status": 200,
+    "sha256": "10e7a2e5a60461d377669733d8315b367e77b3ae24747cafd3478fe6c2b6968d"
+  }
+}

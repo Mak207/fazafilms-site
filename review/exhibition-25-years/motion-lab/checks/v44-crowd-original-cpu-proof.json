@@ -1,0 +1,470 @@
+{
+  "package": "recast-navigation",
+  "version": "0.44.0",
+  "dt": 0.016666666666666666,
+  "radius": 0.7,
+  "envelopeRadius": 0.68,
+  "envelopeStatus": "Native Idle/Walk only: measured Ethan holderXZ max .654409m; .68m guard includes .025591m margin. Turn/start/stop/gesture not covered.",
+  "nativeEnvelopeAudit": {
+    "path": "../native-audit/native-pose-envelope-audit.json",
+    "sha256": "ad8b11a276570560d2c8e0bd2f5ed4736195f6d299909d038ea8c280d27e4c21",
+    "emmaWalkHolderRadius": 0.5435881265102334,
+    "ethanWalkHolderRadius": 0.654409
+  },
+  "engineSettings": {
+    "params": [
+      {
+        "radius": 0.7,
+        "height": 1.8,
+        "maxAcceleration": 2,
+        "maxSpeed": 1.14,
+        "collisionQueryRange": 2.5,
+        "pathOptimizationRange": 21,
+        "separationWeight": 1,
+        "updateFlags": 31,
+        "obstacleAvoidanceType": 0
+      },
+      {
+        "radius": 0.7,
+        "height": 1.8,
+        "maxAcceleration": 2,
+        "maxSpeed": 1.04,
+        "collisionQueryRange": 2.5,
+        "pathOptimizationRange": 21,
+        "separationWeight": 1,
+        "updateFlags": 31,
+        "obstacleAvoidanceType": 0
+      }
+    ],
+    "avoidance": {
+      "velBias": 0.5,
+      "adaptiveDivs": 7,
+      "adaptiveRings": 3,
+      "adaptiveDepth": 3
+    }
+  },
+  "config": {
+    "cs": 0.06,
+    "ch": 0.06,
+    "walkableSlopeAngle": 45,
+    "walkableHeight": 32,
+    "walkableClimb": 0,
+    "walkableRadius": 13,
+    "maxEdgeLen": 134,
+    "maxSimplificationError": 0.5,
+    "minRegionArea": 0,
+    "mergeRegionArea": 0,
+    "maxVertsPerPoly": 6,
+    "detailSampleDist": 6,
+    "detailSampleMaxError": 1,
+    "bounds": [
+      [
+        -5.18,
+        -0.1,
+        -8.75
+      ],
+      [
+        5.18,
+        2.2,
+        8.75
+      ]
+    ]
+  },
+  "obstacles": [
+    [
+      -1.22,
+      1.22,
+      -1.56,
+      0.86
+    ],
+    [
+      -4.28,
+      -2.82,
+      1.14,
+      3.96
+    ],
+    [
+      2.85,
+      4.25,
+      1.07,
+      4.03
+    ],
+    [
+      -4.62,
+      -2.08,
+      -4.37,
+      -2.73
+    ],
+    [
+      2.08,
+      4.62,
+      -4.37,
+      -2.73
+    ],
+    [
+      -1.92,
+      1.92,
+      4.34,
+      6.62
+    ]
+  ],
+  "bounds": {
+    "minX": -5.18,
+    "maxX": 5.18,
+    "minZ": -8.75,
+    "maxZ": 8.75
+  },
+  "stationProjection": [
+    {
+      "original": [
+        -3.55,
+        0.45
+      ],
+      "projected": {
+        "x": -3.549999952316284,
+        "y": 0.019999995827674866,
+        "z": 0.3099994659423828
+      },
+      "shift": 0.1400005340576253,
+      "clearance": 0.8300005340576171
+    },
+    {
+      "original": [
+        3.55,
+        0.45
+      ],
+      "projected": {
+        "x": 3.549999952316284,
+        "y": 0.019999995827674866,
+        "z": 0.25
+      },
+      "shift": 0.2000000000000057,
+      "clearance": 0.8200000000000001
+    },
+    {
+      "original": [
+        0,
+        3.62
+      ],
+      "projected": {
+        "x": 0,
+        "y": 0.019999995827674866,
+        "z": 3.5500001907348633
+      },
+      "shift": 0.06999980926513683,
+      "clearance": 0.7899998092651366
+    },
+    {
+      "original": [
+        -3.35,
+        -1.88
+      ],
+      "projected": {
+        "x": -3.3499999046325684,
+        "y": 0.019999995827674866,
+        "z": -1.8799999952316284
+      },
+      "shift": 9.548656660074142e-8,
+      "clearance": 0.8500000047683716
+    },
+    {
+      "original": [
+        3.35,
+        -1.88
+      ],
+      "projected": {
+        "x": 3.3499999046325684,
+        "y": 0.019999995827674866,
+        "z": -1.8799999952316284
+      },
+      "shift": 9.548656660074142e-8,
+      "clearance": 0.8500000047683716
+    },
+    {
+      "original": [
+        -1.96,
+        -0.35
+      ],
+      "projected": {
+        "x": -2.059999942779541,
+        "y": 0.019999995827674866,
+        "z": -0.3500000238418579
+      },
+      "shift": 0.0999999427795439,
+      "clearance": 0.839999942779541
+    }
+  ],
+  "results": [
+    {
+      "name": "head-on",
+      "completed": true,
+      "seconds": 9.25,
+      "arriveTimes": [
+        8.433333,
+        9.25
+      ],
+      "minCenterDistance": 1.400845,
+      "agentDiameter": 1.4,
+      "envelopeDiameter": 1.36,
+      "minAgentGap": 0.000845,
+      "minEnvelopeGap": 0.040845,
+      "minRawObstacleDistance": 1.230777,
+      "minEnvelopeObstacleClearance": 0.550777,
+      "overlapFrames": 0,
+      "envelopeOverlapFrames": 0,
+      "obstacleViolationFrames": 0,
+      "maxObservedSpeed": 1.14,
+      "closestFrame": {
+        "time": 3.65,
+        "positions": [
+          {
+            "x": -0.21810013055801392,
+            "y": 0.019999995827674866,
+            "z": -6.572073936462402
+          },
+          {
+            "x": 0.5903874635696411,
+            "y": 0.019999995827674866,
+            "z": -5.428083896636963
+          }
+        ]
+      },
+      "end": [
+        {
+          "position": {
+            "x": 2.8939566612243652,
+            "y": 0.019999995827674866,
+            "z": -6.049708843231201
+          },
+          "goal": {
+            "x": 3,
+            "y": 0.019999995827674866,
+            "z": -6
+          },
+          "remaining": 0.117116,
+          "arrived": true,
+          "state": 1
+        },
+        {
+          "position": {
+            "x": -2.8888094425201416,
+            "y": 0.019999995827674866,
+            "z": -5.956157684326172
+          },
+          "goal": {
+            "x": -3,
+            "y": 0.019999995827674866,
+            "z": -6
+          },
+          "remaining": 0.119522,
+          "arrived": true,
+          "state": 1
+        }
+      ],
+      "pass": true
+    },
+    {
+      "name": "crossing",
+      "completed": true,
+      "seconds": 8.483333,
+      "arriveTimes": [
+        8.483333,
+        6.633333
+      ],
+      "minCenterDistance": 1.549031,
+      "agentDiameter": 1.4,
+      "envelopeDiameter": 1.36,
+      "minAgentGap": 0.149031,
+      "minEnvelopeGap": 0.189031,
+      "minRawObstacleDistance": 0.840556,
+      "minEnvelopeObstacleClearance": 0.160556,
+      "overlapFrames": 0,
+      "envelopeOverlapFrames": 0,
+      "obstacleViolationFrames": 0,
+      "maxObservedSpeed": 1.14,
+      "closestFrame": {
+        "time": 2.883333,
+        "positions": [
+          {
+            "x": -0.8832279443740845,
+            "y": 0.019999995827674866,
+            "z": -6.030147075653076
+          },
+          {
+            "x": 0.5550062656402588,
+            "y": 0.019999995827674866,
+            "z": -5.454838275909424
+          }
+        ]
+      },
+      "end": [
+        {
+          "position": {
+            "x": 2.887103319168091,
+            "y": 0.019999995827674866,
+            "z": -6.036380290985107
+          },
+          "goal": {
+            "x": 3,
+            "y": 0.019999995827674866,
+            "z": -6
+          },
+          "remaining": 0.118614,
+          "arrived": true,
+          "state": 1
+        },
+        {
+          "position": {
+            "x": 0.047425590455532074,
+            "y": 0.019999995827674866,
+            "z": -4.6928534507751465
+          },
+          "goal": {
+            "x": 0,
+            "y": 0.019999995827674866,
+            "z": -4.800000190734863
+          },
+          "remaining": 0.117173,
+          "arrived": true,
+          "state": 1
+        }
+      ],
+      "pass": true
+    },
+    {
+      "name": "occupied-station-reroute",
+      "completed": true,
+      "seconds": 13.583333,
+      "arriveTimes": [
+        null,
+        13.583333
+      ],
+      "minCenterDistance": 1.4017,
+      "agentDiameter": 1.4,
+      "envelopeDiameter": 1.36,
+      "minAgentGap": 0.0017,
+      "minEnvelopeGap": 0.0417,
+      "minRawObstacleDistance": 0.771014,
+      "minEnvelopeObstacleClearance": 0.091014,
+      "overlapFrames": 0,
+      "envelopeOverlapFrames": 0,
+      "obstacleViolationFrames": 0,
+      "maxObservedSpeed": 1.04,
+      "closestFrame": {
+        "time": 6.4,
+        "positions": [
+          {
+            "x": -3.549999952316284,
+            "y": 0.019999995827674866,
+            "z": 0.3099994659423828
+          },
+          {
+            "x": -2.2241992950439453,
+            "y": 0.019999995827674866,
+            "z": -0.1449904888868332
+          }
+        ]
+      },
+      "end": [
+        {
+          "position": {
+            "x": -3.549999952316284,
+            "y": 0.019999995827674866,
+            "z": 0.3099994659423828
+          },
+          "goal": null,
+          "remaining": null,
+          "arrived": false,
+          "state": 1
+        },
+        {
+          "position": {
+            "x": -0.07355338335037231,
+            "y": 0.019999995827674866,
+            "z": 3.4568209648132324
+          },
+          "goal": {
+            "x": 0,
+            "y": 0.019999995827674866,
+            "z": 3.5500001907348633
+          },
+          "remaining": 0.118712,
+          "arrived": true,
+          "state": 1
+        }
+      ],
+      "pass": true
+    },
+    {
+      "name": "exhibition-station-swap",
+      "completed": true,
+      "seconds": 15.7,
+      "arriveTimes": [
+        14.35,
+        15.7
+      ],
+      "minCenterDistance": 1.401382,
+      "agentDiameter": 1.4,
+      "envelopeDiameter": 1.36,
+      "minAgentGap": 0.001382,
+      "minEnvelopeGap": 0.041382,
+      "minRawObstacleDistance": 0.747824,
+      "minEnvelopeObstacleClearance": 0.067824,
+      "overlapFrames": 0,
+      "envelopeOverlapFrames": 0,
+      "obstacleViolationFrames": 0,
+      "maxObservedSpeed": 1.14,
+      "closestFrame": {
+        "time": 7.883333,
+        "positions": [
+          {
+            "x": 0.6730904579162598,
+            "y": 0.019999995827674866,
+            "z": 1.705127239227295
+          },
+          {
+            "x": 1.1874054670333862,
+            "y": 0.019999995827674866,
+            "z": 3.008718967437744
+          }
+        ]
+      },
+      "end": [
+        {
+          "position": {
+            "x": 3.294722080230713,
+            "y": 0.019999995827674866,
+            "z": -1.775890827178955
+          },
+          "goal": {
+            "x": 3.3499999046325684,
+            "y": 0.019999995827674866,
+            "z": -1.8799999952316284
+          },
+          "remaining": 0.117874,
+          "arrived": true,
+          "state": 1
+        },
+        {
+          "position": {
+            "x": -3.431501865386963,
+            "y": 0.019999995827674866,
+            "z": 0.30000799894332886
+          },
+          "goal": {
+            "x": -3.549999952316284,
+            "y": 0.019999995827674866,
+            "z": 0.3099994659423828
+          },
+          "remaining": 0.118919,
+          "arrived": true,
+          "state": 1
+        }
+      ],
+      "pass": true
+    }
+  ],
+  "pass": true,
+  "cpuWallMs": 79.6682,
+  "navmeshBytes": 19324
+}

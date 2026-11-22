@@ -1,0 +1,39 @@
+{
+  "scope": "ONE checkpoint t=20s only. NOT an all-frame exact first20 equivalence test. No new contact measurement is claimed under the bccc SHA.",
+  "contactSourceRuntimeSha256": "4850f3dee6071e54450e86a4a108040bc90aa1c2c1b2193dda87aee41d85a37e",
+  "fsmRuntimeSha256": "bccc1feea2548202027e98de18c65f8aa5f93acefe704817f742eff724bdfab6",
+  "contactSourceFramesSha256": "88685fff47897f6dc96d2f9f9de98f26377125e2a248d4ccd7a7fb66e0962a52",
+  "fsmReportSha256": "8104345b9875847ee858434788d03ec76ff4728cd3a9ef197b005ae71df19a08",
+  "checkpointTime": 20.000000000000146,
+  "comparison": [
+    {
+      "actor": "emma",
+      "sameState": true,
+      "sameHolderPosition": true,
+      "sameHolderQuaternion": true,
+      "phaseDifference": 0.0,
+      "walkWeightDifference": 0
+    },
+    {
+      "actor": "ethan",
+      "sameState": true,
+      "sameHolderPosition": true,
+      "sameHolderQuaternion": true,
+      "phaseDifference": 0.0,
+      "walkWeightDifference": 0
+    }
+  ],
+  "egressGrantsAt20": 0,
+  "yieldReplansAt20": 0,
+  "poseApplicationFunctionSha256": {
+    "contactSource": "5de801ade558623b5ae4cb3f5ac7461c8ac94dab7ee22de8a4d864e1be29768e",
+    "fsmCandidate": "5de801ade558623b5ae4cb3f5ac7461c8ac94dab7ee22de8a4d864e1be29768e",
+    "equal": true
+  },
+  "nativeMotionModuleSha256": {
+    "contactSource": "25bba4041399a033aee1ff259f083d81897da8588bdd90d53f3667bbc365e6ab",
+    "fsmCandidate": "25bba4041399a033aee1ff259f083d81897da8588bdd90d53f3667bbc365e6ab"
+  },
+  "contactReport": "v44-direct-path-contact-phases.json",
+  "interpretation": "The endpoint and unchanged pose code support relevance of the earlier contact audit; they do not replace an all-frame comparison or certify start/stop contact."
+}

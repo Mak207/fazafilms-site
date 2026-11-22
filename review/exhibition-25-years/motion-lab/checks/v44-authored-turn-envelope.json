@@ -1,0 +1,323 @@
+{
+  "method": "Independent NumPy complete visible LBS geometry. In v43 prepareTurn HipsXZ is zeroed and Hips yaw is factored into the holder. All weighted joints descend from Hips and its ancestors have identity transforms, verified here. Thus max hypot(vertexXZ-HipsXZ) on unedited authored turn equals exact radius about the extracted moving holder; removing/adding pure Y yaw does not change this norm. No animation data is changed. Samples<=1/60s apart, including both endpoints. This is not a formal between-sample bound or crossfade/gesture bound.",
+  "avatars": [
+    {
+      "person": "emma",
+      "allVisibleVertices": 52209,
+      "rootAncestorIdentityMaxError": 0.0,
+      "turns": {
+        "UPF \u00b7 TurnLeft90": {
+          "duration": 2.3333332538604736,
+          "frames": 141,
+          "maxSampleInterval": 0.016666666099003382,
+          "radiusAroundExtractedMovingHolderXZ": 0.3225578161227391,
+          "marginWithin068": 0.35744218387726095,
+          "peak": {
+            "time": 1.3333332879202706,
+            "phase": 0.5714285714285714,
+            "sourceVertex": [
+              -0.12712234367769887,
+              0.06288162218716581,
+              0.21566292404128856
+            ],
+            "sourceHips": [
+              0.04765674437436948,
+              0.9215162965366125,
+              -0.0554381920050275
+            ],
+            "vertexIndex": 13597
+          },
+          "sourceHipsStart": [
+            -1.0834837801260155e-12,
+            0.9251465201377869,
+            -3.5381157639097216e-12
+          ],
+          "sourceHipsEnd": [
+            0.057801179587841034,
+            0.9251465201377869,
+            -0.029214950278401375
+          ],
+          "rootPathEndpointDisplacement": [
+            0.057801179588924514,
+            0.0,
+            -0.02921495027486326
+          ],
+          "maxObservedVertexVelocityRelativeToHipsXZ": 1.6921195846164092
+        },
+        "UPF \u00b7 TurnRight90": {
+          "duration": 2.3333332538604736,
+          "frames": 141,
+          "maxSampleInterval": 0.016666666099003382,
+          "radiusAroundExtractedMovingHolderXZ": 0.34725863935953677,
+          "marginWithin068": 0.3327413606404633,
+          "peak": {
+            "time": 1.0999999625342232,
+            "phase": 0.47142857142857136,
+            "sourceVertex": [
+              0.12147830531763038,
+              0.01642082063594972,
+              0.1688967856400658
+            ],
+            "sourceHips": [
+              -0.12016167920419868,
+              0.9270260310017608,
+              -0.08049984723641673
+            ],
+            "vertexIndex": 48810
+          },
+          "sourceHipsStart": [
+            -1.0834837801260155e-12,
+            0.9251465201377869,
+            -3.5381157639097216e-12
+          ],
+          "sourceHipsEnd": [
+            -0.1556212604045868,
+            0.9251465201377869,
+            -0.018604768440127373
+          ],
+          "rootPathEndpointDisplacement": [
+            -0.1556212604035033,
+            0.0,
+            -0.01860476843658926
+          ],
+          "maxObservedVertexVelocityRelativeToHipsXZ": 1.7743112825813208
+        },
+        "UPF \u00b7 TurnLeft180": {
+          "duration": 1.8666666746139526,
+          "frames": 114,
+          "maxSampleInterval": 0.0165191741116279,
+          "radiusAroundExtractedMovingHolderXZ": 0.38409753915211725,
+          "marginWithin068": 0.2959024608478828,
+          "peak": {
+            "time": 1.1563421878139528,
+            "phase": 0.6194690265486725,
+            "sourceVertex": [
+              -0.2286344412429537,
+              0.854941416598885,
+              0.338800517473975
+            ],
+            "sourceHips": [
+              0.09249521721782078,
+              0.9304452119435069,
+              0.1280716346895342
+            ],
+            "vertexIndex": 51986
+          },
+          "sourceHipsStart": [
+            -1.0834837801260155e-12,
+            0.9251465201377869,
+            -3.5381157639097216e-12
+          ],
+          "sourceHipsEnd": [
+            0.02942531555891037,
+            0.9251465201377869,
+            0.04739588499069214
+          ],
+          "rootPathEndpointDisplacement": [
+            0.029425315559993854,
+            0.0,
+            0.04739588499423025
+          ],
+          "maxObservedVertexVelocityRelativeToHipsXZ": 3.253952304957072
+        },
+        "UPF \u00b7 TurnRight180": {
+          "duration": 1.7333333492279053,
+          "frames": 106,
+          "maxSampleInterval": 0.016507936659313382,
+          "radiusAroundExtractedMovingHolderXZ": 0.4001182220850783,
+          "marginWithin068": 0.27988177791492175,
+          "peak": {
+            "time": 0.8419047696249825,
+            "phase": 0.4857142857142857,
+            "sourceVertex": [
+              -0.29977618020183405,
+              0.8228852418558726,
+              0.4870887257179881
+            ],
+            "sourceHips": [
+              -0.03363960544979582,
+              0.927220668149167,
+              0.18831470538861472
+            ],
+            "vertexIndex": 51570
+          },
+          "sourceHipsStart": [
+            -1.0834837801260155e-12,
+            0.9251465201377869,
+            -3.5381157639097216e-12
+          ],
+          "sourceHipsEnd": [
+            -0.02855805493891239,
+            0.9251465201377869,
+            0.08780691027641296
+          ],
+          "rootPathEndpointDisplacement": [
+            -0.028558054937828908,
+            0.0,
+            0.08780691027995108
+          ],
+          "maxObservedVertexVelocityRelativeToHipsXZ": 2.257461812906187
+        }
+      }
+    },
+    {
+      "person": "ethan",
+      "allVisibleVertices": 48517,
+      "rootAncestorIdentityMaxError": 0.0,
+      "turns": {
+        "UPF \u00b7 TurnLeft90": {
+          "duration": 2.3333332538604736,
+          "frames": 141,
+          "maxSampleInterval": 0.016666666099003382,
+          "radiusAroundExtractedMovingHolderXZ": 0.43159333165860636,
+          "marginWithin068": 0.2484066683413937,
+          "peak": {
+            "time": 1.1999999591282435,
+            "phase": 0.5142857142857142,
+            "sourceVertex": [
+              -0.06281165223873611,
+              0.8679003017069421,
+              0.31532909550052934
+            ],
+            "sourceHips": [
+              0.0037619188266430075,
+              0.8980425620898385,
+              -0.1110988158371066
+            ],
+            "vertexIndex": 47058
+          },
+          "sourceHipsStart": [
+            2.4200621975140058e-12,
+            0.9167666435241699,
+            -2.8101543314562605e-10
+          ],
+          "sourceHipsEnd": [
+            2.4200621975140058e-12,
+            0.9167666435241699,
+            2.4192481351548167e-11
+          ],
+          "rootPathEndpointDisplacement": [
+            0.0,
+            0.0,
+            3.052079144971742e-10
+          ],
+          "maxObservedVertexVelocityRelativeToHipsXZ": 1.4104818643436774
+        },
+        "UPF \u00b7 TurnRight90": {
+          "duration": 2.1666667461395264,
+          "frames": 132,
+          "maxSampleInterval": 0.016539440810225393,
+          "radiusAroundExtractedMovingHolderXZ": 0.41351969929040094,
+          "marginWithin068": 0.2664803007095991,
+          "peak": {
+            "time": 0.36386769782495865,
+            "phase": 0.16793893129770993,
+            "sourceVertex": [
+              -0.32002884496867545,
+              0.0791063167961151,
+              0.11728287931146944
+            ],
+            "sourceHips": [
+              0.06475567300191312,
+              0.9222802635173039,
+              -0.034174759754262186
+            ],
+            "vertexIndex": 4501
+          },
+          "sourceHipsStart": [
+            2.4200621975140058e-12,
+            0.9167666435241699,
+            -2.8101543314562605e-10
+          ],
+          "sourceHipsEnd": [
+            2.4200621975140058e-12,
+            0.9167666435241699,
+            2.4192481351548167e-11
+          ],
+          "rootPathEndpointDisplacement": [
+            0.0,
+            0.0,
+            3.052079144971742e-10
+          ],
+          "maxObservedVertexVelocityRelativeToHipsXZ": 2.0987272086427637
+        },
+        "UPF \u00b7 TurnLeft180": {
+          "duration": 2.433333396911621,
+          "frames": 148,
+          "maxSampleInterval": 0.01655328841436477,
+          "radiusAroundExtractedMovingHolderXZ": 0.4538749681430383,
+          "marginWithin068": 0.22612503185696176,
+          "peak": {
+            "time": 1.4897959572928294,
+            "phase": 0.6122448979591838,
+            "sourceVertex": [
+              0.5173820039753345,
+              0.9134440494983594,
+              -0.1351868963929142
+            ],
+            "sourceHips": [
+              0.07216313952360251,
+              0.9247178814238124,
+              -0.046967570601144995
+            ],
+            "vertexIndex": 47058
+          },
+          "sourceHipsStart": [
+            2.4200621975140058e-12,
+            0.9167666435241699,
+            -2.8101543314562605e-10
+          ],
+          "sourceHipsEnd": [
+            2.4200621975140058e-12,
+            0.9167666435241699,
+            -2.8101543314562605e-10
+          ],
+          "rootPathEndpointDisplacement": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maxObservedVertexVelocityRelativeToHipsXZ": 2.3515483282224583
+        },
+        "UPF \u00b7 TurnRight180": {
+          "duration": 2.366666555404663,
+          "frames": 143,
+          "maxSampleInterval": 0.01666666588313143,
+          "radiusAroundExtractedMovingHolderXZ": 0.4228322381564607,
+          "marginWithin068": 0.25716776184353934,
+          "peak": {
+            "time": 1.7999999153781945,
+            "phase": 0.7605633802816901,
+            "sourceVertex": [
+              0.08102165509161427,
+              0.05872413901306994,
+              -0.2730750187280655
+            ],
+            "sourceHips": [
+              -0.04937222183769201,
+              0.9117435805458685,
+              0.1291494689448593
+            ],
+            "vertexIndex": 4418
+          },
+          "sourceHipsStart": [
+            2.4200621975140058e-12,
+            0.9167666435241699,
+            -2.8101543314562605e-10
+          ],
+          "sourceHipsEnd": [
+            2.4200621975140058e-12,
+            0.9167666435241699,
+            0.0752204954624176
+          ],
+          "rootPathEndpointDisplacement": [
+            0.0,
+            0.0,
+            0.07522049574343304
+          ],
+          "maxObservedVertexVelocityRelativeToHipsXZ": 2.6785100182882147
+        }
+      }
+    }
+  ]
+}

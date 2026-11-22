@@ -1,0 +1,174 @@
+{
+  "separationWeight": 0,
+  "updateFlags": 31,
+  "pass": true,
+  "results": [
+    {
+      "name": "close-waypoint-near-idle-station3",
+      "request": {
+        "accepted": true,
+        "target": {
+          "x": -3.3499999046325684,
+          "y": 0.019999995827674866,
+          "z": 0.10999946296215057
+        },
+        "station": null
+      },
+      "completed": true,
+      "seconds": 1.0166666666666666,
+      "minPair": 2.0744983554094247,
+      "minStatic": 0.8303933584690093,
+      "final": [
+        {
+          "id": "0",
+          "position": {
+            "x": -3.4367032051086426,
+            "y": 0,
+            "z": 0.19268569350242615
+          },
+          "station": 0,
+          "remaining": 0.11981016248383945
+        },
+        {
+          "id": "1",
+          "position": {
+            "x": -3.3499999046325684,
+            "y": 0,
+            "z": -1.8799999952316284
+          },
+          "station": 3,
+          "remaining": null
+        }
+      ],
+      "pass": true
+    },
+    {
+      "name": "station5-next-to-occupied-station0",
+      "request": {
+        "accepted": true,
+        "target": {
+          "x": -2.059999942779541,
+          "y": 0.019999995827674866,
+          "z": -0.3500000238418579
+        },
+        "station": 5
+      },
+      "completed": true,
+      "seconds": 11.65,
+      "minPair": 1.4624944280484808,
+      "minStatic": 0.7430146195831059,
+      "final": [
+        {
+          "id": "0",
+          "position": {
+            "x": -3.549999952316284,
+            "y": 0,
+            "z": 0.3099994659423828
+          },
+          "station": 0,
+          "remaining": null
+        },
+        {
+          "id": "1",
+          "position": {
+            "x": -2.0724711418151855,
+            "y": 0,
+            "z": -0.23094245791435242
+          },
+          "station": 5,
+          "remaining": 0.11970895877071597
+        }
+      ],
+      "pass": true
+    },
+    {
+      "name": "station0-next-to-occupied-station5",
+      "request": {
+        "accepted": true,
+        "target": {
+          "x": -3.549999952316284,
+          "y": 0.019999995827674866,
+          "z": 0.3099994659423828
+        },
+        "station": 0
+      },
+      "completed": true,
+      "seconds": 4.183333333333334,
+      "minPair": 1.422202271307238,
+      "minStatic": 0.839999942779541,
+      "final": [
+        {
+          "id": "0",
+          "position": {
+            "x": -2.059999942779541,
+            "y": 0,
+            "z": -0.3500000238418579
+          },
+          "station": 5,
+          "remaining": null
+        },
+        {
+          "id": "1",
+          "position": {
+            "x": -3.5368967056274414,
+            "y": 0,
+            "z": 0.19187971949577332
+          },
+          "station": 0,
+          "remaining": 0.11884430812790314
+        }
+      ],
+      "pass": true
+    },
+    {
+      "name": "simultaneous-stations0-and5",
+      "request": [
+        {
+          "accepted": true,
+          "target": {
+            "x": -3.549999952316284,
+            "y": 0.019999995827674866,
+            "z": 0.3099994659423828
+          },
+          "station": 0
+        },
+        {
+          "accepted": true,
+          "target": {
+            "x": -2.059999942779541,
+            "y": 0.019999995827674866,
+            "z": -0.3500000238418579
+          },
+          "station": 5
+        }
+      ],
+      "completed": true,
+      "seconds": 11.616666666666667,
+      "minPair": 1.4499760979242011,
+      "minStatic": 0.7428513936394655,
+      "final": [
+        {
+          "id": "0",
+          "position": {
+            "x": -3.537810802459717,
+            "y": 0,
+            "z": 0.1936366707086563
+          },
+          "station": 0,
+          "remaining": 0.11699946789978158
+        },
+        {
+          "id": "1",
+          "position": {
+            "x": -2.071183204650879,
+            "y": 0,
+            "z": -0.2312055081129074
+          },
+          "station": 5,
+          "remaining": 0.11931974821193173
+        }
+      ],
+      "pass": true
+    }
+  ]
+}

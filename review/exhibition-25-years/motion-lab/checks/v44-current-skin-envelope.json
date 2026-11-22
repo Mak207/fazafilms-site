@@ -1,0 +1,549 @@
+{
+  "method": "All visible current walking-woman/man GLB vertices, independent NumPy LBS. Fast grouped influences verified against full reference LBS at two phases. v43 Walk/Idle uses source vertexXZ minus [HipsStart + phase*(HipsEnd-HipsStart)]XZ; gestures use source vertexXZ minus HipsStartXZ (normalizeRootXZ cyclic=false). Root ancestors identity verified. XZ envelope is measured around controller holder. Samples<=1/30sec, endpoints included. Pure clips only; no claim for crossfades or arbitrary gestures beyond listed names.",
+  "avatars": [
+    {
+      "person": "emma",
+      "vertices": 52209,
+      "fastSkinMaxAbsError": 8.881784197001252e-16,
+      "clips": {
+        "Walk": {
+          "duration": 1.2000000476837158,
+          "frames": 38,
+          "radiusAroundRuntimeHolderXZ": 0.5797619337855314,
+          "marginWithin068": 0.10023806621446862,
+          "pureClipFits068": true,
+          "rootNormalization": "linear cycle baseline",
+          "sourceHipsStart": [
+            -0.07695895433425903,
+            0.9251465201377869,
+            -1.45741868019104
+          ],
+          "sourceHipsEnd": [
+            -9.721228813250327e-13,
+            0.9251465201377869,
+            -3.323769211249772e-12
+          ],
+          "peak": {
+            "time": 0.8108108430295377,
+            "phase": 0.6756756756756757,
+            "sourceVertex": [
+              -0.10026627533087606,
+              0.16140262505377967,
+              0.10217392455711838
+            ],
+            "normalizationBaseline": [
+              -0.024959660865821937,
+              0.9251465201377869,
+              -0.47267632871285337
+            ],
+            "vertexIndex": 13716
+          }
+        },
+        "Idle": {
+          "duration": 15.533333778381348,
+          "frames": 468,
+          "radiusAroundRuntimeHolderXZ": 0.30174937968397936,
+          "marginWithin068": 0.3782506203160207,
+          "pureClipFits068": true,
+          "rootNormalization": "linear cycle baseline",
+          "sourceHipsStart": [
+            -9.721228813250327e-13,
+            0.9251465201377869,
+            -3.323769211249772e-12
+          ],
+          "sourceHipsEnd": [
+            -9.721228813250327e-13,
+            0.9251465201377869,
+            -3.323769211249772e-12
+          ],
+          "peak": {
+            "time": 5.388436985220082,
+            "phase": 0.3468950749464668,
+            "sourceVertex": [
+              -0.2928650383694798,
+              0.8254358121111498,
+              0.07268258003535437
+            ],
+            "normalizationBaseline": [
+              -9.721228813250327e-13,
+              0.9251465201377869,
+              -3.323769211249772e-12
+            ],
+            "vertexIndex": 402
+          }
+        },
+        "Wave": {
+          "duration": 5.5333333015441895,
+          "frames": 167,
+          "radiusAroundRuntimeHolderXZ": 0.7844202228652966,
+          "marginWithin068": -0.10442022286529651,
+          "pureClipFits068": false,
+          "rootNormalization": "constant start offset only",
+          "sourceHipsStart": [
+            0.09996309876441956,
+            0.9369931817054749,
+            0.0037606162950396538
+          ],
+          "sourceHipsEnd": [
+            0.09996309876441956,
+            0.9369931817054749,
+            0.0037606162950396538
+          ],
+          "peak": {
+            "time": 1.0999999936804714,
+            "phase": 0.19879518072289157,
+            "sourceVertex": [
+              -0.5634923446164941,
+              1.3612121603800675,
+              0.42226027064170324
+            ],
+            "normalizationBaseline": [
+              0.09996309876441956,
+              0.9369931817054749,
+              0.0037606162950396538
+            ],
+            "vertexIndex": 282
+          }
+        },
+        "Talk": {
+          "duration": 27.33333396911621,
+          "frames": 822,
+          "radiusAroundRuntimeHolderXZ": 0.4802034126371911,
+          "marginWithin068": 0.19979658736280898,
+          "pureClipFits068": true,
+          "rootNormalization": "constant start offset only",
+          "sourceHipsStart": [
+            0.007853453047573566,
+            0.9254637360572815,
+            0.003275542054325342
+          ],
+          "sourceHipsEnd": [
+            0.007853453047573566,
+            0.9254637360572815,
+            0.003275542054325342
+          ],
+          "peak": {
+            "time": 25.53552637553244,
+            "phase": 0.9342265529841657,
+            "sourceVertex": [
+              -0.45386695032449004,
+              1.0360613249095012,
+              0.13522093461633675
+            ],
+            "normalizationBaseline": [
+              0.007853453047573566,
+              0.9254637360572815,
+              0.003275542054325342
+            ],
+            "vertexIndex": 2
+          }
+        },
+        "Clap": {
+          "duration": 15.933333396911621,
+          "frames": 480,
+          "radiusAroundRuntimeHolderXZ": 0.5131067451949615,
+          "marginWithin068": 0.16689325480503858,
+          "pureClipFits068": true,
+          "rootNormalization": "constant start offset only",
+          "sourceHipsStart": [
+            0.037467338144779205,
+            0.9200685024261475,
+            0.006654215976595879
+          ],
+          "sourceHipsEnd": [
+            0.037467338144779205,
+            0.9200685024261475,
+            0.006654215976595879
+          ],
+          "peak": {
+            "time": 0.5987473927858229,
+            "phase": 0.037578288100208766,
+            "sourceVertex": [
+              -0.40436618861467094,
+              1.025803531499317,
+              0.2675405256899907
+            ],
+            "normalizationBaseline": [
+              0.037467338144779205,
+              0.9200685024261475,
+              0.006654215976595879
+            ],
+            "vertexIndex": 1
+          }
+        },
+        "Think": {
+          "duration": 9.399999618530273,
+          "frames": 283,
+          "radiusAroundRuntimeHolderXZ": 0.35756749674433264,
+          "marginWithin068": 0.3224325032556674,
+          "pureClipFits068": true,
+          "rootNormalization": "constant start offset only",
+          "sourceHipsStart": [
+            -9.721228813250327e-13,
+            0.9251465201377869,
+            -3.323769211249772e-12
+          ],
+          "sourceHipsEnd": [
+            0.00016437852173112333,
+            0.925102949142456,
+            8.151754627760965e-06
+          ],
+          "peak": {
+            "time": 1.366666611204756,
+            "phase": 0.1453900709219858,
+            "sourceVertex": [
+              -0.2162357250344268,
+              1.176619901738601,
+              0.28477469330221644
+            ],
+            "normalizationBaseline": [
+              -9.721228813250327e-13,
+              0.9251465201377869,
+              -3.323769211249772e-12
+            ],
+            "vertexIndex": 2
+          }
+        },
+        "Cheer": {
+          "duration": 15.266666412353516,
+          "frames": 459,
+          "radiusAroundRuntimeHolderXZ": 0.8093579109970936,
+          "marginWithin068": -0.1293579109970936,
+          "pureClipFits068": false,
+          "rootNormalization": "constant start offset only",
+          "sourceHipsStart": [
+            -9.721228813250327e-13,
+            0.9251465201377869,
+            -3.323769211249772e-12
+          ],
+          "sourceHipsEnd": [
+            0.0006025711190886796,
+            0.924900233745575,
+            0.00042883073911070824
+          ],
+          "peak": {
+            "time": 9.399999843414173,
+            "phase": 0.6157205240174672,
+            "sourceVertex": [
+              -0.7618388339534008,
+              1.4487977207338092,
+              0.2732431502778556
+            ],
+            "normalizationBaseline": [
+              -9.721228813250327e-13,
+              0.9251465201377869,
+              -3.323769211249772e-12
+            ],
+            "vertexIndex": 1
+          }
+        },
+        "Shrug": {
+          "duration": 1.7999999523162842,
+          "frames": 55,
+          "radiusAroundRuntimeHolderXZ": 0.2878117402831919,
+          "marginWithin068": 0.39218825971680815,
+          "pureClipFits068": true,
+          "rootNormalization": "constant start offset only",
+          "sourceHipsStart": [
+            -9.721228813250327e-13,
+            0.9251465201377869,
+            -3.323769211249772e-12
+          ],
+          "sourceHipsEnd": [
+            -0.00028006196953356266,
+            0.9252159595489502,
+            0.0004510329745244235
+          ],
+          "peak": {
+            "time": 1.3999999629126656,
+            "phase": 0.7777777777777779,
+            "sourceVertex": [
+              -0.28690938832818463,
+              0.8329328218058845,
+              0.022772806906327714
+            ],
+            "normalizationBaseline": [
+              -9.721228813250327e-13,
+              0.9251465201377869,
+              -3.323769211249772e-12
+            ],
+            "vertexIndex": 394
+          }
+        }
+      },
+      "elapsedSeconds": 26.49008600000525
+    },
+    {
+      "person": "ethan",
+      "vertices": 48517,
+      "fastSkinMaxAbsError": 8.881784197001252e-16,
+      "clips": {
+        "Walk": {
+          "duration": 1.2000000476837158,
+          "frames": 38,
+          "radiusAroundRuntimeHolderXZ": 0.634191698289449,
+          "marginWithin068": 0.04580830171055106,
+          "pureClipFits068": true,
+          "rootNormalization": "linear cycle baseline",
+          "sourceHipsStart": [
+            0.05771388113498688,
+            0.916766881942749,
+            -1.2419692277908325
+          ],
+          "sourceHipsEnd": [
+            2.2131710526729353e-12,
+            0.916766881942749,
+            -2.817308886182701e-10
+          ],
+          "peak": {
+            "time": 0.7783784093083561,
+            "phase": 0.6486486486486486,
+            "sourceVertex": [
+              0.12960023115944574,
+              0.16686357801010496,
+              0.1883305421337699
+            ],
+            "normalizationBaseline": [
+              0.02027785012994448,
+              0.916766881942749,
+              -0.4363675667038478
+            ],
+            "vertexIndex": 39925
+          }
+        },
+        "Idle": {
+          "duration": 11.666666984558105,
+          "frames": 352,
+          "radiusAroundRuntimeHolderXZ": 0.351577511245337,
+          "marginWithin068": 0.32842248875466307,
+          "pureClipFits068": true,
+          "rootNormalization": "linear cycle baseline",
+          "sourceHipsStart": [
+            2.2131710526729353e-12,
+            0.916766881942749,
+            -2.817308886182701e-10
+          ],
+          "sourceHipsEnd": [
+            2.2131710526729353e-12,
+            0.916766881942749,
+            -2.817308886182701e-10
+          ],
+          "peak": {
+            "time": 8.542260441684995,
+            "phase": 0.7321937321937322,
+            "sourceVertex": [
+              -0.28977819356525575,
+              0.04148956840354472,
+              0.19908627485103558
+            ],
+            "normalizationBaseline": [
+              2.2131710526729353e-12,
+              0.916766881942749,
+              -2.817308886182701e-10
+            ],
+            "vertexIndex": 4418
+          }
+        },
+        "Wave": {
+          "duration": 2.799999952316284,
+          "frames": 85,
+          "radiusAroundRuntimeHolderXZ": 0.7616478143297492,
+          "marginWithin068": -0.0816478143297491,
+          "pureClipFits068": false,
+          "rootNormalization": "constant start offset only",
+          "sourceHipsStart": [
+            0.058051515370607376,
+            0.9112847447395325,
+            -0.06818842887878418
+          ],
+          "sourceHipsEnd": [
+            0.058626916259527206,
+            0.9114239811897278,
+            -0.0688493549823761
+          ],
+          "peak": {
+            "time": 1.8666666348775227,
+            "phase": 0.6666666666666666,
+            "sourceVertex": [
+              -0.5047415854878394,
+              1.5797906212037058,
+              0.44500872495141597
+            ],
+            "normalizationBaseline": [
+              0.058051515370607376,
+              0.9112847447395325,
+              -0.06818842887878418
+            ],
+            "vertexIndex": 47563
+          }
+        },
+        "Talk": {
+          "duration": 35.53333282470703,
+          "frames": 1067,
+          "radiusAroundRuntimeHolderXZ": 0.6794748988814872,
+          "marginWithin068": 0.000525101118512894,
+          "pureClipFits068": true,
+          "rootNormalization": "constant start offset only",
+          "sourceHipsStart": [
+            0.013711392879486084,
+            0.9166498184204102,
+            -0.002051619114354253
+          ],
+          "sourceHipsEnd": [
+            0.013671611435711384,
+            0.9166256785392761,
+            -0.001960029825568199
+          ],
+          "peak": {
+            "time": 12.333333156793248,
+            "phase": 0.34709193245778613,
+            "sourceVertex": [
+              -0.4047418309611849,
+              1.221081706439706,
+              0.5332828909514143
+            ],
+            "normalizationBaseline": [
+              0.013711392879486084,
+              0.9166498184204102,
+              -0.002051619114354253
+            ],
+            "vertexIndex": 46935
+          }
+        },
+        "Clap": {
+          "duration": 7.0,
+          "frames": 211,
+          "radiusAroundRuntimeHolderXZ": 0.46391340989652563,
+          "marginWithin068": 0.21608659010347442,
+          "pureClipFits068": true,
+          "rootNormalization": "constant start offset only",
+          "sourceHipsStart": [
+            2.2131710526729353e-12,
+            0.916766881942749,
+            -2.817308886182701e-10
+          ],
+          "sourceHipsEnd": [
+            2.2131710526729353e-12,
+            0.916766881942749,
+            -2.817308886182701e-10
+          ],
+          "peak": {
+            "time": 4.866666666666666,
+            "phase": 0.6952380952380952,
+            "sourceVertex": [
+              -0.26031084791768677,
+              1.2066862782313073,
+              0.38399728400169286
+            ],
+            "normalizationBaseline": [
+              2.2131710526729353e-12,
+              0.916766881942749,
+              -2.817308886182701e-10
+            ],
+            "vertexIndex": 46919
+          }
+        },
+        "Think": {
+          "duration": 13.466666221618652,
+          "frames": 405,
+          "radiusAroundRuntimeHolderXZ": 0.5006564310875904,
+          "marginWithin068": 0.17934356891240966,
+          "pureClipFits068": true,
+          "rootNormalization": "constant start offset only",
+          "sourceHipsStart": [
+            -0.009235193021595478,
+            0.9157751202583313,
+            0.00960630364716053
+          ],
+          "sourceHipsEnd": [
+            -0.009338748641312122,
+            0.9157688617706299,
+            0.009616270661354065
+          ],
+          "peak": {
+            "time": 0.7999999735615041,
+            "phase": 0.0594059405940594,
+            "sourceVertex": [
+              -0.38309191187301794,
+              1.1621103896583223,
+              0.3426048258045592
+            ],
+            "normalizationBaseline": [
+              -0.009235193021595478,
+              0.9157751202583313,
+              0.00960630364716053
+            ],
+            "vertexIndex": 46656
+          }
+        },
+        "Cheer": {
+          "duration": 24.600000381469727,
+          "frames": 740,
+          "radiusAroundRuntimeHolderXZ": 0.640697944997775,
+          "marginWithin068": 0.039302055002225056,
+          "pureClipFits068": true,
+          "rootNormalization": "constant start offset only",
+          "sourceHipsStart": [
+            2.2131766905242323e-12,
+            0.916766881942749,
+            2.3477261801296834e-11
+          ],
+          "sourceHipsEnd": [
+            4.0867387724574655e-05,
+            0.9167743921279907,
+            -0.00025243349955417216
+          ],
+          "peak": {
+            "time": 17.276590254374543,
+            "phase": 0.7023004059539919,
+            "sourceVertex": [
+              -0.1840072114385625,
+              1.615665916538155,
+              0.6137061209495778
+            ],
+            "normalizationBaseline": [
+              2.2131766905242323e-12,
+              0.916766881942749,
+              2.3477261801296834e-11
+            ],
+            "vertexIndex": 47565
+          }
+        },
+        "Shrug": {
+          "duration": 1.7999999523162842,
+          "frames": 55,
+          "radiusAroundRuntimeHolderXZ": 0.3717779415213427,
+          "marginWithin068": 0.30822205847865736,
+          "pureClipFits068": true,
+          "rootNormalization": "constant start offset only",
+          "sourceHipsStart": [
+            2.2131710526729353e-12,
+            0.916766881942749,
+            -2.817308886182701e-10
+          ],
+          "sourceHipsEnd": [
+            -5.202879947319161e-06,
+            0.9167892932891846,
+            2.7060428692493588e-05
+          ],
+          "peak": {
+            "time": 0.533333319204825,
+            "phase": 0.29629629629629634,
+            "sourceVertex": [
+              -0.3594297757675555,
+              0.9169518260202205,
+              0.09502143988805767
+            ],
+            "normalizationBaseline": [
+              2.2131710526729353e-12,
+              0.916766881942749,
+              -2.817308886182701e-10
+            ],
+            "vertexIndex": 47050
+          }
+        }
+      },
+      "elapsedSeconds": 28.195696700015105
+    }
+  ]
+}

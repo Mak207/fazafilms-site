@@ -1,0 +1,183 @@
+{
+  "acceptanceStatus": "NUMERICAL_GATES_PASSED_VISUAL_REVIEW_SEPARATE",
+  "scope": "60-second deterministic exhibition scenario; full source-matched pose continuity and navigation, not universal gait naturalness, zero foot slip or runtime FPS proof.",
+  "urlParameters": "zone=technology&camera=overview&mode=film&visitorQA=1&visitorSeed=20261122&visitorDemoEvery=9999",
+  "durationSeconds": 60,
+  "fixedStepSeconds": 0.016666666666666666,
+  "fixedSteps": 3600,
+  "inputSha256": {
+    "visitors-v44.js": "64652e0adb53f307d9101c8f0383d6f01f686d178b1fee5f28eef62bff99140b",
+    "visitor-motion-v43.js": "25bba4041399a033aee1ff259f083d81897da8588bdd90d53f3667bbc365e6ab",
+    "ready-crowd-v1.js": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de",
+    "index.html": "29f2d9a8d5b1ab50d8751fcaa77f3e15c96c28bcd0a55b28f6ad2f042191789b",
+    "exhibition-3d.js": "c6d2a346775d09a6049501d1223c081b5e5ba767760374675a8fecb26b6e461d"
+  },
+  "traceSha256": "11f9f12549d274661ef153dc435ed3952e87855358da8a554ae76f6572ddcbb5",
+  "sourceReportSha256": "9629af2e051ca88f8c987e52499163b5be0d9c55b7aca19672127763174eca9a",
+  "pageErrors": [],
+  "requestFailed": [],
+  "sceneErrors": [],
+  "sceneFailures": [],
+  "sourcePoseReference": "Independent fresh GLTF loaded before any AnimationMixer action. Comparisons use identical clips, weights and times; cloning an already posed rig is not a valid baseline.",
+  "poseAndDistance": {
+    "maxBoneQuaternionRadians": 7.300048299977715e-08,
+    "maxBonePositionDelta": 0,
+    "maxWorldJump": 0.01733341216949192,
+    "maxWalkPhaseDistanceError": 1.1102230246251565e-16,
+    "maxRootPoseAdvanceWithoutApplication": 0
+  },
+  "navigation": {
+    "fixedSteps": 3600,
+    "minimumPairDistance": 1.4006878813198238,
+    "minimumStaticClearance": 0.7332181412009411,
+    "maximumRenderedWorldDeviation": 0,
+    "maximumRootMotionDeviation": 1.1920928955078125e-07,
+    "rejectedRootSteps": 0,
+    "appliedRootSteps": 982,
+    "rootPoseAdvancedWithoutApplication": 0,
+    "navigationPreflightFailures": 7,
+    "completedJourneys": 5,
+    "maximumYawStep": 0.05244410037994385,
+    "maximumFacingVelocityAngle": 0.6749924762091758,
+    "maximumFacingVelocityLagSeconds": 0,
+    "facingVelocityOver45DegreesTime": 0,
+    "reversedExitCandidates": 5,
+    "yieldCount": 1,
+    "yieldResumes": 1,
+    "yieldReplans": 0,
+    "totalYieldSeconds": 6.516666666666649,
+    "maximumYieldSeconds": 6.516666666666649,
+    "secondaryYieldSignals": 0,
+    "droppedTime": 0,
+    "fixedAccumulator": 0,
+    "engine": "recast-navigation@0.44.0",
+    "worldTranslationAuthority": "DetourCrowd snapshot",
+    "intermediateLookahead": 0.18,
+    "finalArrivalUsesEngine": true,
+    "yieldingId": null,
+    "yieldPause": 0.6,
+    "lateYieldReplanAfter": 3,
+    "facingAngularSpeed": 2.4,
+    "facingVelocityThreshold": 0.1,
+    "facingMethod": "THREE.Quaternion.rotateTowards; authored turns bypass it",
+    "sourceWalkHasNonzeroContactSlip": true,
+    "startStop": "Standard Idle/Walk blend; dedicated start/stop clips are not installed."
+  },
+  "actors": [
+    {
+      "id": "emma",
+      "completedJourneys": 3,
+      "endState": "observe",
+      "failure": null
+    },
+    {
+      "id": "ethan",
+      "completedJourneys": 2,
+      "endState": "walk",
+      "failure": null
+    }
+  ],
+  "events": [
+    {
+      "time": 8.91666666666669,
+      "id": "ethan",
+      "from": "turn",
+      "to": "walk",
+      "image": "event-00535-ethan-turn-walk.png"
+    },
+    {
+      "time": 10.350000000000094,
+      "id": "emma",
+      "from": "turn",
+      "to": "yield",
+      "image": "event-00621-emma-turn-yield.png"
+    },
+    {
+      "time": 16.86666666666699,
+      "id": "emma",
+      "from": "yield",
+      "to": "walk",
+      "image": "event-01012-emma-yield-walk.png"
+    },
+    {
+      "time": 22.366666666666678,
+      "id": "emma",
+      "from": "walk",
+      "to": "observe",
+      "image": "event-01342-emma-walk-observe.png"
+    },
+    {
+      "time": 27.349999999999728,
+      "id": "ethan",
+      "from": "walk",
+      "to": "observe",
+      "image": "event-01641-ethan-walk-observe.png"
+    },
+    {
+      "time": 30.866666666666195,
+      "id": "emma",
+      "from": "turn",
+      "to": "walk",
+      "image": "event-01852-emma-turn-walk.png"
+    },
+    {
+      "time": 36.04999999999924,
+      "id": "ethan",
+      "from": "turn",
+      "to": "walk",
+      "image": "event-02163-ethan-turn-walk.png"
+    },
+    {
+      "time": 36.96666666666585,
+      "id": "emma",
+      "from": "walk",
+      "to": "observe",
+      "image": "event-02218-emma-walk-observe.png"
+    },
+    {
+      "time": 47.06666666666528,
+      "id": "ethan",
+      "from": "walk",
+      "to": "observe",
+      "image": "event-02824-ethan-walk-observe.png"
+    },
+    {
+      "time": 49.69999999999846,
+      "id": "emma",
+      "from": "turn",
+      "to": "walk",
+      "image": "event-02982-emma-turn-walk.png"
+    },
+    {
+      "time": 56.183333333331426,
+      "id": "emma",
+      "from": "walk",
+      "to": "observe",
+      "image": "event-03371-emma-walk-observe.png"
+    },
+    {
+      "time": 59.89999999999788,
+      "id": "ethan",
+      "from": "turn",
+      "to": "walk",
+      "image": "event-03594-ethan-turn-walk.png"
+    }
+  ],
+  "gateResults": {
+    "bothArrivedAtLeastTwice": true,
+    "noErrors": true,
+    "sourcePoseWithin1eMinus6Radians": true,
+    "noFacingOver45DegreesAtSpeedAbovePoint25": true,
+    "noRootPhaseWithoutApplication": true,
+    "noEnvelopeOverlap": true,
+    "noObstacleEnvelopeOverlap": true,
+    "yieldActuallyResumed": true
+  },
+  "limitations": [
+    "This fixed-seed gate does not prove all possible route sequences or unbounded congestion recovery.",
+    "Original Walk contains measurable contact drift; it is preserved, not claimed to be foot-locked.",
+    "Start/stop are ordinary Idle/Walk blends, not dedicated authored start/stop clips.",
+    "Full current-skin and sole audit is in a separate proof.",
+    "Automatic overview screenshots were partially occluded by roof beams and are not visual acceptance evidence."
+  ]
+}

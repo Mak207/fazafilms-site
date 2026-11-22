@@ -1,0 +1,158 @@
+{
+  "version": 1,
+  "sourceRuntime": "visitors-v43.js",
+  "bounds": {
+    "minX": -5.18,
+    "maxX": 5.18,
+    "minZ": -8.75,
+    "maxZ": 8.75
+  },
+  "obstacles": [
+    [
+      -1.22,
+      1.22,
+      -1.56,
+      0.86
+    ],
+    [
+      -4.28,
+      -2.82,
+      1.14,
+      3.96
+    ],
+    [
+      2.85,
+      4.25,
+      1.07,
+      4.03
+    ],
+    [
+      -4.62,
+      -2.08,
+      -4.37,
+      -2.73
+    ],
+    [
+      2.08,
+      4.62,
+      -4.37,
+      -2.73
+    ],
+    [
+      -1.92,
+      1.92,
+      4.34,
+      6.62
+    ]
+  ],
+  "agentRadius": 0.7,
+  "envelopeGuard": 0.68,
+  "groundY": 0,
+  "config": {
+    "cs": 0.06,
+    "ch": 0.06,
+    "walkableSlopeAngle": 45,
+    "walkableHeight": 32,
+    "walkableClimb": 0,
+    "walkableRadius": 13,
+    "maxEdgeLen": 134,
+    "maxSimplificationError": 0.5,
+    "minRegionArea": 0,
+    "mergeRegionArea": 0,
+    "maxVertsPerPoly": 6,
+    "detailSampleDist": 6,
+    "detailSampleMaxError": 1,
+    "bounds": [
+      [
+        -5.18,
+        -0.1,
+        -8.75
+      ],
+      [
+        5.18,
+        2.2,
+        8.75
+      ]
+    ]
+  },
+  "stations": [
+    {
+      "name": "Robot and reactor",
+      "position": [
+        -3.55,
+        0.45
+      ],
+      "safePosition": {
+        "x": -3.549999952316284,
+        "y": 0.019999995827674866,
+        "z": 0.3099994659423828
+      },
+      "projectionShift": 0.1400005340576253
+    },
+    {
+      "name": "Train Moscow-2024",
+      "position": [
+        3.55,
+        0.45
+      ],
+      "safePosition": {
+        "x": 3.549999952316284,
+        "y": 0.019999995827674866,
+        "z": 0.25
+      },
+      "projectionShift": 0.2000000000000057
+    },
+    {
+      "name": "Moscow City",
+      "position": [
+        0,
+        3.62
+      ],
+      "safePosition": {
+        "x": 0,
+        "y": 0.019999995827674866,
+        "z": 3.5500001907348633
+      },
+      "projectionShift": 0.06999980926513683
+    },
+    {
+      "name": "Residential district",
+      "position": [
+        -3.35,
+        -1.88
+      ],
+      "safePosition": {
+        "x": -3.3499999046325684,
+        "y": 0.019999995827674866,
+        "z": -1.8799999952316284
+      },
+      "projectionShift": 9.548656660074142e-08
+    },
+    {
+      "name": "Sports arena",
+      "position": [
+        3.35,
+        -1.88
+      ],
+      "safePosition": {
+        "x": 3.3499999046325684,
+        "y": 0.019999995827674866,
+        "z": -1.8799999952316284
+      },
+      "projectionShift": 9.548656660074142e-08
+    },
+    {
+      "name": "Video cube",
+      "position": [
+        -1.96,
+        -0.35
+      ],
+      "safePosition": {
+        "x": -2.059999942779541,
+        "y": 0.019999995827674866,
+        "z": -0.3500000238418579
+      },
+      "projectionShift": 0.0999999427795439
+    }
+  ]
+}

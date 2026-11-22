@@ -1,0 +1,333 @@
+{
+  "method": "Full LBS from actual recorded world bone matrices (rounded to 1e-7), current model POSITION/JOINTS/WEIGHTS/IBM. Metadata verified attached mode, bindMatrix identity and meshWorld*bindMatrixInverse identity. Weighted shoe min cross-checked to the renderer runtime for every frame. Static distances use the 2D footprint of layout AABBs conservatively at all heights. Positive center-clearance minus actual radius proves the whole projected skin and its triangles clear those AABBs; vertex clearance is reported separately. Positive pair centerDistance-rA-rB proves skin disjointness by enclosing circles at each captured frame; no between-frame collision claim.",
+  "frames": 3601,
+  "duration": 59.999999999997875,
+  "inputs": {
+    "framesSha256": "11f9f12549d274661ef153dc435ed3952e87855358da8a554ae76f6572ddcbb5",
+    "metadataSha256": "bc8946cce8fec8d1037416e49c078ae564a156d8d661c9d08417b5ac1aa23020",
+    "continuityReportSha256": "9629af2e051ca88f8c987e52499163b5be0d9c55b7aca19672127763174eca9a"
+  },
+  "summary": {
+    "emma": {
+      "vertices": 52209,
+      "shoeVertices": 6310,
+      "maxRadius": 0.4052387177488835,
+      "minVertexStaticClearance": 0.569667757436496,
+      "minCircleStaticClearanceBound": 0.5282183255433961,
+      "minShoeY": -0.0023333258546542404,
+      "maxShoeY": 5.2613868622986004e-08,
+      "maxShoeVsRuntimeMinimumError": 5.2613868622986004e-08,
+      "maxYawRateDegreesPerSecond": 137.50987083151085,
+      "maxYawRateUnder015mpsDegreesPerSecond": 137.50987083141393,
+      "maxNonAuthoredYawRateDegreesPerSecond": 137.50987083151085,
+      "nonAuthoredYawLimitViolations": 0,
+      "movingIdleFrames": 0,
+      "movingIdleDistanceApprox": 0,
+      "states": {
+        "observe": 1642,
+        "turn": 483,
+        "yield": 391,
+        "walk": 1085
+      },
+      "maxRadiusWitness": {
+        "time": 33.16666666666607,
+        "state": "walk",
+        "phase": 0.6662151861060333,
+        "walkWeight": 0.5063327107190921,
+        "vertexIndex": 13714,
+        "vertex": [
+          -2.9326053942634873,
+          0.06909480471024898,
+          -1.2852597647120132
+        ],
+        "holder": [
+          -2.6566715240478516,
+          0.0,
+          -0.9884788393974304
+        ]
+      },
+      "minStaticWitness": {
+        "time": 10.383333333333429,
+        "state": "yield",
+        "vertexIndex": 394,
+        "vertex": [
+          -3.4701824341178567,
+          0.8373762213940622,
+          0.5703322425635039
+        ],
+        "holder": [
+          -3.4921987056732178,
+          0.0,
+          0.2807845175266266
+        ]
+      },
+      "lowSpeedYawWitness": {
+        "time": 49.74999999999846,
+        "state": "walk",
+        "actualSpeed": 0.10000239809727123,
+        "walkWeight": 0.021735092868598354,
+        "phase": 0.4565070739000982,
+        "holder": [
+          -3.3716683387756348,
+          0.0,
+          -1.7156227827072144
+        ],
+        "yawRateDegreesPerSecond": 137.50987083141393
+      }
+    },
+    "ethan": {
+      "vertices": 48517,
+      "shoeVertices": 8335,
+      "maxRadius": 0.6433910836557089,
+      "minVertexStaticClearance": 0.41610393487194597,
+      "minCircleStaticClearanceBound": 0.13812424703149428,
+      "minShoeY": -5.791623582107608e-08,
+      "maxShoeY": 5.530439043232177e-08,
+      "maxShoeVsRuntimeMinimumError": 5.791623582107608e-08,
+      "maxYawRateDegreesPerSecond": 180.28953672788342,
+      "maxYawRateUnder015mpsDegreesPerSecond": 157.19707695541084,
+      "maxNonAuthoredYawRateDegreesPerSecond": 137.5098708314725,
+      "nonAuthoredYawLimitViolations": 0,
+      "movingIdleFrames": 0,
+      "movingIdleDistanceApprox": 0,
+      "states": {
+        "observe": 1334,
+        "turn": 493,
+        "walk": 1774
+      },
+      "maxRadiusWitness": {
+        "time": 21.23333333333341,
+        "state": "walk",
+        "phase": 0.6667290221829214,
+        "walkWeight": 1,
+        "vertexIndex": 39925,
+        "vertex": [
+          2.30890184134477,
+          0.17398473607979853,
+          0.20627507247968518
+        ],
+        "holder": [
+          2.1085684299468994,
+          0.0,
+          0.817682147026062
+        ]
+      },
+      "minStaticWitness": {
+        "time": 40.94999999999896,
+        "state": "walk",
+        "vertexIndex": 643,
+        "vertex": [
+          1.5588437630959207,
+          1.1349247052307756,
+          1.1015106391588416
+        ],
+        "holder": [
+          1.81852388381958,
+          0.0,
+          1.2940177917480469
+        ]
+      },
+      "lowSpeedYawWitness": {
+        "time": 7.216666666666646,
+        "state": "turn",
+        "actualSpeed": 0.14149158424671854,
+        "walkWeight": 0,
+        "phase": 0,
+        "holder": [
+          -3.36053204536438,
+          0.0,
+          -1.74309504032135
+        ],
+        "yawRateDegreesPerSecond": 157.19707695541084
+      }
+    }
+  },
+  "minimumPairCircleLowerBound": 0.616213890699339,
+  "pairWitness": {
+    "time": 15.916666666667037,
+    "centerDistance": 1.4077102397658898,
+    "radii": [
+      0.28228145265062815,
+      0.5092148964159228
+    ],
+    "states": [
+      "yield",
+      "walk"
+    ]
+  },
+  "elapsedSeconds": 182.97774940001545,
+  "schema": "v44-independent-recorded-world-skin-proof/1",
+  "measuredRuntimeSha256": "64652e0adb53f307d9101c8f0383d6f01f686d178b1fee5f28eef62bff99140b",
+  "measuredAdapterSha256": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de",
+  "captureInputManifest": {
+    "visitors-v44.js": "64652e0adb53f307d9101c8f0383d6f01f686d178b1fee5f28eef62bff99140b",
+    "visitor-motion-v43.js": "25bba4041399a033aee1ff259f083d81897da8588bdd90d53f3667bbc365e6ab",
+    "ready-crowd-v1.js": "4acd1bf3447a2bfbe37f11f3c1bd596dfcc06958dfc1db49e7123a4ca33261de",
+    "index.html": "29f2d9a8d5b1ab50d8751fcaa77f3e15c96c28bcd0a55b28f6ad2f042191789b",
+    "exhibition-3d.js": "c6d2a346775d09a6049501d1223c081b5e5ba767760374675a8fecb26b6e461d"
+  },
+  "sampledScope": {
+    "seed": 20261122,
+    "fixedHz": 60,
+    "timeStart": 0,
+    "timeEnd": 59.999999999997875,
+    "actors": [
+      "emma",
+      "ethan"
+    ],
+    "geometryVerticesPerFrame": 100726,
+    "avatarStatesSampled": {
+      "emma": [
+        "observe",
+        "turn",
+        "yield",
+        "walk"
+      ],
+      "ethan": [
+        "observe",
+        "turn",
+        "walk"
+      ]
+    }
+  },
+  "measuredChecks": {
+    "allFullSkinRadiusAtOrBelow068m": true,
+    "fullSkinStaticEnclosingCircleBoundsPositive": true,
+    "fullSkinPairEnclosingCircleBoundsPositive": true,
+    "nonAuthoredYawAtOrBelow24RadiansPerSecond": true,
+    "noMovingIdleFramesAbove002mps": true,
+    "cpuShoeVsRuntimeAgreementWithinOneMicrometre": true
+  },
+  "floorAlignmentException": {
+    "actor": "emma",
+    "sampleThresholdMeters": -1e-05,
+    "framesBelowThreshold": 11,
+    "episodes": [
+      {
+        "startTime": 18.683333333333554,
+        "endTime": 18.783333333333548,
+        "frames": 7,
+        "minimumShoeY": -0.0023333258546542404
+      },
+      {
+        "startTime": 51.58333333333169,
+        "endTime": 51.633333333331684,
+        "frames": 4,
+        "minimumShoeY": -0.0014829433340968722
+      }
+    ],
+    "minimumWitness": {
+      "time": 18.750000000000217,
+      "state": "walk",
+      "phase": 0.38676000595093085,
+      "speed": 0.4685630125535947,
+      "groundingY": 0.035,
+      "pose": {
+        "phase": 0.38676000595093085,
+        "walk": {
+          "name": "Native · Walk in place",
+          "time": 0.46411202558327125,
+          "duration": 1.2000000476837158,
+          "weight": 0.3679392585121198
+        },
+        "idle": {
+          "name": "Native · Idle in place",
+          "time": 3.216666221618869,
+          "duration": 15.533333778381348,
+          "weight": 0.6320607414878803
+        },
+        "gesture": null,
+        "transition": null,
+        "verticalLift": 0.035,
+        "requestedLift": 0.037333372611545054,
+        "liftCap": 0.035,
+        "dropCap": 0.03,
+        "liftCapExceeded": true,
+        "dropCapExceeded": false,
+        "groundedWeight": 1,
+        "positiveFloorGap": 0,
+        "rawShoeMinimumY": -0.037333372611545054,
+        "correctedShoeMinimumY": -0.002333372611545051
+      }
+    },
+    "interpretation": "The existing 35 mm vertical lift cap clips a 37.333373 mm Idle/Walk-blend grounding request, leaving 2.333373 mm penetration. This audit changed no cap, animation, bone or world transform."
+  },
+  "limits": [
+    "This is a measured 60-second single-seed trace, not proof for every future route or seed.",
+    "Positive enclosing-circle bounds prove complete projected skin/triangles clear other actors and layout AABBs only at captured frames; continuous between-frame collision and mesh self-intersections are not tested.",
+    "Shoe union minimum height is not a support/contact solver and is not a horizontal foot-slip measurement. No zero-slip or naturalness claim follows from floor alignment.",
+    "Nonzero support-slip exists in the separately recorded source baseline; this audit does not alter or erase that limitation.",
+    "There is an explicit Emma floor-alignment exception in 11 frames; do not report exact floor contact throughout the capture.",
+    "No gestures occur in this trace; compact gesture pure/blend envelopes are covered by their separate bounded gates.",
+    "Visual normal-speed acceptance and route-completion/facing checks are separate evidence."
+  ],
+  "reproduction": {
+    "command": [
+      "py",
+      "-3",
+      "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-ready-locomotion-data-20261122\\v44-yield-gate\\actual_skin_audit_native_reference.py"
+    ],
+    "workingDirectory": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work",
+    "python": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "description": "Run the exact archived CPU auditor against the trace, metadata, decoded current models and GLB reader listed below. The script asserts the capture manifest runtime/adapter hashes. Full trace and per-frame results are retained in the isolated audit directory instead of duplicated in Git.",
+    "requiredArtifacts": [
+      {
+        "path": "avatar-ready-locomotion-data-20261122\\v44-yield-gate\\actual_skin_audit_native_reference.py",
+        "sha256": "0903828ac77291cd09d047be4bb9d8e2af2e75e913fbecbb4f476a0f9b9de1f1",
+        "bytes": 8389
+      },
+      {
+        "path": "avatar-ready-locomotion-data-20261122\\native-audit\\native_cpu_audit.py",
+        "sha256": "372505237ed002845efa253f4cfccff097bb52fedca4ddc374345e2fd6da6dd5",
+        "bytes": 10115
+      },
+      {
+        "path": "avatar-motion-data-20261122\\decoded\\emma-current-decoded.glb",
+        "sha256": "125adf09e8309f895fbbc39b479b311ff05832a0dc6d40c055a2df3ed29557bd",
+        "bytes": 2481620
+      },
+      {
+        "path": "avatar-motion-data-20261122\\decoded\\ethan-current-decoded.glb",
+        "sha256": "b02c7ffa01347060b3668c9073776c0081c86412d37931acae2b56c05c4d4616",
+        "bytes": 2451832
+      },
+      {
+        "path": "fazafilms-avatar-motion-lab-20261122\\review\\exhibition-25-years\\assets\\models\\visitors\\walking-woman.glb",
+        "sha256": "be518e47c6e418c3a3dc4cf0692bbcc324ff9b70af23c0c539376f1e6debb957",
+        "bytes": 734400
+      },
+      {
+        "path": "fazafilms-avatar-motion-lab-20261122\\review\\exhibition-25-years\\assets\\models\\visitors\\walking-man.glb",
+        "sha256": "710096e92e0acbfac10f9680f262514402822dfeda33f9f0dc4117bec24172d9",
+        "bytes": 804428
+      },
+      {
+        "path": "fazafilms-avatar-motion-lab-20261122\\review\\exhibition-25-years\\ready-crowd-layout-v1.json",
+        "sha256": "870a54289223ad67a47bad37e82017b10afeca34dc2de0949519395c60f4e35a",
+        "bytes": 2763
+      },
+      {
+        "path": "avatar-ready-locomotion-data-20261122\\v44-yield-gate\\frames.ndjson.gz",
+        "sha256": "11f9f12549d274661ef153dc435ed3952e87855358da8a554ae76f6572ddcbb5",
+        "bytes": 31282219
+      },
+      {
+        "path": "avatar-ready-locomotion-data-20261122\\v44-yield-gate\\skin-metadata.json",
+        "sha256": "bc8946cce8fec8d1037416e49c078ae564a156d8d661c9d08417b5ac1aa23020",
+        "bytes": 92346
+      },
+      {
+        "path": "avatar-ready-locomotion-data-20261122\\v44-yield-gate\\continuity-report.json",
+        "sha256": "9629af2e051ca88f8c987e52499163b5be0d9c55b7aca19672127763174eca9a",
+        "bytes": 1561018
+      },
+      {
+        "path": "avatar-ready-locomotion-data-20261122\\v44-yield-gate\\actual-skin-envelope-clearance.json",
+        "sha256": "a48d80018bc25a1d1e985623ff1b6338a4a206a0085f73acb980f7a1da7c1dc6",
+        "bytes": 3211035
+      }
+    ]
+  }
+}

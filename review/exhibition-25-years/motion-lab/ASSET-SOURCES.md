@@ -1,6 +1,6 @@
 # Sources, build and fidelity
 
-Version 43 is integrated into the working branch of the real exhibition. The public fazafilms.ru deployment remains v42 pending owner review. The 45-second desktop/mobile run is complete; [integration results](INTEGRATION-V43.md) explicitly retain the strict cap failure and the separate 2 mm contact acceptance. Numerical asset validation is not a deployment or a complete behaviour approval.
+The asset-fidelity work below was established for v43 and is retained by the v44 integration. The current runtime and navigation candidate is documented in [INTEGRATION-V44.md](INTEGRATION-V44.md). The former 45-second v43 run was insufficient for complete movement acceptance because it did not cover dynamic visitor avoidance. Its [historical results](INTEGRATION-V43.md), including the cap failure, remain unchanged. Public fazafilms.ru was still serving v42 at the latest verification; numerical asset validation does not imply deployment.
 
 ## Existing exhibition avatars
 

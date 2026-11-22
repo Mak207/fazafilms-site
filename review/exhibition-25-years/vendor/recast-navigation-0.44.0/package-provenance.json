@@ -1,0 +1,67 @@
+{
+  "source": "Official npm registry snapshot and fetched tarballs",
+  "capturedDate": "2026-11-22",
+  "gitCommit": "8a2ece9f8b4947fcb328e17c7ac76c41744021b3",
+  "packages": [
+    {
+      "name": "recast-navigation",
+      "version": "0.44.0",
+      "tarball": "https://registry.npmjs.org/recast-navigation/-/recast-navigation-0.44.0.tgz",
+      "sha256": "3a73e7b121ac5db11be43557325ffca34049a8344b5056d258adf4e23811c5d6",
+      "bytes": 10302,
+      "integrity": "sha512-Qu5ETIZZo69uk3lvjJpdgopPUFp95dTmKljckjpSdL1IbdX26837R8j4nC2oHT6tEKViVwkIvy9Zbzyxr27GiQ==",
+      "published": "2026-10-30T06:20:40.300Z",
+      "license": "MIT",
+      "repository": {
+        "url": "git+https://github.com/isaac-mason/recast-navigation-js.git",
+        "type": "git",
+        "directory": "packages/recast-navigation"
+      }
+    },
+    {
+      "name": "@recast-navigation/core",
+      "version": "0.44.0",
+      "tarball": "https://registry.npmjs.org/@recast-navigation/core/-/core-0.44.0.tgz",
+      "sha256": "a8f771b3af4475b1b8c87de170658bb5f14bf6624fa245ac528dfb743d3b87b7",
+      "bytes": 36423,
+      "integrity": "sha512-N4YO9JBXrGFf3LkrhXmABa7pEwLHvq/gq6o7pLKKu5A4JAp+A5y/9424ps3cVpO1m7ibh3zlXmeewTut9LeXQw==",
+      "published": "2026-10-30T06:20:09.622Z",
+      "license": "MIT",
+      "repository": {
+        "url": "git+https://github.com/isaac-mason/recast-navigation-js.git",
+        "type": "git",
+        "directory": "packages/recast-navigation-core"
+      }
+    },
+    {
+      "name": "@recast-navigation/generators",
+      "version": "0.44.0",
+      "tarball": "https://registry.npmjs.org/@recast-navigation/generators/-/generators-0.44.0.tgz",
+      "sha256": "05ea38920693a2c3cdb1124619fd8bc29faed21afb41a7da20fd17be8bb7099f",
+      "bytes": 11274,
+      "integrity": "sha512-i2N/sCfuq7IJcSuMmHuX2Uer6oonr9PzFZTrPpwS/e2t+ZpVLHb3DHFY9evKrL2X8diO7sDUDBOpTfW/4Nwucw==",
+      "published": "2026-10-30T06:21:57.365Z",
+      "license": "MIT",
+      "repository": {
+        "url": "git+https://github.com/isaac-mason/recast-navigation-js.git",
+        "type": "git",
+        "directory": "packages/recast-navigation-generators"
+      }
+    },
+    {
+      "name": "@recast-navigation/wasm",
+      "version": "0.44.0",
+      "tarball": "https://registry.npmjs.org/@recast-navigation/wasm/-/wasm-0.44.0.tgz",
+      "sha256": "c2587b4a67370abd0d1683c7024494b0f1f6665ef23fe339402ac75df93fee7a",
+      "bytes": 442055,
+      "integrity": "sha512-VNv7xv50cFCdsGd2LdQWZqtLcWXB7nyi4Ilq9t5GMn3GEfCmJEbbeZWSXX5Mgdc4yj71QueTv15V7hPDAQ9gaw==",
+      "published": "2026-10-30T06:19:57.112Z",
+      "license": "MIT",
+      "repository": {
+        "url": "git+https://github.com/isaac-mason/recast-navigation-js.git",
+        "type": "git",
+        "directory": "packages/recast-navigation-wasm"
+      }
+    }
+  ]
+}
