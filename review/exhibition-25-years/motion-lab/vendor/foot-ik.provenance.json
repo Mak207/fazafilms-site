@@ -1,0 +1,24 @@
+{
+  "repository": "https://github.com/hh-hang/three-player-controller",
+  "commit": "29403c7dcc48c43153c2d6126571e685ca012617",
+  "package_version": "0.6.3",
+  "license": "MIT",
+  "builder": "esbuild@0.25.12",
+  "external_imports": [
+    "three"
+  ],
+  "runtime_test_dependency": "three@0.169.0",
+  "bundle_sha256": "765d7ecb8038debc1bedef1935a1d376b4ff5f5289ee47e01673817764469eae",
+  "package_lock_sha256": "4565bb593d5bfc3f7153686bf7b32bd4e7b96d2321f59aaca211ebd26fc4cc42",
+  "source_sha256": {
+    "src/plugins/foot-ik/FootIK.ts": "fbfb0d2d7b98724f407dcd25c52765dd295c9cb34a4053c5c1727fe1d8578048",
+    "src/plugins/foot-ik/index.ts": "0b0427eeb8805906e87c968ed03ed41d09a34be07962dbdcc91e483201d9583e",
+    "src/plugins/foot-ik/internal/debug.ts": "33013e89da6b9aca6cbfaa77c8458bffdc79f298860df1bafcb4150d624e1b9d",
+    "src/plugins/foot-ik/internal/footPhase.ts": "fcf8cd8f85aa87945f5de2ce9cf032dff3612e38c3eacbd393529cb75a5bdfb9",
+    "src/plugins/foot-ik/internal/predictivePlacement.ts": "7d95ff21e4fa5a91e4611c6ce9dc40f5c81309d91265ac07ef2ce18b780de368",
+    "src/plugins/foot-ik/internal/predictiveTrajectory.ts": "b16fe22a37592a9aeaa25af97575366ff100824552667bcb05e293da39d7ffc5",
+    "src/plugins/foot-ik/internal/skeleton.ts": "96cccf83f77127426195091428b844d4c177b32a38fbb3987739ab9566f00026",
+    "src/plugins/foot-ik/internal/twoBoneIK.ts": "259a07e13c8004b92fb9c19dceddc83ddb4618c899a4361d0228added7074fef",
+    "src/plugins/foot-ik/types.ts": "e98d0ce395e396f10272847167e563d19ae2e6b015ac65c0aa5ff4d04986456e"
+  }
+}

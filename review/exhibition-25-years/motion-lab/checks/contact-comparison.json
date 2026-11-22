@@ -1,0 +1,403 @@
+{
+  "method": "Same current geometry and retimed root-motion-derived Walk, 480 fixed1/60steps per actor; full weighted Foot/Toe minima each step. Centroid drift is a same-mask heuristic, not ground-truth slip.",
+  "actors": {
+    "emma": {
+      "frames": 480,
+      "durationSeconds": 7.999999999999977,
+      "motion": {
+        "sourceClip": "UPF · Walk",
+        "sourceDurationSeconds": 1.2000000476837158,
+        "sourceTrackCount": 63,
+        "hipsTrack": "mixamorigHips.position",
+        "hipsStartLocal": [
+          -0.07695895433425903,
+          0.9251465201377869,
+          -1.45741868019104
+        ],
+        "hipsEndLocal": [
+          -9.721228813250327e-13,
+          0.9251465201377869,
+          -3.323769211249772e-12
+        ],
+        "extractedDisplacementLocal": [
+          0.07695895433328691,
+          0,
+          1.4574186801877163
+        ],
+        "extractedDisplacementWorldM": [
+          0.07695895433328691,
+          0,
+          1.4574186801877163
+        ],
+        "strideLengthM": 1.4594491734939514,
+        "sourceAverageSpeedMps": 1.216207596250545,
+        "requestedSpeedMps": 0.9,
+        "derivedClip": "Contact · Walk",
+        "derivedDurationSeconds": 1.6216101927710571,
+        "trackTimeMultiplier": 1.3513417736117166,
+        "equivalentPlaybackTimeScale": 0.7400052448073967,
+        "maxHipsReconstructionErrorLocal": 5.960464477539063e-08,
+        "maxOtherTrackRetimingError": 8.702278137207031e-06,
+        "hipsResidualStart": [
+          0,
+          0.9251465201377869,
+          0
+        ],
+        "hipsResidualEnd": [
+          2.2768245622195593e-18,
+          0.9251465201377869,
+          1.6479873021779667e-17
+        ],
+        "preserved": [
+          "Y channel",
+          "residual XZ sway",
+          "all other channel values; cubic tangents rescaled for changed time units"
+        ],
+        "changed": [
+          "Hips XZ constant and linear cycle displacement removed",
+          "all track times retimed"
+        ],
+        "sourceClipMutated": false
+      },
+      "CControl": {
+        "method": "Same current model + same derived Walk + one world-vertical root translation; explicit control, not a ready library",
+        "parameters": {
+          "capMetres": 0.02,
+          "releaseTauSeconds": 0.08
+        },
+        "maxRequestedLiftM": 0.011219699246657514,
+        "maxAppliedLiftM": 0.011219699246657514,
+        "capExceededFrames": 0,
+        "targetGeometry": "ALL weighted Foot/Toe vertices, not fixed64",
+        "maxFullWeightedShoePenetrationM": 5.551115123125783e-17,
+        "maxXZChangeM": 0,
+        "maxYTranslationErrorM": 9.686451098248885e-08,
+        "maxBoneLocalTransformDelta": 0
+      },
+      "validation": {
+        "rootSpeedMinMps": 0.899999999999977,
+        "rootSpeedMaxMps": 0.9000000000000835,
+        "rootSpeedMaxErrorMps": 8.348877145181177e-14,
+        "distinctResetCounts": [
+          7
+        ],
+        "continuousAcrossClipWrap": true
+      },
+      "preIKParityMaxM": 2.4424906541753444e-15,
+      "results": {
+        "raw": {
+          "left": {
+            "fullWeightedShoe": {
+              "count": 3709,
+              "minYM": -0.0010243711331540395,
+              "maxPenetrationM": 0.0010243711331540395,
+              "secondsBelowMinus2mm": 0,
+              "heuristicStanceMedianYM": 0.006636305774716584,
+              "heuristicStanceMaxYM": 0.01402720235283511
+            },
+            "centroidHeuristic": {
+              "maxSegmentDriftM": 0.026020624482462378,
+              "medianHorizontalSpeedMps": 0.044689646245322796,
+              "sampleCount": 269,
+              "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+            }
+          },
+          "right": {
+            "fullWeightedShoe": {
+              "count": 2601,
+              "minYM": -0.011219699246657514,
+              "maxPenetrationM": 0.011219699246657514,
+              "secondsBelowMinus2mm": 1.0666666666666678,
+              "heuristicStanceMedianYM": 0.0008251851969812014,
+              "heuristicStanceMaxYM": 0.0071195706137754
+            },
+            "centroidHeuristic": {
+              "maxSegmentDriftM": 0.02856391455894416,
+              "medianHorizontalSpeedMps": 0.06622132579318699,
+              "sampleCount": 257,
+              "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+            }
+          }
+        },
+        "after": {
+          "left": {
+            "fullWeightedShoe": {
+              "count": 3709,
+              "minYM": 0.00011417057722555396,
+              "maxPenetrationM": 0,
+              "secondsBelowMinus2mm": 0,
+              "heuristicStanceMedianYM": 0.008042310649382472,
+              "heuristicStanceMaxYM": 0.034248558463381124
+            },
+            "centroidHeuristic": {
+              "maxSegmentDriftM": 0.02730573963675349,
+              "medianHorizontalSpeedMps": 0.048511700776965504,
+              "sampleCount": 269,
+              "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+            }
+          },
+          "right": {
+            "fullWeightedShoe": {
+              "count": 2601,
+              "minYM": 0.0001329981037435413,
+              "maxPenetrationM": 0,
+              "secondsBelowMinus2mm": 0,
+              "heuristicStanceMedianYM": 0.002385843877717335,
+              "heuristicStanceMaxYM": 0.020092243235187823
+            },
+            "centroidHeuristic": {
+              "maxSegmentDriftM": 0.028602481627336328,
+              "medianHorizontalSpeedMps": 0.066181233181872,
+              "sampleCount": 257,
+              "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+            }
+          }
+        },
+        "afterC": {
+          "left": {
+            "fullWeightedShoe": {
+              "count": 3709,
+              "minYM": -2.7647155398380363e-17,
+              "maxPenetrationM": 2.7647155398380363e-17,
+              "secondsBelowMinus2mm": 0,
+              "heuristicStanceMedianYM": 0.007779507567831037,
+              "heuristicStanceMaxYM": 0.017015668717802024
+            },
+            "centroidHeuristic": {
+              "maxSegmentDriftM": 0.026020624482462493,
+              "medianHorizontalSpeedMps": 0.04468964624530512,
+              "sampleCount": 269,
+              "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+            }
+          },
+          "right": {
+            "fullWeightedShoe": {
+              "count": 2601,
+              "minYM": -5.551115123125783e-17,
+              "maxPenetrationM": 5.551115123125783e-17,
+              "secondsBelowMinus2mm": 0,
+              "heuristicStanceMedianYM": 0.0018776527486509332,
+              "heuristicStanceMaxYM": 0.008513182994907331
+            },
+            "centroidHeuristic": {
+              "maxSegmentDriftM": 0.028563914558943512,
+              "medianHorizontalSpeedMps": 0.06622132579318157,
+              "sampleCount": 257,
+              "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+            }
+          }
+        }
+      },
+      "seam": {
+        "actor": "emma",
+        "clip": "Contact · Walk",
+        "durationSeconds": 1.6216101927710571,
+        "scope": "A derived clip after linear Hips XZ removal; isolated cloned rig; LoopOnce exact t=0 and t=duration; comparison holder translation omitted equally. Endpoint C0 pose only, not velocity or perceptual continuity.",
+        "boneCount": 80,
+        "maxWorldPositionDeltaM": 0.00647441934237448,
+        "maxWorldRotationDeltaDegrees": 1.3750272782090378,
+        "maxWorldScaleDelta": 7.05943338216164e-05
+      },
+      "errors": []
+    },
+    "ethan": {
+      "frames": 480,
+      "durationSeconds": 7.999999999999977,
+      "motion": {
+        "sourceClip": "UPF · Walk",
+        "sourceDurationSeconds": 1.2000000476837158,
+        "sourceTrackCount": 63,
+        "hipsTrack": "mixamorigHips.position",
+        "hipsStartLocal": [
+          0.05771388113498688,
+          0.916766881942749,
+          -1.2419692277908325
+        ],
+        "hipsEndLocal": [
+          2.2131710526729353e-12,
+          0.916766881942749,
+          -2.817308886182701e-10
+        ],
+        "extractedDisplacementLocal": [
+          -0.0577138811327737,
+          0,
+          1.2419692275091017
+        ],
+        "extractedDisplacementWorldM": [
+          -0.0577138811327737,
+          0,
+          1.2419692275091017
+        ],
+        "strideLengthM": 1.2433094764196737,
+        "sourceAverageSpeedMps": 1.0360911891791633,
+        "requestedSpeedMps": 0.84,
+        "derivedClip": "Contact · Walk",
+        "derivedDurationSeconds": 1.4801303290710401,
+        "trackTimeMultiplier": 1.2334418918799563,
+        "equivalentPlaybackTimeScale": 0.8107394491651693,
+        "maxHipsReconstructionErrorLocal": 2.9767106113354203e-08,
+        "maxOtherTrackRetimingError": 1.430511474609375e-05,
+        "hipsResidualStart": [
+          0,
+          0.916766881942749,
+          0
+        ],
+        "hipsResidualEnd": [
+          -3.0357660829594124e-18,
+          0.916766881942749,
+          -2.7755575615628914e-17
+        ],
+        "preserved": [
+          "Y channel",
+          "residual XZ sway",
+          "all other channel values; cubic tangents rescaled for changed time units"
+        ],
+        "changed": [
+          "Hips XZ constant and linear cycle displacement removed",
+          "all track times retimed"
+        ],
+        "sourceClipMutated": false
+      },
+      "CControl": {
+        "method": "Same current model + same derived Walk + one world-vertical root translation; explicit control, not a ready library",
+        "parameters": {
+          "capMetres": 0.02,
+          "releaseTauSeconds": 0.08
+        },
+        "maxRequestedLiftM": 0.01841000569144913,
+        "maxAppliedLiftM": 0.01841000569144913,
+        "capExceededFrames": 0,
+        "targetGeometry": "ALL weighted Foot/Toe vertices, not fixed64",
+        "maxFullWeightedShoePenetrationM": 5.898059818321144e-17,
+        "maxXZChangeM": 0,
+        "maxYTranslationErrorM": 9.814904740855501e-08,
+        "maxBoneLocalTransformDelta": 0
+      },
+      "validation": {
+        "rootSpeedMinMps": 0.8399999999999301,
+        "rootSpeedMaxMps": 0.8400000000000368,
+        "rootSpeedMaxErrorMps": 6.983302824892235e-14,
+        "distinctResetCounts": [
+          7
+        ],
+        "continuousAcrossClipWrap": true
+      },
+      "preIKParityMaxM": 2.6645352591003757e-15,
+      "results": {
+        "raw": {
+          "left": {
+            "fullWeightedShoe": {
+              "count": 4617,
+              "minYM": -0.005184392802291847,
+              "maxPenetrationM": 0.005184392802291847,
+              "secondsBelowMinus2mm": 0.4833333333333333,
+              "heuristicStanceMedianYM": 0.001925801301371089,
+              "heuristicStanceMaxYM": 0.020655447707848735
+            },
+            "centroidHeuristic": {
+              "maxSegmentDriftM": 0.0437757841108761,
+              "medianHorizontalSpeedMps": 0.030141296236307336,
+              "sampleCount": 251,
+              "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+            }
+          },
+          "right": {
+            "fullWeightedShoe": {
+              "count": 3718,
+              "minYM": -0.01841000569144913,
+              "maxPenetrationM": 0.01841000569144913,
+              "secondsBelowMinus2mm": 1.5999999999999992,
+              "heuristicStanceMedianYM": 0.00041040287895844604,
+              "heuristicStanceMaxYM": 0.015690800507066924
+            },
+            "centroidHeuristic": {
+              "maxSegmentDriftM": 0.02918889053955062,
+              "medianHorizontalSpeedMps": 0.012001106541817916,
+              "sampleCount": 246,
+              "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+            }
+          }
+        },
+        "after": {
+          "left": {
+            "fullWeightedShoe": {
+              "count": 4617,
+              "minYM": 0.0023820840707821944,
+              "maxPenetrationM": 0,
+              "secondsBelowMinus2mm": 0,
+              "heuristicStanceMedianYM": 0.007522186060995364,
+              "heuristicStanceMaxYM": 0.017780472673222535
+            },
+            "centroidHeuristic": {
+              "maxSegmentDriftM": 0.0490015201901049,
+              "medianHorizontalSpeedMps": 0.03791994495393507,
+              "sampleCount": 251,
+              "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+            }
+          },
+          "right": {
+            "fullWeightedShoe": {
+              "count": 3718,
+              "minYM": 0.0036254727006247074,
+              "maxPenetrationM": 0,
+              "secondsBelowMinus2mm": 0,
+              "heuristicStanceMedianYM": 0.008007523217163817,
+              "heuristicStanceMaxYM": 0.013844130014685534
+            },
+            "centroidHeuristic": {
+              "maxSegmentDriftM": 0.044743117330380805,
+              "medianHorizontalSpeedMps": 0.04971665240686085,
+              "sampleCount": 246,
+              "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+            }
+          }
+        },
+        "afterC": {
+          "left": {
+            "fullWeightedShoe": {
+              "count": 4617,
+              "minYM": -5.4643789493269423e-17,
+              "maxPenetrationM": 5.4643789493269423e-17,
+              "secondsBelowMinus2mm": 0,
+              "heuristicStanceMedianYM": 0.0025405025198671355,
+              "heuristicStanceMaxYM": 0.02260548948892234
+            },
+            "centroidHeuristic": {
+              "maxSegmentDriftM": 0.0437757841108762,
+              "medianHorizontalSpeedMps": 0.0301412962361797,
+              "sampleCount": 251,
+              "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+            }
+          },
+          "right": {
+            "fullWeightedShoe": {
+              "count": 3718,
+              "minYM": -5.898059818321144e-17,
+              "maxPenetrationM": 5.898059818321144e-17,
+              "secondsBelowMinus2mm": 0,
+              "heuristicStanceMedianYM": 0.0010020829656852725,
+              "heuristicStanceMaxYM": 0.02169973959242908
+            },
+            "centroidHeuristic": {
+              "maxSegmentDriftM": 0.029188890539550795,
+              "medianHorizontalSpeedMps": 0.012001106541769165,
+              "sampleCount": 246,
+              "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+            }
+          }
+        }
+      },
+      "seam": {
+        "actor": "ethan",
+        "clip": "Contact · Walk",
+        "durationSeconds": 1.4801303290710401,
+        "scope": "A derived clip after linear Hips XZ removal; isolated cloned rig; LoopOnce exact t=0 and t=duration; comparison holder translation omitted equally. Endpoint C0 pose only, not velocity or perceptual continuity.",
+        "boneCount": 80,
+        "maxWorldPositionDeltaM": 0.0102633203002724,
+        "maxWorldRotationDeltaDegrees": 0.866742808842198,
+        "maxWorldScaleDelta": 9.454107564854652e-05
+      },
+      "errors": []
+    }
+  }
+}

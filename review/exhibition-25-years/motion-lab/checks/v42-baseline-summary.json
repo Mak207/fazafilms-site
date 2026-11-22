@@ -1,0 +1,901 @@
+{
+  "schema": "v42-baseline-summary/1",
+  "runtime": "production v42, unchanged visitors-v40.js",
+  "runtimeURL": "http://127.0.0.1:56737/visitors-v40.js?motionLabBaselineSeed=424242",
+  "runtimeSha256": "db1673c0cf29181dd33d31ff9041c234aee16f26da9b1e28a0edffa8058435fa",
+  "threeRevision": "169",
+  "seed": 424242,
+  "frames": 1800,
+  "timeSeconds": 30,
+  "fixedStepSeconds": 0.016666666666666666,
+  "assets": [
+    {
+      "model": "woman",
+      "url": "http://127.0.0.1:56737/assets/models/visitors/walking-woman.glb?v=41",
+      "clips": [
+        {
+          "name": "Walk",
+          "durationSeconds": 1.3333333730697632,
+          "tracks": 52
+        },
+        {
+          "name": "Observe",
+          "durationSeconds": 2.566666841506958,
+          "tracks": 52
+        }
+      ]
+    },
+    {
+      "model": "man",
+      "url": "http://127.0.0.1:56737/assets/models/visitors/walking-man.glb?v=41",
+      "clips": [
+        {
+          "name": "Walk",
+          "durationSeconds": 1.4000000953674316,
+          "tracks": 53
+        },
+        {
+          "name": "Observe",
+          "durationSeconds": 2.566666841506958,
+          "tracks": 53
+        }
+      ]
+    }
+  ],
+  "byActorAndPhase": {
+    "woman:all": {
+      "samples": 1801,
+      "maxFootLateralM": 0.17551053587403542,
+      "minSoleYMetres": -0.08051829960023282,
+      "maxSoleYMetres": 0.10352839328776793,
+      "maxFootHorizontalSpeedMps": 2.7155722887992293,
+      "estimatedContactIntervals": 2976,
+      "maxEstimatedContactFootSpeedMps": 1.9534924907389886
+    },
+    "woman:observe": {
+      "samples": 1072,
+      "maxFootLateralM": 0.17551053587403542,
+      "minSoleYMetres": 4.845686573046877e-05,
+      "maxSoleYMetres": 0.003410653216984069,
+      "maxFootHorizontalSpeedMps": 0.17417282227574743,
+      "estimatedContactIntervals": 2142,
+      "maxEstimatedContactFootSpeedMps": 0.17417282227574743
+    },
+    "man:all": {
+      "samples": 1801,
+      "maxFootLateralM": 0.17550836889504629,
+      "minSoleYMetres": -0.0020524076765708332,
+      "maxSoleYMetres": 0.12385813461665138,
+      "maxFootHorizontalSpeedMps": 3.0931491693475714,
+      "estimatedContactIntervals": 3051,
+      "maxEstimatedContactFootSpeedMps": 1.3042026826585047
+    },
+    "man:observe": {
+      "samples": 1182,
+      "maxFootLateralM": 0.17550836889504629,
+      "minSoleYMetres": 2.4198521917657978e-05,
+      "maxSoleYMetres": 0.00112562435497611,
+      "maxFootHorizontalSpeedMps": 0.21771009885165726,
+      "estimatedContactIntervals": 2362,
+      "maxEstimatedContactFootSpeedMps": 0.21771009885165726
+    },
+    "man:walk": {
+      "samples": 619,
+      "maxFootLateralM": 0.17536101601606546,
+      "minSoleYMetres": -0.0020524076765708332,
+      "maxSoleYMetres": 0.12385813461665138,
+      "maxFootHorizontalSpeedMps": 3.0931491693475714,
+      "estimatedContactIntervals": 689,
+      "maxEstimatedContactFootSpeedMps": 1.3042026826585047
+    },
+    "woman:walk": {
+      "samples": 729,
+      "maxFootLateralM": 0.17534443448356463,
+      "minSoleYMetres": -0.08051829960023282,
+      "maxSoleYMetres": 0.10352839328776793,
+      "maxFootHorizontalSpeedMps": 2.7155722887992293,
+      "estimatedContactIntervals": 834,
+      "maxEstimatedContactFootSpeedMps": 1.9534924907389886
+    }
+  },
+  "measurementNotes": [
+    "All positions and distances are metres; the scene has identity transform.",
+    "actorLocal removes the actual visitor holder translation and yaw, not the foot bone transform.",
+    "Phases are the frozen holder.userData.visitorState; internal mixer weights are not exposed.",
+    "Foot slip is an estimate: foot-bone horizontal speed over consecutive sole samples within +/-0.02 m of the floor.",
+    "Sole samples use the frozen bind-pose grid; they are not every deformed mesh vertex.",
+    "Navigation, Walk/Observe blending, foot IK, grounding and gaze are the original v42 code.",
+    "This adapter never sets pose, animation weight, actor scale or navigation state."
+  ],
+  "navigation": {
+    "capsuleRadius": 0.48,
+    "routes": [
+      {
+        "from": "Робот и реактор",
+        "to": "Поезд Москва-2024",
+        "points": [
+          [
+            -3.55,
+            0.45
+          ],
+          [
+            -1.76,
+            0.75
+          ],
+          [
+            -1.76,
+            1.51
+          ],
+          [
+            2.04,
+            1.51
+          ],
+          [
+            2.42,
+            0.37
+          ],
+          [
+            3.55,
+            0.45
+          ]
+        ],
+        "length": 8.44,
+        "clear": true
+      },
+      {
+        "from": "Робот и реактор",
+        "to": "Москва-Сити",
+        "points": [
+          [
+            -3.55,
+            0.45
+          ],
+          [
+            -1.76,
+            0.75
+          ],
+          [
+            -1.76,
+            1.51
+          ],
+          [
+            0,
+            3.62
+          ]
+        ],
+        "length": 5.25,
+        "clear": true
+      },
+      {
+        "from": "Робот и реактор",
+        "to": "Новый жилой микрорайон",
+        "points": [
+          [
+            -3.55,
+            0.45
+          ],
+          [
+            -3.35,
+            -1.88
+          ]
+        ],
+        "length": 2.34,
+        "clear": true
+      },
+      {
+        "from": "Робот и реактор",
+        "to": "Большая спортивная арена",
+        "points": [
+          [
+            -3.55,
+            0.45
+          ],
+          [
+            -1.76,
+            0.75
+          ],
+          [
+            -1.76,
+            1.51
+          ],
+          [
+            2.04,
+            1.51
+          ],
+          [
+            3.18,
+            -1.91
+          ],
+          [
+            3.35,
+            -1.88
+          ]
+        ],
+        "length": 9.93,
+        "clear": true
+      },
+      {
+        "from": "Робот и реактор",
+        "to": "Видеокуб",
+        "points": [
+          [
+            -3.55,
+            0.45
+          ],
+          [
+            -1.96,
+            -0.35
+          ]
+        ],
+        "length": 1.78,
+        "clear": true
+      },
+      {
+        "from": "Поезд Москва-2024",
+        "to": "Москва-Сити",
+        "points": [
+          [
+            3.55,
+            0.45
+          ],
+          [
+            2.04,
+            0.37
+          ],
+          [
+            1.66,
+            1.89
+          ],
+          [
+            0,
+            3.62
+          ]
+        ],
+        "length": 5.36,
+        "clear": true
+      },
+      {
+        "from": "Поезд Москва-2024",
+        "to": "Новый жилой микрорайон",
+        "points": [
+          [
+            3.55,
+            0.45
+          ],
+          [
+            2.04,
+            0.37
+          ],
+          [
+            1.66,
+            1.51
+          ],
+          [
+            -1.76,
+            1.51
+          ],
+          [
+            -3.35,
+            -1.88
+          ]
+        ],
+        "length": 9.66,
+        "clear": true
+      },
+      {
+        "from": "Поезд Москва-2024",
+        "to": "Большая спортивная арена",
+        "points": [
+          [
+            3.55,
+            0.45
+          ],
+          [
+            3.35,
+            -1.88
+          ]
+        ],
+        "length": 2.34,
+        "clear": true
+      },
+      {
+        "from": "Поезд Москва-2024",
+        "to": "Видеокуб",
+        "points": [
+          [
+            3.55,
+            0.45
+          ],
+          [
+            2.04,
+            0.37
+          ],
+          [
+            1.66,
+            1.51
+          ],
+          [
+            -1.76,
+            1.51
+          ],
+          [
+            -1.96,
+            -0.35
+          ]
+        ],
+        "length": 7.74,
+        "clear": true
+      },
+      {
+        "from": "Москва-Сити",
+        "to": "Новый жилой микрорайон",
+        "points": [
+          [
+            0,
+            3.62
+          ],
+          [
+            -2.14,
+            0.75
+          ],
+          [
+            -3.35,
+            -1.88
+          ]
+        ],
+        "length": 6.47,
+        "clear": true
+      },
+      {
+        "from": "Москва-Сити",
+        "to": "Большая спортивная арена",
+        "points": [
+          [
+            0,
+            3.62
+          ],
+          [
+            2.04,
+            1.13
+          ],
+          [
+            3.35,
+            -1.88
+          ]
+        ],
+        "length": 6.5,
+        "clear": true
+      },
+      {
+        "from": "Москва-Сити",
+        "to": "Видеокуб",
+        "points": [
+          [
+            0,
+            3.62
+          ],
+          [
+            -1.76,
+            1.51
+          ],
+          [
+            -1.96,
+            -0.35
+          ]
+        ],
+        "length": 4.6,
+        "clear": true
+      },
+      {
+        "from": "Новый жилой микрорайон",
+        "to": "Большая спортивная арена",
+        "points": [
+          [
+            -3.35,
+            -1.88
+          ],
+          [
+            -1.76,
+            1.51
+          ],
+          [
+            2.04,
+            1.51
+          ],
+          [
+            3.18,
+            -1.91
+          ],
+          [
+            3.35,
+            -1.88
+          ]
+        ],
+        "length": 11.16,
+        "clear": true
+      },
+      {
+        "from": "Новый жилой микрорайон",
+        "to": "Видеокуб",
+        "points": [
+          [
+            -3.35,
+            -1.88
+          ],
+          [
+            -1.96,
+            -0.35
+          ]
+        ],
+        "length": 2.07,
+        "clear": true
+      },
+      {
+        "from": "Большая спортивная арена",
+        "to": "Видеокуб",
+        "points": [
+          [
+            3.35,
+            -1.88
+          ],
+          [
+            1.66,
+            1.51
+          ],
+          [
+            -1.76,
+            1.51
+          ],
+          [
+            -1.96,
+            -0.35
+          ]
+        ],
+        "length": 8.9,
+        "clear": true
+      }
+    ]
+  },
+  "snapshot": {
+    "schema": "v42-baseline-snapshot/1",
+    "units": {
+      "distance": "metres",
+      "time": "seconds",
+      "speed": "metres/second"
+    },
+    "frame": 1800,
+    "timeSeconds": 30,
+    "fixedStepSeconds": 0.016666666666666666,
+    "seed": 424242,
+    "actors": [
+      {
+        "model": "woman",
+        "label": "Emma · runtime v42",
+        "phase": "observe",
+        "station": "Москва-Сити",
+        "demoKind": "",
+        "demoTimeSeconds": 0,
+        "demoCount": 0,
+        "holderWorld": {
+          "x": 0,
+          "y": 0,
+          "z": 3.62
+        },
+        "holderQuaternion": {
+          "x": 0,
+          "y": 0.17937098656405406,
+          "z": 0,
+          "w": 0.9837815047961809
+        },
+        "rigLocalPosition": {
+          "x": 0,
+          "y": 0.0009146247154277051,
+          "z": 0
+        },
+        "rootHorizontalSpeedMps": 0,
+        "lowestSoleYMetres": 0.000999999999999987,
+        "unclassifiedSoleSamples": 0,
+        "bones": {
+          "Hips": {
+            "world": {
+              "x": -0.00021541206957917232,
+              "y": 0.8926577887106535,
+              "z": 3.620044687115051
+            },
+            "actorLocal": {
+              "x": -0.00021732189771084265,
+              "y": 0.8926577887106535,
+              "z": -3.4212435565006416e-05
+            }
+          },
+          "Spine": {
+            "world": {
+              "x": 0.013425861854416347,
+              "y": 1.0123236906776392,
+              "z": 3.615743122880588
+            },
+            "actorLocal": {
+              "x": 0.014064288717072992,
+              "y": 1.0123236906776392,
+              "z": 0.0007553490758995807
+            }
+          },
+          "Head": {
+            "world": {
+              "x": 0.0012242400071623225,
+              "y": 1.4930269107371756,
+              "z": 3.576075902374414
+            },
+            "actorLocal": {
+              "x": 0.01664731858233126,
+              "y": 1.4930269107371756,
+              "z": -0.04066561077661923
+            }
+          },
+          "LeftUpLeg": {
+            "world": {
+              "x": 0.08765726951400679,
+              "y": 0.8828086741342549,
+              "z": 3.62471822671461
+            },
+            "actorLocal": {
+              "x": 0.08035153404188988,
+              "y": 0.8828086741342549,
+              "z": 0.035350948206472665
+            }
+          },
+          "LeftLeg": {
+            "world": {
+              "x": 0.1900922934054829,
+              "y": 0.485436534405789,
+              "z": 3.7424692947557343
+            },
+            "actorLocal": {
+              "x": 0.13463793434121607,
+              "y": 0.485436534405789,
+              "z": 0.1816767316043899
+            }
+          },
+          "LeftFoot": {
+            "world": {
+              "x": 0.18276951239618186,
+              "y": 0.10755249902499803,
+              "z": 3.607703505269284
+            },
+            "actorLocal": {
+              "x": 0.17534840243003869,
+              "y": 0.10755249902499803,
+              "z": 0.05299845478345411
+            }
+          },
+          "LeftToeBase": {
+            "world": {
+              "x": 0.23535080104617737,
+              "y": 0.031152465473978624,
+              "z": 3.746726747771829
+            },
+            "actorLocal": {
+              "x": 0.17548159583546563,
+              "y": 0.031152465473978624,
+              "z": 0.20163302724737475
+            }
+          },
+          "RightUpLeg": {
+            "world": {
+              "x": -0.0880885446205127,
+              "y": 0.9025090605902572,
+              "z": 3.6153711853560875
+            },
+            "actorLocal": {
+              "x": -0.08078661314070001,
+              "y": 0.9025090605902572,
+              "z": -0.03541949682904333
+            }
+          },
+          "RightLeg": {
+            "world": {
+              "x": -0.13305646580916283,
+              "y": 0.4883513756053927,
+              "z": 3.708716502465192
+            },
+            "actorLocal": {
+              "x": -0.15580471934639917,
+              "y": 0.4883513756053927,
+              "z": 0.03604899905227743
+            }
+          },
+          "RightFoot": {
+            "world": {
+              "x": -0.10516778807338326,
+              "y": 0.10436998475082437,
+              "z": 3.5956113890481793
+            },
+            "actorLocal": {
+              "x": -0.08979314233272451,
+              "y": 0.10436998475082437,
+              "z": -0.05993546181037068
+            }
+          },
+          "RightToeBase": {
+            "world": {
+              "x": -0.16560366285971306,
+              "y": 0.024267712708377687,
+              "z": 3.7292558346999325
+            },
+            "actorLocal": {
+              "x": -0.1935063900631775,
+              "y": 0.024267712708377687,
+              "z": 0.04377999055790038
+            }
+          }
+        },
+        "feet": [
+          {
+            "side": "Left",
+            "world": {
+              "x": 0.18276951239618186,
+              "y": 0.10755249902499803,
+              "z": 3.607703505269284
+            },
+            "actorLocal": {
+              "x": 0.17534840243003869,
+              "y": 0.10755249902499803,
+              "z": 0.05299845478345411
+            },
+            "toeWorld": {
+              "x": 0.23535080104617737,
+              "y": 0.031152465473978624,
+              "z": 3.746726747771829
+            },
+            "thighLengthM": 0.42692255219987174,
+            "shinLengthM": 0.4012627385308625,
+            "soleMinYMetres": 0.0033719189507022893,
+            "soleSampleCount": 17,
+            "horizontalSpeedMps": 0.17417282227574743,
+            "nearGroundEstimate": true,
+            "estimatedContactHorizontalSpeedMps": 0.17417282227574743
+          },
+          {
+            "side": "Right",
+            "world": {
+              "x": -0.10516778807338326,
+              "y": 0.10436998475082437,
+              "z": 3.5956113890481793
+            },
+            "actorLocal": {
+              "x": -0.08979314233272451,
+              "y": 0.10436998475082437,
+              "z": -0.05993546181037068
+            },
+            "toeWorld": {
+              "x": -0.16560366285971306,
+              "y": 0.024267712708377687,
+              "z": 3.7292558346999325
+            },
+            "thighLengthM": 0.426921597245033,
+            "shinLengthM": 0.40126332195895287,
+            "soleMinYMetres": 0.000999999999999987,
+            "soleSampleCount": 17,
+            "horizontalSpeedMps": 0.10372197433246644,
+            "nearGroundEstimate": true,
+            "estimatedContactHorizontalSpeedMps": 0.10372197433246644
+          }
+        ]
+      },
+      {
+        "model": "man",
+        "label": "Ethan · runtime v42",
+        "phase": "observe",
+        "station": "Москва-Сити",
+        "demoKind": "",
+        "demoTimeSeconds": 0,
+        "demoCount": 0,
+        "holderWorld": {
+          "x": 0,
+          "y": 0,
+          "z": 3.62
+        },
+        "holderQuaternion": {
+          "x": 0,
+          "y": 5.551115123125783e-17,
+          "z": 0,
+          "w": 1
+        },
+        "rigLocalPosition": {
+          "x": 0,
+          "y": 0.0009712806893106959,
+          "z": 0
+        },
+        "rootHorizontalSpeedMps": 0,
+        "lowestSoleYMetres": 0.0010000000000000425,
+        "unclassifiedSoleSamples": 0,
+        "bones": {
+          "Hips": {
+            "world": {
+              "x": -0.0002173218977109411,
+              "y": 0.8899518881663866,
+              "z": 3.619965787564435
+            },
+            "actorLocal": {
+              "x": -0.00021732189771094107,
+              "y": 0.8899518881663866,
+              "z": -3.4212435565006416e-05
+            }
+          },
+          "Spine": {
+            "world": {
+              "x": 0.014388344371910944,
+              "y": 1.0122529287644153,
+              "z": 3.6207509815708763
+            },
+            "actorLocal": {
+              "x": 0.014388344371910944,
+              "y": 1.0122529287644153,
+              "z": 0.0007509815708761636
+            }
+          },
+          "Head": {
+            "world": {
+              "x": 0.004238187453532438,
+              "y": 1.596737505658574,
+              "z": 3.6454290511717033
+            },
+            "actorLocal": {
+              "x": 0.004238187453532435,
+              "y": 1.596737505658574,
+              "z": 0.025429051171703243
+            }
+          },
+          "LeftUpLeg": {
+            "world": {
+              "x": 0.08212839689406079,
+              "y": 0.8798850118223137,
+              "z": 3.6561313257982517
+            },
+            "actorLocal": {
+              "x": 0.08212839689406079,
+              "y": 0.8798850118223137,
+              "z": 0.03613132579825162
+            }
+          },
+          "LeftLeg": {
+            "world": {
+              "x": 0.13410458416567628,
+              "y": 0.4994980256803213,
+              "z": 3.7962139912895743
+            },
+            "actorLocal": {
+              "x": 0.13410458416567625,
+              "y": 0.4994980256803213,
+              "z": 0.17621399128957416
+            }
+          },
+          "LeftFoot": {
+            "world": {
+              "x": 0.17535100414246085,
+              "y": 0.11689739350224415,
+              "z": 3.6659388174171386
+            },
+            "actorLocal": {
+              "x": 0.17535100414246083,
+              "y": 0.11689739350224415,
+              "z": 0.045938817417138456
+            }
+          },
+          "LeftToeBase": {
+            "world": {
+              "x": 0.17549213773913172,
+              "y": 0.0372977772252968,
+              "z": 3.8207932283679384
+            },
+            "actorLocal": {
+              "x": 0.1754921377391317,
+              "y": 0.0372977772252968,
+              "z": 0.20079322836793834
+            }
+          },
+          "RightUpLeg": {
+            "world": {
+              "x": -0.0825634998674296,
+              "y": 0.9000199379857202,
+              "z": 3.5837999806666456
+            },
+            "actorLocal": {
+              "x": -0.0825634998674296,
+              "y": 0.9000199379857202,
+              "z": -0.03620001933335448
+            }
+          },
+          "RightLeg": {
+            "world": {
+              "x": -0.15436194733814973,
+              "y": 0.5035803277725794,
+              "z": 3.65223579634081
+            },
+            "actorLocal": {
+              "x": -0.15436194733814976,
+              "y": 0.5035803277725794,
+              "z": 0.03223579634080975
+            }
+          },
+          "RightFoot": {
+            "world": {
+              "x": -0.08752048196293545,
+              "y": 0.11482131087486785,
+              "z": 3.555056069791037
+            },
+            "actorLocal": {
+              "x": -0.08752048196293544,
+              "y": 0.11482131087486785,
+              "z": -0.06494393020896316
+            }
+          },
+          "RightToeBase": {
+            "world": {
+              "x": -0.19557045254598424,
+              "y": 0.03136830880365264,
+              "z": 3.663112477118679
+            },
+            "actorLocal": {
+              "x": -0.19557045254598426,
+              "y": 0.03136830880365264,
+              "z": 0.04311247711867905
+            }
+          }
+        },
+        "feet": [
+          {
+            "side": "Left",
+            "world": {
+              "x": 0.17535100414246085,
+              "y": 0.11689739350224415,
+              "z": 3.6659388174171386
+            },
+            "actorLocal": {
+              "x": 0.17535100414246083,
+              "y": 0.11689739350224415,
+              "z": 0.045938817417138456
+            },
+            "toeWorld": {
+              "x": 0.17549213773913172,
+              "y": 0.0372977772252968,
+              "z": 3.8207932283679384
+            },
+            "thighLengthM": 0.4086795033282635,
+            "shinLengthM": 0.4062710078647736,
+            "soleMinYMetres": 0.0010544514026700135,
+            "soleSampleCount": 24,
+            "horizontalSpeedMps": 0.0009599173533285719,
+            "nearGroundEstimate": true,
+            "estimatedContactHorizontalSpeedMps": 0.0009599173533285719
+          },
+          {
+            "side": "Right",
+            "world": {
+              "x": -0.08752048196293545,
+              "y": 0.11482131087486785,
+              "z": 3.555056069791037
+            },
+            "actorLocal": {
+              "x": -0.08752048196293544,
+              "y": 0.11482131087486785,
+              "z": -0.06494393020896316
+            },
+            "toeWorld": {
+              "x": -0.19557045254598424,
+              "y": 0.03136830880365264,
+              "z": 3.663112477118679
+            },
+            "thighLengthM": 0.4086598126463391,
+            "shinLengthM": 0.4062576201932338,
+            "soleMinYMetres": 0.0010000000000000425,
+            "soleSampleCount": 23,
+            "horizontalSpeedMps": 0.0014895967985594715,
+            "nearGroundEstimate": true,
+            "estimatedContactHorizontalSpeedMps": 0.0014895967985594715
+          }
+        ]
+      }
+    ]
+  }
+}

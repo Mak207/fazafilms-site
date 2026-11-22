@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "three": "169",
+  "frames": 480,
+  "seconds": 7.999999999999977,
+  "maxBoneLengthChangeM": 6.569785826471275e-10,
+  "maxAnkleCorrectionM": 0.03557452726804583,
+  "externalMeasureCalls": 968,
+  "phase": "Walk: plant 100%",
+  "tests": [
+    "real pinned FootIK on structural host",
+    "restore before mixer",
+    "repeat seek determinism",
+    "480 fixed 60fps steps",
+    "loop wrap continuity",
+    "bone lengths",
+    "raw holder ownership",
+    "public phase heuristic",
+    "in-place speed estimator",
+    "disable restores",
+    "dispose"
+  ],
+  "scope": "Headless synthetic bone rig, real pinned FootIK and Three0.169. Not visual or shoe-contact validation of Emma/Ethan.",
+  "upstream_commit": "29403c7dcc48c43153c2d6126571e685ca012617",
+  "adapter_sha256": "3351d409f55f0167ba6a5ff4824fb14dd3b37c3ad5b0f267ed02d93dfb178601",
+  "stderr": "",
+  "rerun_after": "Seed observed world root position at reset, so first physical frame reports real velocity."
+}

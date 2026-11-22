@@ -1,0 +1,2402 @@
+{
+  "scope": "Same current geometry and same root-motion-derived Walk: A raw, B ready FootIK, C whole-root Y lift control.",
+  "seconds_per_actor": 8,
+  "fps": 60,
+  "errors": [],
+  "console": [],
+  "trials": {
+    "emma": {
+      "file": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-motion-data-20261122\\evidence\\contacts\\emma-contact-trial.json",
+      "metadata": {
+        "actor": "emma",
+        "units": "metres",
+        "sourceNativeAsset": "./assets/emma-native-motions.glb",
+        "geometrySource": "../assets/models/visitors/walking-woman.glb",
+        "geometrySameForAandB": true,
+        "A": "Same current model + derived Walk; no external IK",
+        "B": "Same current model + same derived Walk + pinned FootIK only",
+        "C": "Same current model + same derived Walk + one world-vertical root translation; explicit control, not a ready library",
+        "rootLiftControl": {
+          "capMetres": 0.02,
+          "releaseTauSeconds": 0.08,
+          "target": "max(0,-minimum of ALL exact skinned weighted Foot/Toe vertices), no constant extra offset",
+          "update": "Immediate rise; fall: target+(previous-target)*exp(-physicalDelta/tau); report cap exceed as failure",
+          "preserves": "All joint local transforms and all XZ vertex positions; does not lock feet"
+        },
+        "frozenV42": "Separate reference, not executed by this bench",
+        "motion": {
+          "sourceClip": "UPF · Walk",
+          "sourceDurationSeconds": 1.2000000476837158,
+          "sourceTrackCount": 63,
+          "hipsTrack": "mixamorigHips.position",
+          "hipsStartLocal": [
+            -0.07695895433425903,
+            0.9251465201377869,
+            -1.45741868019104
+          ],
+          "hipsEndLocal": [
+            -9.721228813250327e-13,
+            0.9251465201377869,
+            -3.323769211249772e-12
+          ],
+          "extractedDisplacementLocal": [
+            0.07695895433328691,
+            0,
+            1.4574186801877163
+          ],
+          "extractedDisplacementWorldM": [
+            0.07695895433328691,
+            0,
+            1.4574186801877163
+          ],
+          "strideLengthM": 1.4594491734939514,
+          "sourceAverageSpeedMps": 1.216207596250545,
+          "requestedSpeedMps": 0.9,
+          "derivedClip": "Contact · Walk",
+          "derivedDurationSeconds": 1.6216101927710571,
+          "trackTimeMultiplier": 1.3513417736117166,
+          "equivalentPlaybackTimeScale": 0.7400052448073967,
+          "maxHipsReconstructionErrorLocal": 5.960464477539063e-08,
+          "maxOtherTrackRetimingError": 8.702278137207031e-06,
+          "hipsResidualStart": [
+            0,
+            0.9251465201377869,
+            0
+          ],
+          "hipsResidualEnd": [
+            2.2768245622195593e-18,
+            0.9251465201377869,
+            1.6479873021779667e-17
+          ],
+          "preserved": [
+            "Y channel",
+            "residual XZ sway",
+            "all other channel values; cubic tangents rescaled for changed time units"
+          ],
+          "changed": [
+            "Hips XZ constant and linear cycle displacement removed",
+            "all track times retimed"
+          ],
+          "sourceClipMutated": false
+        },
+        "phaseHeuristic": "Pinned FootIK sampled-animation phase, same mask applied to A and B; NOT contact ground truth",
+        "measurement": "Contact minima: ALL vertices with summed weight >=.25 on Foot and descendants, cached indices and live skinning every pose. Comparable centroid drift and heel/toe groups: original fixed 64-point samples.",
+        "fullWeightedShoeCounts": {
+          "left": 3709,
+          "right": 2601
+        },
+        "profiles": {
+          "emma-raw": {
+            "left": {
+              "heelKeys": [
+                "mesh_0:48377",
+                "mesh_0:48397",
+                "mesh_0:49257",
+                "mesh_0:46775",
+                "mesh_0:46787",
+                "mesh_0:48401",
+                "mesh_0:48398",
+                "mesh_0:46791",
+                "mesh_0:48388",
+                "mesh_0:49128",
+                "mesh_0:46761",
+                "mesh_0:47127",
+                "mesh_0:46785",
+                "mesh_0:48392",
+                "mesh_0:49089",
+                "mesh_0:49093",
+                "mesh_0:49274",
+                "mesh_0:46738",
+                "mesh_0:49117",
+                "mesh_0:46737",
+                "mesh_0:49110",
+                "mesh_0:46741",
+                "mesh_0:46734",
+                "mesh_0:49283"
+              ],
+              "toeKeys": [
+                "mesh_0:48861",
+                "mesh_0:48754",
+                "mesh_0:48769",
+                "mesh_0:48803",
+                "mesh_0:48852",
+                "mesh_0:48834",
+                "mesh_0:48790",
+                "mesh_0:48841",
+                "mesh_0:48833",
+                "mesh_0:48837",
+                "mesh_0:48806",
+                "mesh_0:48840",
+                "mesh_0:48836",
+                "mesh_0:48839",
+                "mesh_0:48807",
+                "mesh_0:48808"
+              ],
+              "keys": [
+                "mesh_0:48861",
+                "mesh_0:47017",
+                "mesh_0:48754",
+                "mesh_0:48769",
+                "mesh_0:48803",
+                "mesh_0:48852",
+                "mesh_0:47035",
+                "mesh_0:46980",
+                "mesh_0:47041",
+                "mesh_0:46998",
+                "mesh_0:48377",
+                "mesh_0:48397",
+                "mesh_0:49257",
+                "mesh_0:49193",
+                "mesh_0:46775",
+                "mesh_0:48834",
+                "mesh_0:46787",
+                "mesh_0:48401",
+                "mesh_0:46953",
+                "mesh_0:48398",
+                "mesh_0:46965",
+                "mesh_0:46984",
+                "mesh_0:46791",
+                "mesh_0:48388",
+                "mesh_0:46814",
+                "mesh_0:49125",
+                "mesh_0:47046",
+                "mesh_0:47003",
+                "mesh_0:48790",
+                "mesh_0:49128",
+                "mesh_0:46761",
+                "mesh_0:47127",
+                "mesh_0:48841",
+                "mesh_0:46785",
+                "mesh_0:48392",
+                "mesh_0:46807",
+                "mesh_0:49089",
+                "mesh_0:49093",
+                "mesh_0:48833",
+                "mesh_0:48837",
+                "mesh_0:48806",
+                "mesh_0:48840",
+                "mesh_0:46992",
+                "mesh_0:46942",
+                "mesh_0:49274",
+                "mesh_0:46991",
+                "mesh_0:48836",
+                "mesh_0:46943",
+                "mesh_0:48839",
+                "mesh_0:48807",
+                "mesh_0:46891",
+                "mesh_0:46887",
+                "mesh_0:46738",
+                "mesh_0:49117",
+                "mesh_0:46737",
+                "mesh_0:48808",
+                "mesh_0:49110",
+                "mesh_0:46884",
+                "mesh_0:46741",
+                "mesh_0:46882",
+                "mesh_0:46734",
+                "mesh_0:48928",
+                "mesh_0:46927",
+                "mesh_0:49283"
+              ],
+              "soleHalfWidth": 0.06539017317919617,
+              "soleHeelExtend": 0.024835862008091607,
+              "soleToeExtend": 0.06903434316959212,
+              "soleSkinThickness": 0.0023945305122891336,
+              "restSoleMinY": 0,
+              "restFootWorld": [
+                -2.0313270402163583,
+                0.0998958544953345,
+                -0.0626673316869865
+              ],
+              "restToeWorld": [
+                -1.9977434763512327,
+                0.0023945305122891336,
+                0.06884151321136482
+              ],
+              "source": "Fixed skinned-sole samples selected by motion-lab in the original rest pose; 20% forward-extreme bands define heel/toe."
+            },
+            "right": {
+              "heelKeys": [
+                "mesh_0:7342",
+                "mesh_0:7295",
+                "mesh_0:6727",
+                "mesh_0:7386",
+                "mesh_0:7375",
+                "mesh_0:6623",
+                "mesh_0:7384",
+                "mesh_0:7339",
+                "mesh_0:6736",
+                "mesh_0:7288",
+                "mesh_0:6737",
+                "mesh_0:6713"
+              ],
+              "toeKeys": [
+                "mesh_0:14085",
+                "mesh_0:14092",
+                "mesh_0:14327",
+                "mesh_0:14094",
+                "mesh_0:14095",
+                "mesh_0:13591",
+                "mesh_0:13581",
+                "mesh_0:14060",
+                "mesh_0:14064",
+                "mesh_0:14026",
+                "mesh_0:14032"
+              ],
+              "keys": [
+                "mesh_0:14085",
+                "mesh_0:14310",
+                "mesh_0:14092",
+                "mesh_0:13567",
+                "mesh_0:14351",
+                "mesh_0:14345",
+                "mesh_0:14362",
+                "mesh_0:14327",
+                "mesh_0:14094",
+                "mesh_0:14103",
+                "mesh_0:14379",
+                "mesh_0:14341",
+                "mesh_0:14095",
+                "mesh_0:14387",
+                "mesh_0:14353",
+                "mesh_0:7342",
+                "mesh_0:14432",
+                "mesh_0:7347",
+                "mesh_0:13591",
+                "mesh_0:6643",
+                "mesh_0:7353",
+                "mesh_0:7295",
+                "mesh_0:6587",
+                "mesh_0:6630",
+                "mesh_0:6727",
+                "mesh_0:7386",
+                "mesh_0:6584",
+                "mesh_0:14431",
+                "mesh_0:13581",
+                "mesh_0:7375",
+                "mesh_0:14523",
+                "mesh_0:6588",
+                "mesh_0:14418",
+                "mesh_0:6623",
+                "mesh_0:7384",
+                "mesh_0:6665",
+                "mesh_0:6570",
+                "mesh_0:7339",
+                "mesh_0:6566",
+                "mesh_0:6640",
+                "mesh_0:6736",
+                "mesh_0:14060",
+                "mesh_0:7288",
+                "mesh_0:7365",
+                "mesh_0:6555",
+                "mesh_0:14064",
+                "mesh_0:6737",
+                "mesh_0:7366",
+                "mesh_0:6713",
+                "mesh_0:6547",
+                "mesh_0:6548",
+                "mesh_0:14026",
+                "mesh_0:6532",
+                "mesh_0:6411",
+                "mesh_0:14400",
+                "mesh_0:6529",
+                "mesh_0:6671",
+                "mesh_0:6422",
+                "mesh_0:14032",
+                "mesh_0:6415",
+                "mesh_0:6511",
+                "mesh_0:6518",
+                "mesh_0:6383",
+                "mesh_0:14109"
+              ],
+              "soleHalfWidth": 0.06758988731793728,
+              "soleHeelExtend": 0.027298668680429634,
+              "soleToeExtend": 0.0699636630448554,
+              "soleSkinThickness": 0.0023947339869743733,
+              "restSoleMinY": 0,
+              "restFootWorld": [
+                -2.268673865529131,
+                0.09989597219647561,
+                -0.06266683406589887
+              ],
+              "restToeWorld": [
+                -2.302257272431508,
+                0.0023947339869743733,
+                0.06884205682260616
+              ],
+              "source": "Fixed skinned-sole samples selected by motion-lab in the original rest pose; 20% forward-extreme bands define heel/toe."
+            }
+          },
+          "emma-ik": {
+            "left": {
+              "heelKeys": [
+                "mesh_0:48377",
+                "mesh_0:48397",
+                "mesh_0:49257",
+                "mesh_0:46775",
+                "mesh_0:46787",
+                "mesh_0:48401",
+                "mesh_0:48398",
+                "mesh_0:46791",
+                "mesh_0:48388",
+                "mesh_0:49128",
+                "mesh_0:46761",
+                "mesh_0:47127",
+                "mesh_0:46785",
+                "mesh_0:48392",
+                "mesh_0:49089",
+                "mesh_0:49093",
+                "mesh_0:49274",
+                "mesh_0:46738",
+                "mesh_0:49117",
+                "mesh_0:46737",
+                "mesh_0:49110",
+                "mesh_0:46741",
+                "mesh_0:46734",
+                "mesh_0:49283"
+              ],
+              "toeKeys": [
+                "mesh_0:48861",
+                "mesh_0:48754",
+                "mesh_0:48769",
+                "mesh_0:48803",
+                "mesh_0:48852",
+                "mesh_0:48834",
+                "mesh_0:48790",
+                "mesh_0:48841",
+                "mesh_0:48833",
+                "mesh_0:48837",
+                "mesh_0:48806",
+                "mesh_0:48840",
+                "mesh_0:48836",
+                "mesh_0:48839",
+                "mesh_0:48807",
+                "mesh_0:48808"
+              ],
+              "keys": [
+                "mesh_0:48861",
+                "mesh_0:47017",
+                "mesh_0:48754",
+                "mesh_0:48769",
+                "mesh_0:48803",
+                "mesh_0:48852",
+                "mesh_0:47035",
+                "mesh_0:46980",
+                "mesh_0:47041",
+                "mesh_0:46998",
+                "mesh_0:48377",
+                "mesh_0:48397",
+                "mesh_0:49257",
+                "mesh_0:49193",
+                "mesh_0:46775",
+                "mesh_0:48834",
+                "mesh_0:46787",
+                "mesh_0:48401",
+                "mesh_0:46953",
+                "mesh_0:48398",
+                "mesh_0:46965",
+                "mesh_0:46984",
+                "mesh_0:46791",
+                "mesh_0:48388",
+                "mesh_0:46814",
+                "mesh_0:49125",
+                "mesh_0:47046",
+                "mesh_0:47003",
+                "mesh_0:48790",
+                "mesh_0:49128",
+                "mesh_0:46761",
+                "mesh_0:47127",
+                "mesh_0:48841",
+                "mesh_0:46785",
+                "mesh_0:48392",
+                "mesh_0:46807",
+                "mesh_0:49089",
+                "mesh_0:49093",
+                "mesh_0:48833",
+                "mesh_0:48837",
+                "mesh_0:48806",
+                "mesh_0:48840",
+                "mesh_0:46992",
+                "mesh_0:46942",
+                "mesh_0:49274",
+                "mesh_0:46991",
+                "mesh_0:48836",
+                "mesh_0:46943",
+                "mesh_0:48839",
+                "mesh_0:48807",
+                "mesh_0:46891",
+                "mesh_0:46887",
+                "mesh_0:46738",
+                "mesh_0:49117",
+                "mesh_0:46737",
+                "mesh_0:48808",
+                "mesh_0:49110",
+                "mesh_0:46884",
+                "mesh_0:46741",
+                "mesh_0:46882",
+                "mesh_0:46734",
+                "mesh_0:48928",
+                "mesh_0:46927",
+                "mesh_0:49283"
+              ],
+              "soleHalfWidth": 0.06539017317919593,
+              "soleHeelExtend": 0.024835862008091587,
+              "soleToeExtend": 0.06903434316959209,
+              "soleSkinThickness": 0.0023945305122891336,
+              "restSoleMinY": 0,
+              "restFootWorld": [
+                0.11867295978364173,
+                0.0998958544953345,
+                -0.0626673316869865
+              ],
+              "restToeWorld": [
+                0.15225652364876746,
+                0.0023945305122891336,
+                0.06884151321136482
+              ],
+              "source": "Fixed skinned-sole samples selected by motion-lab in the original rest pose; 20% forward-extreme bands define heel/toe."
+            },
+            "right": {
+              "heelKeys": [
+                "mesh_0:7342",
+                "mesh_0:7295",
+                "mesh_0:6727",
+                "mesh_0:7386",
+                "mesh_0:7375",
+                "mesh_0:6623",
+                "mesh_0:7384",
+                "mesh_0:7339",
+                "mesh_0:6736",
+                "mesh_0:7288",
+                "mesh_0:6737",
+                "mesh_0:6713"
+              ],
+              "toeKeys": [
+                "mesh_0:14085",
+                "mesh_0:14092",
+                "mesh_0:14327",
+                "mesh_0:14094",
+                "mesh_0:14095",
+                "mesh_0:13591",
+                "mesh_0:13581",
+                "mesh_0:14060",
+                "mesh_0:14064",
+                "mesh_0:14026",
+                "mesh_0:14032"
+              ],
+              "keys": [
+                "mesh_0:14085",
+                "mesh_0:14310",
+                "mesh_0:14092",
+                "mesh_0:13567",
+                "mesh_0:14351",
+                "mesh_0:14345",
+                "mesh_0:14362",
+                "mesh_0:14327",
+                "mesh_0:14094",
+                "mesh_0:14103",
+                "mesh_0:14379",
+                "mesh_0:14341",
+                "mesh_0:14095",
+                "mesh_0:14387",
+                "mesh_0:14353",
+                "mesh_0:7342",
+                "mesh_0:14432",
+                "mesh_0:7347",
+                "mesh_0:13591",
+                "mesh_0:6643",
+                "mesh_0:7353",
+                "mesh_0:7295",
+                "mesh_0:6587",
+                "mesh_0:6630",
+                "mesh_0:6727",
+                "mesh_0:7386",
+                "mesh_0:6584",
+                "mesh_0:14431",
+                "mesh_0:13581",
+                "mesh_0:7375",
+                "mesh_0:14523",
+                "mesh_0:6588",
+                "mesh_0:14418",
+                "mesh_0:6623",
+                "mesh_0:7384",
+                "mesh_0:6665",
+                "mesh_0:6570",
+                "mesh_0:7339",
+                "mesh_0:6566",
+                "mesh_0:6640",
+                "mesh_0:6736",
+                "mesh_0:14060",
+                "mesh_0:7288",
+                "mesh_0:7365",
+                "mesh_0:6555",
+                "mesh_0:14064",
+                "mesh_0:6737",
+                "mesh_0:7366",
+                "mesh_0:6713",
+                "mesh_0:6547",
+                "mesh_0:6548",
+                "mesh_0:14026",
+                "mesh_0:6532",
+                "mesh_0:6411",
+                "mesh_0:14400",
+                "mesh_0:6529",
+                "mesh_0:6671",
+                "mesh_0:6422",
+                "mesh_0:14032",
+                "mesh_0:6415",
+                "mesh_0:6511",
+                "mesh_0:6518",
+                "mesh_0:6383",
+                "mesh_0:14109"
+              ],
+              "soleHalfWidth": 0.06758988731793733,
+              "soleHeelExtend": 0.027298668680429666,
+              "soleToeExtend": 0.06996366304485543,
+              "soleSkinThickness": 0.0023947339869743733,
+              "restSoleMinY": 0,
+              "restFootWorld": [
+                -0.11867386552913108,
+                0.09989597219647561,
+                -0.06266683406589887
+              ],
+              "restToeWorld": [
+                -0.1522572724315078,
+                0.0023947339869743733,
+                0.06884205682260616
+              ],
+              "source": "Fixed skinned-sole samples selected by motion-lab in the original rest pose; 20% forward-extreme bands define heel/toe."
+            }
+          },
+          "emma-lift": {
+            "left": {
+              "heelKeys": [
+                "mesh_0:48377",
+                "mesh_0:48397",
+                "mesh_0:49257",
+                "mesh_0:46775",
+                "mesh_0:46787",
+                "mesh_0:48401",
+                "mesh_0:48398",
+                "mesh_0:46791",
+                "mesh_0:48388",
+                "mesh_0:49128",
+                "mesh_0:46761",
+                "mesh_0:47127",
+                "mesh_0:46785",
+                "mesh_0:48392",
+                "mesh_0:49089",
+                "mesh_0:49093",
+                "mesh_0:49274",
+                "mesh_0:46738",
+                "mesh_0:49117",
+                "mesh_0:46737",
+                "mesh_0:49110",
+                "mesh_0:46741",
+                "mesh_0:46734",
+                "mesh_0:49283"
+              ],
+              "toeKeys": [
+                "mesh_0:48861",
+                "mesh_0:48754",
+                "mesh_0:48769",
+                "mesh_0:48803",
+                "mesh_0:48852",
+                "mesh_0:48834",
+                "mesh_0:48790",
+                "mesh_0:48841",
+                "mesh_0:48833",
+                "mesh_0:48837",
+                "mesh_0:48806",
+                "mesh_0:48840",
+                "mesh_0:48836",
+                "mesh_0:48839",
+                "mesh_0:48807",
+                "mesh_0:48808"
+              ],
+              "keys": [
+                "mesh_0:48861",
+                "mesh_0:47017",
+                "mesh_0:48754",
+                "mesh_0:48769",
+                "mesh_0:48803",
+                "mesh_0:48852",
+                "mesh_0:47035",
+                "mesh_0:46980",
+                "mesh_0:47041",
+                "mesh_0:46998",
+                "mesh_0:48377",
+                "mesh_0:48397",
+                "mesh_0:49257",
+                "mesh_0:49193",
+                "mesh_0:46775",
+                "mesh_0:48834",
+                "mesh_0:46787",
+                "mesh_0:48401",
+                "mesh_0:46953",
+                "mesh_0:48398",
+                "mesh_0:46965",
+                "mesh_0:46984",
+                "mesh_0:46791",
+                "mesh_0:48388",
+                "mesh_0:46814",
+                "mesh_0:49125",
+                "mesh_0:47046",
+                "mesh_0:47003",
+                "mesh_0:48790",
+                "mesh_0:49128",
+                "mesh_0:46761",
+                "mesh_0:47127",
+                "mesh_0:48841",
+                "mesh_0:46785",
+                "mesh_0:48392",
+                "mesh_0:46807",
+                "mesh_0:49089",
+                "mesh_0:49093",
+                "mesh_0:48833",
+                "mesh_0:48837",
+                "mesh_0:48806",
+                "mesh_0:48840",
+                "mesh_0:46992",
+                "mesh_0:46942",
+                "mesh_0:49274",
+                "mesh_0:46991",
+                "mesh_0:48836",
+                "mesh_0:46943",
+                "mesh_0:48839",
+                "mesh_0:48807",
+                "mesh_0:46891",
+                "mesh_0:46887",
+                "mesh_0:46738",
+                "mesh_0:49117",
+                "mesh_0:46737",
+                "mesh_0:48808",
+                "mesh_0:49110",
+                "mesh_0:46884",
+                "mesh_0:46741",
+                "mesh_0:46882",
+                "mesh_0:46734",
+                "mesh_0:48928",
+                "mesh_0:46927",
+                "mesh_0:49283"
+              ],
+              "soleHalfWidth": 0.06539017317919597,
+              "soleHeelExtend": 0.024835862008091455,
+              "soleToeExtend": 0.06903434316959209,
+              "soleSkinThickness": 0.0023945305122891336,
+              "restSoleMinY": 0,
+              "restFootWorld": [
+                2.2686729597836415,
+                0.0998958544953345,
+                -0.0626673316869865
+              ],
+              "restToeWorld": [
+                2.3022565236487673,
+                0.0023945305122891336,
+                0.06884151321136482
+              ],
+              "source": "Fixed skinned-sole samples selected by motion-lab in the original rest pose; 20% forward-extreme bands define heel/toe."
+            },
+            "right": {
+              "heelKeys": [
+                "mesh_0:7342",
+                "mesh_0:7295",
+                "mesh_0:6727",
+                "mesh_0:7386",
+                "mesh_0:7375",
+                "mesh_0:6623",
+                "mesh_0:7384",
+                "mesh_0:7339",
+                "mesh_0:6736",
+                "mesh_0:7288",
+                "mesh_0:6737",
+                "mesh_0:6713"
+              ],
+              "toeKeys": [
+                "mesh_0:14085",
+                "mesh_0:14092",
+                "mesh_0:14327",
+                "mesh_0:14094",
+                "mesh_0:14095",
+                "mesh_0:13591",
+                "mesh_0:13581",
+                "mesh_0:14060",
+                "mesh_0:14064",
+                "mesh_0:14026",
+                "mesh_0:14032"
+              ],
+              "keys": [
+                "mesh_0:14085",
+                "mesh_0:14310",
+                "mesh_0:14092",
+                "mesh_0:13567",
+                "mesh_0:14351",
+                "mesh_0:14345",
+                "mesh_0:14362",
+                "mesh_0:14327",
+                "mesh_0:14094",
+                "mesh_0:14103",
+                "mesh_0:14379",
+                "mesh_0:14341",
+                "mesh_0:14095",
+                "mesh_0:14387",
+                "mesh_0:14353",
+                "mesh_0:7342",
+                "mesh_0:14432",
+                "mesh_0:7347",
+                "mesh_0:13591",
+                "mesh_0:6643",
+                "mesh_0:7353",
+                "mesh_0:7295",
+                "mesh_0:6587",
+                "mesh_0:6630",
+                "mesh_0:6727",
+                "mesh_0:7386",
+                "mesh_0:6584",
+                "mesh_0:14431",
+                "mesh_0:13581",
+                "mesh_0:7375",
+                "mesh_0:14523",
+                "mesh_0:6588",
+                "mesh_0:14418",
+                "mesh_0:6623",
+                "mesh_0:7384",
+                "mesh_0:6665",
+                "mesh_0:6570",
+                "mesh_0:7339",
+                "mesh_0:6566",
+                "mesh_0:6640",
+                "mesh_0:6736",
+                "mesh_0:14060",
+                "mesh_0:7288",
+                "mesh_0:7365",
+                "mesh_0:6555",
+                "mesh_0:14064",
+                "mesh_0:6737",
+                "mesh_0:7366",
+                "mesh_0:6713",
+                "mesh_0:6547",
+                "mesh_0:6548",
+                "mesh_0:14026",
+                "mesh_0:6532",
+                "mesh_0:6411",
+                "mesh_0:14400",
+                "mesh_0:6529",
+                "mesh_0:6671",
+                "mesh_0:6422",
+                "mesh_0:14032",
+                "mesh_0:6415",
+                "mesh_0:6511",
+                "mesh_0:6518",
+                "mesh_0:6383",
+                "mesh_0:14109"
+              ],
+              "soleHalfWidth": 0.06758988731793705,
+              "soleHeelExtend": 0.027298668680429745,
+              "soleToeExtend": 0.06996366304485535,
+              "soleSkinThickness": 0.0023947339869743733,
+              "restSoleMinY": 0,
+              "restFootWorld": [
+                2.0313261344708686,
+                0.09989597219647561,
+                -0.06266683406589887
+              ],
+              "restToeWorld": [
+                1.9977427275684918,
+                0.0023947339869743733,
+                0.06884205682260616
+              ],
+              "source": "Fixed skinned-sole samples selected by motion-lab in the original rest pose; 20% forward-extreme bands define heel/toe."
+            }
+          }
+        },
+        "soleCalibrationOptionsMetres": {
+          "soleHalfWidth": 0.06758988731793733,
+          "soleToeExtend": 0.06996366304485543,
+          "soleHeelExtend": 0.027298668680429666,
+          "soleSkinThickness": 0.0023946322496317535
+        },
+        "soleCalibrationPolicy": "Before the trial, take max(left,right) width/toe/heel and mean toe-to-bottom thickness. No parameter sweep or post-result tuning.",
+        "footIK": {
+          "repository": "https://github.com/hh-hang/three-player-controller",
+          "commit": "29403c7dcc48c43153c2d6126571e685ca012617",
+          "packageVersion": "0.6.3",
+          "license": "MIT",
+          "bundleSHA256": "765d7ecb8038debc1bedef1935a1d376b4ff5f5289ee47e01673817764469eae",
+          "testedThreeRevision": "169"
+        },
+        "initialization": "Reset at t=0; all 480 measured dynamic frames include startup; no warmup discarded."
+      },
+      "summary": {
+        "actor": "emma",
+        "frames": 480,
+        "dynamicSeconds": 7.999999999999977,
+        "preIKParityMaxM": 2.4424906541753444e-15,
+        "sameSourceGeometryAndClip": true,
+        "results": {
+          "raw": {
+            "left": {
+              "sole": {
+                "minYM": -0.0010083,
+                "maxPenetrationM": 0.0010083,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0067142,
+                "heuristicStanceMaxYM": 0.0140551,
+                "heuristicStanceSecondsAbove15mm": 0
+              },
+              "heel": {
+                "minYM": 0.0053592,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0211985,
+                "heuristicStanceMaxYM": 0.1463739,
+                "heuristicStanceSecondsAbove15mm": 2.799999999999995
+              },
+              "toe": {
+                "minYM": -0.0010083,
+                "maxPenetrationM": 0.0010083,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0080264,
+                "heuristicStanceMaxYM": 0.0420255,
+                "heuristicStanceSecondsAbove15mm": 0.41666666666666663
+              },
+              "heuristicStanceCentroidDrift": {
+                "maxSegmentDriftM": 0.026020624482462378,
+                "medianHorizontalSpeedMps": 0.044689646245322796,
+                "sampleCount": 269,
+                "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+              },
+              "fullWeightedShoe": {
+                "count": 3709,
+                "minYM": -0.0010243711331540395,
+                "maxPenetrationM": 0.0010243711331540395,
+                "secondsBelowMinus2mm": 0,
+                "heuristicStanceMedianYM": 0.006636305774716584,
+                "heuristicStanceMaxYM": 0.01402720235283511
+              }
+            },
+            "right": {
+              "sole": {
+                "minYM": -0.009746,
+                "maxPenetrationM": 0.009746,
+                "secondsBelowMinus2mm": 1.0333333333333345,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0015501,
+                "heuristicStanceMaxYM": 0.007229,
+                "heuristicStanceSecondsAbove15mm": 0
+              },
+              "heel": {
+                "minYM": 0.0024477,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0161444,
+                "heuristicStanceMaxYM": 0.145924,
+                "heuristicStanceSecondsAbove15mm": 2.449999999999996
+              },
+              "toe": {
+                "minYM": -0.009746,
+                "maxPenetrationM": 0.009746,
+                "secondsBelowMinus2mm": 1.0333333333333345,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0015501,
+                "heuristicStanceMaxYM": 0.0415212,
+                "heuristicStanceSecondsAbove15mm": 0.3333333333333333
+              },
+              "heuristicStanceCentroidDrift": {
+                "maxSegmentDriftM": 0.02856391455894416,
+                "medianHorizontalSpeedMps": 0.06622132579318699,
+                "sampleCount": 257,
+                "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+              },
+              "fullWeightedShoe": {
+                "count": 2601,
+                "minYM": -0.011219699246657514,
+                "maxPenetrationM": 0.011219699246657514,
+                "secondsBelowMinus2mm": 1.0666666666666678,
+                "heuristicStanceMedianYM": 0.0008251851969812014,
+                "heuristicStanceMaxYM": 0.0071195706137754
+              }
+            }
+          },
+          "after": {
+            "left": {
+              "sole": {
+                "minYM": 0.0001575,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0080423,
+                "heuristicStanceMaxYM": 0.0342764,
+                "heuristicStanceSecondsAbove15mm": 1.2166666666666672
+              },
+              "heel": {
+                "minYM": 0.0031115,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0210339,
+                "heuristicStanceMaxYM": 0.1665942,
+                "heuristicStanceSecondsAbove15mm": 2.716666666666662
+              },
+              "toe": {
+                "minYM": 0.0023603,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0108457,
+                "heuristicStanceMaxYM": 0.0422531,
+                "heuristicStanceSecondsAbove15mm": 1.566666666666666
+              },
+              "heuristicStanceCentroidDrift": {
+                "maxSegmentDriftM": 0.02730573963675349,
+                "medianHorizontalSpeedMps": 0.048511700776965504,
+                "sampleCount": 269,
+                "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+              },
+              "fullWeightedShoe": {
+                "count": 3709,
+                "minYM": 0.00011417057722555396,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "heuristicStanceMedianYM": 0.008042310649382472,
+                "heuristicStanceMaxYM": 0.034248558463381124
+              }
+            },
+            "right": {
+              "sole": {
+                "minYM": 0.0001443,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.002785,
+                "heuristicStanceMaxYM": 0.0219234,
+                "heuristicStanceSecondsAbove15mm": 0.44999999999999996
+              },
+              "heel": {
+                "minYM": 0.0028422,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0165023,
+                "heuristicStanceMaxYM": 0.1648146,
+                "heuristicStanceSecondsAbove15mm": 2.7666666666666617
+              },
+              "toe": {
+                "minYM": 0.0007899,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0028182,
+                "heuristicStanceMaxYM": 0.0456441,
+                "heuristicStanceSecondsAbove15mm": 0.7500000000000007
+              },
+              "heuristicStanceCentroidDrift": {
+                "maxSegmentDriftM": 0.028602481627336328,
+                "medianHorizontalSpeedMps": 0.066181233181872,
+                "sampleCount": 257,
+                "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+              },
+              "fullWeightedShoe": {
+                "count": 2601,
+                "minYM": 0.0001329981037435413,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "heuristicStanceMedianYM": 0.002385843877717335,
+                "heuristicStanceMaxYM": 0.020092243235187823
+              }
+            }
+          },
+          "afterC": {
+            "left": {
+              "sole": {
+                "minYM": -0.0,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0078599,
+                "heuristicStanceMaxYM": 0.0170157,
+                "heuristicStanceSecondsAbove15mm": 0.2833333333333333
+              },
+              "heel": {
+                "minYM": 0.0114843,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0212625,
+                "heuristicStanceMaxYM": 0.1466904,
+                "heuristicStanceSecondsAbove15mm": 3.099999999999994
+              },
+              "toe": {
+                "minYM": -0.0,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0082871,
+                "heuristicStanceMaxYM": 0.0531914,
+                "heuristicStanceSecondsAbove15mm": 0.5666666666666668
+              },
+              "heuristicStanceCentroidDrift": {
+                "maxSegmentDriftM": 0.026020624482462493,
+                "medianHorizontalSpeedMps": 0.04468964624530512,
+                "sampleCount": 269,
+                "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+              },
+              "fullWeightedShoe": {
+                "count": 3709,
+                "minYM": -2.7647155398380363e-17,
+                "maxPenetrationM": 2.7647155398380363e-17,
+                "secondsBelowMinus2mm": 0,
+                "heuristicStanceMedianYM": 0.007779507567831037,
+                "heuristicStanceMaxYM": 0.017015668717802024
+              }
+            },
+            "right": {
+              "sole": {
+                "minYM": -0.0,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0025507,
+                "heuristicStanceMaxYM": 0.0103443,
+                "heuristicStanceSecondsAbove15mm": 0
+              },
+              "heel": {
+                "minYM": 0.0031931,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0164104,
+                "heuristicStanceMaxYM": 0.1532341,
+                "heuristicStanceSecondsAbove15mm": 2.6833333333333287
+              },
+              "toe": {
+                "minYM": -0.0,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0025507,
+                "heuristicStanceMaxYM": 0.04243,
+                "heuristicStanceSecondsAbove15mm": 0.35
+              },
+              "heuristicStanceCentroidDrift": {
+                "maxSegmentDriftM": 0.028563914558943512,
+                "medianHorizontalSpeedMps": 0.06622132579318157,
+                "sampleCount": 257,
+                "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+              },
+              "fullWeightedShoe": {
+                "count": 2601,
+                "minYM": -5.551115123125783e-17,
+                "maxPenetrationM": 5.551115123125783e-17,
+                "secondsBelowMinus2mm": 0,
+                "heuristicStanceMedianYM": 0.0018776527486509332,
+                "heuristicStanceMaxYM": 0.008513182994907331
+              }
+            }
+          }
+        },
+        "validation": {
+          "rootSpeedMinMps": 0.899999999999977,
+          "rootSpeedMaxMps": 0.9000000000000835,
+          "rootSpeedMaxErrorMps": 8.348877145181177e-14,
+          "distinctResetCounts": [
+            7
+          ],
+          "continuousAcrossClipWrap": true
+        },
+        "CControl": {
+          "method": "Same current model + same derived Walk + one world-vertical root translation; explicit control, not a ready library",
+          "parameters": {
+            "capMetres": 0.02,
+            "releaseTauSeconds": 0.08
+          },
+          "maxRequestedLiftM": 0.011219699246657514,
+          "maxAppliedLiftM": 0.011219699246657514,
+          "capExceededFrames": 0,
+          "targetGeometry": "ALL weighted Foot/Toe vertices, not fixed64",
+          "maxFullWeightedShoePenetrationM": 5.551115123125783e-17,
+          "maxXZChangeM": 0,
+          "maxYTranslationErrorM": 9.686451098248885e-08,
+          "maxBoneLocalTransformDelta": 0
+        },
+        "imageSelection": {
+          "criterion": "Maximum absolute full-weighted-shoe minimum Y in B among feet labelled plant by the upstream phase heuristic. This ranks contact clearance for illustration, not overall animation quality; phase is not ground truth.",
+          "best": {
+            "frame": 36,
+            "time": 0.6000000000000002,
+            "score": 0.00011417057722555396,
+            "heuristicStanceSides": [
+              "left"
+            ]
+          },
+          "worst": {
+            "frame": 81,
+            "time": 1.35,
+            "score": 0.034248558463381124,
+            "heuristicStanceSides": [
+              "left",
+              "right"
+            ]
+          }
+        },
+        "footIKRuntime": {
+          "dynamicFrames": 480,
+          "dynamicSeconds": 7.999999999999977,
+          "staticPreviews": 0,
+          "maxBoneLengthChangeM": 5.641330331512817e-05,
+          "maxAnkleCorrectionM": 0.02776560904939721,
+          "sides": {
+            "left": {
+              "heuristicStanceSamples": 269,
+              "beforeMaxProxyPenetrationM": 0.02687449936182304,
+              "afterMaxProxyPenetrationM": 0.0004110922411450363,
+              "beforeProxyPenetrationSeconds": 2.249999999999997,
+              "afterProxyPenetrationSeconds": 0,
+              "beforeMaxHeuristicStanceDriftM": 0.13563398979027214,
+              "afterMaxHeuristicStanceDriftM": 0.13501759807863603
+            },
+            "right": {
+              "heuristicStanceSamples": 257,
+              "beforeMaxProxyPenetrationM": 0.02778042245396231,
+              "afterMaxProxyPenetrationM": 0.0009118958917088416,
+              "beforeProxyPenetrationSeconds": 2.583333333333329,
+              "afterProxyPenetrationSeconds": 0,
+              "beforeMaxHeuristicStanceDriftM": 0.1257649601099787,
+              "afterMaxHeuristicStanceDriftM": 0.12576470828981537
+            }
+          }
+        },
+        "errors": [],
+        "labErrors": []
+      },
+      "seamCheck": {
+        "actor": "emma",
+        "clip": "Contact · Walk",
+        "durationSeconds": 1.6216101927710571,
+        "scope": "A derived clip after linear Hips XZ removal; isolated cloned rig; LoopOnce exact t=0 and t=duration; comparison holder translation omitted equally. Endpoint C0 pose only, not velocity or perceptual continuity.",
+        "boneCount": 80,
+        "maxWorldPositionDeltaM": 0.00647441934237448,
+        "maxWorldRotationDeltaDegrees": 1.3750272782090378,
+        "maxWorldScaleDelta": 7.05943338216164e-05
+      },
+      "seamFile": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-motion-data-20261122\\evidence\\contacts\\emma-seam-check.json"
+    },
+    "ethan": {
+      "file": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-motion-data-20261122\\evidence\\contacts\\ethan-contact-trial.json",
+      "metadata": {
+        "actor": "ethan",
+        "units": "metres",
+        "sourceNativeAsset": "./assets/ethan-native-motions.glb",
+        "geometrySource": "../assets/models/visitors/walking-man.glb",
+        "geometrySameForAandB": true,
+        "A": "Same current model + derived Walk; no external IK",
+        "B": "Same current model + same derived Walk + pinned FootIK only",
+        "C": "Same current model + same derived Walk + one world-vertical root translation; explicit control, not a ready library",
+        "rootLiftControl": {
+          "capMetres": 0.02,
+          "releaseTauSeconds": 0.08,
+          "target": "max(0,-minimum of ALL exact skinned weighted Foot/Toe vertices), no constant extra offset",
+          "update": "Immediate rise; fall: target+(previous-target)*exp(-physicalDelta/tau); report cap exceed as failure",
+          "preserves": "All joint local transforms and all XZ vertex positions; does not lock feet"
+        },
+        "frozenV42": "Separate reference, not executed by this bench",
+        "motion": {
+          "sourceClip": "UPF · Walk",
+          "sourceDurationSeconds": 1.2000000476837158,
+          "sourceTrackCount": 63,
+          "hipsTrack": "mixamorigHips.position",
+          "hipsStartLocal": [
+            0.05771388113498688,
+            0.916766881942749,
+            -1.2419692277908325
+          ],
+          "hipsEndLocal": [
+            2.2131710526729353e-12,
+            0.916766881942749,
+            -2.817308886182701e-10
+          ],
+          "extractedDisplacementLocal": [
+            -0.0577138811327737,
+            0,
+            1.2419692275091017
+          ],
+          "extractedDisplacementWorldM": [
+            -0.0577138811327737,
+            0,
+            1.2419692275091017
+          ],
+          "strideLengthM": 1.2433094764196737,
+          "sourceAverageSpeedMps": 1.0360911891791633,
+          "requestedSpeedMps": 0.84,
+          "derivedClip": "Contact · Walk",
+          "derivedDurationSeconds": 1.4801303290710401,
+          "trackTimeMultiplier": 1.2334418918799563,
+          "equivalentPlaybackTimeScale": 0.8107394491651693,
+          "maxHipsReconstructionErrorLocal": 2.9767106113354203e-08,
+          "maxOtherTrackRetimingError": 1.430511474609375e-05,
+          "hipsResidualStart": [
+            0,
+            0.916766881942749,
+            0
+          ],
+          "hipsResidualEnd": [
+            -3.0357660829594124e-18,
+            0.916766881942749,
+            -2.7755575615628914e-17
+          ],
+          "preserved": [
+            "Y channel",
+            "residual XZ sway",
+            "all other channel values; cubic tangents rescaled for changed time units"
+          ],
+          "changed": [
+            "Hips XZ constant and linear cycle displacement removed",
+            "all track times retimed"
+          ],
+          "sourceClipMutated": false
+        },
+        "phaseHeuristic": "Pinned FootIK sampled-animation phase, same mask applied to A and B; NOT contact ground truth",
+        "measurement": "Contact minima: ALL vertices with summed weight >=.25 on Foot and descendants, cached indices and live skinning every pose. Comparable centroid drift and heel/toe groups: original fixed 64-point samples.",
+        "fullWeightedShoeCounts": {
+          "left": 4617,
+          "right": 3718
+        },
+        "profiles": {
+          "ethan-raw": {
+            "left": {
+              "heelKeys": [
+                "mesh_0:32551",
+                "mesh_0:32552",
+                "mesh_0:32542",
+                "mesh_0:32566",
+                "mesh_0:32630",
+                "mesh_0:32574",
+                "mesh_0:32649",
+                "mesh_0:32575",
+                "mesh_0:32617",
+                "mesh_0:32539",
+                "mesh_0:32614",
+                "mesh_0:32593",
+                "mesh_0:32636",
+                "mesh_0:32634"
+              ],
+              "toeKeys": [
+                "mesh_0:40017",
+                "mesh_0:40006",
+                "mesh_0:39975",
+                "mesh_0:40022",
+                "mesh_0:41057",
+                "mesh_0:41074",
+                "mesh_0:41079",
+                "mesh_0:41316",
+                "mesh_0:39612",
+                "mesh_0:39968",
+                "mesh_0:41230",
+                "mesh_0:41310",
+                "mesh_0:41218",
+                "mesh_0:39996",
+                "mesh_0:39995",
+                "mesh_0:41226"
+              ],
+              "keys": [
+                "mesh_0:40062",
+                "mesh_0:40034",
+                "mesh_0:40072",
+                "mesh_0:40110",
+                "mesh_0:40017",
+                "mesh_0:40114",
+                "mesh_0:40232",
+                "mesh_0:32551",
+                "mesh_0:32552",
+                "mesh_0:40208",
+                "mesh_0:32794",
+                "mesh_0:32542",
+                "mesh_0:40196",
+                "mesh_0:40038",
+                "mesh_0:41111",
+                "mesh_0:40251",
+                "mesh_0:40312",
+                "mesh_0:40257",
+                "mesh_0:40167",
+                "mesh_0:32772",
+                "mesh_0:32566",
+                "mesh_0:40047",
+                "mesh_0:40006",
+                "mesh_0:39634",
+                "mesh_0:40221",
+                "mesh_0:32501",
+                "mesh_0:40040",
+                "mesh_0:40108",
+                "mesh_0:32630",
+                "mesh_0:40272",
+                "mesh_0:40206",
+                "mesh_0:40124",
+                "mesh_0:40261",
+                "mesh_0:32496",
+                "mesh_0:40316",
+                "mesh_0:39646",
+                "mesh_0:32574",
+                "mesh_0:32649",
+                "mesh_0:32575",
+                "mesh_0:39975",
+                "mesh_0:40321",
+                "mesh_0:40022",
+                "mesh_0:41057",
+                "mesh_0:41074",
+                "mesh_0:41079",
+                "mesh_0:39652",
+                "mesh_0:32617",
+                "mesh_0:41316",
+                "mesh_0:39612",
+                "mesh_0:32539",
+                "mesh_0:32614",
+                "mesh_0:39968",
+                "mesh_0:40200",
+                "mesh_0:41230",
+                "mesh_0:40304",
+                "mesh_0:40280",
+                "mesh_0:32593",
+                "mesh_0:32636",
+                "mesh_0:41310",
+                "mesh_0:41218",
+                "mesh_0:32634",
+                "mesh_0:39996",
+                "mesh_0:39995",
+                "mesh_0:41226"
+              ],
+              "soleHalfWidth": 0.11098436863826186,
+              "soleHeelExtend": 0.03592538794718788,
+              "soleToeExtend": 0.008465302219400256,
+              "soleSkinThickness": 0.002385645002647722,
+              "restSoleMinY": 0.0001091,
+              "restFootWorld": [
+                -2.030212514457684,
+                0.10407474758831309,
+                -0.014884408017280762
+              ],
+              "restToeWorld": [
+                -1.9952241696524617,
+                0.002494745002647722,
+                0.12212564077674269
+              ],
+              "source": "Fixed skinned-sole samples selected by motion-lab in the original rest pose; 20% forward-extreme bands define heel/toe."
+            },
+            "right": {
+              "heelKeys": [
+                "mesh_0:7462",
+                "mesh_0:7466",
+                "mesh_0:7536",
+                "mesh_0:7436"
+              ],
+              "toeKeys": [
+                "mesh_0:4825",
+                "mesh_0:5456",
+                "mesh_0:5459",
+                "mesh_0:5454",
+                "mesh_0:4549",
+                "mesh_0:4698",
+                "mesh_0:4693",
+                "mesh_0:4702",
+                "mesh_0:4574",
+                "mesh_0:4557",
+                "mesh_0:4710",
+                "mesh_0:4703"
+              ],
+              "keys": [
+                "mesh_0:4784",
+                "mesh_0:4792",
+                "mesh_0:4825",
+                "mesh_0:5456",
+                "mesh_0:4791",
+                "mesh_0:4678",
+                "mesh_0:5459",
+                "mesh_0:5454",
+                "mesh_0:4865",
+                "mesh_0:4778",
+                "mesh_0:4782",
+                "mesh_0:4549",
+                "mesh_0:4657",
+                "mesh_0:6796",
+                "mesh_0:4795",
+                "mesh_0:4698",
+                "mesh_0:7372",
+                "mesh_0:8596",
+                "mesh_0:4829",
+                "mesh_0:5058",
+                "mesh_0:7585",
+                "mesh_0:4932",
+                "mesh_0:4899",
+                "mesh_0:4922",
+                "mesh_0:4918",
+                "mesh_0:4769",
+                "mesh_0:4917",
+                "mesh_0:4693",
+                "mesh_0:6791",
+                "mesh_0:4649",
+                "mesh_0:4988",
+                "mesh_0:4663",
+                "mesh_0:4667",
+                "mesh_0:7462",
+                "mesh_0:4644",
+                "mesh_0:4896",
+                "mesh_0:4645",
+                "mesh_0:8602",
+                "mesh_0:4890",
+                "mesh_0:8138",
+                "mesh_0:4900",
+                "mesh_0:7580",
+                "mesh_0:6844",
+                "mesh_0:6802",
+                "mesh_0:5034",
+                "mesh_0:4702",
+                "mesh_0:4574",
+                "mesh_0:7466",
+                "mesh_0:5050",
+                "mesh_0:7536",
+                "mesh_0:7571",
+                "mesh_0:7436",
+                "mesh_0:5052",
+                "mesh_0:4557",
+                "mesh_0:5048",
+                "mesh_0:4883",
+                "mesh_0:8562",
+                "mesh_0:4633",
+                "mesh_0:4887",
+                "mesh_0:4710",
+                "mesh_0:8561",
+                "mesh_0:7544",
+                "mesh_0:6847",
+                "mesh_0:4703"
+              ],
+              "soleHalfWidth": 0.111343263980435,
+              "soleHeelExtend": 0.06872030570453587,
+              "soleToeExtend": 0,
+              "soleSkinThickness": 0.0024948725343378222,
+              "restSoleMinY": 1e-07,
+              "restFootWorld": [
+                -2.2697883591106107,
+                0.10407479713725565,
+                -0.014884152725420152
+              ],
+              "restToeWorld": [
+                -2.304776276678403,
+                0.002494972534337822,
+                0.12212606914510771
+              ],
+              "source": "Fixed skinned-sole samples selected by motion-lab in the original rest pose; 20% forward-extreme bands define heel/toe."
+            }
+          },
+          "ethan-ik": {
+            "left": {
+              "heelKeys": [
+                "mesh_0:32551",
+                "mesh_0:32552",
+                "mesh_0:32542",
+                "mesh_0:32566",
+                "mesh_0:32630",
+                "mesh_0:32574",
+                "mesh_0:32649",
+                "mesh_0:32575",
+                "mesh_0:32617",
+                "mesh_0:32539",
+                "mesh_0:32614",
+                "mesh_0:32593",
+                "mesh_0:32636",
+                "mesh_0:32634"
+              ],
+              "toeKeys": [
+                "mesh_0:40017",
+                "mesh_0:40006",
+                "mesh_0:39975",
+                "mesh_0:40022",
+                "mesh_0:41057",
+                "mesh_0:41074",
+                "mesh_0:41079",
+                "mesh_0:41316",
+                "mesh_0:39612",
+                "mesh_0:39968",
+                "mesh_0:41230",
+                "mesh_0:41310",
+                "mesh_0:41218",
+                "mesh_0:39996",
+                "mesh_0:39995",
+                "mesh_0:41226"
+              ],
+              "keys": [
+                "mesh_0:40062",
+                "mesh_0:40034",
+                "mesh_0:40072",
+                "mesh_0:40110",
+                "mesh_0:40017",
+                "mesh_0:40114",
+                "mesh_0:40232",
+                "mesh_0:32551",
+                "mesh_0:32552",
+                "mesh_0:40208",
+                "mesh_0:32794",
+                "mesh_0:32542",
+                "mesh_0:40196",
+                "mesh_0:40038",
+                "mesh_0:41111",
+                "mesh_0:40251",
+                "mesh_0:40312",
+                "mesh_0:40257",
+                "mesh_0:40167",
+                "mesh_0:32772",
+                "mesh_0:32566",
+                "mesh_0:40047",
+                "mesh_0:40006",
+                "mesh_0:39634",
+                "mesh_0:40221",
+                "mesh_0:32501",
+                "mesh_0:40040",
+                "mesh_0:40108",
+                "mesh_0:32630",
+                "mesh_0:40272",
+                "mesh_0:40206",
+                "mesh_0:40124",
+                "mesh_0:40261",
+                "mesh_0:32496",
+                "mesh_0:40316",
+                "mesh_0:39646",
+                "mesh_0:32574",
+                "mesh_0:32649",
+                "mesh_0:32575",
+                "mesh_0:39975",
+                "mesh_0:40321",
+                "mesh_0:40022",
+                "mesh_0:41057",
+                "mesh_0:41074",
+                "mesh_0:41079",
+                "mesh_0:39652",
+                "mesh_0:32617",
+                "mesh_0:41316",
+                "mesh_0:39612",
+                "mesh_0:32539",
+                "mesh_0:32614",
+                "mesh_0:39968",
+                "mesh_0:40200",
+                "mesh_0:41230",
+                "mesh_0:40304",
+                "mesh_0:40280",
+                "mesh_0:32593",
+                "mesh_0:32636",
+                "mesh_0:41310",
+                "mesh_0:41218",
+                "mesh_0:32634",
+                "mesh_0:39996",
+                "mesh_0:39995",
+                "mesh_0:41226"
+              ],
+              "soleHalfWidth": 0.11098436863826183,
+              "soleHeelExtend": 0.03592538794718788,
+              "soleToeExtend": 0.008465302219400228,
+              "soleSkinThickness": 0.002385645002647722,
+              "restSoleMinY": 0.0001091,
+              "restFootWorld": [
+                0.11978748554231591,
+                0.10407474758831309,
+                -0.014884408017280762
+              ],
+              "restToeWorld": [
+                0.15477583034753833,
+                0.002494745002647722,
+                0.12212564077674269
+              ],
+              "source": "Fixed skinned-sole samples selected by motion-lab in the original rest pose; 20% forward-extreme bands define heel/toe."
+            },
+            "right": {
+              "heelKeys": [
+                "mesh_0:7462",
+                "mesh_0:7466",
+                "mesh_0:7536",
+                "mesh_0:7436"
+              ],
+              "toeKeys": [
+                "mesh_0:4825",
+                "mesh_0:5456",
+                "mesh_0:5459",
+                "mesh_0:5454",
+                "mesh_0:4549",
+                "mesh_0:4698",
+                "mesh_0:4693",
+                "mesh_0:4702",
+                "mesh_0:4574",
+                "mesh_0:4557",
+                "mesh_0:4710",
+                "mesh_0:4703"
+              ],
+              "keys": [
+                "mesh_0:4784",
+                "mesh_0:4792",
+                "mesh_0:4825",
+                "mesh_0:5456",
+                "mesh_0:4791",
+                "mesh_0:4678",
+                "mesh_0:5459",
+                "mesh_0:5454",
+                "mesh_0:4865",
+                "mesh_0:4778",
+                "mesh_0:4782",
+                "mesh_0:4549",
+                "mesh_0:4657",
+                "mesh_0:6796",
+                "mesh_0:4795",
+                "mesh_0:4698",
+                "mesh_0:7372",
+                "mesh_0:8596",
+                "mesh_0:4829",
+                "mesh_0:5058",
+                "mesh_0:7585",
+                "mesh_0:4932",
+                "mesh_0:4899",
+                "mesh_0:4922",
+                "mesh_0:4918",
+                "mesh_0:4769",
+                "mesh_0:4917",
+                "mesh_0:4693",
+                "mesh_0:6791",
+                "mesh_0:4649",
+                "mesh_0:4988",
+                "mesh_0:4663",
+                "mesh_0:4667",
+                "mesh_0:7462",
+                "mesh_0:4644",
+                "mesh_0:4896",
+                "mesh_0:4645",
+                "mesh_0:8602",
+                "mesh_0:4890",
+                "mesh_0:8138",
+                "mesh_0:4900",
+                "mesh_0:7580",
+                "mesh_0:6844",
+                "mesh_0:6802",
+                "mesh_0:5034",
+                "mesh_0:4702",
+                "mesh_0:4574",
+                "mesh_0:7466",
+                "mesh_0:5050",
+                "mesh_0:7536",
+                "mesh_0:7571",
+                "mesh_0:7436",
+                "mesh_0:5052",
+                "mesh_0:4557",
+                "mesh_0:5048",
+                "mesh_0:4883",
+                "mesh_0:8562",
+                "mesh_0:4633",
+                "mesh_0:4887",
+                "mesh_0:4710",
+                "mesh_0:8561",
+                "mesh_0:7544",
+                "mesh_0:6847",
+                "mesh_0:4703"
+              ],
+              "soleHalfWidth": 0.11134326398043483,
+              "soleHeelExtend": 0.06872030570453588,
+              "soleToeExtend": 0,
+              "soleSkinThickness": 0.0024948725343378222,
+              "restSoleMinY": 1e-07,
+              "restFootWorld": [
+                -0.119788359110611,
+                0.10407479713725565,
+                -0.014884152725420152
+              ],
+              "restToeWorld": [
+                -0.15477627667840324,
+                0.002494972534337822,
+                0.12212606914510771
+              ],
+              "source": "Fixed skinned-sole samples selected by motion-lab in the original rest pose; 20% forward-extreme bands define heel/toe."
+            }
+          },
+          "ethan-lift": {
+            "left": {
+              "heelKeys": [
+                "mesh_0:32551",
+                "mesh_0:32552",
+                "mesh_0:32542",
+                "mesh_0:32566",
+                "mesh_0:32630",
+                "mesh_0:32574",
+                "mesh_0:32649",
+                "mesh_0:32575",
+                "mesh_0:32617",
+                "mesh_0:32539",
+                "mesh_0:32614",
+                "mesh_0:32593",
+                "mesh_0:32636",
+                "mesh_0:32634"
+              ],
+              "toeKeys": [
+                "mesh_0:40017",
+                "mesh_0:40006",
+                "mesh_0:39975",
+                "mesh_0:40022",
+                "mesh_0:41057",
+                "mesh_0:41074",
+                "mesh_0:41079",
+                "mesh_0:41316",
+                "mesh_0:39612",
+                "mesh_0:39968",
+                "mesh_0:41230",
+                "mesh_0:41310",
+                "mesh_0:41218",
+                "mesh_0:39996",
+                "mesh_0:39995",
+                "mesh_0:41226"
+              ],
+              "keys": [
+                "mesh_0:40062",
+                "mesh_0:40034",
+                "mesh_0:40072",
+                "mesh_0:40110",
+                "mesh_0:40017",
+                "mesh_0:40114",
+                "mesh_0:40232",
+                "mesh_0:32551",
+                "mesh_0:32552",
+                "mesh_0:40208",
+                "mesh_0:32794",
+                "mesh_0:32542",
+                "mesh_0:40196",
+                "mesh_0:40038",
+                "mesh_0:41111",
+                "mesh_0:40251",
+                "mesh_0:40312",
+                "mesh_0:40257",
+                "mesh_0:40167",
+                "mesh_0:32772",
+                "mesh_0:32566",
+                "mesh_0:40047",
+                "mesh_0:40006",
+                "mesh_0:39634",
+                "mesh_0:40221",
+                "mesh_0:32501",
+                "mesh_0:40040",
+                "mesh_0:40108",
+                "mesh_0:32630",
+                "mesh_0:40272",
+                "mesh_0:40206",
+                "mesh_0:40124",
+                "mesh_0:40261",
+                "mesh_0:32496",
+                "mesh_0:40316",
+                "mesh_0:39646",
+                "mesh_0:32574",
+                "mesh_0:32649",
+                "mesh_0:32575",
+                "mesh_0:39975",
+                "mesh_0:40321",
+                "mesh_0:40022",
+                "mesh_0:41057",
+                "mesh_0:41074",
+                "mesh_0:41079",
+                "mesh_0:39652",
+                "mesh_0:32617",
+                "mesh_0:41316",
+                "mesh_0:39612",
+                "mesh_0:32539",
+                "mesh_0:32614",
+                "mesh_0:39968",
+                "mesh_0:40200",
+                "mesh_0:41230",
+                "mesh_0:40304",
+                "mesh_0:40280",
+                "mesh_0:32593",
+                "mesh_0:32636",
+                "mesh_0:41310",
+                "mesh_0:41218",
+                "mesh_0:32634",
+                "mesh_0:39996",
+                "mesh_0:39995",
+                "mesh_0:41226"
+              ],
+              "soleHalfWidth": 0.11098436863826186,
+              "soleHeelExtend": 0.03592538794718788,
+              "soleToeExtend": 0.008465302219400311,
+              "soleSkinThickness": 0.002385645002647722,
+              "restSoleMinY": 0.0001091,
+              "restFootWorld": [
+                2.2697874855423157,
+                0.10407474758831309,
+                -0.014884408017280762
+              ],
+              "restToeWorld": [
+                2.304775830347538,
+                0.002494745002647722,
+                0.12212564077674269
+              ],
+              "source": "Fixed skinned-sole samples selected by motion-lab in the original rest pose; 20% forward-extreme bands define heel/toe."
+            },
+            "right": {
+              "heelKeys": [
+                "mesh_0:7462",
+                "mesh_0:7466",
+                "mesh_0:7536",
+                "mesh_0:7436"
+              ],
+              "toeKeys": [
+                "mesh_0:4825",
+                "mesh_0:5456",
+                "mesh_0:5459",
+                "mesh_0:5454",
+                "mesh_0:4549",
+                "mesh_0:4698",
+                "mesh_0:4693",
+                "mesh_0:4702",
+                "mesh_0:4574",
+                "mesh_0:4557",
+                "mesh_0:4710",
+                "mesh_0:4703"
+              ],
+              "keys": [
+                "mesh_0:4784",
+                "mesh_0:4792",
+                "mesh_0:4825",
+                "mesh_0:5456",
+                "mesh_0:4791",
+                "mesh_0:4678",
+                "mesh_0:5459",
+                "mesh_0:5454",
+                "mesh_0:4865",
+                "mesh_0:4778",
+                "mesh_0:4782",
+                "mesh_0:4549",
+                "mesh_0:4657",
+                "mesh_0:6796",
+                "mesh_0:4795",
+                "mesh_0:4698",
+                "mesh_0:7372",
+                "mesh_0:8596",
+                "mesh_0:4829",
+                "mesh_0:5058",
+                "mesh_0:7585",
+                "mesh_0:4932",
+                "mesh_0:4899",
+                "mesh_0:4922",
+                "mesh_0:4918",
+                "mesh_0:4769",
+                "mesh_0:4917",
+                "mesh_0:4693",
+                "mesh_0:6791",
+                "mesh_0:4649",
+                "mesh_0:4988",
+                "mesh_0:4663",
+                "mesh_0:4667",
+                "mesh_0:7462",
+                "mesh_0:4644",
+                "mesh_0:4896",
+                "mesh_0:4645",
+                "mesh_0:8602",
+                "mesh_0:4890",
+                "mesh_0:8138",
+                "mesh_0:4900",
+                "mesh_0:7580",
+                "mesh_0:6844",
+                "mesh_0:6802",
+                "mesh_0:5034",
+                "mesh_0:4702",
+                "mesh_0:4574",
+                "mesh_0:7466",
+                "mesh_0:5050",
+                "mesh_0:7536",
+                "mesh_0:7571",
+                "mesh_0:7436",
+                "mesh_0:5052",
+                "mesh_0:4557",
+                "mesh_0:5048",
+                "mesh_0:4883",
+                "mesh_0:8562",
+                "mesh_0:4633",
+                "mesh_0:4887",
+                "mesh_0:4710",
+                "mesh_0:8561",
+                "mesh_0:7544",
+                "mesh_0:6847",
+                "mesh_0:4703"
+              ],
+              "soleHalfWidth": 0.11134326398043506,
+              "soleHeelExtend": 0.06872030570453581,
+              "soleToeExtend": 0,
+              "soleSkinThickness": 0.0024948725343378222,
+              "restSoleMinY": 1e-07,
+              "restFootWorld": [
+                2.030211640889389,
+                0.10407479713725565,
+                -0.014884152725420152
+              ],
+              "restToeWorld": [
+                1.9952237233215968,
+                0.002494972534337822,
+                0.12212606914510771
+              ],
+              "source": "Fixed skinned-sole samples selected by motion-lab in the original rest pose; 20% forward-extreme bands define heel/toe."
+            }
+          }
+        },
+        "soleCalibrationOptionsMetres": {
+          "soleHalfWidth": 0.11134326398043483,
+          "soleToeExtend": 0.008465302219400228,
+          "soleHeelExtend": 0.06872030570453588,
+          "soleSkinThickness": 0.002440258768492772
+        },
+        "soleCalibrationPolicy": "Before the trial, take max(left,right) width/toe/heel and mean toe-to-bottom thickness. No parameter sweep or post-result tuning.",
+        "footIK": {
+          "repository": "https://github.com/hh-hang/three-player-controller",
+          "commit": "29403c7dcc48c43153c2d6126571e685ca012617",
+          "packageVersion": "0.6.3",
+          "license": "MIT",
+          "bundleSHA256": "765d7ecb8038debc1bedef1935a1d376b4ff5f5289ee47e01673817764469eae",
+          "testedThreeRevision": "169"
+        },
+        "initialization": "Reset at t=0; all 480 measured dynamic frames include startup; no warmup discarded."
+      },
+      "summary": {
+        "actor": "ethan",
+        "frames": 480,
+        "dynamicSeconds": 7.999999999999977,
+        "preIKParityMaxM": 2.6645352591003757e-15,
+        "sameSourceGeometryAndClip": true,
+        "results": {
+          "raw": {
+            "left": {
+              "sole": {
+                "minYM": -0.0050236,
+                "maxPenetrationM": 0.0050236,
+                "secondsBelowMinus2mm": 0.44999999999999996,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0027528,
+                "heuristicStanceMaxYM": 0.0297409,
+                "heuristicStanceSecondsAbove15mm": 0.15
+              },
+              "heel": {
+                "minYM": 0.0020261,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0105423,
+                "heuristicStanceMaxYM": 0.1543494,
+                "heuristicStanceSecondsAbove15mm": 1.566666666666666
+              },
+              "toe": {
+                "minYM": -0.0050236,
+                "maxPenetrationM": 0.0050236,
+                "secondsBelowMinus2mm": 0.44999999999999996,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0057299,
+                "heuristicStanceMaxYM": 0.0297409,
+                "heuristicStanceSecondsAbove15mm": 0.8000000000000008
+              },
+              "heuristicStanceCentroidDrift": {
+                "maxSegmentDriftM": 0.0437757841108761,
+                "medianHorizontalSpeedMps": 0.030141296236307336,
+                "sampleCount": 251,
+                "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+              },
+              "fullWeightedShoe": {
+                "count": 4617,
+                "minYM": -0.005184392802291847,
+                "maxPenetrationM": 0.005184392802291847,
+                "secondsBelowMinus2mm": 0.4833333333333333,
+                "heuristicStanceMedianYM": 0.001925801301371089,
+                "heuristicStanceMaxYM": 0.020655447707848735
+              }
+            },
+            "right": {
+              "sole": {
+                "minYM": -0.0131711,
+                "maxPenetrationM": 0.0131711,
+                "secondsBelowMinus2mm": 1.2833333333333337,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0006322,
+                "heuristicStanceMaxYM": 0.0279652,
+                "heuristicStanceSecondsAbove15mm": 0.19999999999999998
+              },
+              "heel": {
+                "minYM": 0.0008022,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0134451,
+                "heuristicStanceMaxYM": 0.1681776,
+                "heuristicStanceSecondsAbove15mm": 1.8999999999999981
+              },
+              "toe": {
+                "minYM": -0.0131711,
+                "maxPenetrationM": 0.0131711,
+                "secondsBelowMinus2mm": 1.2833333333333337,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0012822,
+                "heuristicStanceMaxYM": 0.0279652,
+                "heuristicStanceSecondsAbove15mm": 0.4833333333333333
+              },
+              "heuristicStanceCentroidDrift": {
+                "maxSegmentDriftM": 0.02918889053955062,
+                "medianHorizontalSpeedMps": 0.012001106541817916,
+                "sampleCount": 246,
+                "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+              },
+              "fullWeightedShoe": {
+                "count": 3718,
+                "minYM": -0.01841000569144913,
+                "maxPenetrationM": 0.01841000569144913,
+                "secondsBelowMinus2mm": 1.5999999999999992,
+                "heuristicStanceMedianYM": 0.00041040287895844604,
+                "heuristicStanceMaxYM": 0.015690800507066924
+              }
+            }
+          },
+          "after": {
+            "left": {
+              "sole": {
+                "minYM": 0.0023844,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0084249,
+                "heuristicStanceMaxYM": 0.0178432,
+                "heuristicStanceSecondsAbove15mm": 0.8166666666666675
+              },
+              "heel": {
+                "minYM": 0.005758,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0093322,
+                "heuristicStanceMaxYM": 0.1366587,
+                "heuristicStanceSecondsAbove15mm": 1.6999999999999988
+              },
+              "toe": {
+                "minYM": 0.0050341,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.013372,
+                "heuristicStanceMaxYM": 0.0204407,
+                "heuristicStanceSecondsAbove15mm": 1.4333333333333331
+              },
+              "heuristicStanceCentroidDrift": {
+                "maxSegmentDriftM": 0.0490015201901049,
+                "medianHorizontalSpeedMps": 0.03791994495393507,
+                "sampleCount": 251,
+                "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+              },
+              "fullWeightedShoe": {
+                "count": 4617,
+                "minYM": 0.0023820840707821944,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "heuristicStanceMedianYM": 0.007522186060995364,
+                "heuristicStanceMaxYM": 0.017780472673222535
+              }
+            },
+            "right": {
+              "sole": {
+                "minYM": 0.0036255,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0086471,
+                "heuristicStanceMaxYM": 0.0194263,
+                "heuristicStanceSecondsAbove15mm": 1.0000000000000013
+              },
+              "heel": {
+                "minYM": 0.0063313,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0144956,
+                "heuristicStanceMaxYM": 0.1596374,
+                "heuristicStanceSecondsAbove15mm": 1.949999999999998
+              },
+              "toe": {
+                "minYM": 0.0042785,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0104459,
+                "heuristicStanceMaxYM": 0.0194263,
+                "heuristicStanceSecondsAbove15mm": 1.0000000000000013
+              },
+              "heuristicStanceCentroidDrift": {
+                "maxSegmentDriftM": 0.044743117330380805,
+                "medianHorizontalSpeedMps": 0.04971665240686085,
+                "sampleCount": 246,
+                "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+              },
+              "fullWeightedShoe": {
+                "count": 3718,
+                "minYM": 0.0036254727006247074,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "heuristicStanceMedianYM": 0.008007523217163817,
+                "heuristicStanceMaxYM": 0.013844130014685534
+              }
+            }
+          },
+          "afterC": {
+            "left": {
+              "sole": {
+                "minYM": 0.0001252,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0029269,
+                "heuristicStanceMaxYM": 0.031691,
+                "heuristicStanceSecondsAbove15mm": 0.4833333333333333
+              },
+              "heel": {
+                "minYM": 0.002036,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0124966,
+                "heuristicStanceMaxYM": 0.1562994,
+                "heuristicStanceSecondsAbove15mm": 1.8499999999999983
+              },
+              "toe": {
+                "minYM": 0.0001252,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0063762,
+                "heuristicStanceMaxYM": 0.031691,
+                "heuristicStanceSecondsAbove15mm": 1.0000000000000013
+              },
+              "heuristicStanceCentroidDrift": {
+                "maxSegmentDriftM": 0.0437757841108762,
+                "medianHorizontalSpeedMps": 0.0301412962361797,
+                "sampleCount": 251,
+                "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+              },
+              "fullWeightedShoe": {
+                "count": 4617,
+                "minYM": -5.4643789493269423e-17,
+                "maxPenetrationM": 5.4643789493269423e-17,
+                "secondsBelowMinus2mm": 0,
+                "heuristicStanceMedianYM": 0.0025405025198671355,
+                "heuristicStanceMaxYM": 0.02260548948892234
+              }
+            },
+            "right": {
+              "sole": {
+                "minYM": 0.0002611,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0033395,
+                "heuristicStanceMaxYM": 0.0361681,
+                "heuristicStanceSecondsAbove15mm": 0.5833333333333335
+              },
+              "heel": {
+                "minYM": 0.0008907,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0154977,
+                "heuristicStanceMaxYM": 0.1763805,
+                "heuristicStanceSecondsAbove15mm": 2.083333333333331
+              },
+              "toe": {
+                "minYM": 0.0002782,
+                "maxPenetrationM": 0,
+                "secondsBelowMinus2mm": 0,
+                "secondsBelowMinus15mm": 0,
+                "heuristicStanceMedianYM": 0.0041873,
+                "heuristicStanceMaxYM": 0.0361681,
+                "heuristicStanceSecondsAbove15mm": 0.7500000000000007
+              },
+              "heuristicStanceCentroidDrift": {
+                "maxSegmentDriftM": 0.029188890539550795,
+                "medianHorizontalSpeedMps": 0.012001106541769165,
+                "sampleCount": 246,
+                "note": "Fixed sampled-sole centroid during inferred stance; includes rolling-foot motion, not ground-truth contact-point slip."
+              },
+              "fullWeightedShoe": {
+                "count": 3718,
+                "minYM": -5.898059818321144e-17,
+                "maxPenetrationM": 5.898059818321144e-17,
+                "secondsBelowMinus2mm": 0,
+                "heuristicStanceMedianYM": 0.0010020829656852725,
+                "heuristicStanceMaxYM": 0.02169973959242908
+              }
+            }
+          }
+        },
+        "validation": {
+          "rootSpeedMinMps": 0.8399999999999301,
+          "rootSpeedMaxMps": 0.8400000000000368,
+          "rootSpeedMaxErrorMps": 6.983302824892235e-14,
+          "distinctResetCounts": [
+            7
+          ],
+          "continuousAcrossClipWrap": true
+        },
+        "CControl": {
+          "method": "Same current model + same derived Walk + one world-vertical root translation; explicit control, not a ready library",
+          "parameters": {
+            "capMetres": 0.02,
+            "releaseTauSeconds": 0.08
+          },
+          "maxRequestedLiftM": 0.01841000569144913,
+          "maxAppliedLiftM": 0.01841000569144913,
+          "capExceededFrames": 0,
+          "targetGeometry": "ALL weighted Foot/Toe vertices, not fixed64",
+          "maxFullWeightedShoePenetrationM": 5.898059818321144e-17,
+          "maxXZChangeM": 0,
+          "maxYTranslationErrorM": 9.814904740855501e-08,
+          "maxBoneLocalTransformDelta": 0
+        },
+        "imageSelection": {
+          "criterion": "Maximum absolute full-weighted-shoe minimum Y in B among feet labelled plant by the upstream phase heuristic. This ranks contact clearance for illustration, not overall animation quality; phase is not ground truth.",
+          "best": {
+            "frame": 277,
+            "time": 4.616666666666656,
+            "score": 0.0023820840707821944,
+            "heuristicStanceSides": [
+              "left"
+            ]
+          },
+          "worst": {
+            "frame": 291,
+            "time": 4.849999999999988,
+            "score": 0.017780472673222535,
+            "heuristicStanceSides": [
+              "left"
+            ]
+          }
+        },
+        "footIKRuntime": {
+          "dynamicFrames": 480,
+          "dynamicSeconds": 7.999999999999977,
+          "staticPreviews": 0,
+          "maxBoneLengthChangeM": 4.7730663750578106e-05,
+          "maxAnkleCorrectionM": 0.031236766447341264,
+          "sides": {
+            "left": {
+              "heuristicStanceSamples": 251,
+              "beforeMaxProxyPenetrationM": 0.022604944991933912,
+              "afterMaxProxyPenetrationM": 5.533961550364952e-05,
+              "beforeProxyPenetrationSeconds": 3.0333333333333274,
+              "afterProxyPenetrationSeconds": 0,
+              "beforeMaxHeuristicStanceDriftM": 0.16381515326961985,
+              "afterMaxHeuristicStanceDriftM": 0.16887742180128087
+            },
+            "right": {
+              "heuristicStanceSamples": 246,
+              "beforeMaxProxyPenetrationM": 0.031226101883939844,
+              "afterMaxProxyPenetrationM": 6.485111943640987e-05,
+              "beforeProxyPenetrationSeconds": 2.749999999999995,
+              "afterProxyPenetrationSeconds": 0,
+              "beforeMaxHeuristicStanceDriftM": 0.13348930486216126,
+              "afterMaxHeuristicStanceDriftM": 0.1483226277647574
+            }
+          }
+        },
+        "errors": [],
+        "labErrors": []
+      },
+      "seamCheck": {
+        "actor": "ethan",
+        "clip": "Contact · Walk",
+        "durationSeconds": 1.4801303290710401,
+        "scope": "A derived clip after linear Hips XZ removal; isolated cloned rig; LoopOnce exact t=0 and t=duration; comparison holder translation omitted equally. Endpoint C0 pose only, not velocity or perceptual continuity.",
+        "boneCount": 80,
+        "maxWorldPositionDeltaM": 0.0102633203002724,
+        "maxWorldRotationDeltaDegrees": 0.866742808842198,
+        "maxWorldScaleDelta": 9.454107564854652e-05
+      },
+      "seamFile": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-motion-data-20261122\\evidence\\contacts\\ethan-seam-check.json"
+    }
+  },
+  "screenshots": [
+    {
+      "label": "best",
+      "actor": "emma",
+      "frame": 36,
+      "time": 0.6000000000000002,
+      "score": 0.00011417057722555396,
+      "heuristicStanceSides": [
+        "left"
+      ],
+      "png": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-motion-data-20261122\\evidence\\contacts\\contact-best.png",
+      "snapshot": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-motion-data-20261122\\evidence\\contacts\\contact-best-frame.json"
+    },
+    {
+      "label": "worst",
+      "actor": "emma",
+      "frame": 81,
+      "time": 1.35,
+      "score": 0.034248558463381124,
+      "heuristicStanceSides": [
+        "left",
+        "right"
+      ],
+      "png": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-motion-data-20261122\\evidence\\contacts\\contact-worst.png",
+      "snapshot": "C:\\Users\\User\\Documents\\Codex\\2026-11-20\\10-12-36\\work\\avatar-motion-data-20261122\\evidence\\contacts\\contact-worst-frame.json"
+    }
+  ],
+  "provenance": {
+    "contact-experiment.js": {
+      "sha256": "fe04f702c2440ec088915b9af15e8f2737cd80bbb14571676607f8bd088b3727",
+      "bytes": 34126
+    },
+    "contact-manifest.json": {
+      "sha256": "8b4734486a9fb1c4c7d3b7fbac117e8cc40ef3be41dd1abed7dba4e6205b300e",
+      "bytes": 1396
+    },
+    "contact-bench.html": {
+      "sha256": "d173be9195adf78acd51ce676972f2cf689425afe8a098b379a37a28bb48c10c",
+      "bytes": 18888
+    },
+    "foot-ik-experiment.js": {
+      "sha256": "3351d409f55f0167ba6a5ff4824fb14dd3b37c3ad5b0f267ed02d93dfb178601",
+      "bytes": 26445
+    },
+    "vendor/foot-ik.mjs": {
+      "sha256": "765d7ecb8038debc1bedef1935a1d376b4ff5f5289ee47e01673817764469eae",
+      "bytes": 135956
+    },
+    "assets/emma-native-motions.glb": {
+      "sha256": "98129dd80e549fc670f507656402f3e642c42d2448a99d3229e631cccb19ad95",
+      "bytes": 1074652
+    },
+    "assets/ethan-native-motions.glb": {
+      "sha256": "67d9338afc00c2943eec61749db0f8ab24af7094adbb1c0480c4bd3882d2b3b1",
+      "bytes": 1336596
+    },
+    "../assets/models/visitors/walking-woman.glb": {
+      "sha256": "be518e47c6e418c3a3dc4cf0692bbcc324ff9b70af23c0c539376f1e6debb957",
+      "bytes": 734400
+    },
+    "../assets/models/visitors/walking-man.glb": {
+      "sha256": "710096e92e0acbfac10f9680f262514402822dfeda33f9f0dc4117bec24172d9",
+      "bytes": 804428
+    }
+  },
+  "validation": {
+    "initial": {
+      "ready": true,
+      "errors": [],
+      "lab": []
+    },
+    "finalLabErrors": [],
+    "finalContactErrors": [],
+    "indexAndMainUntouched": true,
+    "indexAndMainHashesBefore": {
+      "index.html": "25b154251d944ef83a8bd55364fcdbc19b593b2ba6b5860a5d947514fda28d70",
+      "motion-lab.js": "97795d670ba26689fbe461b5b1c9beffd163926c1dc917edeadae99b84543956"
+    },
+    "indexAndMainHashesAfter": {
+      "index.html": "25b154251d944ef83a8bd55364fcdbc19b593b2ba6b5860a5d947514fda28d70",
+      "motion-lab.js": "97795d670ba26689fbe461b5b1c9beffd163926c1dc917edeadae99b84543956"
+    }
+  },
+  "httpFailures": [],
+  "url": "http://127.0.0.1:59351/review/exhibition-25-years/motion-lab/contact-bench.html"
+}
