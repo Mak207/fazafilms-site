@@ -46,7 +46,7 @@ const views = {
   },
   visitors: {
     kicker: 'Посетители павильона',
-    title: 'Прогулка по центральному залу',
+    title: 'Прогулка по павильону',
     description: 'Камера следит за посетителем. Выберите другого человека или перетащите обзор для свободного осмотра.',
     position: [9.5, 2.6, 2.6], target: [14, 1, 6]
   },
@@ -133,13 +133,16 @@ function setView(name, immediate = false) {
   visitorFollow = name === 'visitors';
   visitorControls.hidden = !visitorFollow;
   screenControls.hidden = !isScreen;
-  viewKicker.textContent = view.kicker;
+  viewKicker.textContent = visitorFollow && visitors
+    ? `Посетитель ${followedVisitor + 1} из ${visitors.count}` : view.kicker;
   viewTitle.textContent = view.title;
   viewDescription.textContent = view.description;
   document.querySelectorAll('[data-view]').forEach(button => button.classList.toggle('is-active', button.dataset.view === name));
-  const endPosition = new THREE.Vector3(...view.position);
-  const endTarget = visitorFollow && visitors ? visitors.focusTarget(followedVisitor) : new THREE.Vector3(...view.target);
-  const endFov = isScreen ? [72,61,64,70][screenIndex] : 46;
+  const followView = visitorFollow && visitors ? visitors.focusView(followedVisitor) : null;
+  const endPosition = followView?.position || new THREE.Vector3(...view.position);
+  const endTarget = followView?.target || new THREE.Vector3(...view.target);
+  const endFov = followView?.fov || (isScreen ? [72,61,64,70][screenIndex] : 46);
+  if (followView) viewTitle.textContent = followView.room;
   if (immediate || matchMedia('(prefers-reduced-motion: reduce)').matches) {
     camera.fov = endFov;
     camera.updateProjectionMatrix();
@@ -187,6 +190,7 @@ function orbit(dx, dy) {
 }
 
 function zoom(factor) {
+  visitorFollow = false;
   const offset = camera.position.clone().sub(target);
   const distance = THREE.MathUtils.clamp(offset.length() * factor, 3.5, 130);
   camera.position.copy(target).add(offset.setLength(distance));
@@ -284,10 +288,20 @@ function animate(now) {
   if (visitors && visitorsEnabled && visitorFrameTime > 0) visitors.update(visitorFrameTime);
   visitorFrameTime = 0;
   if (visitorFollow && visitors) {
-    const followTarget = visitors.focusTarget(followedVisitor);
-    if (cameraMotion) cameraMotion.endTarget.copy(followTarget);
-    else {
-      target.copy(followTarget);
+    const followView = visitors.focusView(followedVisitor);
+    if (viewTitle.textContent !== followView.room) viewTitle.textContent = followView.room;
+    root.dataset.visitorRoom = followView.room;
+    if (cameraMotion) {
+      cameraMotion.endPosition.copy(followView.position);
+      cameraMotion.endTarget.copy(followView.target);
+      cameraMotion.endFov = followView.fov;
+    } else {
+      camera.position.copy(followView.position);
+      target.copy(followView.target);
+      if (camera.fov !== followView.fov) {
+        camera.fov = followView.fov;
+        camera.updateProjectionMatrix();
+      }
       orbitDistance = camera.position.distanceTo(target);
       camera.lookAt(target);
       camera.updateMatrixWorld();
@@ -341,10 +355,12 @@ async function loadVisitors(loader) {
   updateVisitorButton();
   visitorLoadPromise = (async () => {
     try {
-      const { createPavilionVisitors } = await import('./visitors.js?v=1');
+      const { createPavilionVisitors } = await import('./visitors.js?v=2');
       visitors = await createPavilionVisitors(scene, loader);
       visitorStatus = 'ready';
-      root.dataset.visitorsCount = '2';
+      root.dataset.visitorsCount = String(visitors.count);
+      document.querySelector('[data-view="visitors"]').textContent = `Посетители · ${visitors.count}`;
+      if (visitorFollow) setView('visitors', true);
       visitorFrameTime = 0;
       refreshFrame = true;
     } catch (error) {
@@ -497,7 +513,7 @@ visitorMotionButton.addEventListener('click', () => {
   else setVisitorMotion(!visitorsEnabled);
 });
 nextVisitorButton.addEventListener('click', () => {
-  followedVisitor = (followedVisitor + 1) % 2;
+  followedVisitor = (followedVisitor + 1) % visitors.count;
   setView('visitors');
 });
 document.addEventListener('visibilitychange', () => {
@@ -583,9 +599,10 @@ retry.addEventListener('click', () => {
 
 window.__GOLDEN_RING_TOUR = {
   state: () => ({ mode, ready: root.dataset.state === 'ready', view: viewTitle.textContent,
-    visitors: visitorStatus, visitorCount: visitors ? 2 : 0, visitorFollow, followedVisitor }),
+    visitors: visitorStatus, visitorCount: visitors?.count || 0, visitorFollow, followedVisitor }),
   visitors: () => ({ status: visitorStatus, enabled: visitorsEnabled, ...(visitors?.snapshot() || { ready: false, actors: [] }) }),
   camera: () => ({
+    fov: camera.fov,
     position: camera.position.toArray().map(value => Number(value.toFixed(4))),
     target: target.toArray().map(value => Number(value.toFixed(4)))
   })
