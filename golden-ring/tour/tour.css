@@ -143,3 +143,35 @@ html.tour-fullscreen { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .loading, .notice, .progress i { transition: none; }
 }
+
+/* Source exhibition controls stay in the same tour, with the object visible. */
+#interactive-picker, #screen-picker {
+  width:100%; min-height:40px; margin:7px 0; padding:7px 9px;
+  border:1px solid #d6b06f80; border-radius:7px; color:#f2e8d3;
+  background:#142a24; font:12px Arial,sans-serif; pointer-events:auto;
+}
+#interactive-picker[hidden], #source-interactive-controls[hidden] { display:none; }
+#screen-picker { margin:0 0 4px; }
+#screen-controls { margin-top:10px; }
+[data-active-interactive] .view-card { max-height:calc(100% - 100px); overflow:auto; }
+[data-active-interactive] .view-card h1 { font-size:25px; }
+[data-active-interactive] #view-description { font-size:12px; }
+[data-active-interactive] .source-zone-objects { margin-top:7px; }
+@media(max-width:720px) {
+  [data-active-interactive] .view-card {
+    top:auto; bottom:70px; left:10px; width:calc(100% - 20px); max-width:none;
+    max-height:255px; padding:11px 13px;
+  }
+  [data-active-interactive] .view-card h1 { font-size:20px; margin-bottom:2px; }
+  [data-active-interactive] #view-description { display:none; }
+  [data-active-interactive] #view-kicker { font-size:9px; }
+  [data-active-interactive] #interactive-picker { min-height:36px; margin:5px 0; }
+  [data-active-interactive] .source-zone-objects button { min-height:36px; }
+  #screen-picker { font-size:11px; }
+}
+@media(max-height:560px) {
+  [data-active-interactive] .view-card { top:8px; bottom:auto; max-height:calc(100% - 86px); width:310px; }
+}
+
+.help-copy a { color:#ecd09a; text-underline-offset:3px; }
+[data-active-interactive] .view-card { pointer-events:auto; }

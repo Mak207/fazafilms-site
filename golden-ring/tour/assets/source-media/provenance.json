@@ -1,0 +1,395 @@
+{
+  "version": 1,
+  "prepared": "2026-11-23",
+  "sourceConcept": {
+    "file": "Концепция_Золотое_кольцо_2026-10-21.pdf",
+    "date": "2026-10-21",
+    "archive": "https://disk.yandex.ru/d/dhpQs8qRpZ16ww"
+  },
+  "images": [
+    {
+      "file": "history-sergius-1370.jpg",
+      "title": "1370 · Сергий Радонежский",
+      "kind": "flat-screen-collage",
+      "sourceFile": "Концепция_Золотое_кольцо_2026-10-21.pdf",
+      "sourcePage": 14,
+      "sourceXref": 6290,
+      "sourceUrl": "https://disk.yandex.ru/d/dhpQs8qRpZ16ww",
+      "credit": "Материалы концепции заказчика",
+      "license": "Customer-provided project source; no public reuse license inferred",
+      "fileChanges": "Original embedded JPEG extracted without pixel modification",
+      "displayChanges": "Screen crop and fitting only",
+      "width": 2172,
+      "height": 724,
+      "bytes": 258601,
+      "sha256": "1dcf8a75c05df0a6dc7e40833ab15eb20de6e0ed5f9884700641a00926db9385"
+    },
+    {
+      "file": "history-rublev-1408.jpg",
+      "title": "1408 · Андрей Рублёв",
+      "kind": "flat-screen-collage",
+      "sourceFile": "Концепция_Золотое_кольцо_2026-10-21.pdf",
+      "sourcePage": 14,
+      "sourceXref": 6294,
+      "sourceUrl": "https://disk.yandex.ru/d/dhpQs8qRpZ16ww",
+      "credit": "Материалы концепции заказчика",
+      "license": "Customer-provided project source; no public reuse license inferred",
+      "fileChanges": "Original embedded JPEG extracted without pixel modification",
+      "displayChanges": "Screen crop and fitting only",
+      "width": 2172,
+      "height": 724,
+      "bytes": 293259,
+      "sha256": "fd62570a92a291815fe6146108ce694d5b0161c13b132bead9cb40310a3aa285"
+    },
+    {
+      "file": "history-rostov-bell-1688.jpg",
+      "title": "1688 · Ростов Великий",
+      "kind": "flat-screen-collage",
+      "sourceFile": "Концепция_Золотое_кольцо_2026-10-21.pdf",
+      "sourcePage": 14,
+      "sourceXref": 6286,
+      "sourceUrl": "https://disk.yandex.ru/d/dhpQs8qRpZ16ww",
+      "credit": "Материалы концепции заказчика",
+      "license": "Customer-provided project source; no public reuse license inferred",
+      "fileChanges": "Original embedded JPEG extracted without pixel modification",
+      "displayChanges": "Screen crop and fitting only",
+      "width": 2172,
+      "height": 724,
+      "bytes": 236109,
+      "sha256": "b113dcdb062d1804767796a317d289daebcf28d497a20c2bbf6dfdba078da7a8"
+    },
+    {
+      "file": "workshop-ceramics.jpg",
+      "title": "Мастерская керамики",
+      "kind": "niche-concept-render",
+      "sourceFile": "Концепция_Золотое_кольцо_2026-10-21.pdf",
+      "sourcePage": 59,
+      "sourceXref": 25579,
+      "sourceUrl": "https://disk.yandex.ru/d/dhpQs8qRpZ16ww",
+      "credit": "Материалы концепции заказчика",
+      "license": "Customer-provided project source; no public reuse license inferred",
+      "fileChanges": "Original embedded JPEG extracted without pixel modification",
+      "displayChanges": "Screen crop and fitting only",
+      "contentCrop": [
+        0.3,
+        0.49,
+        0.42,
+        0.3
+      ],
+      "width": 1024,
+      "height": 1536,
+      "bytes": 142294,
+      "sha256": "3cc1a729536fd9aa33ad83629d2154bf2cf9d2825842f8d4ad1542f6b95b7442"
+    },
+    {
+      "file": "workshop-matryoshka.jpg",
+      "title": "Тайна русской матрёшки",
+      "kind": "niche-concept-render",
+      "sourceFile": "Концепция_Золотое_кольцо_2026-10-21.pdf",
+      "sourcePage": 59,
+      "sourceXref": 25571,
+      "sourceUrl": "https://disk.yandex.ru/d/dhpQs8qRpZ16ww",
+      "credit": "Материалы концепции заказчика",
+      "license": "Customer-provided project source; no public reuse license inferred",
+      "fileChanges": "Original embedded JPEG extracted without pixel modification",
+      "displayChanges": "Screen crop and fitting only",
+      "contentCrop": [
+        0.3,
+        0.49,
+        0.42,
+        0.3
+      ],
+      "width": 1024,
+      "height": 1536,
+      "bytes": 155687,
+      "sha256": "ebf0f4c9d844586357fb15373875282533a3e2c0b7ab75606406d4de0870099a"
+    },
+    {
+      "file": "workshop-gorodets.jpg",
+      "title": "Художник Городца",
+      "kind": "niche-concept-render",
+      "sourceFile": "Концепция_Золотое_кольцо_2026-10-21.pdf",
+      "sourcePage": 59,
+      "sourceXref": 25575,
+      "sourceUrl": "https://disk.yandex.ru/d/dhpQs8qRpZ16ww",
+      "credit": "Материалы концепции заказчика",
+      "license": "Customer-provided project source; no public reuse license inferred",
+      "fileChanges": "Original embedded JPEG extracted without pixel modification",
+      "displayChanges": "Screen crop and fitting only",
+      "contentCrop": [
+        0.3,
+        0.49,
+        0.42,
+        0.3
+      ],
+      "width": 1024,
+      "height": 1536,
+      "bytes": 153075,
+      "sha256": "f188f4207b0c397664f9e85482314fd7cb2b76049e8e6a0034eb6a97cc3a892d"
+    },
+    {
+      "file": "workshop-palekh.jpg",
+      "title": "Секреты Палеха",
+      "kind": "niche-concept-render",
+      "sourceFile": "Концепция_Золотое_кольцо_2026-10-21.pdf",
+      "sourcePage": 59,
+      "sourceXref": 25567,
+      "sourceUrl": "https://disk.yandex.ru/d/dhpQs8qRpZ16ww",
+      "credit": "Материалы концепции заказчика",
+      "license": "Customer-provided project source; no public reuse license inferred",
+      "fileChanges": "Original embedded JPEG extracted without pixel modification",
+      "displayChanges": "Screen crop and fitting only",
+      "contentCrop": [
+        0.3,
+        0.49,
+        0.42,
+        0.3
+      ],
+      "width": 1024,
+      "height": 1536,
+      "bytes": 150346,
+      "sha256": "5d9c3afa9f5b3fcbe6d96558b4bdc750688987e73fa5bca3b0ee30fc289acf0b"
+    },
+    {
+      "file": "workshop-lace.jpg",
+      "title": "Кружевное одеяние",
+      "kind": "niche-concept-render",
+      "sourceFile": "Концепция_Золотое_кольцо_2026-10-21.pdf",
+      "sourcePage": 60,
+      "sourceXref": 26199,
+      "sourceUrl": "https://disk.yandex.ru/d/dhpQs8qRpZ16ww",
+      "credit": "Материалы концепции заказчика",
+      "license": "Customer-provided project source; no public reuse license inferred",
+      "fileChanges": "Original embedded JPEG extracted without pixel modification",
+      "displayChanges": "Screen crop and fitting only",
+      "contentCrop": [
+        0.3,
+        0.49,
+        0.42,
+        0.3
+      ],
+      "width": 1024,
+      "height": 1536,
+      "bytes": 153510,
+      "sha256": "466e62181b1d56c8ffa48be6f7a8e33fcd2600d42c27925ccf90e4fefc221f46"
+    },
+    {
+      "file": "workshop-glass.jpg",
+      "title": "Мастер-стеклодув",
+      "kind": "niche-concept-render",
+      "sourceFile": "Концепция_Золотое_кольцо_2026-10-21.pdf",
+      "sourcePage": 60,
+      "sourceXref": 26203,
+      "sourceUrl": "https://disk.yandex.ru/d/dhpQs8qRpZ16ww",
+      "credit": "Материалы концепции заказчика",
+      "license": "Customer-provided project source; no public reuse license inferred",
+      "fileChanges": "Original embedded JPEG extracted without pixel modification",
+      "displayChanges": "Screen crop and fitting only",
+      "contentCrop": [
+        0.3,
+        0.49,
+        0.42,
+        0.3
+      ],
+      "width": 1024,
+      "height": 1536,
+      "bytes": 136681,
+      "sha256": "0b6800963dc38a0dcb32df862673f8db944904a0f7aa151481925b57860f5d5a"
+    },
+    {
+      "file": "workshop-finift.jpg",
+      "title": "Мастерская финифти",
+      "kind": "niche-concept-render",
+      "sourceFile": "Концепция_Золотое_кольцо_2026-10-21.pdf",
+      "sourcePage": 60,
+      "sourceXref": 26207,
+      "sourceUrl": "https://disk.yandex.ru/d/dhpQs8qRpZ16ww",
+      "credit": "Материалы концепции заказчика",
+      "license": "Customer-provided project source; no public reuse license inferred",
+      "fileChanges": "Original embedded JPEG extracted without pixel modification",
+      "displayChanges": "Screen crop and fitting only",
+      "contentCrop": [
+        0.3,
+        0.49,
+        0.42,
+        0.3
+      ],
+      "width": 1024,
+      "height": 1536,
+      "bytes": 147130,
+      "sha256": "8e102d77bd42f0ce4d659e7d88b3c3222493b07d285be311a0984a52a3bcc2d5"
+    },
+    {
+      "file": "workshop-filigree.jpg",
+      "title": "Искусство филиграни",
+      "kind": "niche-concept-render",
+      "sourceFile": "Концепция_Золотое_кольцо_2026-10-21.pdf",
+      "sourcePage": 60,
+      "sourceXref": 26211,
+      "sourceUrl": "https://disk.yandex.ru/d/dhpQs8qRpZ16ww",
+      "credit": "Материалы концепции заказчика",
+      "license": "Customer-provided project source; no public reuse license inferred",
+      "fileChanges": "Original embedded JPEG extracted without pixel modification",
+      "displayChanges": "Screen crop and fitting only",
+      "contentCrop": [
+        0.3,
+        0.49,
+        0.42,
+        0.3
+      ],
+      "width": 1024,
+      "height": 1536,
+      "bytes": 147074,
+      "sha256": "2be88775677399dfed2ac3ed543c7eb0aebfc036abf38588f2d3ec22286465b2"
+    },
+    {
+      "file": "vladimir-dormition.jpg",
+      "title": "Владимир. Успенский собор",
+      "author": "Alexxx1979",
+      "authorUrl": "https://commons.wikimedia.org/wiki/User:Alexxx1979",
+      "dateTaken": "2025-05-19",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vladimir._Dormition_Cathedral_P5191019_2800.jpg",
+      "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0d/Vladimir._Dormition_Cathedral_P5191019_2800.jpg/1920px-Vladimir._Dormition_Cathedral_P5191019_2800.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "kind": "photograph",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "fileChanges": "Official Wikimedia Commons 1920px thumbnail, copied unchanged",
+      "displayChanges": "May be cropped, fitted and combined with a projection layer inside the 3D scene. Photo adaptations remain CC BY-SA 4.0.",
+      "width": 1920,
+      "height": 1280,
+      "bytes": 674883,
+      "sha256": "59facbaf2a9f2eac546d6303d83cf1d7ae834beabf183ccb02e26f87945ad3eb"
+    },
+    {
+      "file": "suzdal-kremlin.jpg",
+      "title": "Суздальский кремль",
+      "author": "Dmitry Makeev (Knopik-som)",
+      "authorUrl": "https://commons.wikimedia.org/wiki/User:Knopik-som",
+      "dateTaken": "2007-06-22",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Suzdal_Kremlin.jpg",
+      "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/86/Suzdal_Kremlin.jpg/1920px-Suzdal_Kremlin.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "kind": "photograph",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "fileChanges": "Official Wikimedia Commons 1920px thumbnail, copied unchanged",
+      "displayChanges": "May be cropped, fitted and combined with a projection layer inside the 3D scene. Photo adaptations remain CC BY-SA 4.0.",
+      "width": 1920,
+      "height": 1277,
+      "bytes": 513598,
+      "sha256": "497ddf4e6bf96b0167a86778cac84c015163d2a803464bb1ffee13999df33657"
+    },
+    {
+      "file": "kalyazin-bell-tower.jpg",
+      "title": "Калязин. Колокольня Никольского собора",
+      "author": "Александр Байдуков",
+      "authorUrl": "https://commons.wikimedia.org/wiki/User:Александр_Байдуков",
+      "dateTaken": "2020-08-20",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kalyazin,_in_the_flood_zone._Bell_tower_of_St._Nicholas_Cathedral.jpg",
+      "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Kalyazin%2C_in_the_flood_zone._Bell_tower_of_St._Nicholas_Cathedral.jpg/1920px-Kalyazin%2C_in_the_flood_zone._Bell_tower_of_St._Nicholas_Cathedral.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "kind": "photograph",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "fileChanges": "Official Wikimedia Commons 1920px thumbnail, copied unchanged",
+      "displayChanges": "May be cropped, fitted and combined with a projection layer inside the 3D scene. Photo adaptations remain CC BY-SA 4.0.",
+      "width": 1920,
+      "height": 1281,
+      "bytes": 638332,
+      "sha256": "4f2c62ff18825e7f80acbd12dee09b75990ca581979a0d186c8ff22a10f27994"
+    }
+  ],
+  "existingProjectMedia": [
+    {
+      "path": "../interactives/art/barge-river.webp",
+      "width": 1750,
+      "height": 687,
+      "role": "existing-project-thematic-illustration",
+      "attributionStatus": "No author or external original found in the project metadata inspected; not presented as a documentary photograph of a named city"
+    },
+    {
+      "path": "../interactives/art/bells-riverside.webp",
+      "width": 1935,
+      "height": 813,
+      "role": "existing-project-thematic-illustration",
+      "attributionStatus": "No author or external original found in the project metadata inspected; not presented as a documentary photograph of a named city"
+    },
+    {
+      "path": "../interactives/art/bells-riverside-dusk.webp",
+      "width": 1935,
+      "height": 813,
+      "role": "existing-project-thematic-illustration",
+      "attributionStatus": "No author or external original found in the project metadata inspected; not presented as a documentary photograph of a named city"
+    },
+    {
+      "path": "../interactives/art/loom-finale.webp",
+      "width": 1600,
+      "height": 900,
+      "role": "existing-project-thematic-illustration",
+      "attributionStatus": "No author or external original found in the project metadata inspected; not presented as a documentary photograph of a named city"
+    },
+    {
+      "path": "../interactives/art/craft-finale.webp",
+      "width": 1600,
+      "height": 800,
+      "role": "existing-project-thematic-illustration",
+      "attributionStatus": "No author or external original found in the project metadata inspected; not presented as a documentary photograph of a named city"
+    },
+    {
+      "path": "../interactives/art/craft-pigment.webp",
+      "width": 1600,
+      "height": 533,
+      "role": "existing-project-thematic-illustration",
+      "attributionStatus": "No author or external original found in the project metadata inspected; not presented as a documentary photograph of a named city"
+    },
+    {
+      "path": "../interactives/art/fairground/fair-panorama.webp",
+      "width": 1975,
+      "height": 796,
+      "role": "existing-project-thematic-illustration",
+      "attributionStatus": "No author or external original found in the project metadata inspected; not presented as a documentary photograph of a named city"
+    },
+    {
+      "path": "../interactives/art/passport-finale.webp",
+      "width": 1600,
+      "height": 900,
+      "role": "existing-project-thematic-illustration",
+      "attributionStatus": "No author or external original found in the project metadata inspected; not presented as a documentary photograph of a named city"
+    },
+    {
+      "path": "../interactives/art/glass-process/1.webp",
+      "width": 762,
+      "height": 506,
+      "role": "existing-project-thematic-illustration",
+      "attributionStatus": "No author or external original found in the project metadata inspected; not presented as a documentary photograph of a named city"
+    },
+    {
+      "path": "../interactives/art/glass-process/2.webp",
+      "width": 762,
+      "height": 506,
+      "role": "existing-project-thematic-illustration",
+      "attributionStatus": "No author or external original found in the project metadata inspected; not presented as a documentary photograph of a named city"
+    },
+    {
+      "path": "../interactives/art/glass-process/3.webp",
+      "width": 762,
+      "height": 506,
+      "role": "existing-project-thematic-illustration",
+      "attributionStatus": "No author or external original found in the project metadata inspected; not presented as a documentary photograph of a named city"
+    },
+    {
+      "path": "../interactives/art/glass-process/4.webp",
+      "width": 762,
+      "height": 506,
+      "role": "existing-project-thematic-illustration",
+      "attributionStatus": "No author or external original found in the project metadata inspected; not presented as a documentary photograph of a named city"
+    }
+  ],
+  "interpretationNotes": [
+    "Historical collages retain the dates and wording from the customer concept; they are customer illustrations, not independent historical evidence.",
+    "Workshop images include a rendered niche. Runtime contentCrop selects only the central subject and excludes the depicted architectural frame and floor.",
+    "Eight craft-to-niche positions are a web presentation assignment. The exact physical craft order is not documented in the concept.",
+    "Kalyazin is captioned as Kalyazin in Tver region, never as a photograph of Tver city.",
+    "Only Vladimir, Suzdal and Kalyazin photographs identify a real pictured place. Other named city selections use clearly captioned thematic imagery.",
+    "No low-resolution volga-windows previews are stretched over the new large surfaces.",
+    "The old nine apparatus are not taken as the customer model inventory."
+  ]
+}

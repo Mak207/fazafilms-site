@@ -2,8 +2,11 @@ import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
 import { GLTFLoader } from '../interactives/vendor/three-0.180/GLTFLoader.js';
 import { MeshoptDecoder } from './vendor/meshopt_decoder.mjs';
 import { lightGallery, finishGallery, screens } from './gallery.js?v=3';
-import { sourceZones } from './source-zones.js?v=1';
+import { sourceZones } from './source-zones.js?v=2';
 import { createZoneLabels } from './zone-labels.js?v=1';
+import { prepareSourceGeometry } from './source-geometry.js?v=3';
+import { installSourceDisplays } from './source-display-content.js?v=1';
+import { createSourceInteractives } from './source-interactives.js?v=1';
 
 const root = document.getElementById('tour');
 const stage = document.getElementById('stage');
@@ -31,6 +34,17 @@ const zoneConcept = document.getElementById('source-zone-concept');
 const zoneReference = document.getElementById('source-zone-reference');
 const zoneObjects = document.getElementById('source-zone-objects');
 const sourceZoneById = new Map(sourceZones.map(zone => [zone.id, zone]));
+const interactiveMount = document.getElementById('source-interactive-controls');
+const interactivePicker = document.getElementById('interactive-picker');
+const screenPicker = document.getElementById('screen-picker');
+let sourceGeometry = null;
+let sourceDisplays = null;
+let sourceInteractives = null;
+let interactiveFrameTime = 0;
+let choosingSourceView = false;
+let focusedCraft = 'pottery';
+const mediaViews = screens.map((screen,index) => ({...screen, fov:[72,61,64,70][index],
+  zoneId:index===3?'finale':'tver', id:'original-screen-'+(index+1)}));
 let screenIndex = 0;
 const mediaTime = { value: 0 };
 const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
@@ -141,6 +155,7 @@ const projectionView = new THREE.Matrix4();
 const previousProjectionView = new THREE.Matrix4();
 let refreshFrame = true;
 let screenInView = false;
+let webglLost = false;
 let lastDraw = 0;
 const zoneLabels = createZoneLabels({ stage, camera, zones: sourceZones, toggle: zoneToggle,
   selectZone: zone => {
@@ -203,14 +218,33 @@ function resize() {
 }
 
 function setView(name, immediate = false) {
+  if (name === 'interactives') {
+    const definition = sourceInteractives?.definitions.find(item => item.id === interactivePicker.value)
+      || sourceInteractives?.definitions[0];
+    if (!definition) return showNotice('Подготавливаем интерактивы…');
+    name = definition.viewId;
+  }
   if (mode === 'walk') setWalk(false, false);
   activeView = name === 'media' || views[name] ? name : 'overview';
   root.dataset.view = activeView;
   zoneLabels.setView(activeView);
   const isScreen = name === 'media';
-  const hall = screenIndex === 3 ? 'Финальный зал' : 'Региональный зал';
-  const view = isScreen ? { ...screens[screenIndex], kicker: `${hall} · Экран ${screenIndex + 1} из ${screens.length}`,
-    description: '' } : views[name] || views.overview;
+  const selectedScreen = mediaViews[screenIndex];
+  const hall = sourceZoneById.get(selectedScreen.zoneId)?.title || 'Экспозиция';
+  const view = isScreen ? { ...selectedScreen, kicker: `${hall} · Экран ${screenIndex + 1} из ${mediaViews.length}`,
+    description: selectedScreen.description || '' } : views[name] || views.overview;
+  if (view.interactiveId) root.dataset.activeInteractive = view.interactiveId;
+  else delete root.dataset.activeInteractive;
+  if(view.interactiveId==='workshops'&&view.craftId) {
+    choosingSourceView=true;
+    try { sourceInteractives?.invoke('workshops','craft',view.craftId); }
+    finally { choosingSourceView=false; }
+  }
+  sourceInteractives?.setActive(view.interactiveId || null);
+  interactiveMount.hidden = !view.interactiveId;
+  interactivePicker.hidden = !view.interactiveId;
+  if (view.interactiveId) interactivePicker.value = view.interactiveId;
+  screenPicker.value = String(screenIndex);
   const zone = sourceZoneById.get(view.zoneId);
   if (zone) root.dataset.sourceZone = zone.id;
   else delete root.dataset.sourceZone;
@@ -232,7 +266,7 @@ function setView(name, immediate = false) {
   };
   if (view.objectId) addObjectButton('Вернуться в зал', 'zone-' + zone.id);
   for (const object of zone?.objects || []) {
-    if (object.id !== view.objectId) addObjectButton(object.button, 'object-' + zone.id + '-' + object.id);
+    if (object.id !== view.objectId) addObjectButton(object.button, object.viewId || 'object-' + zone.id + '-' + object.id);
   }
   zoneObjects.hidden = !zoneObjects.childElementCount;
   refreshFrame = true;
@@ -245,7 +279,7 @@ function setView(name, immediate = false) {
   viewDescription.textContent = view.description;
   document.querySelectorAll('.camera-nav [data-view]').forEach(button => button.classList.toggle('is-active', button.dataset.view === name));
   const followView = visitorFollow && visitors ? visitors.focusView(followedVisitor) : null;
-  const endFov = followView?.fov || (isScreen ? [72,61,64,70][screenIndex] : (view.fov || 46));
+  const endFov = followView?.fov || view.fov || 46;
   const endPosition = followView?.position || fittedViewPosition(view, name, endFov);
   const endTarget = followView?.target || new THREE.Vector3(...view.target);
   if (followView) viewTitle.textContent = followView.room;
@@ -323,6 +357,10 @@ function setWalk(enabled, moveToStart = true) {
   mode = enabled ? 'walk' : 'orbit';
   root.dataset.mode = mode;
   if (enabled) {
+    sourceInteractives?.setActive(null);
+    interactiveMount.hidden = true;
+    interactivePicker.hidden = true;
+    delete root.dataset.activeInteractive;
     activeView = 'walk';
     root.dataset.view = activeView;
     zoneLabels.setView(activeView);
@@ -383,12 +421,14 @@ function animate(now) {
   if (document.hidden) {
     lastFrameTime = undefined;
     visitorFrameTime = 0;
+    interactiveFrameTime = 0;
     return;
   }
   const delta = lastFrameTime === undefined ? 0 : Math.min((now - lastFrameTime) / 1000, .25);
   lastFrameTime = now;
   if (motionEnabled) mediaTime.value += delta;
   if (visitors && visitorsEnabled) visitorFrameTime += delta;
+  if (sourceInteractives?.isAnimating()) interactiveFrameTime += delta;
   updateCameraMotion();
   camera.updateMatrixWorld();
   projectionView.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
@@ -397,9 +437,11 @@ function animate(now) {
     frustum.setFromProjectionMatrix(projectionView);
     screenInView = mediaMeshes.some(mesh => frustum.intersectsObject(mesh));
   } else {
-    const hasAnimation = (motionEnabled && screenInView) || (visitors && visitorsEnabled);
+    const hasAnimation = (motionEnabled && screenInView) || (visitors && visitorsEnabled) || sourceInteractives?.isAnimating();
     if (!hasAnimation || now - lastDraw < 1000 / 30) return;
   }
+  if (sourceInteractives && interactiveFrameTime > 0) sourceInteractives.update(interactiveFrameTime);
+  interactiveFrameTime = 0;
   if (visitors && visitorsEnabled && visitorFrameTime > 0) visitors.update(visitorFrameTime);
   visitorFrameTime = 0;
   if (visitorFollow && visitors) {
@@ -526,11 +568,46 @@ async function loadModel() {
       });
     });
     await finishGallery(pavilion, renderer, mediaTime);
+    loadingDetail.textContent = 'Наполняем исходные экраны и механизмы…';
+    sourceGeometry = await prepareSourceGeometry(pavilion, loader);
+    const sourceSurfaces = [...sourceGeometry.surfaces];
+    // The existing final panorama is an original display, already installed by
+    // finishGallery. Its content is now governed by the journey controls.
+    const panorama = pavilion.getObjectByName('Pavilion_panorama');
+    if (panorama) {
+      sourceSurfaces.push({id:'finale-panorama',mesh:panorama,zoneId:'finale',
+        interactiveId:'finale',kind:'panorama',ordinal:0,
+        aspect:panorama.userData.faceAspect||5.6,UVorientation:'v-down',
+        camera:{position:screens[3].position,target:screens[3].target,fov:70}});
+      sourceGeometry.bindings.finale ||= {id:'finale',displayOnly:true,parts:[],roles:{}};
+    }
+    for (const surface of sourceSurfaces) if (surface.interactiveId && !sourceGeometry.bindings[surface.interactiveId]) {
+      sourceGeometry.bindings[surface.interactiveId] = {id:surface.interactiveId,displayOnly:true,parts:[],roles:{}};
+    }
+    sourceDisplays = await installSourceDisplays({surfaces:sourceSurfaces,renderer,clock:mediaTime});
+    sourceInteractives = createSourceInteractives({
+      model:pavilion,bindings:sourceGeometry.bindings,renderer,clock:mediaTime,
+      mount:interactiveMount,reducedMotion:motionPreference.matches,
+      setDisplayState:(id,state)=>{
+        sourceDisplays.setDisplayState(id,state);
+        if(id!=='workshops')return;
+        if(choosingSourceView){focusedCraft=state.craft;return;}
+        if(state.craft===focusedCraft||!sourceInteractives||root.dataset.activeInteractive!=='workshops')return;
+        focusedCraft=state.craft;
+        const selected=mediaViews.find(item=>item.craftId===state.craft);
+        if(selected){history.replaceState(null,'','#screen-'+selected.id);setView('screen-'+selected.id);}
+      },
+      onChange:()=>{refreshFrame=true;zoneLabels.invalidate();},
+      onSelectView:name=>setView(name)
+    });
+    sourceInteractives.setPaused(!motionEnabled);
+    registerSourceViews(sourceSurfaces);
     scene.add(pavilion);
     pavilion.updateMatrixWorld(true);
     pavilionBounds = new THREE.Box3().setFromObject(pavilion);
     mediaMeshes.length = 0;
     pavilion.traverse(mesh => { if (mesh.isMesh && /^Pavilion_(display|panorama)/.test(mesh.name)) mediaMeshes.push(mesh); });
+    mediaMeshes.push(...sourceDisplays.meshes.filter(mesh=>!mediaMeshes.includes(mesh)));
     refreshFrame = true;
     if (renderer.compileAsync) {
       await Promise.race([
@@ -567,8 +644,10 @@ canvas.addEventListener('pointerdown', event => {
 function openTourLocation() {
   const hash = location.hash;
   if (hash === '#panorama' || hash === '#screens') {
-    screenIndex = hash === '#panorama' ? screens.length - 1 : 0;
+    screenIndex = hash === '#panorama' ? 3 : 0;
     setView('media', true);
+  } else if (hash === '#interactives') {
+    setView('interactives', true);
   } else if (hash === '#visitors') {
     setView('visitors', true);
   } else if (hash === '#cities' || hash === '#plan') {
@@ -615,11 +694,14 @@ canvas.addEventListener('wheel', event => {
 
 document.querySelectorAll('.camera-nav [data-view]').forEach(button => button.addEventListener('click', () => setView(button.dataset.view)));
 document.getElementById('next-screen').addEventListener('click', () => {
-  screenIndex = (screenIndex + 1) % screens.length;
+  screenIndex = (screenIndex + 1) % mediaViews.length;
   setView('media');
 });
 function setScreenMotion(enabled) {
   motionEnabled = enabled;
+  sourceInteractives?.setPaused(!enabled);
+  interactiveFrameTime = 0;
+  refreshFrame = true;
   motionButton.textContent = enabled ? 'Пауза' : 'Запустить';
   motionButton.setAttribute('aria-label', enabled ? 'Остановить движение на экранах' : 'Включить движение на экранах');
 }
@@ -640,6 +722,7 @@ nextVisitorButton.addEventListener('click', () => {
 document.addEventListener('visibilitychange', () => {
   lastFrameTime = undefined;
   visitorFrameTime = 0;
+  interactiveFrameTime = 0;
   refreshFrame = true;
 });
 updateVisitorButton();
@@ -712,17 +795,122 @@ window.addEventListener('keydown', event => {
 
 canvas.addEventListener('webglcontextlost', event => {
   event.preventDefault();
+  webglLost = true;
   showNotice('3D-контекст остановлен. Перезагрузите тур.');
 });
+canvas.addEventListener('webglcontextrestored', () => { webglLost = false; refreshFrame = true; });
 window.addEventListener('resize', resize);
 retry.addEventListener('click', () => {
+  sourceInteractives?.dispose();
+  sourceDisplays?.dispose();
+  sourceInteractives = null;
+  sourceDisplays = null;
+  sourceGeometry = null;
   if (pavilion) scene.remove(pavilion);
   loadModel();
 });
 
+
+function registerSourceViews(surfaces) {
+  for (const definition of sourceInteractives.definitions) {
+    const zone = sourceZoneById.get(definition.zoneId);
+    const firstSurface=surfaces.find(surface=>surface.interactiveId===definition.id&&surface.camera);
+    const sourceCamera=['workshops','ornament'].includes(definition.id)&&firstSurface?firstSurface.camera:definition.camera;
+    views[definition.viewId] = {
+      kicker:(zone?.title||'Павильон')+' · интерактив исходного проекта',
+      title:definition.title,description:definition.description,
+      ...sourceCamera,zoneId:definition.zoneId,objectId:definition.objectId,
+      ...(definition.id==='workshops'?{craftId:'pottery'}:{}),
+      ...(definition.id==='bobbins'?{position:[-6.5,7.5,13],target:[-6.5,1.5,8.9],bounds:definition.bounds}:{}),
+      ...(definition.id==='map'?{position:[20,16,-4],target:[20,.52,-8],bounds:definition.bounds}:{}),
+      interactiveId:definition.id,concept:zone?.concept,reference:definition.reference
+    };
+    for (const zoneId of definition.zoneIds || [definition.zoneId]) {
+      const owner=sourceZoneById.get(zoneId);if(!owner)continue;
+      owner.objects ||= [];
+      const current=owner.objects.find(item=>item.id===definition.objectId);
+      const entry={id:definition.objectId,button:definition.button,viewId:definition.viewId};
+      if(current)Object.assign(current,entry);else owner.objects.push(entry);
+    }
+    const option=document.createElement('option');
+    option.value=definition.id;option.textContent=(zone?.title||'')+' · '+definition.title;
+    interactivePicker.append(option);
+  }
+  // Every verified source surface is reachable, including those outside the
+  // four media views present in the previous version.
+  const contentById=new Map(sourceDisplays.snapshot().surfaces.map(item=>[item.id,item]));
+  for(const surface of surfaces) {
+    if(surface.id==='finale-panorama')continue;
+    const zone=sourceZoneById.get(surface.zoneId);
+    const content=contentById.get(surface.id);
+    let shot=surface.camera;
+    if(!shot) {
+      surface.mesh.updateWorldMatrix(true,false);
+      const box=new THREE.Box3().setFromObject(surface.mesh), center=box.getCenter(new THREE.Vector3());
+      const size=box.getSize(new THREE.Vector3());
+      const normal=new THREE.Vector3(...(surface.normal||[0,0,1])).normalize();
+      const position=center.clone().addScaledVector(normal,Math.max(2.5,size.length()*.85));
+      position.y=Math.max(position.y,center.y+.5);
+      shot={position:position.toArray(),target:center.toArray(),fov:55};
+    }
+    if(surface.kind==='history-ribbon') {
+      const point=new THREE.Vector3(...shot.target);
+      const direction=new THREE.Vector3(...shot.position).sub(point).normalize();
+      const close=point.clone().addScaledVector(direction,3.2);close.y+=.25;
+      shot={position:close.toArray(),target:point.toArray(),fov:58};
+    }
+    const detailBounds=surface.kind==='history-ribbon'?{
+      min:[shot.target[0]-1.6,shot.target[1]-.6,shot.target[2]-.4],
+      max:[shot.target[0]+1.6,shot.target[1]+.6,shot.target[2]+.4]
+    }:undefined;
+    if(surface.interactiveId==='map')shot={position:[20,16,-4],target:[20,.52,-8],fov:58};
+    const mediaView={...shot,id:surface.id,zoneId:surface.zoneId,craftId:content?.craftId,
+      bounds:surface.interactiveId==='map'?{min:[15.5,0,-10.6],max:[31.3,1.05,-5.5]}:detailBounds,
+      title:content?.title||zone?.title||'Экран',description:content?.kind==='hanging-cloth'?'Проекционное полотно «Кружево памяти».':'',
+      interactiveId:surface.interactiveId||undefined};
+    mediaViews.push(mediaView);
+    views['screen-'+surface.id]={...mediaView,kicker:(zone?.title||'Экспозиция')+' · экран',objectId:surface.id};
+  }
+  mediaViews.forEach((item,index)=>{
+    const option=document.createElement('option');option.value=String(index);
+    option.textContent=(index+1)+'. '+(sourceZoneById.get(item.zoneId)?.title||'')+' · '+item.title;
+    screenPicker.append(option);
+  });
+  document.querySelector('[data-view="media"]').textContent='Экраны · '+mediaViews.length;
+  document.querySelector('[data-view="interactives"]').textContent='Интерактивы · '+sourceInteractives.definitions.length;
+}
+
+interactivePicker.addEventListener('change',()=>{
+  const definition=sourceInteractives?.definitions.find(item=>item.id===interactivePicker.value);
+  if(definition){history.replaceState(null,'','#'+definition.viewId);setView(definition.viewId);}
+});
+screenPicker.addEventListener('change',()=>{screenIndex=Number(screenPicker.value);setView('media');});
+
+const sourceRaycaster=new THREE.Raycaster(), sourcePointer=new THREE.Vector2();
+let sourcePointerDown=null;
+canvas.addEventListener('pointerdown',event=>{sourcePointerDown={x:event.clientX,y:event.clientY,time:performance.now()};});
+canvas.addEventListener('pointerup',event=>{
+  if(!sourceInteractives||!pavilion||!sourcePointerDown||mode!=='orbit')return;
+  const start=sourcePointerDown;sourcePointerDown=null;
+  if(Math.hypot(event.clientX-start.x,event.clientY-start.y)>6||performance.now()-start.time>550)return;
+  const rect=canvas.getBoundingClientRect();
+  sourcePointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);
+  sourceRaycaster.setFromCamera(sourcePointer,camera);
+  const hit=sourceRaycaster.intersectObject(pavilion,true)[0];
+  const definition=hit&&sourceInteractives.findInteractive(hit.object);
+  if(definition){history.replaceState(null,'','#'+definition.viewId);setView(definition.viewId);}
+});
+
 window.__GOLDEN_RING_TOUR = {
   zones: () => zoneLabels.snapshot(),
-  state: () => ({ mode, ready: root.dataset.state === 'ready', view: viewTitle.textContent,
+  renderer: () => ({calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,
+    textures:renderer.info.memory.textures,geometries:renderer.info.memory.geometries,webglLost}),
+  sourceGeometry: () => sourceGeometry?.report || null,
+  displays: () => sourceDisplays?.snapshot() || null,
+  interactives: () => sourceInteractives?.snapshot() || null,
+  sourceViews: () => sourceInteractives?.definitions.map(item=>({id:item.id,viewId:item.viewId,title:item.title})) || [],
+  screens: () => mediaViews.map(item=>({id:item.id,title:item.title,zoneId:item.zoneId})),
+  state: () => ({ release:'source-interactives-20261123-1', mode, ready: root.dataset.state === 'ready' && !webglLost, webglLost, view: viewTitle.textContent,
     visitors: visitorStatus, visitorCount: visitors?.count || 0, visitorFollow, followedVisitor }),
   visitors: () => ({ status: visitorStatus, enabled: visitorsEnabled, ...(visitors?.snapshot() || { ready: false, actors: [] }) }),
   camera: () => ({

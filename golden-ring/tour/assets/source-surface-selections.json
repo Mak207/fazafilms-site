@@ -1,0 +1,7395 @@
+{
+  "version": 1,
+  "status": "Source-verified 49 media surfaces; conservative complete component replacement",
+  "sourceSha256": "b3baac592a3b46b0a9577e61f92142e23aa44ee945ed2afbf2c8c905270712dc",
+  "sourceBlend": "Общая сборка 1911-review.blend",
+  "coordinateSystem": "GLB metres Y-up",
+  "removals": [
+    {
+      "mesh": "Pavilion_equipment",
+      "expectedVertices": 8433,
+      "expectedTriangles": 7166,
+      "indexFNV": 733974986,
+      "ranges": [
+        [
+          0,
+          848
+        ],
+        [
+          866,
+          2708
+        ],
+        [
+          4002,
+          2864
+        ]
+      ],
+      "removedTriangles": 6420
+    },
+    {
+      "mesh": "Pavilion_glass",
+      "expectedVertices": 45716,
+      "expectedTriangles": 24114,
+      "indexFNV": 520587442,
+      "ranges": [
+        [
+          0,
+          32
+        ]
+      ],
+      "removedTriangles": 32
+    },
+    {
+      "mesh": "Pavilion_metal",
+      "expectedVertices": 39036,
+      "expectedTriangles": 28523,
+      "indexFNV": 2563669345,
+      "ranges": [
+        [
+          1220,
+          4058
+        ]
+      ],
+      "removedTriangles": 4058
+    },
+    {
+      "mesh": "Pavilion_neutral",
+      "expectedVertices": 167523,
+      "expectedTriangles": 118163,
+      "indexFNV": 1612697182,
+      "ranges": [
+        [
+          1965,
+          24
+        ],
+        [
+          1993,
+          12
+        ],
+        [
+          2019,
+          12
+        ],
+        [
+          3992,
+          14475
+        ],
+        [
+          40234,
+          814
+        ],
+        [
+          41058,
+          858
+        ],
+        [
+          41938,
+          48
+        ],
+        [
+          41992,
+          12
+        ],
+        [
+          42008,
+          12
+        ],
+        [
+          42148,
+          8734
+        ],
+        [
+          50884,
+          13517
+        ],
+        [
+          64497,
+          596
+        ],
+        [
+          65721,
+          52186
+        ]
+      ],
+      "removedTriangles": 91300
+    },
+    {
+      "mesh": "Pavilion_object",
+      "expectedVertices": 38161,
+      "expectedTriangles": 44214,
+      "indexFNV": 2009983761,
+      "ranges": [
+        [
+          0,
+          17610
+        ],
+        [
+          18190,
+          618
+        ],
+        [
+          18914,
+          2
+        ],
+        [
+          19012,
+          9028
+        ]
+      ],
+      "removedTriangles": 27258
+    },
+    {
+      "mesh": "Pavilion_screen",
+      "expectedVertices": 51746,
+      "expectedTriangles": 31188,
+      "indexFNV": 2340755639,
+      "ranges": [
+        [
+          0,
+          22
+        ],
+        [
+          246,
+          20
+        ],
+        [
+          534,
+          36
+        ],
+        [
+          812,
+          120
+        ]
+      ],
+      "removedTriangles": 198
+    },
+    {
+      "mesh": "Pavilion_textile",
+      "expectedVertices": 27209,
+      "expectedTriangles": 32675,
+      "indexFNV": 2932750400,
+      "ranges": [
+        [
+          12748,
+          19927
+        ]
+      ],
+      "removedTriangles": 19927
+    },
+    {
+      "mesh": "Pavilion_tile",
+      "expectedVertices": 190701,
+      "expectedTriangles": 98103,
+      "indexFNV": 4036811418,
+      "ranges": [
+        [
+          1163,
+          5664
+        ],
+        [
+          97723,
+          380
+        ]
+      ],
+      "removedTriangles": 6044
+    },
+    {
+      "mesh": "Pavilion_wood",
+      "expectedVertices": 7459,
+      "expectedTriangles": 5042,
+      "indexFNV": 1390184875,
+      "ranges": [
+        [
+          0,
+          4738
+        ]
+      ],
+      "removedTriangles": 4738
+    },
+    {
+      "mesh": "Pavilion_scenery",
+      "expectedVertices": 102986,
+      "expectedTriangles": 122317,
+      "indexFNV": 1569177334,
+      "ranges": [
+        [
+          110936,
+          412
+        ]
+      ],
+      "removedTriangles": 412
+    },
+    {
+      "mesh": "Pavilion_wall",
+      "expectedVertices": 786,
+      "expectedTriangles": 750,
+      "indexFNV": 1915926794,
+      "ranges": [
+        [
+          0,
+          750
+        ]
+      ],
+      "removedTriangles": 750
+    },
+    {
+      "mesh": "Pavilion_plaster",
+      "expectedVertices": 327244,
+      "expectedTriangles": 160948,
+      "indexFNV": 3824038827,
+      "ranges": [
+        [
+          130897,
+          22099
+        ]
+      ],
+      "removedTriangles": 22099
+    }
+  ],
+  "surfaces": [
+    {
+      "id": "tver-hanging-01",
+      "zoneId": "tver",
+      "kind": "hanging-cloth",
+      "interactiveId": "",
+      "ordinal": 0,
+      "aspect": 0.2771088449836485,
+      "UVorientation": "v-up; both broad sides readable",
+      "sourceObject": "Plane010",
+      "sourceGroup": "Group2146524758",
+      "role": "surface",
+      "pivot": [
+        -18.29696750640869,
+        2.8214527368545532,
+        -6.4629175662994385
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "camera": {
+        "position": [
+          -18.50436279899673,
+          2.8214527368545532,
+          -4.09239041160209
+        ],
+        "target": [
+          -18.29696750640869,
+          2.8214527368545532,
+          -6.4629175662994385
+        ],
+        "fov": 60
+      },
+      "center": [
+        -18.29696750640869,
+        2.8214527368545532,
+        -6.4629175662994385
+      ],
+      "normal": [
+        -0.08715617646743126,
+        -0.0,
+        0.9961946601460872
+      ],
+      "sourceBounds": {
+        "min": [
+          -18.643136978149414,
+          1.5690410137176514,
+          -6.4981465339660645
+        ],
+        "max": [
+          -17.95079803466797,
+          4.073864459991455,
+          -6.4276885986328125
+        ]
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 15,
+        "fraction": 1.0,
+        "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
+        "angle": 0,
+        "heightOffset": 0
+      }
+    },
+    {
+      "id": "tver-hanging-02",
+      "zoneId": "tver",
+      "kind": "hanging-cloth",
+      "interactiveId": "",
+      "ordinal": 1,
+      "aspect": 0.27844000736863445,
+      "UVorientation": "v-up; both broad sides readable",
+      "sourceObject": "Plane011",
+      "sourceGroup": "Group2146524758",
+      "role": "surface",
+      "pivot": [
+        -18.742432594299316,
+        2.4629446864128113,
+        -7.740548610687256
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "camera": {
+        "position": [
+          -18.523770109322186,
+          2.4629446864128113,
+          -10.239877586792193
+        ],
+        "target": [
+          -18.742432594299316,
+          2.4629446864128113,
+          -7.740548610687256
+        ],
+        "fov": 60
+      },
+      "center": [
+        -18.742432594299316,
+        2.4629446864128113,
+        -7.740548610687256
+      ],
+      "normal": [
+        0.08715555808024679,
+        0.0,
+        -0.9961947142480333
+      ],
+      "sourceBounds": {
+        "min": [
+          -19.10913848876953,
+          1.142483651638031,
+          -7.777574062347412
+        ],
+        "max": [
+          -18.3757266998291,
+          3.7834057211875916,
+          -7.7035231590271
+        ]
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 15,
+        "fraction": 1.0,
+        "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
+        "angle": 0,
+        "heightOffset": 0
+      }
+    },
+    {
+      "id": "tver-hanging-03",
+      "zoneId": "tver",
+      "kind": "hanging-cloth",
+      "interactiveId": "",
+      "ordinal": 2,
+      "aspect": 0.2662636312130885,
+      "UVorientation": "v-up; both broad sides readable",
+      "sourceObject": "Plane012",
+      "sourceGroup": "Group2146524758",
+      "role": "surface",
+      "pivot": [
+        -20.27926731109619,
+        1.9729151725769043,
+        -7.693806171417236
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "camera": {
+        "position": [
+          -19.442405720813912,
+          3.0151174068450928,
+          -5.899149568250401
+        ],
+        "target": [
+          -20.27926731109619,
+          1.9729151725769043,
+          -7.693806171417236
+        ],
+        "fov": 60
+      },
+      "center": [
+        -20.27926731109619,
+        1.9729151725769043,
+        -7.693806171417236
+      ],
+      "normal": [
+        0.4226180429164957,
+        -0.0,
+        0.9063078890760199
+      ],
+      "sourceBounds": {
+        "min": [
+          -20.532880783081055,
+          0.9307129383087158,
+          -7.815614700317383
+        ],
+        "max": [
+          -20.025653839111328,
+          3.0151174068450928,
+          -7.57199764251709
+        ]
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 15,
+        "fraction": 1.0,
+        "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
+        "angle": 0,
+        "heightOffset": 0.5
+      }
+    },
+    {
+      "id": "tver-hanging-04",
+      "zoneId": "tver",
+      "kind": "hanging-cloth",
+      "interactiveId": "",
+      "ordinal": 3,
+      "aspect": 0.33946625366086025,
+      "UVorientation": "v-up; both broad sides readable",
+      "sourceObject": "Plane013",
+      "sourceGroup": "Group2146524758",
+      "role": "surface",
+      "pivot": [
+        -19.65708827972412,
+        2.4137604236602783,
+        -8.905439376831055
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "camera": {
+        "position": [
+          -19.865736863549966,
+          2.4137604236602783,
+          -11.29032966397422
+        ],
+        "target": [
+          -19.65708827972412,
+          2.4137604236602783,
+          -8.905439376831055
+        ],
+        "fov": 60
+      },
+      "center": [
+        -19.65708827972412,
+        2.4137604236602783,
+        -8.905439376831055
+      ],
+      "normal": [
+        -0.08715479757939547,
+        0.0,
+        -0.9961947807828018
+      ],
+      "sourceBounds": {
+        "min": [
+          -20.0836238861084,
+          1.1537604331970215,
+          -8.947699546813965
+        ],
+        "max": [
+          -19.230552673339844,
+          3.673760414123535,
+          -8.863179206848145
+        ]
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 15,
+        "fraction": 1.0,
+        "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
+        "angle": 0,
+        "heightOffset": 0
+      }
+    },
+    {
+      "id": "tver-hanging-05",
+      "zoneId": "tver",
+      "kind": "hanging-cloth",
+      "interactiveId": "",
+      "ordinal": 4,
+      "aspect": 0.2706490848249175,
+      "UVorientation": "v-up; both broad sides readable",
+      "sourceObject": "Plane015",
+      "sourceGroup": "Group2146524758",
+      "role": "surface",
+      "pivot": [
+        -21.09174346923828,
+        4.005808591842651,
+        -10.798322677612305
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "camera": {
+        "position": [
+          -22.785739380670357,
+          4.005808591842651,
+          -9.376890735884974
+        ],
+        "target": [
+          -21.09174346923828,
+          4.005808591842651,
+          -10.798322677612305
+        ],
+        "fov": 60
+      },
+      "center": [
+        -21.09174346923828,
+        4.005808591842651,
+        -10.798322677612305
+      ],
+      "normal": [
+        -0.7660443101336178,
+        0.0,
+        0.6427877681722868
+      ],
+      "sourceBounds": {
+        "min": [
+          -21.298051834106445,
+          2.84193754196167,
+          -11.042840957641602
+        ],
+        "max": [
+          -20.885435104370117,
+          5.169679641723633,
+          -10.553804397583008
+        ]
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 15,
+        "fraction": 1.0,
+        "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
+        "angle": 0,
+        "heightOffset": 0
+      }
+    },
+    {
+      "id": "tver-hanging-06",
+      "zoneId": "tver",
+      "kind": "hanging-cloth",
+      "interactiveId": "",
+      "ordinal": 5,
+      "aspect": 0.2030595830770483,
+      "UVorientation": "v-up; both broad sides readable",
+      "sourceObject": "Plane019",
+      "sourceGroup": "Group2146524758",
+      "role": "surface",
+      "pivot": [
+        -19.12220001220703,
+        3.8321157693862915,
+        -6.403512001037598
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "camera": {
+        "position": [
+          -16.726461451831554,
+          3.8321157693862915,
+          -5.02033184278493
+        ],
+        "target": [
+          -19.12220001220703,
+          3.8321157693862915,
+          -6.403512001037598
+        ],
+        "fov": 60
+      },
+      "center": [
+        -19.12220001220703,
+        3.8321157693862915,
+        -6.403512001037598
+      ],
+      "normal": [
+        0.8660254264008587,
+        -0.0,
+        0.49999996082720954
+      ],
+      "sourceBounds": {
+        "min": [
+          -19.274354934692383,
+          2.376136541366577,
+          -6.662052631378174
+        ],
+        "max": [
+          -18.97004508972168,
+          5.288094997406006,
+          -6.1449713706970215
+        ]
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 15,
+        "fraction": 1.0,
+        "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
+        "angle": 0,
+        "heightOffset": 0
+      }
+    },
+    {
+      "id": "tver-hanging-07",
+      "zoneId": "tver",
+      "kind": "hanging-cloth",
+      "interactiveId": "",
+      "ordinal": 6,
+      "aspect": 0.23789139662147848,
+      "UVorientation": "v-up; both broad sides readable",
+      "sourceObject": "Plane020",
+      "sourceGroup": "Group2146524758",
+      "role": "surface",
+      "pivot": [
+        -18.698189735412598,
+        3.575109839439392,
+        -10.652591705322266
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "camera": {
+        "position": [
+          -16.31287661790848,
+          3.575109839439392,
+          -10.652591705322266
+        ],
+        "target": [
+          -18.698189735412598,
+          3.575109839439392,
+          -10.652591705322266
+        ],
+        "fov": 60
+      },
+      "center": [
+        -18.698189735412598,
+        3.575109839439392,
+        -10.652591705322266
+      ],
+      "normal": [
+        1.0,
+        -0.0,
+        -0.0
+      ],
+      "sourceBounds": {
+        "min": [
+          -18.703189849853516,
+          2.3196818828582764,
+          -10.951247215270996
+        ],
+        "max": [
+          -18.69318962097168,
+          4.830537796020508,
+          -10.353936195373535
+        ]
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 15,
+        "fraction": 1.0,
+        "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
+        "angle": 0,
+        "heightOffset": 0
+      }
+    },
+    {
+      "id": "tver-hanging-08",
+      "zoneId": "tver",
+      "kind": "hanging-cloth",
+      "interactiveId": "",
+      "ordinal": 7,
+      "aspect": 0.2503263373772874,
+      "UVorientation": "v-up; both broad sides readable",
+      "sourceObject": "Plane022",
+      "sourceGroup": "Group2146524758",
+      "role": "surface",
+      "pivot": [
+        -21.211661338806152,
+        2.9901994466781616,
+        -8.157966136932373
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "camera": {
+        "position": [
+          -22.190015165518616,
+          2.9901994466781616,
+          -6.059880026720293
+        ],
+        "target": [
+          -21.211661338806152,
+          2.9901994466781616,
+          -8.157966136932373
+        ],
+        "fov": 60
+      },
+      "center": [
+        -21.211661338806152,
+        2.9901994466781616,
+        -8.157966136932373
+      ],
+      "normal": [
+        -0.4226183348513266,
+        -0.0,
+        0.906307752944601
+      ],
+      "sourceBounds": {
+        "min": [
+          -21.490198135375977,
+          1.7717878818511963,
+          -8.291396141052246
+        ],
+        "max": [
+          -20.933124542236328,
+          4.208611011505127,
+          -8.0245361328125
+        ]
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 15,
+        "fraction": 1.0,
+        "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
+        "angle": 0,
+        "heightOffset": 0
+      }
+    },
+    {
+      "id": "tver-hanging-09",
+      "zoneId": "tver",
+      "kind": "hanging-cloth",
+      "interactiveId": "",
+      "ordinal": 8,
+      "aspect": 0.2799368129688743,
+      "UVorientation": "v-up; both broad sides readable",
+      "sourceObject": "Plane023",
+      "sourceGroup": "Group2146524758",
+      "role": "surface",
+      "pivot": [
+        -20.376336097717285,
+        3.659222722053528,
+        -10.069636344909668
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "camera": {
+        "position": [
+          -21.721312538302094,
+          3.659222722053528,
+          -11.011397212397279
+        ],
+        "target": [
+          -20.376336097717285,
+          3.659222722053528,
+          -10.069636344909668
+        ],
+        "fov": 60
+      },
+      "center": [
+        -20.376336097717285,
+        3.659222722053528,
+        -10.069636344909668
+      ],
+      "normal": [
+        -0.8191525521975164,
+        0.0,
+        -0.5735757109818156
+      ],
+      "sourceBounds": {
+        "min": [
+          -20.51918601989746,
+          2.795058488845825,
+          -10.270666122436523
+        ],
+        "max": [
+          -20.23348617553711,
+          4.5233869552612305,
+          -9.868606567382812
+        ]
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 15,
+        "fraction": 1.0,
+        "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
+        "angle": 0,
+        "heightOffset": 0
+      }
+    },
+    {
+      "id": "tver-hanging-10",
+      "zoneId": "tver",
+      "kind": "hanging-cloth",
+      "interactiveId": "",
+      "ordinal": 9,
+      "aspect": 0.17275980466973223,
+      "UVorientation": "v-up; both broad sides readable",
+      "sourceObject": "Plane033",
+      "sourceGroup": "Group2146524758",
+      "role": "surface",
+      "pivot": [
+        -19.576775550842285,
+        3.680671453475952,
+        -7.800709009170532
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "camera": {
+        "position": [
+          -21.007000049363715,
+          3.680671453475952,
+          -9.23093693509298
+        ],
+        "target": [
+          -19.576775550842285,
+          3.680671453475952,
+          -7.800709009170532
+        ],
+        "fov": 60
+      },
+      "center": [
+        -19.576775550842285,
+        3.680671453475952,
+        -7.800709009170532
+      ],
+      "normal": [
+        -0.7071059339289829,
+        0.0,
+        -0.7071076284430969
+      ],
+      "sourceBounds": {
+        "min": [
+          -19.710355758666992,
+          2.616121292114258,
+          -7.934289455413818
+        ],
+        "max": [
+          -19.443195343017578,
+          4.7452216148376465,
+          -7.667128562927246
+        ]
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 15,
+        "fraction": 1.0,
+        "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
+        "angle": 0,
+        "heightOffset": 0
+      }
+    },
+    {
+      "id": "tver-hanging-11",
+      "zoneId": "tver",
+      "kind": "hanging-cloth",
+      "interactiveId": "",
+      "ordinal": 10,
+      "aspect": 0.19755883502986007,
+      "UVorientation": "v-up; both broad sides readable",
+      "sourceObject": "Plane035",
+      "sourceGroup": "Group2146524758",
+      "role": "surface",
+      "pivot": [
+        -19.887611389160156,
+        4.276234745979309,
+        -11.136921405792236
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "camera": {
+        "position": [
+          -21.077404303725288,
+          4.276234745979309,
+          -9.076143732437881
+        ],
+        "target": [
+          -19.887611389160156,
+          4.276234745979309,
+          -11.136921405792236
+        ],
+        "fov": 60
+      },
+      "center": [
+        -19.887611389160156,
+        4.276234745979309,
+        -11.136921405792236
+      ],
+      "normal": [
+        -0.5000007470155983,
+        -0.0,
+        0.8660249724943524
+      ],
+      "sourceBounds": {
+        "min": [
+          -20.104387283325195,
+          3.0238230228424072,
+          -11.26496410369873
+        ],
+        "max": [
+          -19.670835494995117,
+          5.528646469116211,
+          -11.008878707885742
+        ]
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 15,
+        "fraction": 1.0,
+        "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
+        "angle": 0,
+        "heightOffset": 0
+      }
+    },
+    {
+      "id": "scroll",
+      "zoneId": "vladimir",
+      "kind": "scroll",
+      "interactiveId": "scroll",
+      "ordinal": 0,
+      "aspect": 1.7460332469879398,
+      "UVorientation": "v-up",
+      "sourceObject": "Object174075797",
+      "sourceGroup": "Group2146524701",
+      "role": "surface",
+      "partId": "table",
+      "pivot": [
+        -5.883395433425903,
+        0.8702171444892883,
+        -5.921983242034912
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -5.883395433425903,
+        0.9462258219718933,
+        -5.921983242034912
+      ],
+      "normal": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "camera": {
+        "position": [
+          -5.883395433425903,
+          3.4462258219718933,
+          -4.3219832420349125
+        ],
+        "target": [
+          -5.883395433425903,
+          0.9462258219718933,
+          -5.921983242034912
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -7.030395030975342,
+          0.9462257623672485,
+          -7.184403419494629
+        ],
+        "max": [
+          -4.736395835876465,
+          0.9462258815765381,
+          -4.659563064575195
+        ]
+      },
+      "interactiveRole": "scroll"
+    },
+    {
+      "id": "water",
+      "zoneId": "tver",
+      "kind": "water",
+      "interactiveId": "well",
+      "ordinal": 0,
+      "aspect": 1.0,
+      "UVorientation": "v-up",
+      "sourceObject": "Circle011",
+      "sourceGroup": "Group2146524757",
+      "role": "surface",
+      "partId": "well",
+      "pivot": [
+        -16.10424,
+        0.0,
+        -10.397385
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -16.10424041748047,
+        0.9804985821247101,
+        -10.397384643554688
+      ],
+      "normal": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "camera": {
+        "position": [
+          -16.10424041748047,
+          3.48049858212471,
+          -8.797384643554688
+        ],
+        "target": [
+          -16.10424041748047,
+          0.9804985821247101,
+          -10.397384643554688
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -16.704240798950195,
+          0.9754985570907593,
+          -10.997385025024414
+        ],
+        "max": [
+          -15.504240036010742,
+          0.9854986071586609,
+          -9.797384262084961
+        ]
+      },
+      "interactiveRole": "water"
+    },
+    {
+      "id": "projection-tower-01",
+      "zoneId": "tver",
+      "kind": "projection-tower",
+      "interactiveId": "",
+      "ordinal": 0,
+      "aspect": 0.3261288810628173,
+      "UVorientation": "v-up",
+      "sourceObject": "Kolokolnya_Proekc_01",
+      "sourceGroup": "Group_Kolokolnya_Proekc",
+      "role": "surface",
+      "partId": "Kolokolnya_Proekc_01",
+      "pivot": [
+        -16.862135887145996,
+        3.0519288033246994,
+        -12.645001888275146
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -16.862135887145996,
+        3.0519288033246994,
+        -12.645001888275146
+      ],
+      "normal": [
+        3.9281283988918704e-05,
+        -0.0,
+        0.9999999992284905
+      ],
+      "camera": {
+        "position": [
+          -16.86191198373829,
+          3.0519288033246994,
+          -6.944999627696252
+        ],
+        "target": [
+          -16.862135887145996,
+          3.0519288033246994,
+          -12.645001888275146
+        ],
+        "fov": 60
+      },
+      "sourceBounds": {
+        "min": [
+          -17.84084129333496,
+          0.051927611231803894,
+          -13.066851615905762
+        ],
+        "max": [
+          -15.883430480957031,
+          6.051929995417595,
+          -12.223152160644531
+        ]
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 15,
+        "fraction": 1.0,
+        "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
+        "angle": 0,
+        "heightOffset": 0
+      }
+    },
+    {
+      "id": "projection-tower-02",
+      "zoneId": "tver",
+      "kind": "projection-tower",
+      "interactiveId": "",
+      "ordinal": 1,
+      "aspect": 0.3119352921631851,
+      "UVorientation": "v-up",
+      "sourceObject": "Kolokolnya_Proekc_02",
+      "sourceGroup": "Group_Kolokolnya_Proekc",
+      "role": "surface",
+      "partId": "Kolokolnya_Proekc_02",
+      "pivot": [
+        -16.85931158065796,
+        3.0519288033246994,
+        -12.694973945617676
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -16.85931158065796,
+        3.0519288033246994,
+        -12.694973945617676
+      ],
+      "normal": [
+        0.22813493028262832,
+        -0.0,
+        0.973629525838725
+      ],
+      "camera": {
+        "position": [
+          -13.739257903990236,
+          3.0519288033246994,
+          -7.924723336325804
+        ],
+        "target": [
+          -16.85931158065796,
+          3.0519288033246994,
+          -12.694973945617676
+        ],
+        "fov": 60
+      },
+      "sourceBounds": {
+        "min": [
+          -17.795988082885742,
+          0.051927611231803894,
+          -13.106703758239746
+        ],
+        "max": [
+          -15.922635078430176,
+          6.051929995417595,
+          -12.283244132995605
+        ]
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 10,
+        "fraction": 0.6666666666666666,
+        "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
+        "angle": 20,
+        "heightOffset": 0
+      }
+    },
+    {
+      "id": "history-ribbon-01",
+      "zoneId": "history",
+      "kind": "history-ribbon",
+      "interactiveId": "",
+      "ordinal": 0,
+      "aspect": 13.943063530203126,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "ПОЛОТНА",
+      "sourceGroup": "Group2132582224",
+      "role": "surface",
+      "partId": "ПОЛОТНА-1",
+      "pivot": [
+        23.602855682373047,
+        1.1804280579090118,
+        -2.661771535873413
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        23.602855682373047,
+        1.1804280579090118,
+        -2.661771535873413
+      ],
+      "normal": [
+        -0.002642925789930065,
+        0.0,
+        -0.9999965074655355
+      ],
+      "camera": {
+        "position": [
+          23.581712276053608,
+          1.1804280579090118,
+          -10.661743595597697
+        ],
+        "target": [
+          23.602855682373047,
+          1.1804280579090118,
+          -2.661771535873413
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          16.55452537536621,
+          0.6748887896537781,
+          -3.015894651412964
+        ],
+        "max": [
+          30.651185989379883,
+          1.6859673261642456,
+          -2.3076484203338623
+        ]
+      }
+    },
+    {
+      "id": "history-ribbon-02",
+      "zoneId": "history",
+      "kind": "history-ribbon",
+      "interactiveId": "",
+      "ordinal": 1,
+      "aspect": 13.921983853715457,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "ПОЛОТНА",
+      "sourceGroup": "Group2132582224",
+      "role": "surface",
+      "partId": "ПОЛОТНА-2",
+      "pivot": [
+        23.255873680114746,
+        2.2627442479133606,
+        -2.6630550622940063
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        23.255873680114746,
+        2.2627442479133606,
+        -2.6630550622940063
+      ],
+      "normal": [
+        -0.0013211779227117382,
+        0.0,
+        -0.9999991272440675
+      ],
+      "camera": {
+        "position": [
+          23.245304256733053,
+          2.2627442479133606,
+          -10.663048080246547
+        ],
+        "target": [
+          23.255873680114746,
+          2.2627442479133606,
+          -2.6630550622940063
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          16.208816528320312,
+          1.7565797567367554,
+          -3.0180587768554688
+        ],
+        "max": [
+          30.30293083190918,
+          2.768908739089966,
+          -2.308051347732544
+        ]
+      }
+    },
+    {
+      "id": "history-ribbon-03",
+      "zoneId": "history",
+      "kind": "history-ribbon",
+      "interactiveId": "",
+      "ordinal": 2,
+      "aspect": 14.120472491122252,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "ПОЛОТНА",
+      "sourceGroup": "Group2132582224",
+      "role": "surface",
+      "partId": "ПОЛОТНА-3",
+      "pivot": [
+        23.602825164794922,
+        3.338551640510559,
+        -2.6614222526550293
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        23.602825164794922,
+        3.338551640510559,
+        -2.6614222526550293
+      ],
+      "normal": [
+        -0.0008617288148435206,
+        0.0,
+        -0.9999996287116559
+      ],
+      "camera": {
+        "position": [
+          23.595931334276173,
+          3.338551640510559,
+          -10.661419282348277
+        ],
+        "target": [
+          23.602825164794922,
+          3.338551640510559,
+          -2.6614222526550293
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          16.554527282714844,
+          2.839386463165283,
+          -3.0154709815979004
+        ],
+        "max": [
+          30.651123046875,
+          3.837716817855835,
+          -2.307373523712158
+        ]
+      }
+    },
+    {
+      "id": "history-ribbon-04",
+      "zoneId": "history",
+      "kind": "history-ribbon",
+      "interactiveId": "",
+      "ordinal": 3,
+      "aspect": 13.743308139068864,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "ПОЛОТНА",
+      "sourceGroup": "Group2132582224",
+      "role": "surface",
+      "partId": "ПОЛОТНА-4",
+      "pivot": [
+        23.255590438842773,
+        4.431994318962097,
+        -2.6610530614852905
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        23.255590438842773,
+        4.431994318962097,
+        -2.6610530614852905
+      ],
+      "normal": [
+        0.0011456710870756716,
+        -0.0,
+        -0.9999993437186646
+      ],
+      "camera": {
+        "position": [
+          23.26475580753938,
+          4.431994318962097,
+          -10.661047811234607
+        ],
+        "target": [
+          23.255590438842773,
+          4.431994318962097,
+          -2.6610530614852905
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          16.20838165283203,
+          3.919205904006958,
+          -3.014669895172119
+        ],
+        "max": [
+          30.302799224853516,
+          4.944782733917236,
+          -2.307436227798462
+        ]
+      }
+    },
+    {
+      "id": "stage-projection-01",
+      "zoneId": "stage",
+      "kind": "stage-projection",
+      "interactiveId": "",
+      "ordinal": 0,
+      "aspect": 0.26768340200655244,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Object031",
+      "sourceGroup": "Group2146524760",
+      "role": "surface",
+      "partId": "Object031-1",
+      "pivot": [
+        -27.50428009033203,
+        2.510455146431923,
+        9.771251201629639
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -27.50428009033203,
+        2.510455146431923,
+        9.771251201629639
+      ],
+      "normal": [
+        0.999999632702761,
+        -0.0,
+        -0.0008570847933283277
+      ],
+      "camera": {
+        "position": [
+          -22.50625267767795,
+          2.510455146431923,
+          9.76696746676421
+        ],
+        "target": [
+          -27.50428009033203,
+          2.510455146431923,
+          9.771251201629639
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -27.844972610473633,
+          0.13044121861457825,
+          9.134358406066895
+        ],
+        "max": [
+          -27.16358757019043,
+          4.890469074249268,
+          10.408143997192383
+        ]
+      }
+    },
+    {
+      "id": "stage-projection-02",
+      "zoneId": "stage",
+      "kind": "stage-projection",
+      "interactiveId": "",
+      "ordinal": 1,
+      "aspect": 0.5107775799975116,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Object031",
+      "sourceGroup": "Group2146524760",
+      "role": "surface",
+      "partId": "Object031-2",
+      "pivot": [
+        -27.196348190307617,
+        2.972891390323639,
+        5.5376012325286865
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -27.196348190307617,
+        2.972891390323639,
+        5.5376012325286865
+      ],
+      "normal": [
+        0.7400000677939526,
+        -0.0,
+        -0.6726067942453046
+      ],
+      "camera": {
+        "position": [
+          -24.217710430132072,
+          2.972891390323639,
+          2.830233919627935
+        ],
+        "target": [
+          -27.196348190307617,
+          2.972891390323639,
+          5.5376012325286865
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -27.847064971923828,
+          1.0561362504959106,
+          4.687486171722412
+        ],
+        "max": [
+          -26.545631408691406,
+          4.889646530151367,
+          6.387716293334961
+        ]
+      }
+    },
+    {
+      "id": "stage-projection-03",
+      "zoneId": "stage",
+      "kind": "stage-projection",
+      "interactiveId": "",
+      "ordinal": 2,
+      "aspect": 0.2937670186088534,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Object031",
+      "sourceGroup": "Group2146524760",
+      "role": "surface",
+      "partId": "Object031-3",
+      "pivot": [
+        -27.439353942871094,
+        2.5209225863218307,
+        8.316473245620728
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -27.439353942871094,
+        2.5209225863218307,
+        8.316473245620728
+      ],
+      "normal": [
+        0.9973101154757297,
+        -0.0,
+        -0.07329756864853333
+      ],
+      "camera": {
+        "position": [
+          -22.477083786867485,
+          2.5209225863218307,
+          7.951769898318627
+        ],
+        "target": [
+          -27.439353942871094,
+          2.5209225863218307,
+          8.316473245620728
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -27.84421730041504,
+          0.15156349539756775,
+          7.644120693206787
+        ],
+        "max": [
+          -27.03449058532715,
+          4.890281677246094,
+          8.988825798034668
+        ]
+      }
+    },
+    {
+      "id": "stage-projection-04",
+      "zoneId": "stage",
+      "kind": "stage-projection",
+      "interactiveId": "",
+      "ordinal": 3,
+      "aspect": 0.37383868777105284,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Object031",
+      "sourceGroup": "Group2146524760",
+      "role": "surface",
+      "partId": "Object031-4",
+      "pivot": [
+        -27.343974113464355,
+        2.6674655377864838,
+        6.894107341766357
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -27.343974113464355,
+        2.6674655377864838,
+        6.894107341766357
+      ],
+      "normal": [
+        0.9399225613862581,
+        -0.0,
+        -0.3413877247311272
+      ],
+      "camera": {
+        "position": [
+          -22.95696995405229,
+          2.6674655377864838,
+          5.300710789864446
+        ],
+        "target": [
+          -27.343974113464355,
+          2.6674655377864838,
+          6.894107341766357
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -27.844837188720703,
+          0.44488924741744995,
+          6.160616874694824
+        ],
+        "max": [
+          -26.843111038208008,
+          4.890041828155518,
+          7.627597808837891
+        ]
+      }
+    },
+    {
+      "id": "stage-projection-05",
+      "zoneId": "stage",
+      "kind": "stage-projection",
+      "interactiveId": "",
+      "ordinal": 4,
+      "aspect": 0.8464887458672794,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Object031",
+      "sourceGroup": "Group2146524760",
+      "role": "surface",
+      "partId": "Object031-5",
+      "pivot": [
+        -27.023771286010742,
+        3.469501495361328,
+        4.272627472877502
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -27.023771286010742,
+        3.469501495361328,
+        4.272627472877502
+      ],
+      "normal": [
+        0.6632705196528559,
+        -0.0,
+        -0.7483797283194076
+      ],
+      "camera": {
+        "position": [
+          -25.04489293484726,
+          3.469501495361328,
+          2.039824417502769
+        ],
+        "target": [
+          -27.023771286010742,
+          3.469501495361328,
+          4.272627472877502
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -27.844297409057617,
+          2.0487794876098633,
+          3.2161381244659424
+        ],
+        "max": [
+          -26.203245162963867,
+          4.890223503112793,
+          5.3291168212890625
+        ]
+      }
+    },
+    {
+      "id": "stage-projection-06",
+      "zoneId": "stage",
+      "kind": "stage-projection",
+      "interactiveId": "",
+      "ordinal": 5,
+      "aspect": 3.9270962386813224,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Object031",
+      "sourceGroup": "Group2146524760",
+      "role": "surface",
+      "partId": "Object031-6",
+      "pivot": [
+        -27.57421112060547,
+        4.35970938205719,
+        0.8342651724815369
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -27.57421112060547,
+        4.35970938205719,
+        0.8342651724815369
+      ],
+      "normal": [
+        0.9984321045781179,
+        -0.0,
+        -0.05597617839501087
+      ],
+      "camera": {
+        "position": [
+          -23.11749444407582,
+          4.35970938205719,
+          0.5844034476856823
+        ],
+        "target": [
+          -27.57421112060547,
+          4.35970938205719,
+          0.8342651724815369
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -27.843717575073242,
+          3.8184497356414795,
+          -1.2941306829452515
+        ],
+        "max": [
+          -27.304704666137695,
+          4.9009690284729,
+          2.962661027908325
+        ]
+      }
+    },
+    {
+      "id": "stage-projection-07",
+      "zoneId": "stage",
+      "kind": "stage-projection",
+      "interactiveId": "",
+      "ordinal": 6,
+      "aspect": 0.5893954256541735,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Object041",
+      "sourceGroup": "Group2146524760",
+      "role": "surface",
+      "partId": "Object041-1",
+      "pivot": [
+        -27.412342071533203,
+        2.6145242899656296,
+        -2.531613290309906
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -27.412342071533203,
+        2.6145242899656296,
+        -2.531613290309906
+      ],
+      "normal": [
+        0.9954840016907958,
+        -0.0,
+        -0.09492946000941832
+      ],
+      "camera": {
+        "position": [
+          -22.672810861561242,
+          2.6145242899656296,
+          -2.9835754892967783
+        ],
+        "target": [
+          -27.412342071533203,
+          2.6145242899656296,
+          -2.531613290309906
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -27.852527618408203,
+          0.34736618399620056,
+          -3.8406617641448975
+        ],
+        "max": [
+          -26.972156524658203,
+          4.881682395935059,
+          -1.2225648164749146
+        ]
+      }
+    },
+    {
+      "id": "stage-projection-08",
+      "zoneId": "stage",
+      "kind": "stage-projection",
+      "interactiveId": "",
+      "ordinal": 7,
+      "aspect": 0.6240869883037171,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Object041",
+      "sourceGroup": "Group2146524760",
+      "role": "surface",
+      "partId": "Object041-2",
+      "pivot": [
+        -26.75258445739746,
+        2.3785258643329144,
+        -4.370372772216797
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -26.75258445739746,
+        2.3785258643329144,
+        -4.370372772216797
+      ],
+      "normal": [
+        0.9343676723228548,
+        -0.0,
+        -0.3563103323199739
+      ],
+      "camera": {
+        "position": [
+          -22.215177723452868,
+          2.3785258643329144,
+          -6.1006604835023115
+        ],
+        "target": [
+          -26.75258445739746,
+          2.3785258643329144,
+          -4.370372772216797
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -27.833009719848633,
+          0.06608512252569199,
+          -5.841365814208984
+        ],
+        "max": [
+          -25.67215919494629,
+          4.690966606140137,
+          -2.8993797302246094
+        ]
+      }
+    },
+    {
+      "id": "stage-projection-09",
+      "zoneId": "stage",
+      "kind": "stage-projection",
+      "interactiveId": "",
+      "ordinal": 8,
+      "aspect": 0.7922594556091125,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Object041",
+      "sourceGroup": "Group2146524760",
+      "role": "surface",
+      "partId": "Object041-3",
+      "pivot": [
+        -25.74525737762451,
+        2.0047318302094936,
+        -5.300200939178467
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -25.74525737762451,
+        2.0047318302094936,
+        -5.300200939178467
+      ],
+      "normal": [
+        0.7744896656269808,
+        -0.0,
+        -0.632586561536844
+      ],
+      "camera": {
+        "position": [
+          -22.605324167001857,
+          2.0047318302094936,
+          -7.864831096709562
+        ],
+        "target": [
+          -25.74525737762451,
+          2.0047318302094936,
+          -5.300200939178467
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -27.14198112487793,
+          0.07416211813688278,
+          -6.558084964752197
+        ],
+        "max": [
+          -24.348533630371094,
+          3.9353015422821045,
+          -4.042316913604736
+        ]
+      }
+    },
+    {
+      "id": "workshop-screen-01",
+      "zoneId": "workshops",
+      "kind": "workshop-screen",
+      "interactiveId": "workshops",
+      "ordinal": 0,
+      "aspect": 0.6666666004392902,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Box2131647158",
+      "sourceGroup": "",
+      "role": "surface",
+      "partId": "Box2131647158",
+      "pivot": [
+        5.266053199768066,
+        1.9000001847743988,
+        13.525925636291504
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        5.266053199768066,
+        1.9000001847743988,
+        13.525925636291504
+      ],
+      "normal": [
+        1.0,
+        -0.0,
+        -0.0
+      ],
+      "camera": {
+        "position": [
+          8.416053512692452,
+          1.9000001847743988,
+          13.525925636291504
+        ],
+        "target": [
+          5.266053199768066,
+          1.9000001847743988,
+          13.525925636291504
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          5.241053104400635,
+          0.40000003576278687,
+          12.525925636291504
+        ],
+        "max": [
+          5.291053295135498,
+          3.4000003337860107,
+          14.525925636291504
+        ]
+      }
+    },
+    {
+      "id": "workshop-screen-02",
+      "zoneId": "workshops",
+      "kind": "workshop-screen",
+      "interactiveId": "workshops",
+      "ordinal": 1,
+      "aspect": 0.6666666004392902,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Box2131647160",
+      "sourceGroup": "",
+      "role": "surface",
+      "partId": "Box2131647160",
+      "pivot": [
+        5.266053199768066,
+        1.9000001847743988,
+        10.254343032836914
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        5.266053199768066,
+        1.9000001847743988,
+        10.254343032836914
+      ],
+      "normal": [
+        1.0,
+        -0.0,
+        -0.0
+      ],
+      "camera": {
+        "position": [
+          8.416053512692452,
+          1.9000001847743988,
+          10.254343032836914
+        ],
+        "target": [
+          5.266053199768066,
+          1.9000001847743988,
+          10.254343032836914
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          5.241053104400635,
+          0.40000003576278687,
+          9.254343032836914
+        ],
+        "max": [
+          5.291053295135498,
+          3.4000003337860107,
+          11.254343032836914
+        ]
+      }
+    },
+    {
+      "id": "workshop-screen-03",
+      "zoneId": "workshops",
+      "kind": "workshop-screen",
+      "interactiveId": "workshops",
+      "ordinal": 2,
+      "aspect": 0.659857432231434,
+      "UVorientation": "v-up",
+      "sourceObject": "Object174075920",
+      "sourceGroup": "",
+      "role": "surface",
+      "partId": "Object174075920",
+      "pivot": [
+        7.100905418395996,
+        1.8999841660261154,
+        8.14100170135498
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        7.100905418395996,
+        1.8999841660261154,
+        8.14100170135498
+      ],
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "camera": {
+        "position": [
+          7.100905418395996,
+          1.8999841660261154,
+          11.290992595255375
+        ],
+        "target": [
+          7.100905418395996,
+          1.8999841660261154,
+          8.14100170135498
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          6.111122131347656,
+          0.3999885022640228,
+          8.139001846313477
+        ],
+        "max": [
+          8.090688705444336,
+          3.399979829788208,
+          8.143001556396484
+        ]
+      }
+    },
+    {
+      "id": "workshop-screen-04",
+      "zoneId": "workshops",
+      "kind": "workshop-screen",
+      "interactiveId": "workshops",
+      "ordinal": 3,
+      "aspect": 0.659857432231434,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Object174075921",
+      "sourceGroup": "",
+      "role": "surface",
+      "partId": "Object174075921",
+      "pivot": [
+        7.100905418395996,
+        1.8999841660261154,
+        15.64093542098999
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        7.100905418395996,
+        1.8999841660261154,
+        15.64093542098999
+      ],
+      "normal": [
+        -0.0,
+        -0.0,
+        -1.0
+      ],
+      "camera": {
+        "position": [
+          7.100905418395996,
+          1.8999841660261154,
+          12.490944527089596
+        ],
+        "target": [
+          7.100905418395996,
+          1.8999841660261154,
+          15.64093542098999
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          6.111122131347656,
+          0.3999885022640228,
+          15.638935089111328
+        ],
+        "max": [
+          8.090688705444336,
+          3.399979829788208,
+          15.642935752868652
+        ]
+      }
+    },
+    {
+      "id": "workshop-screen-05",
+      "zoneId": "workshops",
+      "kind": "workshop-screen",
+      "interactiveId": "workshops",
+      "ordinal": 4,
+      "aspect": 0.6666666086027472,
+      "UVorientation": "v-up",
+      "sourceObject": "Box2131647164",
+      "sourceGroup": "",
+      "role": "surface",
+      "partId": "Box2131647164",
+      "pivot": [
+        13.891112327575684,
+        1.90000019967556,
+        8.11277437210083
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        13.891112327575684,
+        1.90000019967556,
+        8.11277437210083
+      ],
+      "normal": [
+        8.187398025124174e-08,
+        -0.0,
+        0.9999999999999967
+      ],
+      "camera": {
+        "position": [
+          13.891112585478744,
+          1.90000019967556,
+          11.262774653732766
+        ],
+        "target": [
+          13.891112327575684,
+          1.90000019967556,
+          8.11277437210083
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          12.891112327575684,
+          0.40000006556510925,
+          8.08454704284668
+        ],
+        "max": [
+          14.891112327575684,
+          3.4000003337860107,
+          8.14100170135498
+        ]
+      }
+    },
+    {
+      "id": "workshop-screen-06",
+      "zoneId": "workshops",
+      "kind": "workshop-screen",
+      "interactiveId": "workshops",
+      "ordinal": 5,
+      "aspect": 0.6666666086027478,
+      "UVorientation": "v-up",
+      "sourceObject": "Box2131647166",
+      "sourceGroup": "",
+      "role": "surface",
+      "partId": "Box2131647166",
+      "pivot": [
+        17.291105270385742,
+        1.90000019967556,
+        8.112775325775146
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        17.291105270385742,
+        1.90000019967556,
+        8.112775325775146
+      ],
+      "normal": [
+        8.187398025124174e-08,
+        -0.0,
+        0.9999999999999967
+      ],
+      "camera": {
+        "position": [
+          17.291105528288803,
+          1.90000019967556,
+          11.262775607407082
+        ],
+        "target": [
+          17.291105270385742,
+          1.90000019967556,
+          8.112775325775146
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          16.291105270385742,
+          0.40000006556510925,
+          8.084547996520996
+        ],
+        "max": [
+          18.291105270385742,
+          3.4000003337860107,
+          8.141002655029297
+        ]
+      }
+    },
+    {
+      "id": "workshop-screen-07",
+      "zoneId": "workshops",
+      "kind": "workshop-screen",
+      "interactiveId": "workshops",
+      "ordinal": 6,
+      "aspect": 0.6666666070620272,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Box2131647156",
+      "sourceGroup": "",
+      "role": "surface",
+      "partId": "Box2131647156",
+      "pivot": [
+        13.891119956970215,
+        1.90000019967556,
+        15.669163703918457
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        13.891119956970215,
+        1.90000019967556,
+        15.669163703918457
+      ],
+      "normal": [
+        -0.0,
+        -0.0,
+        -1.0
+      ],
+      "camera": {
+        "position": [
+          13.891119956970215,
+          1.90000019967556,
+          12.51916342228651
+        ],
+        "target": [
+          13.891119956970215,
+          1.90000019967556,
+          15.669163703918457
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          12.891119956970215,
+          0.40000006556510925,
+          15.640936851501465
+        ],
+        "max": [
+          14.891119956970215,
+          3.4000003337860107,
+          15.69739055633545
+        ]
+      }
+    },
+    {
+      "id": "workshop-screen-08",
+      "zoneId": "workshops",
+      "kind": "workshop-screen",
+      "interactiveId": "workshops",
+      "ordinal": 7,
+      "aspect": 0.6666666070620272,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Box2131647155",
+      "sourceGroup": "",
+      "role": "surface",
+      "partId": "Box2131647155",
+      "pivot": [
+        17.291107177734375,
+        1.90000019967556,
+        15.66916561126709
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        17.291107177734375,
+        1.90000019967556,
+        15.66916561126709
+      ],
+      "normal": [
+        -0.0,
+        -0.0,
+        -1.0
+      ],
+      "camera": {
+        "position": [
+          17.291107177734375,
+          1.90000019967556,
+          12.519165329635143
+        ],
+        "target": [
+          17.291107177734375,
+          1.90000019967556,
+          15.66916561126709
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          16.291107177734375,
+          0.40000006556510925,
+          15.640938758850098
+        ],
+        "max": [
+          18.291107177734375,
+          3.4000003337860107,
+          15.697392463684082
+        ]
+      }
+    },
+    {
+      "id": "video-sphere",
+      "zoneId": "finale",
+      "kind": "video-sphere",
+      "interactiveId": "finale",
+      "ordinal": 0,
+      "aspect": 2.0,
+      "UVorientation": "v-up",
+      "sourceObject": "Sphere001",
+      "sourceGroup": "",
+      "role": "surface",
+      "partId": "sphere",
+      "pivot": [
+        24.491106033325195,
+        3.7047080993652344,
+        4.173001289367676
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        24.491106033325195,
+        3.7047080993652344,
+        4.173001289367676
+      ],
+      "normal": [
+        0.7599879384444954,
+        -0.0,
+        0.6499371765169969
+      ],
+      "camera": {
+        "position": [
+          24.491106033325195,
+          4.104708099365235,
+          8.973001289367676
+        ],
+        "target": [
+          24.491106033325195,
+          3.7047080993652344,
+          4.173001289367676
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          22.99293327331543,
+          2.2047080993652344,
+          2.673914909362793
+        ],
+        "max": [
+          25.98927879333496,
+          5.204708099365234,
+          5.672087669372559
+        ]
+      },
+      "interactiveRole": "sphere"
+    },
+    {
+      "id": "map-surface",
+      "zoneId": "map",
+      "kind": "map-surface",
+      "interactiveId": "map",
+      "ordinal": 0,
+      "aspect": 3.1718169890779744,
+      "UVorientation": "v-up",
+      "sourceObject": "Object174075859",
+      "sourceGroup": "Group2146524720",
+      "role": "surface",
+      "partId": "map-field",
+      "pivot": [
+        23.422264099121094,
+        0.26211680471897125,
+        -8.047389507293701
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        23.422264099121094,
+        0.26211680471897125,
+        -8.047389507293701
+      ],
+      "normal": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "camera": {
+        "position": [
+          23.422264099121094,
+          2.7621168047189713,
+          -6.4473895072937015
+        ],
+        "target": [
+          23.422264099121094,
+          0.26211680471897125,
+          -8.047389507293701
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          15.59481430053711,
+          0.2621167004108429,
+          -10.515042304992676
+        ],
+        "max": [
+          31.249713897705078,
+          0.2621169090270996,
+          -5.579736709594727
+        ]
+      },
+      "interactiveRole": "field"
+    },
+    {
+      "id": "barge-screen-01",
+      "zoneId": "yaroslavl",
+      "kind": "barge-screen",
+      "interactiveId": "boats",
+      "ordinal": 0,
+      "aspect": 0.39999991527914536,
+      "UVorientation": "v-up",
+      "sourceObject": "Box2131647325",
+      "sourceGroup": "Group2146524678",
+      "role": "surface",
+      "partId": "Box2131647325",
+      "pivot": [
+        -10.734734535217285,
+        2.257375419139862,
+        0.08652538806200027
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -10.734734535217285,
+        2.257375419139862,
+        0.08652538806200027
+      ],
+      "normal": [
+        -0.50000016321267,
+        0.0,
+        0.8660253095535391
+      ],
+      "camera": {
+        "position": [
+          -12.047235026235441,
+          2.257375419139862,
+          2.3598419340402152
+        ],
+        "target": [
+          -10.734734535217285,
+          2.257375419139862,
+          0.08652538806200027
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -11.173996925354004,
+          1.0073753595352173,
+          -0.17429997026920319
+        ],
+        "max": [
+          -10.295472145080566,
+          3.507375478744507,
+          0.34735074639320374
+        ]
+      }
+    },
+    {
+      "id": "barge-screen-02",
+      "zoneId": "yaroslavl",
+      "kind": "barge-screen",
+      "interactiveId": "boats",
+      "ordinal": 1,
+      "aspect": 1.0000000734203045,
+      "UVorientation": "v-up",
+      "sourceObject": "Box2131647326",
+      "sourceGroup": "Group2146524678",
+      "role": "surface",
+      "partId": "Box2131647326",
+      "pivot": [
+        -12.033773422241211,
+        2.007375419139862,
+        -0.6634750887751579
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -12.033773422241211,
+        2.007375419139862,
+        -0.6634750887751579
+      ],
+      "normal": [
+        -0.49999995392765,
+        0.0,
+        0.8660254303843207
+      ],
+      "camera": {
+        "position": [
+          -13.083773465165464,
+          2.007375419139862,
+          1.1551785569582005
+        ],
+        "target": [
+          -12.033773422241211,
+          2.007375419139862,
+          -0.6634750887751579
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -12.906048774719238,
+          1.0073753595352173,
+          -1.1743004322052002
+        ],
+        "max": [
+          -11.161498069763184,
+          3.007375478744507,
+          -0.15264974534511566
+        ]
+      }
+    },
+    {
+      "id": "textile-panel-01",
+      "zoneId": "kostroma",
+      "kind": "textile-panel",
+      "interactiveId": "ornament",
+      "ordinal": 0,
+      "aspect": 0.2857142860887225,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Box2131647505",
+      "sourceGroup": "",
+      "role": "surface",
+      "partId": "Box2131647505",
+      "pivot": [
+        1.4644311666488647,
+        1.7500001108909444,
+        14.999568939208984
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        1.4644311666488647,
+        1.7500001108909444,
+        14.999568939208984
+      ],
+      "normal": [
+        -0.7071067164533773,
+        0.0,
+        -0.707106845919712
+      ],
+      "camera": {
+        "position": [
+          -1.1341862056861558,
+          1.7500001108909444,
+          12.40095109108515
+        ],
+        "target": [
+          1.4644311666488647,
+          1.7500001108909444,
+          14.999568939208984
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          1.083828091621399,
+          -1.663669024765113e-08,
+          14.618966102600098
+        ],
+        "max": [
+          1.8450342416763306,
+          3.500000238418579,
+          15.380171775817871
+        ]
+      }
+    },
+    {
+      "id": "textile-panel-02",
+      "zoneId": "kostroma",
+      "kind": "textile-panel",
+      "interactiveId": "ornament",
+      "ordinal": 1,
+      "aspect": 0.2857142843720133,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Box2131647506",
+      "sourceGroup": "",
+      "role": "surface",
+      "partId": "Box2131647506",
+      "pivot": [
+        3.034026622772217,
+        1.7500001108909444,
+        13.518643379211426
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        3.034026622772217,
+        1.7500001108909444,
+        13.518643379211426
+      ],
+      "normal": [
+        -0.7071067719853706,
+        0.0,
+        -0.7071067903877243
+      ],
+      "camera": {
+        "position": [
+          0.4354090463571061,
+          1.7500001108909444,
+          10.92002573516766
+        ],
+        "target": [
+          3.034026622772217,
+          1.7500001108909444,
+          13.518643379211426
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          2.653423547744751,
+          -1.663669024765113e-08,
+          13.138040542602539
+        ],
+        "max": [
+          3.4146296977996826,
+          3.500000238418579,
+          13.899246215820312
+        ]
+      }
+    },
+    {
+      "id": "textile-panel-03",
+      "zoneId": "kostroma",
+      "kind": "textile-panel",
+      "interactiveId": "ornament",
+      "ordinal": 2,
+      "aspect": 0.28571426611504436,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Box2131647507",
+      "sourceGroup": "",
+      "role": "surface",
+      "partId": "Box2131647507",
+      "pivot": [
+        -1.5526363849639893,
+        1.7500001183732175,
+        16.325374603271484
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -1.5526363849639893,
+        1.7500001183732175,
+        16.325374603271484
+      ],
+      "normal": [
+        -0.0,
+        -0.0,
+        -1.0
+      ],
+      "camera": {
+        "position": [
+          -1.5526363849639893,
+          1.7500001183732175,
+          12.650374351176225
+        ],
+        "target": [
+          -1.5526363849639893,
+          1.7500001183732175,
+          16.325374603271484
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -2.0526363849639893,
+          -1.6721442008815757e-09,
+          16.287120819091797
+        ],
+        "max": [
+          -1.0526363849639893,
+          3.500000238418579,
+          16.363628387451172
+        ]
+      }
+    },
+    {
+      "id": "stage-flat-screen-01",
+      "zoneId": "stage",
+      "kind": "stage-flat-screen",
+      "interactiveId": "",
+      "ordinal": 0,
+      "aspect": 1.7156031286996782,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Object030",
+      "sourceGroup": "Group2146524760",
+      "role": "surface",
+      "partId": "Object030",
+      "pivot": [
+        -30.351778030395508,
+        2.1552935540676117,
+        1.5366525053977966
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -30.351778030395508,
+        2.1552935540676117,
+        1.5366525053977966
+      ],
+      "normal": [
+        1.0,
+        -0.0,
+        -0.0
+      ],
+      "camera": {
+        "position": [
+          -24.050177735090255,
+          2.1552935540676117,
+          1.5366525053977966
+        ],
+        "target": [
+          -30.351778030395508,
+          2.1552935540676117,
+          1.5366525053977966
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -30.351778030395508,
+          0.40619319677352905,
+          -1.4641095399856567
+        ],
+        "max": [
+          -30.351778030395508,
+          3.9043939113616943,
+          4.53741455078125
+        ]
+      }
+    },
+    {
+      "id": "stage-flat-screen-02",
+      "zoneId": "stage",
+      "kind": "stage-flat-screen",
+      "interactiveId": "",
+      "ordinal": 1,
+      "aspect": 1.1993865090592002,
+      "UVorientation": "v-up",
+      "sourceObject": "Object174075685",
+      "sourceGroup": "Group2146524760",
+      "role": "surface",
+      "partId": "Object174075685",
+      "pivot": [
+        -27.85430908203125,
+        2.4999992325901985,
+        7.528445720672607
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -27.85430908203125,
+        2.4999992325901985,
+        7.528445720672607
+      ],
+      "normal": [
+        0.9999999999999845,
+        -0.0,
+        1.7651055990262364e-07
+      ],
+      "camera": {
+        "position": [
+          -21.683465241459178,
+          2.4999992325901985,
+          7.528446809891709
+        ],
+        "target": [
+          -27.85430908203125,
+          2.4999992325901985,
+          7.528445720672607
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -27.856809616088867,
+          0.04999913275241852,
+          4.589948654174805
+        ],
+        "max": [
+          -27.851808547973633,
+          4.9499993324279785,
+          10.46694278717041
+        ]
+      }
+    },
+    {
+      "id": "stage-flat-screen-03",
+      "zoneId": "stage",
+      "kind": "stage-flat-screen",
+      "interactiveId": "",
+      "ordinal": 2,
+      "aspect": 1.1993862544920915,
+      "UVorientation": "u-right on physical front; v-up",
+      "sourceObject": "Object174075687",
+      "sourceGroup": "Group2146524760",
+      "role": "surface",
+      "partId": "Object174075687",
+      "pivot": [
+        -27.854307174682617,
+        2.5000247601419687,
+        -4.448578715324402
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -27.854307174682617,
+        2.5000247601419687,
+        -4.448578715324402
+      ],
+      "normal": [
+        0.9999999999999958,
+        -0.0,
+        9.169070126620797e-08
+      ],
+      "camera": {
+        "position": [
+          -21.68346408557396,
+          2.5000247601419687,
+          -4.4485781495154715
+        ],
+        "target": [
+          -27.854307174682617,
+          2.5000247601419687,
+          -4.448578715324402
+        ],
+        "fov": 58
+      },
+      "sourceBounds": {
+        "min": [
+          -27.856809616088867,
+          0.05002443864941597,
+          -7.387075424194336
+        ],
+        "max": [
+          -27.851804733276367,
+          4.9500250816345215,
+          -1.5100820064544678
+        ]
+      }
+    },
+    {
+      "id": "tver-curved-01",
+      "zoneId": "tver",
+      "kind": "tver-curved",
+      "interactiveId": "",
+      "ordinal": 0,
+      "aspect": 0.514920645549674,
+      "UVorientation": "v-up",
+      "sourceObject": "Floor_Tropa_006",
+      "sourceGroup": "Group_Floor.001",
+      "role": "surface",
+      "partId": "Floor_Tropa_006",
+      "pivot": [
+        -19.08403205871582,
+        1.8499997295439243,
+        -10.034363269805908
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -19.08403205871582,
+        1.8499997295439243,
+        -10.034363269805908
+      ],
+      "normal": [
+        -0.9995231629958632,
+        0.0,
+        0.030877931192760902
+      ],
+      "camera": {
+        "position": [
+          -22.242135278799154,
+          1.8499997295439243,
+          -11.074560634496235
+        ],
+        "target": [
+          -19.08403205871582,
+          1.8499997295439243,
+          -10.034363269805908
+        ],
+        "fov": 60
+      },
+      "sourceBounds": {
+        "min": [
+          -19.404632568359375,
+          0.09999961033463478,
+          -10.931029319763184
+        ],
+        "max": [
+          -18.763431549072266,
+          3.599999848753214,
+          -9.137697219848633
+        ]
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 15,
+        "fraction": 1.0,
+        "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
+        "angle": -20,
+        "heightOffset": 0
+      }
+    },
+    {
+      "id": "tver-curved-02",
+      "zoneId": "tver",
+      "kind": "tver-curved",
+      "interactiveId": "",
+      "ordinal": 1,
+      "aspect": 0.555414526170242,
+      "UVorientation": "v-up",
+      "sourceObject": "Shape320",
+      "sourceGroup": "Group2146524761",
+      "role": "surface",
+      "partId": "Shape320",
+      "pivot": [
+        -17.875463485717773,
+        1.6000000163912773,
+        -8.02645492553711
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -17.875463485717773,
+        1.6000000163912773,
+        -8.02645492553711
+      ],
+      "normal": [
+        0.8794089775959368,
+        -0.0,
+        -0.4760670647331835
+      ],
+      "camera": {
+        "position": [
+          -15.369147700385287,
+          1.6000000163912773,
+          -9.383246167854754
+        ],
+        "target": [
+          -17.875463485717773,
+          1.6000000163912773,
+          -8.02645492553711
+        ],
+        "fov": 60
+      },
+      "sourceBounds": {
+        "min": [
+          -18.325336456298828,
+          0.09999989718198776,
+          -8.758912086486816
+        ],
+        "max": [
+          -17.42559051513672,
+          3.100000135600567,
+          -7.293997764587402
+        ]
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 15,
+        "fraction": 1.0,
+        "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
+        "angle": 0,
+        "heightOffset": 0
+      }
+    },
+    {
+      "id": "tver-curved-03",
+      "zoneId": "tver",
+      "kind": "tver-curved",
+      "interactiveId": "",
+      "ordinal": 2,
+      "aspect": 0.5481062087115763,
+      "UVorientation": "v-up",
+      "sourceObject": "Shape321",
+      "sourceGroup": "Group2146524761",
+      "role": "surface",
+      "partId": "Shape321",
+      "pivot": [
+        -20.880664825439453,
+        1.5999999940395355,
+        -8.944785118103027
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "center": [
+        -20.880664825439453,
+        1.5999999940395355,
+        -8.944785118103027
+      ],
+      "normal": [
+        -0.9989366604990216,
+        0.0,
+        -0.046103669171363965
+      ],
+      "camera": {
+        "position": [
+          -25.076199132966426,
+          1.5999999940395355,
+          -9.138420544011517
+        ],
+        "target": [
+          -20.880664825439453,
+          1.5999999940395355,
+          -8.944785118103027
+        ],
+        "fov": 60
+      },
+      "sourceBounds": {
+        "min": [
+          -21.153038024902344,
+          0.09999987483024597,
+          -9.761049270629883
+        ],
+        "max": [
+          -20.608291625976562,
+          3.100000113248825,
+          -8.128520965576172
+        ]
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 15,
+        "fraction": 1.0,
+        "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
+        "angle": 0,
+        "heightOffset": 0
+      }
+    }
+  ],
+  "bindings": [
+    "scroll",
+    "well",
+    "workshops",
+    "ornament",
+    "bells",
+    "bobbins",
+    "finale",
+    "map",
+    "pillars",
+    "boats"
+  ],
+  "sourceObjects": [
+    {
+      "sourceObject": "Box2131647299",
+      "interactiveId": "scroll",
+      "kind": null,
+      "originalTriangles": 34,
+      "matchedOriginalTriangles": 187,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647300",
+      "interactiveId": "scroll",
+      "kind": null,
+      "originalTriangles": 252,
+      "matchedOriginalTriangles": 88,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647301",
+      "interactiveId": "scroll",
+      "kind": null,
+      "originalTriangles": 208,
+      "matchedOriginalTriangles": 208,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647302",
+      "interactiveId": "scroll",
+      "kind": null,
+      "originalTriangles": 28,
+      "matchedOriginalTriangles": 26,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647303",
+      "interactiveId": "scroll",
+      "kind": null,
+      "originalTriangles": 28,
+      "matchedOriginalTriangles": 28,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647304",
+      "interactiveId": "scroll",
+      "kind": null,
+      "originalTriangles": 28,
+      "matchedOriginalTriangles": 26,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647305",
+      "interactiveId": "scroll",
+      "kind": null,
+      "originalTriangles": 28,
+      "matchedOriginalTriangles": 28,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647306",
+      "interactiveId": "scroll",
+      "kind": null,
+      "originalTriangles": 28,
+      "matchedOriginalTriangles": 27,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647307",
+      "interactiveId": "scroll",
+      "kind": null,
+      "originalTriangles": 28,
+      "matchedOriginalTriangles": 27,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647308",
+      "interactiveId": "scroll",
+      "kind": null,
+      "originalTriangles": 28,
+      "matchedOriginalTriangles": 27,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647309",
+      "interactiveId": "scroll",
+      "kind": null,
+      "originalTriangles": 28,
+      "matchedOriginalTriangles": 27,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647310",
+      "interactiveId": "scroll",
+      "kind": null,
+      "originalTriangles": 28,
+      "matchedOriginalTriangles": 27,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647311",
+      "interactiveId": "scroll",
+      "kind": null,
+      "originalTriangles": 28,
+      "matchedOriginalTriangles": 26,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647312",
+      "interactiveId": "scroll",
+      "kind": null,
+      "originalTriangles": 28,
+      "matchedOriginalTriangles": 26,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder179",
+      "interactiveId": "scroll",
+      "kind": null,
+      "originalTriangles": 2446,
+      "matchedOriginalTriangles": 728,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder180",
+      "interactiveId": "scroll",
+      "kind": null,
+      "originalTriangles": 3216,
+      "matchedOriginalTriangles": 1124,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075797",
+      "interactiveId": "scroll",
+      "kind": "scroll",
+      "originalTriangles": 2,
+      "matchedOriginalTriangles": 2,
+      "components": 1
+    },
+    {
+      "sourceObject": "Circle010",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 204,
+      "matchedOriginalTriangles": 3374,
+      "components": 1
+    },
+    {
+      "sourceObject": "Circle011",
+      "interactiveId": "well",
+      "kind": "water",
+      "originalTriangles": 204,
+      "matchedOriginalTriangles": 431,
+      "components": 1
+    },
+    {
+      "sourceObject": "Circle012",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 5460,
+      "matchedOriginalTriangles": 4745,
+      "components": 1
+    },
+    {
+      "sourceObject": "Circle013",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 50,
+      "matchedOriginalTriangles": 150,
+      "components": 1
+    },
+    {
+      "sourceObject": "Circle014",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 1036,
+      "matchedOriginalTriangles": 971,
+      "components": 1
+    },
+    {
+      "sourceObject": "Circle015",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 1036,
+      "matchedOriginalTriangles": 517,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075829.001",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 472,
+      "matchedOriginalTriangles": 123,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075830.001",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 5460,
+      "matchedOriginalTriangles": 3400,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075831.001",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 5460,
+      "matchedOriginalTriangles": 2606,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075832.001",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 5460,
+      "matchedOriginalTriangles": 1797,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075834.001",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 472,
+      "matchedOriginalTriangles": 113,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075835.001",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 472,
+      "matchedOriginalTriangles": 121,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075836.001",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 472,
+      "matchedOriginalTriangles": 128,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075837.001",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 472,
+      "matchedOriginalTriangles": 145,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075838.001",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 472,
+      "matchedOriginalTriangles": 139,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075839.001",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 472,
+      "matchedOriginalTriangles": 130,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075840.001",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 472,
+      "matchedOriginalTriangles": 132,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075841.001",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 472,
+      "matchedOriginalTriangles": 150,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075842.001",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 472,
+      "matchedOriginalTriangles": 137,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075843.001",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 472,
+      "matchedOriginalTriangles": 109,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075844.001",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 472,
+      "matchedOriginalTriangles": 126,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075860.001",
+      "interactiveId": "well",
+      "kind": null,
+      "originalTriangles": 5460,
+      "matchedOriginalTriangles": 1812,
+      "components": 1
+    },
+    {
+      "sourceObject": "Kolokolnya_Proekc_01",
+      "interactiveId": "",
+      "kind": "projection-tower",
+      "originalTriangles": 20,
+      "matchedOriginalTriangles": 20,
+      "components": 1
+    },
+    {
+      "sourceObject": "Kolokolnya_Proekc_02",
+      "interactiveId": "",
+      "kind": "projection-tower",
+      "originalTriangles": 20,
+      "matchedOriginalTriangles": 20,
+      "components": 1
+    },
+    {
+      "sourceObject": "ПОЛОТНА",
+      "interactiveId": "",
+      "kind": "history-ribbon",
+      "originalTriangles": 730040,
+      "matchedOriginalTriangles": 20848,
+      "components": 4
+    },
+    {
+      "sourceObject": "Object031",
+      "interactiveId": "",
+      "kind": "stage-projection",
+      "originalTriangles": 91840,
+      "matchedOriginalTriangles": 11585,
+      "components": 6
+    },
+    {
+      "sourceObject": "Object041",
+      "interactiveId": "",
+      "kind": "stage-projection",
+      "originalTriangles": 46464,
+      "matchedOriginalTriangles": 6324,
+      "components": 3
+    },
+    {
+      "sourceObject": "Box2131647158",
+      "interactiveId": "workshops",
+      "kind": "workshop-screen",
+      "originalTriangles": 136,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647160",
+      "interactiveId": "workshops",
+      "kind": "workshop-screen",
+      "originalTriangles": 136,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075920",
+      "interactiveId": "workshops",
+      "kind": "workshop-screen",
+      "originalTriangles": 12,
+      "matchedOriginalTriangles": 65,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075921",
+      "interactiveId": "workshops",
+      "kind": "workshop-screen",
+      "originalTriangles": 12,
+      "matchedOriginalTriangles": 67,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647164",
+      "interactiveId": "workshops",
+      "kind": "workshop-screen",
+      "originalTriangles": 136,
+      "matchedOriginalTriangles": 63,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647166",
+      "interactiveId": "workshops",
+      "kind": "workshop-screen",
+      "originalTriangles": 136,
+      "matchedOriginalTriangles": 62,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647156",
+      "interactiveId": "workshops",
+      "kind": "workshop-screen",
+      "originalTriangles": 116,
+      "matchedOriginalTriangles": 63,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647155",
+      "interactiveId": "workshops",
+      "kind": "workshop-screen",
+      "originalTriangles": 116,
+      "matchedOriginalTriangles": 62,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder136",
+      "interactiveId": "bells",
+      "kind": null,
+      "originalTriangles": 1532,
+      "matchedOriginalTriangles": 789,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder256",
+      "interactiveId": "bells",
+      "kind": null,
+      "originalTriangles": 1532,
+      "matchedOriginalTriangles": 291,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder257",
+      "interactiveId": "bells",
+      "kind": null,
+      "originalTriangles": 1532,
+      "matchedOriginalTriangles": 316,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder258",
+      "interactiveId": "bells",
+      "kind": null,
+      "originalTriangles": 1532,
+      "matchedOriginalTriangles": 913,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder259",
+      "interactiveId": "bells",
+      "kind": null,
+      "originalTriangles": 1532,
+      "matchedOriginalTriangles": 889,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder260",
+      "interactiveId": "bells",
+      "kind": null,
+      "originalTriangles": 1532,
+      "matchedOriginalTriangles": 748,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder261",
+      "interactiveId": "bells",
+      "kind": null,
+      "originalTriangles": 1532,
+      "matchedOriginalTriangles": 486,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder262",
+      "interactiveId": "bells",
+      "kind": null,
+      "originalTriangles": 1532,
+      "matchedOriginalTriangles": 636,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder263",
+      "interactiveId": "bells",
+      "kind": null,
+      "originalTriangles": 1532,
+      "matchedOriginalTriangles": 549,
+      "components": 1
+    },
+    {
+      "sourceObject": "Бобины.042",
+      "interactiveId": "bobbins",
+      "kind": null,
+      "originalTriangles": 1596,
+      "matchedOriginalTriangles": 756,
+      "components": 1
+    },
+    {
+      "sourceObject": "Бобины.054",
+      "interactiveId": "bobbins",
+      "kind": null,
+      "originalTriangles": 1676,
+      "matchedOriginalTriangles": 616,
+      "components": 1
+    },
+    {
+      "sourceObject": "Бобины.061",
+      "interactiveId": "bobbins",
+      "kind": null,
+      "originalTriangles": 828,
+      "matchedOriginalTriangles": 354,
+      "components": 1
+    },
+    {
+      "sourceObject": "Бобины.063",
+      "interactiveId": "bobbins",
+      "kind": null,
+      "originalTriangles": 828,
+      "matchedOriginalTriangles": 828,
+      "components": 1
+    },
+    {
+      "sourceObject": "Бобины.073",
+      "interactiveId": "bobbins",
+      "kind": null,
+      "originalTriangles": 828,
+      "matchedOriginalTriangles": 861,
+      "components": 1
+    },
+    {
+      "sourceObject": "Бобины.075",
+      "interactiveId": "bobbins",
+      "kind": null,
+      "originalTriangles": 1596,
+      "matchedOriginalTriangles": 752,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075933",
+      "interactiveId": "bobbins",
+      "kind": null,
+      "originalTriangles": 28099,
+      "matchedOriginalTriangles": 22099,
+      "components": 1573
+    },
+    {
+      "sourceObject": "Object174075935",
+      "interactiveId": "bobbins",
+      "kind": null,
+      "originalTriangles": 1306,
+      "matchedOriginalTriangles": 618,
+      "components": 1
+    },
+    {
+      "sourceObject": "Sphere001",
+      "interactiveId": "finale",
+      "kind": "video-sphere",
+      "originalTriangles": 7920,
+      "matchedOriginalTriangles": 575,
+      "components": 1
+    },
+    {
+      "sourceObject": "Circle008",
+      "interactiveId": "finale",
+      "kind": null,
+      "originalTriangles": 6400,
+      "matchedOriginalTriangles": 1461,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075859",
+      "interactiveId": "map",
+      "kind": "map-surface",
+      "originalTriangles": 9858,
+      "matchedOriginalTriangles": 491,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid076",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 160,
+      "matchedOriginalTriangles": 130,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid077",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 15,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid078",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1244,
+      "matchedOriginalTriangles": 131,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid079",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1504,
+      "matchedOriginalTriangles": 8,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid080",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 164,
+      "matchedOriginalTriangles": 29,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100194-1/2.1.62.2007152-1-solid031",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 160,
+      "matchedOriginalTriangles": 190,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100194-1/2.1.62.2007152-1-solid032",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 3070,
+      "matchedOriginalTriangles": 211,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100294-1/2.2.08.2011467-1-solid016",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 980,
+      "matchedOriginalTriangles": 116,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100295-2/2.2.08.2007166-1-solid016",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1000,
+      "matchedOriginalTriangles": 120,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8200020_1-1/8.0.00.8200024-1-solid031",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8200020_1-1/8.0.00.8200024-1-solid032",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 2822,
+      "matchedOriginalTriangles": 210,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060605_1-1-solid016",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 2640,
+      "matchedOriginalTriangles": 180,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060612_1-1-solid016",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 9180,
+      "matchedOriginalTriangles": 472,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060613_1-1-solid016",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 7822,
+      "matchedOriginalTriangles": 379,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200060-1-solid016",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 4178,
+      "matchedOriginalTriangles": 419,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200107_1-1-solid031",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 4548,
+      "matchedOriginalTriangles": 197,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200107_1-1-solid032",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.2.13.8200041-2-solid016",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 336,
+      "matchedOriginalTriangles": 85,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>337",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 65,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>338",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 67,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>339",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 71,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>340",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 55,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>341",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 62,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>342",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 76,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>343",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 63,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>344",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 68,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>345",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 69,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>346",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 84,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>347",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 66,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>348",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 51,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>349",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 57,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>350",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 59,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>351",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 54,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>352",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 69,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>353",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 75,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>354",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 62,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>355",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 59,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>356",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 76,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>357",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 53,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>358",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 69,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>359",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 61,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>360",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 80,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder112",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 68,
+      "matchedOriginalTriangles": 0,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE057",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 11670,
+      "matchedOriginalTriangles": 1350,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE058",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 6750,
+      "matchedOriginalTriangles": 314,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE059",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 6750,
+      "matchedOriginalTriangles": 300,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE060",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5068,
+      "matchedOriginalTriangles": 244,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì068",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5384,
+      "matchedOriginalTriangles": 354,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì069",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5384,
+      "matchedOriginalTriangles": 312,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì070",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5512,
+      "matchedOriginalTriangles": 242,
+      "components": 1
+    },
+    {
+      "sourceObject": "Í¹Ì¨-À­Éì053",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 3726,
+      "matchedOriginalTriangles": 277,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç163",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 13268,
+      "matchedOriginalTriangles": 670,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç164",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 12474,
+      "matchedOriginalTriangles": 635,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç165",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç166",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 345,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç167",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 319,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç168",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 285,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid086",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 160,
+      "matchedOriginalTriangles": 133,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid087",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid088",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1244,
+      "matchedOriginalTriangles": 135,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid089",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1504,
+      "matchedOriginalTriangles": 10,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid090",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 164,
+      "matchedOriginalTriangles": 17,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100194-1/2.1.62.2007152-1-solid035",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 160,
+      "matchedOriginalTriangles": 195,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100194-1/2.1.62.2007152-1-solid036",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 3070,
+      "matchedOriginalTriangles": 207,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100294-1/2.2.08.2011467-1-solid018",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 980,
+      "matchedOriginalTriangles": 124,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100295-2/2.2.08.2007166-1-solid018",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1000,
+      "matchedOriginalTriangles": 144,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8200020_1-1/8.0.00.8200024-1-solid035",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8200020_1-1/8.0.00.8200024-1-solid036",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 2822,
+      "matchedOriginalTriangles": 278,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060605_1-1-solid018",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 2640,
+      "matchedOriginalTriangles": 210,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060612_1-1-solid018",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 9180,
+      "matchedOriginalTriangles": 637,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060613_1-1-solid018",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 7822,
+      "matchedOriginalTriangles": 402,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200060-1-solid018",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 4178,
+      "matchedOriginalTriangles": 432,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200107_1-1-solid035",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 4548,
+      "matchedOriginalTriangles": 257,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200107_1-1-solid036",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.2.13.8200041-2-solid018",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 336,
+      "matchedOriginalTriangles": 98,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>385",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 76,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>386",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 68,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>387",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 77,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>388",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 71,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>389",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 80,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>390",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 74,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>391",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 61,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>392",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 73,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>393",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 88,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>394",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 67,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>395",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 60,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>396",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 63,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>397",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 75,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>398",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 67,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>399",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 75,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>400",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 85,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>401",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 65,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>402",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 71,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>403",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 65,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>404",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 65,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>405",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 55,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>406",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 85,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>407",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 68,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>408",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 85,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder114",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 68,
+      "matchedOriginalTriangles": 0,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE065",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 11670,
+      "matchedOriginalTriangles": 1442,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE066",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 6750,
+      "matchedOriginalTriangles": 348,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE067",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 6750,
+      "matchedOriginalTriangles": 315,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE068",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5068,
+      "matchedOriginalTriangles": 258,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì074",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5384,
+      "matchedOriginalTriangles": 381,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì075",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5384,
+      "matchedOriginalTriangles": 359,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì076",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5512,
+      "matchedOriginalTriangles": 345,
+      "components": 1
+    },
+    {
+      "sourceObject": "Í¹Ì¨-À­Éì055",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 3726,
+      "matchedOriginalTriangles": 299,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç175",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 13268,
+      "matchedOriginalTriangles": 841,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç176",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 12474,
+      "matchedOriginalTriangles": 752,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç177",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç178",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 309,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç179",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 321,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç180",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 301,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid091",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 160,
+      "matchedOriginalTriangles": 135,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid092",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 15,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid093",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1244,
+      "matchedOriginalTriangles": 138,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid094",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1504,
+      "matchedOriginalTriangles": 6,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid095",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 164,
+      "matchedOriginalTriangles": 27,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100194-1/2.1.62.2007152-1-solid037",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 160,
+      "matchedOriginalTriangles": 212,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100194-1/2.1.62.2007152-1-solid038",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 3070,
+      "matchedOriginalTriangles": 224,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100294-1/2.2.08.2011467-1-solid019",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 980,
+      "matchedOriginalTriangles": 101,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100295-2/2.2.08.2007166-1-solid019",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1000,
+      "matchedOriginalTriangles": 149,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8200020_1-1/8.0.00.8200024-1-solid037",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8200020_1-1/8.0.00.8200024-1-solid038",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 2822,
+      "matchedOriginalTriangles": 204,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060605_1-1-solid019",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 2640,
+      "matchedOriginalTriangles": 182,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060612_1-1-solid019",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 9180,
+      "matchedOriginalTriangles": 451,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060613_1-1-solid019",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 7822,
+      "matchedOriginalTriangles": 410,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200060-1-solid019",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 4178,
+      "matchedOriginalTriangles": 416,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200107_1-1-solid037",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 4548,
+      "matchedOriginalTriangles": 168,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200107_1-1-solid038",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.2.13.8200041-2-solid019",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 336,
+      "matchedOriginalTriangles": 77,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>409",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 87,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>410",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 66,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>411",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 79,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>412",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 70,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>413",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 70,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>414",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 70,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>415",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 69,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>416",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 70,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>417",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 70,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>418",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 80,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>419",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 76,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>420",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 57,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>421",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 64,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>422",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 69,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>423",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 75,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>424",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 65,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>425",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 67,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>426",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 68,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>427",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 65,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>428",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 63,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>429",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 54,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>430",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 78,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>431",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 71,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>432",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 71,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder115",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 68,
+      "matchedOriginalTriangles": 0,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE069",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 11670,
+      "matchedOriginalTriangles": 1352,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE070",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 6750,
+      "matchedOriginalTriangles": 286,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE071",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 6750,
+      "matchedOriginalTriangles": 308,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE072",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5068,
+      "matchedOriginalTriangles": 219,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì077",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5384,
+      "matchedOriginalTriangles": 309,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì078",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5384,
+      "matchedOriginalTriangles": 323,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì079",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5512,
+      "matchedOriginalTriangles": 331,
+      "components": 1
+    },
+    {
+      "sourceObject": "Í¹Ì¨-À­Éì056",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 3726,
+      "matchedOriginalTriangles": 291,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç181",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 13268,
+      "matchedOriginalTriangles": 803,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç182",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 12474,
+      "matchedOriginalTriangles": 742,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç183",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç184",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 314,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç185",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 310,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç186",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 286,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid096",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 160,
+      "matchedOriginalTriangles": 148,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid097",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 16,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid098",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1244,
+      "matchedOriginalTriangles": 148,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid099",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1504,
+      "matchedOriginalTriangles": 8,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid100",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 164,
+      "matchedOriginalTriangles": 32,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100194-1/2.1.62.2007152-1-solid039",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 160,
+      "matchedOriginalTriangles": 221,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100194-1/2.1.62.2007152-1-solid040",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 3070,
+      "matchedOriginalTriangles": 237,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100294-1/2.2.08.2011467-1-solid020",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 980,
+      "matchedOriginalTriangles": 110,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100295-2/2.2.08.2007166-1-solid020",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1000,
+      "matchedOriginalTriangles": 137,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8200020_1-1/8.0.00.8200024-1-solid039",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8200020_1-1/8.0.00.8200024-1-solid040",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 2822,
+      "matchedOriginalTriangles": 300,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060605_1-1-solid020",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 2640,
+      "matchedOriginalTriangles": 218,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060612_1-1-solid020",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 9180,
+      "matchedOriginalTriangles": 595,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060613_1-1-solid020",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 7822,
+      "matchedOriginalTriangles": 404,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200060-1-solid020",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 4178,
+      "matchedOriginalTriangles": 447,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200107_1-1-solid039",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 4548,
+      "matchedOriginalTriangles": 232,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200107_1-1-solid040",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.2.13.8200041-2-solid020",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 336,
+      "matchedOriginalTriangles": 80,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>433",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 89,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>434",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 78,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>435",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 86,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>436",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 78,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>437",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 56,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>438",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 74,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>439",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 62,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>440",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 68,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>441",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 82,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>442",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 85,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>443",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 89,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>444",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 80,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>445",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 81,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>446",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 78,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>447",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 71,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>448",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 71,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>449",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 73,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>450",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 68,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>451",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 65,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>452",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 73,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>453",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 61,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>454",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 56,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>455",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 63,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>456",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 82,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder116",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 68,
+      "matchedOriginalTriangles": 0,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE073",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 11670,
+      "matchedOriginalTriangles": 1426,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE074",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 6750,
+      "matchedOriginalTriangles": 306,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE075",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 6750,
+      "matchedOriginalTriangles": 326,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE076",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5068,
+      "matchedOriginalTriangles": 221,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì080",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5384,
+      "matchedOriginalTriangles": 381,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì081",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5384,
+      "matchedOriginalTriangles": 353,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì082",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5512,
+      "matchedOriginalTriangles": 351,
+      "components": 1
+    },
+    {
+      "sourceObject": "Í¹Ì¨-À­Éì057",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 3726,
+      "matchedOriginalTriangles": 302,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç187",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 13268,
+      "matchedOriginalTriangles": 872,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç188",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 12474,
+      "matchedOriginalTriangles": 790,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç189",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç190",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 354,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç191",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 329,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç192",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 320,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid101",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 160,
+      "matchedOriginalTriangles": 161,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid102",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 22,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid103",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1244,
+      "matchedOriginalTriangles": 150,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid104",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1504,
+      "matchedOriginalTriangles": 17,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid105",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 164,
+      "matchedOriginalTriangles": 25,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100194-1/2.1.62.2007152-1-solid041",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 160,
+      "matchedOriginalTriangles": 218,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100194-1/2.1.62.2007152-1-solid042",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 3070,
+      "matchedOriginalTriangles": 229,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100294-1/2.2.08.2011467-1-solid021",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 980,
+      "matchedOriginalTriangles": 133,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100295-2/2.2.08.2007166-1-solid021",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1000,
+      "matchedOriginalTriangles": 146,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8200020_1-1/8.0.00.8200024-1-solid041",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8200020_1-1/8.0.00.8200024-1-solid042",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 2822,
+      "matchedOriginalTriangles": 305,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060605_1-1-solid021",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 2640,
+      "matchedOriginalTriangles": 214,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060612_1-1-solid021",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 9180,
+      "matchedOriginalTriangles": 674,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060613_1-1-solid021",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 7822,
+      "matchedOriginalTriangles": 425,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200060-1-solid021",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 4178,
+      "matchedOriginalTriangles": 467,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200107_1-1-solid041",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 4548,
+      "matchedOriginalTriangles": 246,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200107_1-1-solid042",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.2.13.8200041-2-solid021",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 336,
+      "matchedOriginalTriangles": 105,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>457",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 85,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>458",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 77,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>459",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 90,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>460",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 73,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>461",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 64,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>462",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 66,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>463",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 81,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>464",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 66,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>465",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 70,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>466",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 78,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>467",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 80,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>468",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 65,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>469",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 69,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>470",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 73,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>471",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 71,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>472",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 74,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>473",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 79,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>474",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 69,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>475",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 72,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>476",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 68,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>477",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 67,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>478",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 70,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>479",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 65,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>480",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 90,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder117",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 68,
+      "matchedOriginalTriangles": 0,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE077",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 11670,
+      "matchedOriginalTriangles": 1380,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE078",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 6750,
+      "matchedOriginalTriangles": 314,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE079",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 6750,
+      "matchedOriginalTriangles": 329,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE080",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5068,
+      "matchedOriginalTriangles": 243,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì083",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5384,
+      "matchedOriginalTriangles": 386,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì084",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5384,
+      "matchedOriginalTriangles": 318,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì085",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5512,
+      "matchedOriginalTriangles": 330,
+      "components": 1
+    },
+    {
+      "sourceObject": "Í¹Ì¨-À­Éì058",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 3726,
+      "matchedOriginalTriangles": 342,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç193",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 13268,
+      "matchedOriginalTriangles": 852,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç194",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 12474,
+      "matchedOriginalTriangles": 780,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç195",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç196",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 323,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç197",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 346,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç198",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 309,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid106",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 160,
+      "matchedOriginalTriangles": 126,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid107",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 13,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid108",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1244,
+      "matchedOriginalTriangles": 115,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid109",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1504,
+      "matchedOriginalTriangles": 3,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid110",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 164,
+      "matchedOriginalTriangles": 29,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100194-1/2.1.62.2007152-1-solid043",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 160,
+      "matchedOriginalTriangles": 187,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100194-1/2.1.62.2007152-1-solid044",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 3070,
+      "matchedOriginalTriangles": 200,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100294-1/2.2.08.2011467-1-solid022",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 980,
+      "matchedOriginalTriangles": 99,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100295-2/2.2.08.2007166-1-solid022",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1000,
+      "matchedOriginalTriangles": 110,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8200020_1-1/8.0.00.8200024-1-solid043",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8200020_1-1/8.0.00.8200024-1-solid044",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 2822,
+      "matchedOriginalTriangles": 220,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060605_1-1-solid022",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 2640,
+      "matchedOriginalTriangles": 190,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060612_1-1-solid022",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 9180,
+      "matchedOriginalTriangles": 450,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060613_1-1-solid022",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 7822,
+      "matchedOriginalTriangles": 346,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200060-1-solid022",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 4178,
+      "matchedOriginalTriangles": 346,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200107_1-1-solid043",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 4548,
+      "matchedOriginalTriangles": 182,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200107_1-1-solid044",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.2.13.8200041-2-solid022",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 336,
+      "matchedOriginalTriangles": 78,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>481",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 53,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>482",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 58,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>483",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 56,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>484",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 53,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>485",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 54,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>486",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 56,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>487",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 59,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>488",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 60,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>489",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 66,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>490",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 68,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>491",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 53,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>492",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 54,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>493",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 49,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>494",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 58,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>495",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 51,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>496",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 69,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>497",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 45,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>498",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 61,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>499",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 45,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>500",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 50,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>501",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 45,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>502",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 64,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>503",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 49,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>504",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 56,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder118",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 68,
+      "matchedOriginalTriangles": 0,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE081",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 11670,
+      "matchedOriginalTriangles": 1106,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE082",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 6750,
+      "matchedOriginalTriangles": 252,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE083",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 6750,
+      "matchedOriginalTriangles": 248,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE084",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5068,
+      "matchedOriginalTriangles": 203,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì086",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5384,
+      "matchedOriginalTriangles": 300,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì087",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5384,
+      "matchedOriginalTriangles": 267,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì088",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5512,
+      "matchedOriginalTriangles": 254,
+      "components": 1
+    },
+    {
+      "sourceObject": "Í¹Ì¨-À­Éì059",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 3726,
+      "matchedOriginalTriangles": 275,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç199",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 13268,
+      "matchedOriginalTriangles": 684,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç200",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 12474,
+      "matchedOriginalTriangles": 637,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç201",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç202",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 287,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç203",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 261,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç204",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 252,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid1",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 160,
+      "matchedOriginalTriangles": 119,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid2",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 17,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid3",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1244,
+      "matchedOriginalTriangles": 114,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid4",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1504,
+      "matchedOriginalTriangles": 4,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100064-1/2.1.62.2007167-1-solid5",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 164,
+      "matchedOriginalTriangles": 27,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100194-1/2.1.62.2007152-1-solid1",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 160,
+      "matchedOriginalTriangles": 168,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100194-1/2.1.62.2007152-1-solid2",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 3070,
+      "matchedOriginalTriangles": 223,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100294-1/2.2.08.2011467-1-solid1",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 980,
+      "matchedOriginalTriangles": 117,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8100295-2/2.2.08.2007166-1-solid1",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 1000,
+      "matchedOriginalTriangles": 134,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8200020_1-1/8.0.00.8200024-1-solid1",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "7.7.00.8200020_1-1/8.0.00.8200024-1-solid2",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 2822,
+      "matchedOriginalTriangles": 298,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060605_1-1-solid1",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 2640,
+      "matchedOriginalTriangles": 218,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060612_1-1-solid1",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 9180,
+      "matchedOriginalTriangles": 695,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8060613_1-1-solid1",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 7822,
+      "matchedOriginalTriangles": 397,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200060-1-solid1",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 4178,
+      "matchedOriginalTriangles": 412,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200107_1-1-solid1",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 4548,
+      "matchedOriginalTriangles": 271,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.0.00.8200107_1-1-solid2",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "8.2.13.8200041-2-solid1",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 336,
+      "matchedOriginalTriangles": 74,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 62,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.001",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 81,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.002",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 63,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.003",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 61,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.004",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 65,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.005",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 59,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.006",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 62,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.007",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 63,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.008",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 84,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.009",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 56,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.010",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 67,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.011",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 83,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.012",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 63,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.013",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 65,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.014",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 58,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.015",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 60,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.016",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 70,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.017",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 76,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.018",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 71,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.019",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 72,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.020",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 85,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.021",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 73,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.022",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 72,
+      "components": 1
+    },
+    {
+      "sourceObject": "<4.0.07.2008583>-<Í¹Ì¨-À­Éì1>.023",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 470,
+      "matchedOriginalTriangles": 56,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder050",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 68,
+      "matchedOriginalTriangles": 0,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 11670,
+      "matchedOriginalTriangles": 1396,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE.001",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5068,
+      "matchedOriginalTriangles": 239,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE.002",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 6750,
+      "matchedOriginalTriangles": 282,
+      "components": 1
+    },
+    {
+      "sourceObject": "NONE.003",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 6750,
+      "matchedOriginalTriangles": 294,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì25",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5384,
+      "matchedOriginalTriangles": 335,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì25.001",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5384,
+      "matchedOriginalTriangles": 392,
+      "components": 1
+    },
+    {
+      "sourceObject": "ÇÐ³ý-À­Éì4",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5512,
+      "matchedOriginalTriangles": 369,
+      "components": 1
+    },
+    {
+      "sourceObject": "Í¹Ì¨-À­Éì38",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 3726,
+      "matchedOriginalTriangles": 289,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç6",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 13268,
+      "matchedOriginalTriangles": 862,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç7",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 12474,
+      "matchedOriginalTriangles": 768,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç78",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 12,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç8",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 298,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç8.001",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 299,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ô²½Ç8.002",
+      "interactiveId": "map",
+      "kind": null,
+      "originalTriangles": 5152,
+      "matchedOriginalTriangles": 324,
+      "components": 1
+    },
+    {
+      "sourceObject": "AppleVisionPro_AudioStrap001",
+      "interactiveId": "workshops",
+      "kind": null,
+      "originalTriangles": 11852,
+      "matchedOriginalTriangles": 1964,
+      "components": 1
+    },
+    {
+      "sourceObject": "AppleVisionPro_Base001",
+      "interactiveId": "workshops",
+      "kind": null,
+      "originalTriangles": 78594,
+      "matchedOriginalTriangles": 5883,
+      "components": 1
+    },
+    {
+      "sourceObject": "AppleVisionPro_Base_Glass001",
+      "interactiveId": "workshops",
+      "kind": null,
+      "originalTriangles": 8704,
+      "matchedOriginalTriangles": 36,
+      "components": 1
+    },
+    {
+      "sourceObject": "AppleVisionPro_HeadBand001",
+      "interactiveId": "workshops",
+      "kind": null,
+      "originalTriangles": 38978,
+      "matchedOriginalTriangles": 1352,
+      "components": 1
+    },
+    {
+      "sourceObject": "AppleVisionPro_LightSeal001",
+      "interactiveId": "workshops",
+      "kind": null,
+      "originalTriangles": 46586,
+      "matchedOriginalTriangles": 895,
+      "components": 1
+    },
+    {
+      "sourceObject": "AppleVisionPro_Power001",
+      "interactiveId": "workshops",
+      "kind": null,
+      "originalTriangles": 18144,
+      "matchedOriginalTriangles": 271,
+      "components": 1
+    },
+    {
+      "sourceObject": "BB0001208",
+      "interactiveId": "pillars",
+      "kind": null,
+      "originalTriangles": 3840,
+      "matchedOriginalTriangles": 162,
+      "components": 1
+    },
+    {
+      "sourceObject": "BB0001209",
+      "interactiveId": "pillars",
+      "kind": null,
+      "originalTriangles": 3840,
+      "matchedOriginalTriangles": 241,
+      "components": 1
+    },
+    {
+      "sourceObject": "BB0001216",
+      "interactiveId": "pillars",
+      "kind": null,
+      "originalTriangles": 1952,
+      "matchedOriginalTriangles": 94,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder017",
+      "interactiveId": "pillars",
+      "kind": null,
+      "originalTriangles": 812,
+      "matchedOriginalTriangles": 501,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder081",
+      "interactiveId": "pillars",
+      "kind": null,
+      "originalTriangles": 812,
+      "matchedOriginalTriangles": 370,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder082",
+      "interactiveId": "pillars",
+      "kind": null,
+      "originalTriangles": 812,
+      "matchedOriginalTriangles": 544,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder083",
+      "interactiveId": "pillars",
+      "kind": null,
+      "originalTriangles": 812,
+      "matchedOriginalTriangles": 501,
+      "components": 1
+    },
+    {
+      "sourceObject": "Cylinder085",
+      "interactiveId": "pillars",
+      "kind": null,
+      "originalTriangles": 812,
+      "matchedOriginalTriangles": 381,
+      "components": 1
+    },
+    {
+      "sourceObject": "Vase_Florum_20_cm",
+      "interactiveId": "pillars",
+      "kind": null,
+      "originalTriangles": 7968,
+      "matchedOriginalTriangles": 110,
+      "components": 1
+    },
+    {
+      "sourceObject": "Vase_Florum_30_cm",
+      "interactiveId": "pillars",
+      "kind": null,
+      "originalTriangles": 7168,
+      "matchedOriginalTriangles": 200,
+      "components": 1
+    },
+    {
+      "sourceObject": "Layer:01 Install-0.009",
+      "interactiveId": "boats",
+      "kind": null,
+      "originalTriangles": 98979,
+      "matchedOriginalTriangles": 15289,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647325",
+      "interactiveId": "boats",
+      "kind": "barge-screen",
+      "originalTriangles": 12,
+      "matchedOriginalTriangles": 15,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647326",
+      "interactiveId": "boats",
+      "kind": "barge-screen",
+      "originalTriangles": 12,
+      "matchedOriginalTriangles": 11,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647505",
+      "interactiveId": "ornament",
+      "kind": "textile-panel",
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 34,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647506",
+      "interactiveId": "ornament",
+      "kind": "textile-panel",
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 17,
+      "components": 1
+    },
+    {
+      "sourceObject": "Box2131647507",
+      "interactiveId": "ornament",
+      "kind": "textile-panel",
+      "originalTriangles": 92,
+      "matchedOriginalTriangles": 36,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object030",
+      "interactiveId": "",
+      "kind": "stage-flat-screen",
+      "originalTriangles": 2,
+      "matchedOriginalTriangles": 50,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075685",
+      "interactiveId": "",
+      "kind": "stage-flat-screen",
+      "originalTriangles": 28,
+      "matchedOriginalTriangles": 150,
+      "components": 1
+    },
+    {
+      "sourceObject": "Object174075687",
+      "interactiveId": "",
+      "kind": "stage-flat-screen",
+      "originalTriangles": 28,
+      "matchedOriginalTriangles": 50,
+      "components": 1
+    },
+    {
+      "sourceObject": "Floor_Tropa_007",
+      "interactiveId": "",
+      "kind": "tver-curved-frame",
+      "originalTriangles": 2040,
+      "matchedOriginalTriangles": 1163,
+      "components": 1,
+      "reason": "Original overlay shell removed together with exact native cloth; source shape retained once."
+    },
+    {
+      "sourceObject": "Floor_Tropa_006",
+      "interactiveId": "",
+      "kind": "tver-curved",
+      "originalTriangles": 1020,
+      "matchedOriginalTriangles": 1067,
+      "components": 1
+    },
+    {
+      "sourceObject": "Shape322",
+      "interactiveId": "",
+      "kind": "tver-curved-frame",
+      "originalTriangles": 632,
+      "matchedOriginalTriangles": 1557,
+      "components": 1,
+      "reason": "Original overlay shell removed together with exact native cloth; source shape retained once."
+    },
+    {
+      "sourceObject": "Shape320",
+      "interactiveId": "",
+      "kind": "tver-curved",
+      "originalTriangles": 316,
+      "matchedOriginalTriangles": 1185,
+      "components": 1
+    },
+    {
+      "sourceObject": "Shape323",
+      "interactiveId": "",
+      "kind": "tver-curved-frame",
+      "originalTriangles": 1192,
+      "matchedOriginalTriangles": 1686,
+      "components": 1,
+      "reason": "Original overlay shell removed together with exact native cloth; source shape retained once."
+    },
+    {
+      "sourceObject": "Shape321",
+      "interactiveId": "",
+      "kind": "tver-curved",
+      "originalTriangles": 596,
+      "matchedOriginalTriangles": 1253,
+      "components": 1
+    }
+  ],
+  "limitations": [
+    "Boat hulls are not independently identifiable in the source merged mechanism; structural rail remains static.",
+    "Robot arms have no verified active joint hierarchy in this web extraction; highlights are enabled without invented robot motion.",
+    "Nizhny Novgorod and prologue contain no independently confirmed blank media surface in the current original 1911 object inventory.",
+    "Curved Object174075940 remains original architecture and is not counted as a display or invented yarn mechanism."
+  ],
+  "coverage": [
+    {
+      "zoneId": "prologue",
+      "newSurfaces": 0,
+      "note": "Kinetic pylons are described in the concept; distinct media/mechanism parts are not confirmed in current source."
+    },
+    {
+      "zoneId": "history",
+      "newSurfaces": 4,
+      "note": "Four original curved cloth strips receive the history sequence."
+    },
+    {
+      "zoneId": "map",
+      "newSurfaces": 1,
+      "note": "Original sand-map field and seven source FR20 arm assemblies; only source field/content and static arm material detail."
+    },
+    {
+      "zoneId": "vladimir",
+      "newSurfaces": 1,
+      "note": "Original scroll sheet, two rollers, wooden table and five pillar/vitrine assemblies."
+    },
+    {
+      "zoneId": "tver",
+      "newSurfaces": 17,
+      "note": "11 original straight hanging cloths, 3 full original curved cloths (both sides, 3 duplicate source overlay shells removed), 2 projection-tower shells, original well water. Three arched river screens were already filled by gallery."
+    },
+    {
+      "zoneId": "yaroslavl",
+      "newSurfaces": 2,
+      "note": "Original detailed rail mechanism retained as static inspection. Three separate boat hulls were not found."
+    },
+    {
+      "zoneId": "sergiev-posad",
+      "newSurfaces": 0,
+      "note": "Nine original textile bell volumes; light/sound response, no invented cast-bell mechanics."
+    },
+    {
+      "zoneId": "stage",
+      "newSurfaces": 12,
+      "note": "Nine curved source cloth pieces, never the structural frame."
+    },
+    {
+      "zoneId": "kostroma",
+      "newSurfaces": 3,
+      "note": "Three confirmed tall textile panels and seven native spool pivots. Curved Object174075940 remains original architecture; no source-backed separate display or yarn mechanism claimed."
+    },
+    {
+      "zoneId": "ivanovo",
+      "newSurfaces": 0,
+      "note": "Seven spindle/bobbin assemblies, with all parts sharing their original axes."
+    },
+    {
+      "zoneId": "nizhny-novgorod",
+      "newSurfaces": 0,
+      "note": "No independently confirmed media surface among current source objects in this zone; no architectural wall is silently turned into a screen."
+    },
+    {
+      "zoneId": "workshops",
+      "newSurfaces": 8,
+      "note": "Eight native niche display faces; original six-part headset with improved detail. Per-niche subjects are web-tour content, not client-authored source labels."
+    },
+    {
+      "zoneId": "finale",
+      "newSurfaces": 1,
+      "note": "Original video sphere and overhead ring. Existing curved panorama remains in gallery."
+    }
+  ],
+  "geometryStats": {
+    "sourceObjects": 502,
+    "meshes": 137,
+    "surfaces": 49,
+    "kinds": {
+      "hanging-cloth": 11,
+      "scroll": 1,
+      "water": 1,
+      "projection-tower": 2,
+      "history-ribbon": 4,
+      "stage-projection": 9,
+      "workshop-screen": 8,
+      "video-sphere": 1,
+      "map-surface": 1,
+      "barge-screen": 2,
+      "textile-panel": 3,
+      "stage-flat-screen": 3,
+      "tver-curved": 3
+    },
+    "mergedGroups": [],
+    "triangles": 331050,
+    "nodes": 192,
+    "pivotGroups": 55,
+    "materials": 10,
+    "textures": 0
+  },
+  "assetSha256": "aeb1617d2d2f3eb03d6ca5d97fc7d300c0d21858af479b1ca27e91165ddb4bab",
+  "assetBytes": 6050136,
+  "revision": "20261123-source-03",
+  "UVcorrections": [
+    "history-ribbon-01",
+    "history-ribbon-02",
+    "history-ribbon-03",
+    "history-ribbon-04",
+    "stage-projection-01",
+    "stage-projection-02",
+    "stage-projection-03",
+    "stage-projection-04",
+    "stage-projection-05",
+    "stage-projection-06",
+    "stage-projection-07",
+    "stage-projection-08",
+    "stage-projection-09",
+    "workshop-screen-01",
+    "workshop-screen-02",
+    "workshop-screen-04",
+    "workshop-screen-07",
+    "workshop-screen-08",
+    "textile-panel-01",
+    "textile-panel-02",
+    "textile-panel-03",
+    "stage-flat-screen-01",
+    "stage-flat-screen-03"
+  ],
+  "removalAudit": {
+    "removedTriangles": 183236,
+    "componentMembershipChecks": 7998,
+    "partialSourceComponentsCompleted": true,
+    "architecturalOverlapRestored": 2407,
+    "coincidentFloorHitsRejected": 3287,
+    "unresolvedComponents": 0,
+    "bobbinComponentsCompleted": 33,
+    "bobbinDuplicateTrianglesRemoved": 22099,
+    "finalScope": "Whole named source components only. Original architectural plaster remains; 33 native spool components inside that material category are removed exactly."
+  },
+  "verificationRevision": "source03-final-bobbin-stage",
+  "projectionShellCorrection": {
+    "sourceObject": "Object041",
+    "surfaces": [
+      "stage-projection-07",
+      "stage-projection-08",
+      "stage-projection-09"
+    ],
+    "reason": "Whole original curved media shell now has continuous content; no angular normal threshold leaves a white tessellated band."
+  }
+}
