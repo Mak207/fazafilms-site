@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#111715">
+  <title>Парк впечатлений — 3D-модель · ФАЗА</title>
+  <link rel="icon" href="/favicon.svg">
+  <link rel="stylesheet" href="viewer.css?v=1">
+  <script type="importmap">{"imports":{"three":"/golden-ring/interactives/vendor/three-0.180/three.module.min.js"}}</script>
+  <script type="module" src="viewer.js?v=1"></script>
+</head>
+<body>
+<main id="viewer" data-state="loading">
+  <header class="viewer-header">
+    <div class="viewer-title"><strong>Парк впечатлений</strong><span id="model-info">3D-модель проекта</span></div>
+    <div class="header-actions"><button id="help-toggle" aria-controls="help" aria-expanded="false" type="button">Управление</button><button id="fullscreen" type="button">На весь экран</button></div>
+  </header>
+  <section id="stage" aria-label="Трёхмерная модель Парка впечатлений">
+    <canvas id="canvas" tabindex="0" aria-label="3D-модель. Левая кнопка — вращение, правая — сдвиг, колесо — масштаб. Двойной щелчок — приблизить выбранное место."></canvas>
+    <div id="loading" class="loading" role="status" aria-live="polite">
+      <div class="loading-card"><span class="eyebrow">Парк впечатлений</span><h1 id="loading-title">Загружаем 3D-модель</h1><div class="progress-track"><div id="progress"></div></div><p id="loading-detail">Подготавливаем пространство для просмотра…</p><button id="retry" type="button" hidden>Повторить загрузку</button></div>
+    </div>
+    <div id="view-caption" class="view-caption" aria-live="polite"><span class="eyebrow">Ракурс</span><strong id="view-name">Общий вид</strong></div>
+    <aside id="help" class="help-card" hidden aria-label="Как управлять моделью">
+      <div class="help-title"><strong>Рассмотрите пространство</strong><button id="close-help" aria-label="Закрыть подсказку" type="button">×</button></div>
+      <p><b>Левая кнопка</b> — повернуть модель.</p><p><b>Правая кнопка</b> — сдвинуть вид.</p><p><b>Колесо или два пальца</b> — приблизить и отдалить.</p><p><b>Двойной щелчок</b> — перейти к выбранному месту.</p><p><b>Разрез</b> — открыть внутреннее пространство.</p>
+    </aside>
+    <div id="section-controls" class="section-controls" hidden>
+      <label for="section-height">Высота среза <output id="section-value" for="section-height"></output></label>
+      <input id="section-height" type="range" min="0" max="100" value="65" step="0.5" aria-label="Высота горизонтального среза">
+    </div>
+    <p id="scene-notice" class="scene-notice" hidden role="status"></p>
+  </section>
+  <footer class="viewer-toolbar" aria-label="Панель управления 3D">
+    <nav class="view-controls" aria-label="Ракурсы модели">
+      <button data-view="overview" aria-pressed="true" type="button">Общий вид</button>
+      <button data-view="top" aria-pressed="false" type="button">Сверху</button>
+      <button data-view="front" aria-pressed="false" type="button">Спереди</button>
+      <button data-view="back" aria-pressed="false" type="button">С другой стороны</button>
+    </nav>
+    <div class="utility-controls"><button id="section-toggle" aria-pressed="false" type="button">Разрез</button><button id="reset" type="button">Сбросить вид</button></div>
+    <p class="model-note">Предварительная модель: некоторые сложные поверхности кровли и стен перенеслись не полностью.</p>
+  </footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,69 @@
+{
+  "source": "выставка_3D вид.dwg",
+  "source_sha256": "2e008514e946e7d5b13feb22b26b88b2ceef45e38a33ce98aec8729f236c4023",
+  "pipeline": "ODA DWG to DXF; InventorLoader and OpenCASCADE BRep tessellation; glTF meshoptimizer",
+  "source_units": "mm",
+  "geometry_units": "meters",
+  "axis": "Y-up",
+  "origin_mm": [
+    162527.95062041492,
+    256941.83598519978,
+    14849.99999999012
+  ],
+  "bounds_y_up_m": [
+    [
+      -49.18978124142522,
+      0.0,
+      -86.56736756990483
+    ],
+    [
+      49.18978124142522,
+      34.58503456946053,
+      86.5673675699048
+    ]
+  ],
+  "dimensions_m": [
+    98.37956248285045,
+    34.58503456946053,
+    173.13473513980964
+  ],
+  "face_totals": {
+    "faces_expected": 59729,
+    "faces_built": 59451,
+    "faces_failed": 278
+  },
+  "unique_body_total": 5109,
+  "unique_body_available": 5105,
+  "unique_body_fully_converted": 5038,
+  "instances_total": 9361,
+  "instances_exported": 9357,
+  "triangles_after_optimization": 2927007,
+  "material_count": 36,
+  "material_scope": "Original CAD entity/instance diffuse RGB and opacity; merged by source layer and RGBA",
+  "display_material": {
+    "roughness": 0.8,
+    "metallic": 0
+  },
+  "texture_note": "No source material texture filenames found; no image mapping synthesized.",
+  "tessellation_deflections_mm": {
+    "3.0": 5109
+  },
+  "geometry_simplification": false,
+  "position_quantization_bits": null,
+  "glb_bytes": 29054296,
+  "glb_sha256": "0fe60c53a9fc72c9ed0ad15ac8808ca721b3a7af8e96d81329cdc748c78fd792",
+  "created_date": "2026-11-24",
+  "partial": true,
+  "limitations": "Some complex roof and wall spline surfaces did not convert correctly and are omitted. Face-count coverage is not surface-area or volume coverage; the model is an incomplete preview of the source DWG.",
+  "omitted_unique_faces_by_layer": {
+    "A-ROOF": 185,
+    "A-WALL": 91,
+    "P-SANR-FIXT": 2
+  },
+  "empty_roof_body_handles": [
+    "30C7",
+    "30D6",
+    "30D9",
+    "30DE"
+  ]
+}
