@@ -7,10 +7,11 @@
   <meta name="theme-color" content="#14231e">
   <title>Интерактивный 3D-тур по павильону · Золотое кольцо</title>
   <link rel="stylesheet" href="tour.css?v=4">
+  <link rel="stylesheet" href="zone-labels.css?v=1">
   <script type="importmap">
     {"imports":{"three":"../interactives/vendor/three-0.180/three.module.min.js"}}
   </script>
-  <script type="module" src="tour.js?v=5"></script>
+  <script type="module" src="tour.js?v=6"></script>
 <link rel="stylesheet" href="/css/project-navigation.css?v=20261123-1">
 </head>
 <body>
@@ -22,7 +23,7 @@
       </div>
       <a class="project-return-link" href="/projects/" target="_top"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M19 12H5m6-6-6 6 6 6"/></svg>Все проекты</a>
       <div class="tour-bar-actions">
-        <span class="model-status">М 1:1 · без приборов</span>
+        <span class="model-status">М 1:1 · модель заказчика</span>
         <button type="button" id="fullscreen">На весь экран</button>
       </div>
     </header>
@@ -43,7 +44,13 @@
       <article class="view-card" aria-live="polite">
         <p id="view-kicker">Общий вид</p>
         <h1 id="view-title">Павильон целиком</h1>
-        <p id="view-description">Архитектура и сценография без добавленных объектов интерактивов.</p>
+        <p id="view-description">Исходная сборка заказчика. Нажмите название города, чтобы рассмотреть зал и его объекты.</p>
+        <details class="source-zone-details" id="source-zone-details" hidden>
+          <summary>Замысел в исходном проекте</summary>
+          <p id="source-zone-concept"></p>
+          <p class="source-reference" id="source-zone-reference"></p>
+        </details>
+        <div class="source-zone-objects" id="source-zone-objects" hidden></div>
         <div id="visitor-controls" hidden>
           <button type="button" id="next-visitor" disabled>Другой посетитель</button>
         </div>
@@ -52,6 +59,8 @@
           <button type="button" id="screen-motion">Пауза</button>
         </div>
       </article>
+
+      <button type="button" class="zone-label-toggle" id="zone-label-toggle" aria-pressed="true" title="Названия городов и зон на общем виде и плане">Подписи: вкл.</button>
 
       <div class="help" id="help">
         <button type="button" id="help-toggle" aria-expanded="false">Как управлять</button>
@@ -70,7 +79,7 @@
         <button type="button" data-view="center">Центральная зона</button>
         <button type="button" data-view="regions">Региональные залы</button>
         <button type="button" data-view="workshops">Мастерские</button>
-        <button type="button" data-view="plan">Сверху</button>
+        <button type="button" data-view="plan">Города · сверху</button>
         <button type="button" id="walk" aria-pressed="false">Прогулка</button>
         <button type="button" id="visitor-motion" aria-pressed="false" disabled>Загрузка посетителей…</button>
       </nav>
