@@ -2,8 +2,9 @@ import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
 import {
   SOURCE_INTERACTIVE_DEFINITIONS, SOURCE_CITIES, SOURCE_INTERESTS, SOURCE_CRAFTS, SOURCE_MAP_LAYERS,
   SOURCE_SCROLL_CHAPTERS, SOURCE_WELL_THEMES, SOURCE_BOBBIN_THEMES, SOURCE_GLASS_STAGE_NAMES, sourceJourney
-} from './source-interactive-data.js?v=3';
-import { MAP_CITY_OPTIONS, MAP_CONTENT_SOURCES, mapSelectionInfo, mapSelectionSummary, pickMapCity } from './map-content.js?v=2';
+} from './source-interactive-data.js?v=4';
+import { activityNarrative, WORKSHOP_ACTIVITIES } from './activity-content.js?v=1';
+import { MAP_CITY_OPTIONS, MAP_CONTENT_SOURCES, mapSelectionInfo, mapSelectionSummary, pickMapCity } from './map-content.js?v=12';
 
 const TAU = Math.PI * 2;
 const clamp = (n, low = 0, high = 1) => Math.min(high, Math.max(low, Number(n) || 0));
@@ -19,14 +20,14 @@ const INITIAL = {
   scroll: () => ({ running: false, progress: 0, chapter: 0, direction: 1 }),
   well: () => ({ running: false, theme: 'kalyazin', phase: 0, steam: 0 }),
   boats: () => ({ running: false, progress: 0 }),
-  bells: () => ({ running: false, struckIndex: -1, pulse: 0 }),
+  bells: () => ({ running: false, struckIndex: -1, pulse: 0, voices: 0, strikes: 0 }),
   bobbins: () => ({ running: false, theme: 'filigree', angle: 0, brightness: .62 }),
   yarn: () => ({ running: false, phase: 0 }),
-  ornament: () => ({ running: false, progress: 0, pattern: 0, stitchQuality: 1 }),
+  ornament: () => ({ running: false, progress: 0, pattern: 0, stitchQuality: 1, completed: 0, archive: [], saved: false }),
   finale: () => ({ running: false, city: 'vladimir', interest: 'architecture', daylight: .78,
     phase: .17, route: sourceJourney('vladimir', 'architecture') }),
-  map: () => ({ running: false, layer: 'cities', city: 'all' }),
-  workshops: () => ({ running: false, craft: 'pottery', step: 0 })
+  map: () => ({ running: false, layer: 'cities', city: 'all', showProgress: 0, showCount: 0, selectionCount: 0, motionPaused: false }),
+  workshops: () => ({ running: false, craft: 'pottery', step: 0, progress: 0, target: 0, count: 0, assembled: 0, palette: 0, pattern: 0, sample: false, blow: .55, feedback: '', effect: 0 })
 };
 
 /**
@@ -37,11 +38,11 @@ const INITIAL = {
  * setDisplayState(id, state) receives a stable plain object; renderers should read it,
  * not mutate it. Continuous display changes are capped at 18 updates per second.
  * invoke() is useful for deterministic QA and external controls. It NEVER starts
- * audio; bell audio requires a trusted click on a button owned by this controller.
+ * audio; bell audio requires a trusted visitor click supplied to activate() or a control.
  */
 export function createSourceInteractives({
   model, bindings = {}, renderer, clock, mount, onChange = () => {},
-  onSelectView = () => {}, reducedMotion = false, setDisplayState = () => {}
+  onSelectView = () => {}, onRequestMotion = () => {}, reducedMotion = false, setDisplayState = () => {}
 } = {}) {
   const records = new Map();
   const meshOwners = new WeakMap();
@@ -161,6 +162,37 @@ export function createSourceInteractives({
         // Preserve any source finishing hook, and do not modify shared materials.
         copy.onBeforeCompile = material.onBeforeCompile;
         copy.customProgramCacheKey = material.customProgramCacheKey;
+        if (record.id === 'bobbins') {
+          record.lightPattern ||= { uSourceBobbinTheme:{value:0}, uSourceBobbinPhase:{value:0} };
+          const previousCompile=copy.onBeforeCompile, previousKey=copy.customProgramCacheKey;
+          copy.onBeforeCompile=function(shader,renderer){
+            previousCompile?.call(this,shader,renderer);
+            Object.assign(shader.uniforms,record.lightPattern);
+            shader.vertexShader='varying vec3 vSourceBobbinPoint;\n'+shader.vertexShader;
+            shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',
+              '#include <begin_vertex>\nvSourceBobbinPoint=position;');
+            shader.fragmentShader='varying vec3 vSourceBobbinPoint; uniform float uSourceBobbinTheme; uniform float uSourceBobbinPhase;\n'+shader.fragmentShader;
+            shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>',`#include <emissivemap_fragment>
+              vec3 bp=vSourceBobbinPoint;
+              float bx=(bp.x+bp.z)*17.0, by=bp.y*20.0;
+              float pattern=0.0; vec3 glow=vec3(1.0,.72,.30);
+              if(uSourceBobbinTheme<.5){
+                float wire=abs(sin(bx+sin(by)*1.5)*sin(by+sin(bx)*1.5));
+                pattern=1.0-smoothstep(.06,.17,wire);
+              }else if(uSourceBobbinTheme<1.5){
+                vec2 cell=fract(vec2(bx*.23,by*.2));
+                pattern=step(.18,cell.x)*step(cell.x,.72)*step(.16,cell.y)*step(cell.y,.78);
+                pattern*=.62+.25*sin(by*.18-uSourceBobbinPhase*.8);
+                glow=vec3(1.0,.88,.48);
+              }else{
+                float crystal=max(abs(sin(bx*.85+by*.5)),abs(sin(bx*.85-by*.5)));
+                pattern=smoothstep(.75,.91,crystal);glow=vec3(.51,.91,.93);
+              }
+              totalEmissiveRadiance+=glow*pattern*.44;
+            `);
+          };
+          copy.customProgramCacheKey=function(){return (previousKey?.call(this)||'')+'|source-bobbin-light-01';};
+        }
         return copy;
       });
       if (materials.every((material, index) => material === originals[index])) continue;
@@ -231,7 +263,8 @@ export function createSourceInteractives({
     const record = {
       id: definition.id, definition, binding, parts, rotors: [], highlights: [],
       pulses: new Float32Array(0), state: INITIAL[definition.id](), time: 0,
-      displayDirty: true, curve: null, manualTime: 0, manualSpeed: 0, soundStatus: ''
+      displayDirty: true, curve: null, manualTime: 0, manualSpeed: 0, soundStatus: '',
+      activationCount: 0, activationSource: null, elapsedAction: 0
     };
     records.set(record.id, record);
     for (const part of parts) {
@@ -265,7 +298,8 @@ export function createSourceInteractives({
   });
 
   function display(record) {
-    setDisplayState(record.id, record.state);
+    const narrative = activityNarrative(record.id, record.state);
+    setDisplayState(record.id, { ...record.state, heading: narrative?.title || '', story: narrative?.text || '', sourcePage: narrative?.page || null });
     record.displayDirty = false;
   }
 
@@ -293,6 +327,7 @@ export function createSourceInteractives({
         applyRotation(rotor, angle);
       }
     } else if (record.id === 'bobbins') {
+      if(record.lightPattern){record.lightPattern.uSourceBobbinTheme.value=({filigree:0,capital:1,salt:2})[state.theme]||0;record.lightPattern.uSourceBobbinPhase.value=state.angle;}
       for (let i = 0; i < record.rotors.length; i++) {
         applyRotation(record.rotors[i], state.angle * (i % 2 ? -1 : 1));
       }
@@ -324,7 +359,15 @@ export function createSourceInteractives({
     }
   }
 
+  function archiveOrnament(record) {
+    const state=record.state;
+    if (record.id !== 'ornament' || state.progress < 1 || state.saved) return;
+    state.completed++; state.archive.push({pattern:state.pattern,quality:state.stitchQuality});
+    if(state.archive.length>6)state.archive.shift(); state.saved=true;
+  }
+
   function notify(record, action, value) {
+    archiveOrnament(record);
     record.displayDirty = true;
     applyPose(record);
     display(record);
@@ -335,13 +378,22 @@ export function createSourceInteractives({
 
   function releaseManualPause() {
     if (!paused) return;
+    // A host may also pause the media, map and robotics clocks. Resume those
+    // together before accepting a direct visitor action from this panel.
+    onRequestMotion();
+    if (!paused) return;
     for (const other of records.values()) other.state.running = false;
     paused = false;
   }
 
   function start(record) {
     releaseManualPause();
-    if (record.id === 'ornament' && record.state.progress >= 1) record.state.progress = 0;
+    if (record.id === 'ornament' && record.state.progress >= 1) { record.state.progress = 0; record.state.saved=false; }
+    if (record.id === 'scroll' && record.state.progress >= 1 && record.state.direction > 0) record.state.progress = 0;
+    if (record.id === 'scroll' && record.state.progress <= 0 && record.state.direction < 0) record.state.progress = 1;
+    if (record.id === 'map') {
+      record.state.showProgress = 0; record.state.showCount++; record.state.motionPaused = false;
+    }
     record.state.running = true;
   }
 
@@ -411,14 +463,20 @@ export function createSourceInteractives({
     let handled = true;
     if (action === 'focus') { onSelectView(record.definition.viewId); return true; }
     if (['play', 'pause', 'toggle'].includes(action) &&
-        (['map', 'workshops', 'bells'].includes(id) ||
+        (['bells'].includes(id) ||
          (id === 'boats' && !record.curve && !record.definition.capabilities.display))) return false;
     if (action === 'play') start(record);
-    else if (action === 'pause') state.running = false;
+    else if (action === 'pause') {
+      if (id === 'map') state.motionPaused = true; else state.running = false;
+    }
+    else if (action === 'stand-pause' && id === 'map') {
+      state.motionPaused = !state.motionPaused;
+      if (!state.motionPaused) releaseManualPause();
+    }
     else if (action === 'toggle') {
       if (state.running && !paused) state.running = false; else start(record);
     } else if (action === 'reset') {
-      record.state = INITIAL[id]();
+      record.state = { ...INITIAL[id](), ...(id==='workshops'?{craft:state.craft}:{}) };
       record.pulses.fill(0); record.time = 0;
       if (id === 'bells') stopAudio();
     } else if (action === 'progress' && ['scroll', 'ornament', 'boats'].includes(id)) {
@@ -443,21 +501,23 @@ export function createSourceInteractives({
       state.direction = Number(value) < 0 ? -1 : 1;
       start(record);
     } else if (action === 'theme' && id === 'well' && valid(SOURCE_WELL_THEMES, value)) {
-      state.theme = value; state.steam = reduced || paused ? 0 : 1;
+      state.theme = value; state.steam = reduced || paused ? 0 : 1; start(record);
     } else if (action === 'theme' && id === 'bobbins' && valid(SOURCE_BOBBIN_THEMES, value)) {
-      state.theme = value; state.brightness = .8;
+      state.theme = value; state.brightness = .8; start(record);
     } else if (action === 'bell' && id === 'bells' && (value === 'all' || [0, 1, 2].includes(Number(value)))) {
       const index = value === 'all' ? 'all' : Number(value);
       releaseManualPause();
-      state.struckIndex = index === 'all' ? -1 : index;
+      state.voices = index === 'all' ? 7 : state.voices | (1 << index); state.strikes++;
+      const ensemble = index === 'all' || state.voices === 7;
+      state.struckIndex = ensemble ? -1 : index;
       state.pulse = 1;
       for (let i = 0; i < record.pulses.length; i++) {
-        record.pulses[i] = index === 'all' || i % 3 === index ? 1 : 0;
+        record.pulses[i] = ensemble || i % 3 === index ? 1 : 0;
       }
-      if (trustedGesture) void playBellAudio(record, index);
+      if (trustedGesture) void playBellAudio(record, ensemble ? 'all' : index);
     } else if (action === 'pattern' && id === 'ornament') {
       state.pattern = value == null ? (state.pattern + 1) % 3 : Math.round(clamp(value, 0, 2));
-      state.progress = 0; state.stitchQuality = 1;
+      state.progress = 0; state.stitchQuality = 1; state.saved=false;
     } else if (action === 'city' && id === 'finale' && valid(SOURCE_CITIES, value)) {
       state.city = value; state.route = sourceJourney(state.city, state.interest);
     } else if (action === 'interest' && id === 'finale' && valid(SOURCE_INTERESTS, value)) {
@@ -466,18 +526,82 @@ export function createSourceInteractives({
       state.running = false; state.daylight = clamp(value);
       state.phase = Math.acos(clamp((state.daylight - .15) / .85) * 2 - 1) / TAU;
     } else if (action === 'layer' && id === 'map' && valid(SOURCE_MAP_LAYERS, value)) {
-      state.layer = value;
+      state.layer = value; start(record);
     } else if (action === 'city' && id === 'map' && valid(MAP_CITY_OPTIONS, value)) {
-      state.city = value;
+      state.city = value; state.selectionCount++; start(record);
     } else if (action === 'craft' && id === 'workshops' && valid(SOURCE_CRAFTS, value)) {
-      state.craft = value; state.step = 0;
+      record.state = { ...INITIAL.workshops(), craft: value };
+    } else if (action === 'blow' && id === 'workshops') {
+      state.blow = clamp(value);
+    } else if (action === 'sample' && id === 'workshops') {
+      state.sample = !state.sample;
+    } else if (action === 'paint' && id === 'workshops' && ['gorodets','palekh'].includes(state.craft)) {
+      const color = Math.round(clamp(value,0,2)); state.palette = color;
+      const next = Math.min(7,Math.floor(state.progress * 8 + .0001));
+      if (state.progress >= 1) { state.progress = 0; state.target = 0; state.feedback = 'Новый узор'; }
+      else if (color === next % 3) { state.progress = clamp((next + 1) / 8); state.feedback = state.progress >= 1 ? 'Узор готов' : 'Цвет выбран верно'; }
+      else state.feedback = 'Сверьте цвет следующего элемента с образцом';
+      state.effect = 1;
+    } else if (action === 'engage' && id === 'workshops') {
+      releaseManualPause(); record.elapsedAction = 0; state.effect = 1;
+      if (state.craft === 'pottery') {
+        if (state.progress >= .999) { state.progress = 0; state.target = 0; }
+        state.target = clamp(state.target + 1/6); state.progress = Math.min(state.target,state.progress + .025); state.running = true;
+      } else if (state.craft === 'matryoshka') {
+        state.count = state.count >= 79 ? 1 : state.count + 1; state.progress = state.count/79;
+      } else if (['gorodets','palekh'].includes(state.craft)) {
+        return perform(id, 'paint', Math.min(7,Math.floor(state.progress*8+.0001))%3, trustedGesture);
+      } else if (state.craft === 'lace') { state.pattern = (state.pattern + 1)%3; state.progress = 1; }
+      else if (state.craft === 'glass') {
+        if (state.progress >= 1) { state.progress = 0; state.step = 0; }
+        state.running = true; state.feedback = 'Держите поток в зелёной области';
+      } else if (state.craft === 'finift') { state.step = state.step >= 4 ? 1 : state.step+1; state.progress = state.step/4; }
+      else if (state.craft === 'filigree') { state.assembled = state.assembled >= 12 ? 1 : state.assembled+1; state.progress = state.assembled/12; }
     } else if (action === 'step' && id === 'workshops' && state.craft === 'glass') {
-      state.step = Math.round(clamp(value, 0, 3));
+      state.step = Math.round(clamp(value, 0, 3)); state.progress = state.step/3; state.running = false;
     } else handled = false;
     if (!handled) return false;
     notify(record, action, value);
     if (action === 'craft' && activeId === id) buildUI(record);
     return true;
+  }
+
+  function activate(id, { source = 'object', event = null, hit = null, city = null, focus = true } = {}) {
+    if (disposed) return false;
+    if (id && typeof id === 'object') id = id.id;
+    if (!records.has(id)) id = definitions.find(item => item.viewId === id)?.id;
+    const record = records.get(id); if (!record) return false;
+    record.activationCount++; record.activationSource = source;
+    if (focus) onSelectView(record.definition.viewId);
+    setActive(id);
+    const trusted = Boolean(event?.isTrusted);
+    if (id === 'map' && city && valid(MAP_CITY_OPTIONS,city)) return perform(id,'city',city,trusted);
+    if (id === 'bells') {
+      const partIndex = hit?.object ? record.parts.findIndex(part => part.mesh === hit.object) : -1;
+      const index = partIndex >= 0 ? partIndex%3 : record.state.strikes%3;
+      return perform(id,'bell',index,trusted);
+    }
+    if (id === 'workshops') {
+      const part = hit?.object && record.parts.find(item => item.mesh === hit.object);
+      const craft = hit?.object?.userData?.craftId || (part?.isSurface ? SOURCE_CRAFTS[(part.ordinal||0)%SOURCE_CRAFTS.length]?.id : null);
+      if (craft && craft !== record.state.craft) perform(id,'craft',craft,trusted);
+      return perform(id,'engage',null,trusted);
+    }
+    if (id === 'well' && record.state.running) {
+      const i = SOURCE_WELL_THEMES.findIndex(item=>item.id===record.state.theme);
+      return perform(id,'theme',SOURCE_WELL_THEMES[(i+1)%SOURCE_WELL_THEMES.length].id,trusted);
+    }
+    if (id === 'bobbins' && record.state.running) {
+      const i = SOURCE_BOBBIN_THEMES.findIndex(item=>item.id===record.state.theme);
+      return perform(id,'theme',SOURCE_BOBBIN_THEMES[(i+1)%SOURCE_BOBBIN_THEMES.length].id,trusted);
+    }
+    if (id === 'ornament') {
+      const state=record.state;
+      if (state.progress >= 1) { state.progress=0; state.pattern=(state.pattern+1)%3; state.saved=false; }
+      state.progress = clamp(state.progress+1/12);
+      state.running = false; notify(record,'stitch',state.progress); return true;
+    }
+    return perform(id,'play',null,trusted);
   }
 
   function listen(element, event, handler) {
@@ -558,8 +682,8 @@ export function createSourceInteractives({
     }
     panel.hidden = false;
     ui = { id: record.id, buttons: [], selects: [], range: null, status: null, route: null };
-    if (record.definition.webDemo && record.id !== 'map') panel.append(makeElement('p', 'source-interactives__hint', record.definition.webDemo));
     panel.append(makeElement('p', 'source-interactives__hint', record.definition.instruction));
+    ui.story = makeElement('p','source-interactives__story'); panel.append(ui.story);
     switch (record.id) {
       case 'scroll': {
         choices(SOURCE_SCROLL_CHAPTERS.map((chapter, index) => ({ id: index, title: chapter.title })), 'chapter');
@@ -581,6 +705,7 @@ export function createSourceInteractives({
         const controls = row();
         ['Малый звон', 'Средний звон', 'Большой звон'].forEach((name, index) => button(controls, name, 'bell', index));
         button(row(), 'Общий звон', 'bell', 'all', { primary: true });
+        button(row(), 'Собрать заново', 'reset');
         break;
       }
       case 'bobbins':
@@ -608,18 +733,31 @@ export function createSourceInteractives({
         themes.setAttribute('aria-label', 'Тематический слой карты');
         themes.style.cssText = 'display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px';
         for (const element of themes.children) element.style.cssText = 'min-width:0;min-height:42px;padding:8px 4px;font-size:14px';
+        const motion = row();
+        button(motion,'Запустить шоу','play',null,{primary:true});
+        button(motion,'Пауза стенда','stand-pause');
         select('Город на карте', 'city', MAP_CITY_OPTIONS);
         ui.mapHeading = makeElement('h3', 'source-interactives__map-heading');
         ui.mapHeading.style.cssText = 'margin:12px 0 4px;font-size:1.1rem;line-height:1.35;color:#f2e8ce';
         panel.append(ui.mapHeading);
         break;
       }
-      case 'workshops':
+      case 'workshops': {
         select('Ремесло', 'craft', SOURCE_CRAFTS);
-        if (record.state.craft === 'glass') {
-          choices(SOURCE_GLASS_STAGE_NAMES.map((title, index) => ({ id: index, title })), 'step');
+        const craft = WORKSHOP_ACTIVITIES[record.state.craft];
+        panel.append(makeElement('p','source-interactives__hint',craft.hint));
+        button(row(),craft.action,'engage',null,{primary:true});
+        if (['gorodets','palekh'].includes(record.state.craft)) {
+          choices((record.state.craft==='palekh'?['Золотой','Красный','Зелёный']:['Красный','Синий','Зелёный']).map((title,id)=>({id,title})),'paint');
+          button(row(),'Показать образец','sample');
         }
+        if (record.state.craft === 'glass') {
+          range('Сила потока','blow');
+          button(row(),'Пауза','pause');
+        }
+        button(row(),'Начать заново','reset');
         break;
+      }
     }
     ui.status = makeElement('p', 'source-interactives__status');
     ui.status.setAttribute('role', 'status');
@@ -645,13 +783,18 @@ export function createSourceInteractives({
     if (record.id === 'ornament') return state.progress >= 1 ? 'Узор готов' :
       'Узор ' + (state.pattern + 1) + ' · ' + Math.round(state.progress * 100) + '%' +
       (state.stitchQuality < .75 ? ' · ведите ползунок плавнее' : '');
-    if (record.id === 'bells') return record.soundStatus || 'Нажмите на голос колокола';
+    if (record.id === 'bells') return 'Голоса: ' + [0,1,2].filter(i=>record.state.voices&(1<<i)).length + '/3 · ' + (record.soundStatus || 'Нажмите на подвес или выберите голос');
     if (record.id === 'well') return SOURCE_WELL_THEMES.find(item => item.id === state.theme)?.title || '';
     if (record.id === 'bobbins') return SOURCE_BOBBIN_THEMES.find(item => item.id === state.theme)?.title || '';
-    if (record.id === 'map') return mapSelectionInfo(state.layer, state.city).text;
+    if (record.id === 'map') return (state.motionPaused?'Стенд на паузе. ':state.running?'Проекционное шоу · '+Math.round(state.showProgress*100)+'%. ':'Руки рисуют песочную карту. ') + mapSelectionInfo(state.layer, state.city).text;
     if (record.id === 'finale') return state.daylight > .7 ? 'Дневная панорама' : state.daylight > .38 ? 'Сумерки' : 'Ночная панорама';
-    if (record.id === 'boats' && !record.curve) return 'Медиарассказ на исходной композиции';
-    if (record.id === 'workshops') return state.craft === 'glass' ? SOURCE_GLASS_STAGE_NAMES[state.step] : SOURCE_CRAFTS.find(item => item.id === state.craft)?.title || '';
+    if (record.id === 'boats' && !record.curve) return (activityNarrative('boats',state)?.title || 'Речная история') + ' · ' + Math.round(state.progress*100) + '%';
+    if (record.id === 'workshops') {
+      if (state.craft==='matryoshka') return 'Открыто '+state.count+' из 79';
+      if (state.craft==='filigree') return 'Соединено '+state.assembled+' из 12';
+      if (state.craft==='lace') return 'Кружевной узор '+(state.pattern+1);
+      return (state.feedback ? state.feedback+' · ' : '') + Math.round(state.progress*100)+'%';
+    }
     return state.running && !paused ? 'Движение включено' : 'Готово к запуску';
   }
 
@@ -667,6 +810,7 @@ export function createSourceInteractives({
         item.element.setAttribute('aria-pressed', String(chosen === item.value));
       }
       if (item.action === 'pause') item.element.disabled = !state.running || paused;
+      if (item.action === 'stand-pause') item.element.textContent = state.motionPaused ? 'Продолжить стенд' : 'Пауза стенда';
     }
     for (const item of ui.selects) item.element.value = state[item.action];
     if (ui.range && ui.range.input !== ui.range.input.ownerDocument.activeElement) {
@@ -689,6 +833,8 @@ export function createSourceInteractives({
         }
       }
     }
+    const narrative = activityNarrative(record.id,state);
+    if (ui.story) { ui.story.hidden = !narrative; if(narrative) ui.story.textContent = narrative.text; }
     const message = status(record);
     if (ui.status) ui.status.setAttribute('aria-live', state.running && !paused ? 'off' : 'polite');
     if (ui.status && ui.status.textContent !== message) ui.status.textContent = message;
@@ -704,8 +850,8 @@ export function createSourceInteractives({
     let changed = false;
     for (const record of records.values()) {
       const state = record.state;
-      let moving = state.running;
-      if (state.running) {
+      let moving = state.running && !state.motionPaused;
+      if (state.running && !state.motionPaused) {
         record.time += dt;
         if (record.id === 'scroll') {
           const next = state.progress + state.direction * dt / 22;
@@ -722,11 +868,27 @@ export function createSourceInteractives({
           state.progress = clamp(state.progress + dt / 16);
           state.stitchQuality = Math.min(1, state.stitchQuality + dt * .05);
           if (state.progress >= 1) state.running = false;
+        } else if (record.id === 'map') {
+          state.showProgress = clamp(state.showProgress + dt/32);
+          if (state.showProgress >= 1) state.running = false;
+        } else if (record.id === 'workshops') {
+          record.elapsedAction += dt;
+          if (state.craft === 'pottery') {
+            state.progress = Math.min(state.target,state.progress+dt*.32);
+            if (state.progress >= state.target) { state.running=false; state.feedback=state.progress>=1?'Сосуд готов':'Стена сосуда поднята'; }
+          } else if (state.craft === 'glass') {
+            const stable=state.blow>=.32 && state.blow<=.68;
+            if (stable) { state.progress=clamp(state.progress+dt*.14); state.feedback='Ровный поток'; }
+            else { state.progress=clamp(state.progress-dt*.035); state.feedback=state.blow>.68?'Ослабьте поток':'Усильте поток'; }
+            state.step=Math.min(3,Math.floor(state.progress*4));
+            if (state.progress>=1) { state.running=false; state.feedback='Стеклянная форма готова'; }
+          } else state.running=false;
         } else if (record.id === 'finale') {
           state.phase = wrap(state.phase + dt / 48);
           state.daylight = .15 + .85 * (.5 + .5 * Math.cos(state.phase * TAU));
         }
       }
+      if (record.id === 'workshops' && state.effect > 0) { state.effect=Math.max(0,state.effect-dt*2); moving=true; }
       if (record.id === 'well' && state.steam > 0) {
         state.steam = Math.max(0, state.steam - dt / 1.3); moving = true;
       }
@@ -741,6 +903,7 @@ export function createSourceInteractives({
         moving = true;
       }
       if (moving) {
+        archiveOrnament(record);
         applyPose(record); record.displayDirty = true; changed = true;
       }
       if (record.displayDirty && (displayDue || !moving)) display(record);
@@ -764,7 +927,7 @@ export function createSourceInteractives({
   function isAnimating() {
     if (disposed || paused) return false;
     for (const record of records.values()) {
-      if (record.state.running || record.state.steam > 0 || record.state.pulse > 0) return true;
+      if ((record.state.running && !record.state.motionPaused) || record.state.steam > 0 || record.state.pulse > 0 || record.state.effect > 0) return true;
     }
     return false;
   }
@@ -797,9 +960,10 @@ export function createSourceInteractives({
 
   function snapshot() {
     return {
-      version: 2, activeId, paused, reducedMotion: reduced, disposed,
+      version: 3, activeId, paused, reducedMotion: reduced, disposed,
       map: records.has('map') ? { theme: records.get('map').state.layer, selectedCity: records.get('map').state.city,
         cityCount: MAP_CITY_OPTIONS.length - 1, layerCount: SOURCE_MAP_LAYERS.length,
+        running: records.get('map').state.running, showProgress: records.get('map').state.showProgress, showCount: records.get('map').state.showCount, motionPaused: records.get('map').state.motionPaused,
         selection: mapSelectionSummary(records.get('map').state.layer, records.get('map').state.city) } : null,
       frame, lastAction, warnings: [...warnings],
       audio: { created: Boolean(audio), state: audio?.state || 'not-created',
@@ -807,7 +971,7 @@ export function createSourceInteractives({
       installations: [...records.values()].map(record => ({
         id: record.id, zoneId: record.definition.zoneId, objectId: record.definition.objectId,
         capabilities: { ...record.definition.capabilities },
-        parts: record.parts.length,
+        parts: record.parts.length, activationCount: record.activationCount, activationSource: record.activationSource,
         sources: [...new Set(record.parts.map(part => part.sourceObject).filter(Boolean))],
         state: JSON.parse(JSON.stringify(record.state)),
         rotors: record.rotors.map(rotor => ({
@@ -843,7 +1007,7 @@ export function createSourceInteractives({
     applyPose(record); display(record);
   }
   return {
-    definitions, setActive, update, isAnimating, setPaused, snapshot, findInteractive, handleSurfacePick, dispose,
+    definitions, setActive, activate, update, isAnimating, setPaused, snapshot, findInteractive, handleSurfacePick, dispose,
     invoke: (id, action, value) => perform(id, action, value, false)
   };
 }

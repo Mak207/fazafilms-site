@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "51 source-shaped media surfaces with source05 front screen placement preserved; seven native FR20 assemblies rejoined and detailed",
+  "status": "51 source media surfaces and source05 front placements preserved; seven native FR20 robots have six rotary joints and rigid CAD skins",
   "sourceSha256": "b3baac592a3b46b0a9577e61f92142e23aa44ee945ed2afbf2c8c905270712dc",
   "sourceBlend": "Общая сборка 1911-review.blend",
   "coordinateSystem": "GLB metres Y-up",
@@ -7641,11 +7641,13 @@
     "textures": 0,
     "meshInstances": 153,
     "robotTrianglesPerInstance": 44888,
-    "robotSharedMeshes": 3
+    "robotSharedMeshes": 3,
+    "robotSkins": 7,
+    "robotJoints": 42
   },
-  "assetSha256": "a64522c5a661238532ee11e7667a7bb1e4739ee42f833223a3285c05331c82bc",
-  "assetBytes": 6437200,
-  "revision": "20261123-source-06",
+  "assetSha256": "06d306beb730009d6380e3d5c500b6c1043c30d38619ec9d3544aa7c6f677feb",
+  "assetBytes": 7178476,
+  "revision": "20261123-source-07",
   "UVcorrections": [
     "history-ribbon-01",
     "history-ribbon-02",
@@ -7695,7 +7697,7 @@
       ]
     }
   },
-  "verificationRevision": "source06-native-robot-assembly-and-source05-front-screens",
+  "verificationRevision": "source07-native-FR20-rigid-skins-source05-fronts-preserved",
   "projectionShellCorrection": {
     "sourceObject": "Object041",
     "surfaces": [
@@ -7977,8 +7979,254 @@
       "majorPartsWithin12mm": 21
     },
     "limitations": [
-      "Static exhibition visualization; no robot control or physical motion simulation.",
-      "Native 3D assembly is unchanged on disk; repaired transforms exist only in the derived web asset."
+      "Exhibition visualization of the source installation; no physical robot-control interface.",
+      "Native CAD source remains unchanged on disk; derived web asset contains corrected assembly and articulated rigid skins."
+    ]
+  },
+  "robotRig": {
+    "version": 1,
+    "robotCount": 7,
+    "jointsPerRobot": 6,
+    "rigidLinksPerRobot": 7,
+    "nativePartsPerRobot": 57,
+    "sourcePartsRetained": 399,
+    "trianglesPerRobot": 44888,
+    "drawCallsPerRobot": 3,
+    "rigidSkinning": true,
+    "bindPoseErrorMetres": 0.0,
+    "conceptPages": [
+      15,
+      16,
+      17,
+      18
+    ],
+    "motionController": "robot-map-motion.js",
+    "solver": "closed-chain-ik-js v0.0.7, commit e966801",
+    "copies": [
+      {
+        "id": "robot-1",
+        "rootNode": 121,
+        "skin": 0,
+        "joints": [
+          121,
+          209,
+          211,
+          213,
+          215,
+          217,
+          219
+        ],
+        "mountMatrix": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          -1.0587911840678754e-22,
+          0.9999999999999999,
+          2.6469779601696886e-23,
+          0.0,
+          -1.1102230246251565e-16,
+          -2.6469779601696886e-23,
+          1.0,
+          0.0,
+          20.066219329833984,
+          0.2631168673130306,
+          -8.969107627868652,
+          1.0
+        ]
+      },
+      {
+        "id": "robot-2",
+        "rootNode": 123,
+        "skin": 1,
+        "joints": [
+          123,
+          222,
+          224,
+          226,
+          228,
+          230,
+          232
+        ],
+        "mountMatrix": [
+          -0.5000002701567631,
+          3.785512960226542e-08,
+          0.8660251516593459,
+          0.0,
+          -3.78551379693791e-08,
+          1.000000000000008,
+          -6.556706162960573e-08,
+          0.0,
+          -0.866025151659307,
+          -6.556707162796607e-08,
+          -0.5000002701567712,
+          0.0,
+          26.156198501586914,
+          0.2631168697115843,
+          -10.202194213867188,
+          1.0
+        ]
+      },
+      {
+        "id": "robot-3",
+        "rootNode": 125,
+        "skin": 2,
+        "joints": [
+          125,
+          235,
+          237,
+          239,
+          241,
+          243,
+          245
+        ],
+        "mountMatrix": [
+          0.4999998416778384,
+          -3.7855176038394965e-08,
+          -0.8660253990421967,
+          0.0,
+          3.7855160219493827e-08,
+          0.9999999999999776,
+          -2.185572469720702e-08,
+          0.0,
+          0.8660253990422012,
+          -2.185571908338316e-08,
+          0.49999984167786093,
+          0.0,
+          20.778139114379883,
+          0.263116862226684,
+          -5.719343185424805,
+          1.0
+        ]
+      },
+      {
+        "id": "robot-4",
+        "rootNode": 127,
+        "skin": 3,
+        "joints": [
+          127,
+          248,
+          250,
+          252,
+          254,
+          256,
+          258
+        ],
+        "mountMatrix": [
+          -0.9999999495907472,
+          5.9604512980415106e-08,
+          2.9103962961851693e-08,
+          0.0,
+          5.9604505420692215e-08,
+          0.999999999999998,
+          -1.9066101068418043e-07,
+          0.0,
+          -2.910387802979031e-08,
+          -1.9066098706074316e-07,
+          -0.9999999495906862,
+          0.0,
+          26.86811637878418,
+          0.26311687132854045,
+          -6.952426433563232,
+          1.0
+        ]
+      },
+      {
+        "id": "robot-5",
+        "rootNode": 129,
+        "skin": 4,
+        "joints": [
+          129,
+          261,
+          263,
+          265,
+          267,
+          269,
+          271
+        ],
+        "mountMatrix": [
+          -0.9848076455642534,
+          6.719490930836502e-08,
+          0.17364821563755534,
+          0.0,
+          3.3181459405309324e-08,
+          1.000000000000002,
+          -1.9877874911837224e-07,
+          0.0,
+          -0.17364821563746186,
+          -1.8999694415544477e-07,
+          -0.9848076455642042,
+          0.0,
+          28.867630004882812,
+          0.263116872235918,
+          -8.001566886901855,
+          1.0
+        ]
+      },
+      {
+        "id": "robot-6",
+        "rootNode": 131,
+        "skin": 5,
+        "joints": [
+          131,
+          274,
+          276,
+          278,
+          280,
+          282,
+          284
+        ],
+        "mountMatrix": [
+          0.5000000685196093,
+          -3.78551482827833e-08,
+          -0.8660252680747894,
+          0.0,
+          3.785514027661201e-08,
+          0.9999999999999776,
+          -2.1855733257264703e-08,
+          0.0,
+          0.866025268074794,
+          -2.185567100934516e-08,
+          0.5000000685196319,
+          0.0,
+          18.61306381225586,
+          0.26311686222668884,
+          -6.712289810180664,
+          1.0
+        ]
+      },
+      {
+        "id": "robot-7",
+        "rootNode": 133,
+        "skin": 6,
+        "joints": [
+          133,
+          287,
+          289,
+          291,
+          293,
+          295,
+          297
+        ],
+        "mountMatrix": [
+          -0.8660257991815337,
+          2.1855664889397783e-08,
+          0.499999221570562,
+          0.0,
+          -2.1855699587893647e-08,
+          0.9999999999999973,
+          -8.156651605828648e-08,
+          0.0,
+          -0.49999922157051774,
+          -8.156656953478516e-08,
+          -0.8660257991815312,
+          0.0,
+          23.94630241394043,
+          0.2631168675536732,
+          -7.856144905090332,
+          1.0
+        ]
+      }
     ]
   }
 }

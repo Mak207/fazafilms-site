@@ -1,6 +1,7 @@
 import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
 import { SOURCE_MEDIA, SOURCE_FINALE_CITIES, SOURCE_GLASS_STEPS } from './source-media-data.js?v=3';
-import { createMapAtlas } from './map-content.js?v=2';
+import { createMapAtlas } from './map-content.js?v=12';
+import { createActivityCanvas } from './activity-content.js?v=1';
 
 const VERTEX = `
 varying vec2 vUv;
@@ -227,7 +228,8 @@ export async function installSourceDisplays({surfaces,renderer,clock}) {
     material.polygonOffset=true;material.polygonOffsetFactor=-.1;material.polygonOffsetUnits=-.1;
     materials.push(material);surface.mesh.material=material;surface.mesh.castShadow=false;
     surface.mesh.userData.sourceDisplayId=surface.id;
-    records.push({surface,key,slides,caption,material,slideIndex:ordinal%Math.max(1,slides.length),selection:null});
+    const activity=createActivityCanvas(renderer,{id:surface.interactiveId,aspect:surface.aspect,ordinal});
+    records.push({surface,key,slides,caption,material,activity,slideIndex:ordinal%Math.max(1,slides.length),selection:null});
   }
   function assignSlide(record,index,title,subtitle) {
     const {slides,material,caption}=record;if(!slides.length)return;
@@ -317,16 +319,28 @@ export async function installSourceDisplays({surfaces,renderer,clock}) {
         if((own?.craftId||own?.id)==='glass'&&state.craft==='glass')assignSlide(record,SOURCE_MEDIA.workshops.slides.length+Math.max(0,Math.min(3,state.step||0)));
         else assignSlide(record,baseIndex);
       }
+      if(record.activity) {
+        let activityState=state;
+        if(id==='workshops') {
+          const own=record.slides[(record.surface.ordinal||0)%SOURCE_MEDIA.workshops.slides.length];
+          const craft=own?.craftId||own?.id, selected=craft===state.craft;
+          activityState=selected?state:{craft,running:false,progress:0,step:0,target:0,count:0,assembled:0,palette:0,pattern:0,sample:false,blow:.55,feedback:'',effect:0};
+        }
+        record.activity.draw(activityState,resolved.get(record.slides[record.slideIndex]?.src));
+        u.uImage.value=record.activity.texture;u.uImageAspect.value=record.activity.aspect;
+        u.uCrop.value.set(0,0,1,1);u.uFocal.value.set(.5,.5);u.uFit.value=1;
+        u.uMode.value=0;u.uAuto.value=0;u.uTiles.value=1;u.uCaptionOn.value=0;
+      }
     }
   }
   return {
-    setDisplayState,meshes:records.map(r=>r.surface.mesh),
+    setDisplayState,mapAtlas:()=>mapTexture,meshes:records.map(r=>r.surface.mesh),
     snapshot:()=>({count:records.length,collections:[...relevantKeys],textures:cache.size,map:mapTexture?.snapshot()||null,
       surfaces:records.map(r=>({id:r.surface.id,zoneId:r.surface.zoneId,interactiveId:r.surface.interactiveId||null,
         kind:r.surface.kind,sourceObject:r.surface.sourceObject,craftId:r.surface.zoneId==='workshops'?SOURCE_MEDIA.workshops.slides[(r.surface.ordinal||0)%8]?.craftId:null,title:r.currentTitle||r.slides[r.slideIndex]?.title||SOURCE_MEDIA[r.key]?.title,
         src:r.currentSrc||r.slides[r.slideIndex]?.src||null,aspect:r.surface.aspect,orientation:r.surface.UVorientation})),
-      states:Object.fromEntries(stateById)}),
-    dispose(){for(const material of materials)material.dispose();for(const label of labels)label.texture.dispose();
+      states:Object.fromEntries(stateById),activities:records.filter(r=>r.activity).map(r=>({surface:r.surface.id,...r.activity.snapshot()}))}),
+    dispose(){for(const record of records)record.activity?.dispose();for(const material of materials)material.dispose();for(const label of labels)label.texture.dispose();
       for(const promise of cache.values())promise.then(texture=>texture.dispose());mapTexture?.texture.dispose();}
   };
 }

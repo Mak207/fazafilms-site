@@ -107,3 +107,7 @@
   .tour[data-active-interactive="map"] #view-description { margin-top:5px; }
   .tour[data-active-interactive="map"] .source-interactives__hint { font-size:11px; }
 }
+
+.source-interactives__story { margin:.55rem 0 .7rem; padding:.6rem .7rem; border-left:2px solid #c8a664; background:rgba(209,184,127,.055); color:#d8ddcc; font-size:.82rem; line-height:1.5; }
+.source-interactives__story[hidden] { display:none; }
+@media(max-width:720px) { .source-interactives__story { font-size:.76rem; padding:.45rem .55rem; } }
