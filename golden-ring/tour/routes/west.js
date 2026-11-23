@@ -43,7 +43,7 @@ export const WEST_ALL_ROUTE = {
   "roomLabels": {
     "west-hall": "Ярославль · западный зал",
     "main-stage": "Главная сцена",
-    "bells-front": "Москва · колокола",
+    "bells-front": "Сергиев Посад · колокола",
     "south-pocket": "Кострома и Иваново",
     "north-passage": "Северный переход",
     "north-middle": "Владимир · северный зал"

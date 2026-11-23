@@ -1,0 +1,49 @@
+/* Labels are projected from customer-model coordinates and stay outside controls. */
+.zone-label-layer { position:absolute; inset:0; z-index:2; overflow:hidden; pointer-events:none; }
+.zone-label-layer[hidden] { display:none; }
+.zone-label-lines { position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; }
+.zone-label-lines path { fill:none; stroke:#fff6d7; stroke-width:1.6; filter:drop-shadow(0 1px 1px #001a14); }
+.zone-label-lines circle { fill:#efc26e; stroke:#142b22; stroke-width:1.8; }
+.zone-label { position:absolute; top:0; left:0; display:inline-flex; align-items:center; gap:6px; min-height:32px; max-width:178px; padding:5px 9px 5px 5px; border:1px solid #e7c688bf; border-radius:8px; background:#11291ff2; box-shadow:0 2px 12px #0005; color:#fff8e9; cursor:pointer; pointer-events:auto; white-space:nowrap; font:600 12px/1.1 Arial,Helvetica,sans-serif; }
+.zone-label[hidden] { display:none; }
+.zone-label strong { font:inherit; }
+.zone-label-copy { display:grid; gap:3px; text-align:left; }
+.zone-label-copy small { font-size:10px; font-weight:400; line-height:1.15; }
+.source-zone-objects { display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; pointer-events:auto; }
+.source-zone-objects[hidden] { display:none; }
+.source-zone-objects button { min-height:38px; padding:8px 10px; border:1px solid #d2b3768c; border-radius:7px; color:#f5dca8; background:#ffffff09; cursor:pointer; font-size:11px; line-height:1.2; }
+.source-zone-objects button:hover { background:#ffffff19; }
+.source-zone-objects button:focus-visible { outline:2px solid #fff3bb; outline-offset:2px; }
+.zone-label-number { display:grid; place-items:center; width:21px; height:21px; flex:0 0 21px; color:#14261e; background:#edc477; border-radius:5px; font-size:10px; font-weight:700; }
+.zone-label.is-place { min-height:28px; font-size:10px; color:#f2eee1; border-color:#bfd1c0a8; background:#284136f2; }
+.zone-label.is-place .zone-label-number { width:18px; height:18px; flex-basis:18px; color:#152a21; background:#d4ded3; font-size:9px; }
+.zone-label:hover, .zone-label.is-selected { color:#112219; background:#f3d393; border-color:#fff3c9; }
+.zone-label:focus-visible, .zone-label-toggle:focus-visible { outline:3px solid #fff3bb; outline-offset:3px; }
+.zone-label-toggle { position:absolute; z-index:5; top:77px; right:clamp(12px,2vw,26px); min-height:38px; padding:7px 10px; color:#f5eedf; background:#142a21eb; border:1px solid #ffffff45; border-radius:8px; cursor:pointer; font-size:12px; }
+.zone-label-toggle[aria-pressed="true"] { border-color:#dfb66e; color:#f4d38f; }
+[data-state="loading"] .zone-label-layer, [data-state="error"] .zone-label-layer { visibility:hidden; }
+[data-source-zone] .view-card { width:min(370px,calc(100% - 160px)); pointer-events:auto; }
+[data-source-zone] #view-description { display:block; font-size:12px; line-height:1.45; }
+.source-zone-details { margin-top:9px; border-top:1px solid #ffffff24; padding-top:8px; pointer-events:auto; }
+.source-zone-details[hidden] { display:none; }
+.source-zone-details summary { cursor:pointer; color:#f0ce8f; font-size:12px; font-weight:700; }
+.source-zone-details p { margin:7px 0 0; font-size:12px; line-height:1.45; color:#d5d9cf; }
+.source-zone-details .source-reference { color:#b6c4b9; font-size:10px; }
+@media(max-width:720px) {
+ .zone-label-copy small { font-size:9px; }
+ .source-zone-objects button { min-height:44px; font-size:10px; }
+ .zone-label { min-height:28px; max-width:159px; gap:4px; padding:4px 6px 4px 4px; font-size:10px; border-radius:6px; }
+ .zone-label-number { width:18px; height:18px; flex-basis:18px; font-size:9px; }
+ .zone-label.is-place { min-height:25px; font-size:9px; }
+ .zone-label.is-place .zone-label-number { width:16px; height:16px; flex-basis:16px; font-size:8px; }
+ .zone-label-toggle { top:61px; right:10px; min-height:34px; padding:6px 8px; font-size:10px; }
+ [data-source-zone] .view-card { width:calc(100% - 112px); max-width:330px; padding:10px 12px; }
+ [data-source-zone] .view-card h1 { font-size:19px; }
+ [data-source-zone] #view-description { font-size:11px; }
+ .source-zone-details summary, .source-zone-details p { font-size:11px; }
+ .source-zone-details[open] { max-height:190px; overflow-y:auto; }
+}
+@media(max-height:560px) {
+ .zone-label-toggle { top:56px; min-height:32px; font-size:10px; }
+ [data-source-zone] .view-card { max-height:calc(100% - 86px); overflow-y:auto; }
+}

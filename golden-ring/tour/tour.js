@@ -2,6 +2,8 @@ import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
 import { GLTFLoader } from '../interactives/vendor/three-0.180/GLTFLoader.js';
 import { MeshoptDecoder } from './vendor/meshopt_decoder.mjs';
 import { lightGallery, finishGallery, screens } from './gallery.js?v=3';
+import { sourceZones } from './source-zones.js?v=1';
+import { createZoneLabels } from './zone-labels.js?v=1';
 
 const root = document.getElementById('tour');
 const stage = document.getElementById('stage');
@@ -23,6 +25,12 @@ const motionButton = document.getElementById('screen-motion');
 const visitorMotionButton = document.getElementById('visitor-motion');
 const visitorControls = document.getElementById('visitor-controls');
 const nextVisitorButton = document.getElementById('next-visitor');
+const zoneToggle = document.getElementById('zone-label-toggle');
+const zoneDetails = document.getElementById('source-zone-details');
+const zoneConcept = document.getElementById('source-zone-concept');
+const zoneReference = document.getElementById('source-zone-reference');
+const zoneObjects = document.getElementById('source-zone-objects');
+const sourceZoneById = new Map(sourceZones.map(zone => [zone.id, zone]));
 let screenIndex = 0;
 const mediaTime = { value: 0 };
 const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
@@ -41,7 +49,7 @@ const views = {
   overview: {
     kicker: 'Общий вид',
     title: 'Павильон целиком',
-    description: 'Архитектура и сценография без добавленных объектов интерактивов.',
+    description: 'Исходная сборка заказчика. Нажмите название города, чтобы рассмотреть зал и его объекты.',
     position: [55, 31, 43], target: [5, 0.8, 1]
   },
   visitors: {
@@ -82,6 +90,24 @@ const views = {
   }
 };
 
+for (const zone of sourceZones) {
+  views['zone-' + zone.id] = {
+    kicker: 'Модель заказчика · ' + (zone.region || 'зона экспозиции'),
+    title: zone.title, description: zone.model,
+    position: zone.camera.position, target: zone.camera.target,
+    fov: zone.camera.fov || 50, bounds: zone.bounds, zoneId: zone.id
+  };
+  for (const object of zone.objects || []) {
+    views['object-' + zone.id + '-' + object.id] = {
+      kicker: zone.title + ' · объект исходной сборки',
+      title: object.title, description: object.model,
+      position: object.camera.position, target: object.camera.target,
+      fov: object.camera.fov || 50, zoneId: zone.id, objectId: object.id,
+      concept: object.concept, reference: object.reference
+    };
+  }
+}
+
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
 renderer.transmissionResolutionScale = .5;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
@@ -90,13 +116,15 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 const scene = new THREE.Scene();
 lightGallery(scene, renderer);
 
-const camera = new THREE.PerspectiveCamera(46, 1, 0.08, 260);
+const camera = new THREE.PerspectiveCamera(46, 1, 0.08, 600);
 camera.position.fromArray(views.overview.position);
 let target = new THREE.Vector3(...views.overview.target);
 camera.lookAt(target);
 
 
 let pavilion = null;
+let pavilionBounds = null;
+let activeView = 'overview';
 let cameraMotion = null;
 let orbitDistance = camera.position.distanceTo(target);
 let mode = 'orbit';
@@ -114,6 +142,44 @@ const previousProjectionView = new THREE.Matrix4();
 let refreshFrame = true;
 let screenInView = false;
 let lastDraw = 0;
+const zoneLabels = createZoneLabels({ stage, camera, zones: sourceZones, toggle: zoneToggle,
+  selectZone: zone => {
+    history.replaceState(null, '', '#zone-' + zone.id);
+    setView('zone-' + zone.id);
+  }
+});
+zoneToggle.addEventListener('click', () => {
+  refreshFrame = true;
+  zoneLabels.update(true);
+});
+zoneDetails.addEventListener('toggle', () => {
+  zoneLabels.invalidate();
+  refreshFrame = true;
+});
+
+function fittedViewPosition(view, name, fov = view.fov || 46) {
+  const position = new THREE.Vector3(...view.position);
+  const center = new THREE.Vector3(...view.target);
+  const bounds = view.bounds ? new THREE.Box3(
+    new THREE.Vector3(...view.bounds.min), new THREE.Vector3(...view.bounds.max)
+  ) : (name === 'overview' || name === 'plan') ? pavilionBounds : null;
+  if (!bounds || bounds.isEmpty()) return position;
+  const direction = position.clone().sub(center).normalize();
+  const forward = direction.clone().negate();
+  const right = new THREE.Vector3().crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize();
+  const up = new THREE.Vector3().crossVectors(right, forward).normalize();
+  const tanV = Math.tan(THREE.MathUtils.degToRad(fov / 2)) * .90;
+  const tanH = tanV * camera.aspect;
+  let distance = position.distanceTo(center);
+  for (const x of [bounds.min.x, bounds.max.x]) for (const y of [bounds.min.y, bounds.max.y])
+    for (const z of [bounds.min.z, bounds.max.z]) {
+      const relative = new THREE.Vector3(x, y, z).sub(center);
+      const depth = relative.dot(direction);
+      distance = Math.max(distance, depth + Math.abs(relative.dot(right)) / tanH,
+        depth + Math.abs(relative.dot(up)) / tanV);
+    }
+  return center.addScaledVector(direction, distance * 1.035);
+}
 
 function resize() {
   const width = Math.max(1, stage.clientWidth);
@@ -121,15 +187,55 @@ function resize() {
   renderer.setSize(width, height, false);
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
+  const currentView = views[activeView];
+  if (pavilion && mode === 'orbit' && currentView
+    && (activeView === 'overview' || activeView === 'plan' || currentView.zoneId)) {
+    cameraMotion = null;
+    camera.fov = currentView.fov || 46;
+    camera.updateProjectionMatrix();
+    camera.position.copy(fittedViewPosition(currentView, activeView));
+    target.fromArray(currentView.target);
+    camera.lookAt(target);
+    orbitDistance = camera.position.distanceTo(target);
+  }
+  zoneLabels.invalidate();
   refreshFrame = true;
 }
 
 function setView(name, immediate = false) {
+  if (mode === 'walk') setWalk(false, false);
+  activeView = name === 'media' || views[name] ? name : 'overview';
+  root.dataset.view = activeView;
+  zoneLabels.setView(activeView);
   const isScreen = name === 'media';
   const hall = screenIndex === 3 ? 'Финальный зал' : 'Региональный зал';
   const view = isScreen ? { ...screens[screenIndex], kicker: `${hall} · Экран ${screenIndex + 1} из ${screens.length}`,
     description: '' } : views[name] || views.overview;
-  if (mode === 'walk') setWalk(false, false);
+  const zone = sourceZoneById.get(view.zoneId);
+  if (zone) root.dataset.sourceZone = zone.id;
+  else delete root.dataset.sourceZone;
+  zoneDetails.hidden = !zone;
+  zoneDetails.open = false;
+  zoneConcept.textContent = view.concept || zone?.concept || '';
+  zoneReference.textContent = view.reference || zone?.reference || '';
+  zoneObjects.replaceChildren();
+  const addObjectButton = (label, nextView) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = label;
+    button.dataset.sourceView = nextView;
+    button.addEventListener('click', () => {
+      history.replaceState(null, '', '#' + nextView);
+      setView(nextView);
+    });
+    zoneObjects.append(button);
+  };
+  if (view.objectId) addObjectButton('Вернуться в зал', 'zone-' + zone.id);
+  for (const object of zone?.objects || []) {
+    if (object.id !== view.objectId) addObjectButton(object.button, 'object-' + zone.id + '-' + object.id);
+  }
+  zoneObjects.hidden = !zoneObjects.childElementCount;
+  refreshFrame = true;
   visitorFollow = name === 'visitors';
   visitorControls.hidden = !visitorFollow;
   screenControls.hidden = !isScreen;
@@ -137,11 +243,11 @@ function setView(name, immediate = false) {
     ? `Посетитель ${followedVisitor + 1} из ${visitors.count}` : view.kicker;
   viewTitle.textContent = view.title;
   viewDescription.textContent = view.description;
-  document.querySelectorAll('[data-view]').forEach(button => button.classList.toggle('is-active', button.dataset.view === name));
+  document.querySelectorAll('.camera-nav [data-view]').forEach(button => button.classList.toggle('is-active', button.dataset.view === name));
   const followView = visitorFollow && visitors ? visitors.focusView(followedVisitor) : null;
-  const endPosition = followView?.position || new THREE.Vector3(...view.position);
+  const endFov = followView?.fov || (isScreen ? [72,61,64,70][screenIndex] : (view.fov || 46));
+  const endPosition = followView?.position || fittedViewPosition(view, name, endFov);
   const endTarget = followView?.target || new THREE.Vector3(...view.target);
-  const endFov = followView?.fov || (isScreen ? [72,61,64,70][screenIndex] : 46);
   if (followView) viewTitle.textContent = followView.room;
   if (immediate || matchMedia('(prefers-reduced-motion: reduce)').matches) {
     camera.fov = endFov;
@@ -183,7 +289,7 @@ function orbit(dx, dy) {
   const spherical = new THREE.Spherical().setFromVector3(offset);
   spherical.theta -= dx * 0.006;
   spherical.phi = THREE.MathUtils.clamp(spherical.phi - dy * 0.006, 0.12, Math.PI * 0.485);
-  spherical.radius = THREE.MathUtils.clamp(spherical.radius, 3.5, 130);
+  spherical.radius = THREE.MathUtils.clamp(spherical.radius, views[activeView]?.objectId ? .35 : 3.5, 420);
   camera.position.copy(target).add(new THREE.Vector3().setFromSpherical(spherical));
   orbitDistance = spherical.radius;
   camera.lookAt(target);
@@ -192,7 +298,7 @@ function orbit(dx, dy) {
 function zoom(factor) {
   visitorFollow = false;
   const offset = camera.position.clone().sub(target);
-  const distance = THREE.MathUtils.clamp(offset.length() * factor, 3.5, 130);
+  const distance = THREE.MathUtils.clamp(offset.length() * factor, views[activeView]?.objectId ? .35 : 3.5, 420);
   camera.position.copy(target).add(offset.setLength(distance));
   orbitDistance = distance;
   camera.lookAt(target);
@@ -216,6 +322,15 @@ function setWalk(enabled, moveToStart = true) {
   visitorControls.hidden = true;
   mode = enabled ? 'walk' : 'orbit';
   root.dataset.mode = mode;
+  if (enabled) {
+    activeView = 'walk';
+    root.dataset.view = activeView;
+    zoneLabels.setView(activeView);
+    zoneDetails.hidden = true;
+    zoneObjects.hidden = true;
+    delete root.dataset.sourceZone;
+    refreshFrame = true;
+  }
   walkButton.setAttribute('aria-pressed', String(enabled));
   walkButton.textContent = enabled ? 'Выйти из прогулки' : 'Прогулка';
   walkHint.hidden = !enabled;
@@ -233,7 +348,7 @@ function setWalk(enabled, moveToStart = true) {
     viewKicker.textContent = 'Свободное перемещение';
     viewTitle.textContent = 'Прогулка по павильону';
     viewDescription.textContent = 'Осмотрите пространство с высоты глаз посетителя.';
-    document.querySelectorAll('[data-view]').forEach(button => button.classList.remove('is-active'));
+    document.querySelectorAll('.camera-nav [data-view]').forEach(button => button.classList.remove('is-active'));
     canvas.focus({ preventScroll: true });
   } else {
     setView('overview');
@@ -314,6 +429,7 @@ function animate(now) {
   refreshFrame = false;
   lastDraw = now;
   renderer.render(scene, camera);
+  zoneLabels.update();
 }
 
 let lastWalkUpdate = performance.now();
@@ -355,7 +471,7 @@ async function loadVisitors(loader) {
   updateVisitorButton();
   visitorLoadPromise = (async () => {
     try {
-      const { createPavilionVisitors } = await import('./visitors.js?v=2');
+      const { createPavilionVisitors } = await import('./visitors.js?v=3');
       visitors = await createPavilionVisitors(scene, loader);
       visitorStatus = 'ready';
       root.dataset.visitorsCount = String(visitors.count);
@@ -412,6 +528,7 @@ async function loadModel() {
     await finishGallery(pavilion, renderer, mediaTime);
     scene.add(pavilion);
     pavilion.updateMatrixWorld(true);
+    pavilionBounds = new THREE.Box3().setFromObject(pavilion);
     mediaMeshes.length = 0;
     pavilion.traverse(mesh => { if (mesh.isMesh && /^Pavilion_(display|panorama)/.test(mesh.name)) mediaMeshes.push(mesh); });
     refreshFrame = true;
@@ -454,6 +571,10 @@ function openTourLocation() {
     setView('media', true);
   } else if (hash === '#visitors') {
     setView('visitors', true);
+  } else if (hash === '#cities' || hash === '#plan') {
+    setView('plan', true);
+  } else if (views[hash.slice(1)]?.zoneId) {
+    setView(hash.slice(1), true);
   } else {
     setView('overview', true);
   }
@@ -492,7 +613,7 @@ canvas.addEventListener('wheel', event => {
   zoom(Math.exp(event.deltaY * 0.0011));
 }, { passive: false });
 
-document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => setView(button.dataset.view)));
+document.querySelectorAll('.camera-nav [data-view]').forEach(button => button.addEventListener('click', () => setView(button.dataset.view)));
 document.getElementById('next-screen').addEventListener('click', () => {
   screenIndex = (screenIndex + 1) % screens.length;
   setView('media');
@@ -552,6 +673,8 @@ document.getElementById('help-toggle').addEventListener('click', event => {
   const expanded = event.currentTarget.getAttribute('aria-expanded') === 'true';
   event.currentTarget.setAttribute('aria-expanded', String(!expanded));
   copy.hidden = expanded;
+  zoneLabels.invalidate();
+  refreshFrame = true;
 });
 
 async function toggleFullscreen() {
@@ -598,6 +721,7 @@ retry.addEventListener('click', () => {
 });
 
 window.__GOLDEN_RING_TOUR = {
+  zones: () => zoneLabels.snapshot(),
   state: () => ({ mode, ready: root.dataset.state === 'ready', view: viewTitle.textContent,
     visitors: visitorStatus, visitorCount: visitors?.count || 0, visitorFollow, followedVisitor }),
   visitors: () => ({ status: visitorStatus, enabled: visitorsEnabled, ...(visitors?.snapshot() || { ready: false, actors: [] }) }),

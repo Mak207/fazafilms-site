@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { clone as cloneSkeleton } from '../interactives/vendor/three-0.180/SkeletonUtils.js';
-import { createVisitorRoutes } from './visitor-routes.js?v=1';
+import { createVisitorRoutes } from './visitor-routes.js?v=2';
 import { focusViewAtDistance } from './visitor-camera.js?v=1';
 import { createShoeGrounding } from './visitor-grounding.js?v=1';
 import { createNativeMotion } from '/review/exhibition-25-years/visitor-motion-v43.js?v=43';

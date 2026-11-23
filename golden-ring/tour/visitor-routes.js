@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { EAST_ROUTE, createEastRoute } from './routes/east.js?v=1';
-import { WEST_ALL_ROUTE, createWestAllRoute } from './routes/west.js?v=1';
+import { WEST_ALL_ROUTE, createWestAllRoute } from './routes/west.js?v=2';
 import * as Northwest from './routes/northwest.js?v=1';
 import * as Northeast from './routes/northeast.js?v=1';
 import { VISITOR_CAMERA_PROFILES } from './visitor-camera.js?v=1';
