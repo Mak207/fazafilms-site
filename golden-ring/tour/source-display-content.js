@@ -1,5 +1,6 @@
 import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
 import { SOURCE_MEDIA, SOURCE_FINALE_CITIES, SOURCE_GLASS_STEPS } from './source-media-data.js?v=3';
+import { createMapAtlas } from './map-content.js?v=2';
 
 const VERTEX = `
 varying vec2 vUv;
@@ -155,46 +156,6 @@ function writeCaption(label, title, subtitle = '') {
   label.texture.needsUpdate = true;
 }
 
-function makeMapTexture(renderer) {
-  const canvas = document.createElement('canvas'); canvas.width=2048;canvas.height=1024;
-  const texture = new THREE.CanvasTexture(canvas); texture.colorSpace=THREE.SRGBColorSpace;
-  texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
-  const ctx=canvas.getContext('2d');
-  const cities=[
-    ['Сергиев Посад',.13,.66],['Переславль',.26,.39],['Ростов',.40,.24],
-    ['Ярославль',.56,.20],['Кострома',.75,.25],['Иваново',.78,.55],
-    ['Суздаль',.60,.68],['Владимир',.45,.78],['Тверь',.12,.23],['Нижний Новгород',.89,.82]
-  ];
-  const draw=layer=>{
-    ctx.fillStyle='#102b2e';ctx.fillRect(0,0,2048,1024);
-    const grad=ctx.createRadialGradient(1024,500,100,1024,500,1000);
-    grad.addColorStop(0,'#28524d');grad.addColorStop(1,'#11292e');ctx.fillStyle=grad;ctx.fillRect(0,0,2048,1024);
-    ctx.strokeStyle=({rivers:'#79d8dd',nature:'#9dcc8b',trade:'#e8b16b',architecture:'#e0d9be'})[layer]||'#bd9a5e';ctx.lineWidth=layer==='trade'?10:6;
-    ctx.beginPath();
-    cities.slice(0,8).forEach((p,i)=>i?ctx.lineTo(p[1]*2048,p[2]*900):ctx.moveTo(p[1]*2048,p[2]*900));ctx.closePath();ctx.stroke();
-    if(layer==='rivers'){ctx.strokeStyle='#68c5d1';ctx.lineWidth=16;ctx.beginPath();ctx.moveTo(170,130);ctx.bezierCurveTo(600,450,900,50,1500,250);ctx.bezierCurveTo(1800,350,1300,700,1950,830);ctx.stroke();}
-    cities.forEach(([name,x,y],i)=>{
-      x*=2048;y*=900;ctx.beginPath();ctx.arc(x,y,layer==='crafts'?18:11,0,Math.PI*2);
-      ctx.fillStyle=layer==='crafts'?['#e6ba69','#cd8362','#a5c1a0'][i%3]:'#f2dfb2';ctx.fill();
-      ctx.font='36px Georgia,serif';ctx.textAlign=x>1600?'right':'left';ctx.fillStyle='#f8efdb';
-      ctx.fillText(name,x+(x>1600?-24:24),y-22,390);
-      if(layer==='architecture') {
-        ctx.strokeStyle='#e4d7b9';ctx.lineWidth=3;ctx.strokeRect(x-12,y+22,24,28);
-        ctx.beginPath();ctx.moveTo(x-18,y+22);ctx.lineTo(x,y+8);ctx.lineTo(x+18,y+22);ctx.stroke();
-      } else if(layer==='nature') {
-        ctx.fillStyle='#83ad78';ctx.beginPath();ctx.ellipse(x-22,y+32,12,23,-.5,0,Math.PI*2);ctx.fill();
-      } else if(layer==='trade') {
-        ctx.strokeStyle='#e6bf78';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x,y+35,13,0,Math.PI*2);ctx.stroke();
-      }
-    });
-    ctx.textAlign='left';ctx.font='44px Georgia,serif';ctx.fillStyle='#f2dfb2';ctx.fillText('Золотое кольцо',90,960);
-    ctx.font='27px Arial,sans-serif';ctx.fillStyle='#b6c6bb';
-    ctx.fillText(({cities:'Города и связи',rivers:'Речные пути',crafts:'Города ремёсел',nature:'Природа и путешествие',trade:'Торговые пути',architecture:'Архитектура городов'})[layer]+' · схема маршрута',560,958);
-    texture.needsUpdate=true;
-  };
-  draw('cities'); return {texture,draw,aspect:2};
-}
-
 /** Content is applied only to faces exported from verified original objects. */
 export async function installSourceDisplays({surfaces,renderer,clock}) {
   const loader=new THREE.TextureLoader(), cache=new Map(), resolved=new Map(), materials=[], labels=[];
@@ -230,15 +191,15 @@ export async function installSourceDisplays({surfaces,renderer,clock}) {
     const first=slides[ordinal%Math.max(1,slides.length)], second=slides[(ordinal+1)%Math.max(1,slides.length)];
     let image, next, imageAspect, nextAspect;
     if(surface.interactiveId==='map') {
-      mapTexture ||= makeMapTexture(renderer);
-      image=next=mapTexture.texture; imageAspect=nextAspect=2;
+      mapTexture ||= createMapAtlas(renderer,surface.aspect);
+      image=next=mapTexture.texture; imageAspect=nextAspect=mapTexture.aspect;
     } else {
       image=await loadTexture(first.src);next=await loadTexture(second.src);
       imageAspect=image.image.width/image.image.height;nextAspect=next.image.width/next.image.height;
     }
     const caption=captionTexture(renderer);labels.push(caption);
     writeCaption(caption,first?.title||data.title,first?.caption||'');
-    const crop=first?.contentCrop||[0,0,1,1],nextCrop=second?.contentCrop||[0,0,1,1];
+    const crop=surface.interactiveId==='map'?[0,0,1,1]:first?.contentCrop||[0,0,1,1],nextCrop=surface.interactiveId==='map'?[0,0,1,1]:second?.contentCrop||[0,0,1,1];
     imageAspect*=crop[2]/crop[3];nextAspect*=nextCrop[2]/nextCrop[3];
     const mode=modeFor(surface);
     const isOriginalCollage=surface.zoneId==='history';
@@ -343,7 +304,10 @@ export async function installSourceDisplays({surfaces,renderer,clock}) {
         u.uFocal.value.x=.45+.1*(state.progress||0);
       }
       if(id==='map'&&state.layer&&mapTexture) {
-        if(record.selection!==state.layer){mapTexture.draw(state.layer);record.selection=state.layer;}
+        const key=state.layer+'|'+(state.city||'all');
+        if(record.selection!==key){mapTexture.draw(state.layer,state.city);record.selection=key;}
+        record.currentTitle=mapTexture.snapshot().selected.title;
+        record.currentSrc='generated:golden-ring-map-atlas';
       }
       if(id==='workshops'&&state.craft) {
         const baseIndex=(record.surface.ordinal||0)%SOURCE_MEDIA.workshops.slides.length;
@@ -357,7 +321,7 @@ export async function installSourceDisplays({surfaces,renderer,clock}) {
   }
   return {
     setDisplayState,meshes:records.map(r=>r.surface.mesh),
-    snapshot:()=>({count:records.length,collections:[...relevantKeys],textures:cache.size,
+    snapshot:()=>({count:records.length,collections:[...relevantKeys],textures:cache.size,map:mapTexture?.snapshot()||null,
       surfaces:records.map(r=>({id:r.surface.id,zoneId:r.surface.zoneId,interactiveId:r.surface.interactiveId||null,
         kind:r.surface.kind,sourceObject:r.surface.sourceObject,craftId:r.surface.zoneId==='workshops'?SOURCE_MEDIA.workshops.slides[(r.surface.ordinal||0)%8]?.craftId:null,title:r.currentTitle||r.slides[r.slideIndex]?.title||SOURCE_MEDIA[r.key]?.title,
         src:r.currentSrc||r.slides[r.slideIndex]?.src||null,aspect:r.surface.aspect,orientation:r.surface.UVorientation})),

@@ -2,7 +2,8 @@ import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
 import {
   SOURCE_INTERACTIVE_DEFINITIONS, SOURCE_CITIES, SOURCE_INTERESTS, SOURCE_CRAFTS, SOURCE_MAP_LAYERS,
   SOURCE_SCROLL_CHAPTERS, SOURCE_WELL_THEMES, SOURCE_BOBBIN_THEMES, SOURCE_GLASS_STAGE_NAMES, sourceJourney
-} from './source-interactive-data.js?v=2';
+} from './source-interactive-data.js?v=3';
+import { MAP_CITY_OPTIONS, MAP_CONTENT_SOURCES, mapSelectionInfo, mapSelectionSummary, pickMapCity } from './map-content.js?v=2';
 
 const TAU = Math.PI * 2;
 const clamp = (n, low = 0, high = 1) => Math.min(high, Math.max(low, Number(n) || 0));
@@ -24,7 +25,7 @@ const INITIAL = {
   ornament: () => ({ running: false, progress: 0, pattern: 0, stitchQuality: 1 }),
   finale: () => ({ running: false, city: 'vladimir', interest: 'architecture', daylight: .78,
     phase: .17, route: sourceJourney('vladimir', 'architecture') }),
-  map: () => ({ running: false, layer: 'cities' }),
+  map: () => ({ running: false, layer: 'cities', city: 'all' }),
   workshops: () => ({ running: false, craft: 'pottery', step: 0 })
 };
 
@@ -466,6 +467,8 @@ export function createSourceInteractives({
       state.phase = Math.acos(clamp((state.daylight - .15) / .85) * 2 - 1) / TAU;
     } else if (action === 'layer' && id === 'map' && valid(SOURCE_MAP_LAYERS, value)) {
       state.layer = value;
+    } else if (action === 'city' && id === 'map' && valid(MAP_CITY_OPTIONS, value)) {
+      state.city = value;
     } else if (action === 'craft' && id === 'workshops' && valid(SOURCE_CRAFTS, value)) {
       state.craft = value; state.step = 0;
     } else if (action === 'step' && id === 'workshops' && state.craft === 'glass') {
@@ -513,6 +516,7 @@ export function createSourceInteractives({
   function choices(items, action) {
     const parent = row(); parent.setAttribute('role', 'group');
     for (const item of items) button(parent, item.title, action, item.id, { pressed: true });
+    return parent;
   }
 
   function range(label, action) {
@@ -554,7 +558,7 @@ export function createSourceInteractives({
     }
     panel.hidden = false;
     ui = { id: record.id, buttons: [], selects: [], range: null, status: null, route: null };
-    if (record.definition.webDemo) panel.append(makeElement('p', 'source-interactives__hint', record.definition.webDemo));
+    if (record.definition.webDemo && record.id !== 'map') panel.append(makeElement('p', 'source-interactives__hint', record.definition.webDemo));
     panel.append(makeElement('p', 'source-interactives__hint', record.definition.instruction));
     switch (record.id) {
       case 'scroll': {
@@ -599,8 +603,17 @@ export function createSourceInteractives({
         panel.append(ui.route);
         playControl('День и ночь');
         range('Свет панорамы', 'daylight'); break;
-      case 'map':
-        choices(SOURCE_MAP_LAYERS, 'layer'); break;
+      case 'map': {
+        const themes = choices(SOURCE_MAP_LAYERS, 'layer');
+        themes.setAttribute('aria-label', 'Тематический слой карты');
+        themes.style.cssText = 'display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px';
+        for (const element of themes.children) element.style.cssText = 'min-width:0;min-height:42px;padding:8px 4px;font-size:14px';
+        select('Город на карте', 'city', MAP_CITY_OPTIONS);
+        ui.mapHeading = makeElement('h3', 'source-interactives__map-heading');
+        ui.mapHeading.style.cssText = 'margin:12px 0 4px;font-size:1.1rem;line-height:1.35;color:#f2e8ce';
+        panel.append(ui.mapHeading);
+        break;
+      }
       case 'workshops':
         select('Ремесло', 'craft', SOURCE_CRAFTS);
         if (record.state.craft === 'glass') {
@@ -613,6 +626,15 @@ export function createSourceInteractives({
     ui.status.setAttribute('aria-live', 'polite');
     ui.status.setAttribute('aria-atomic', 'true');
     panel.append(ui.status);
+    if (record.id === 'map') {
+      const details = makeElement('details', 'source-interactives__evidence');
+      details.style.cssText = 'margin-top:12px;font-size:.86rem;line-height:1.5';
+      details.append(makeElement('summary', '', 'Об исходной модели и источниках'));
+      details.append(makeElement('p', 'source-interactives__hint', record.definition.webDemo));
+      details.append(makeElement('p', 'source-interactives__hint', 'Десять городов соответствуют составу павильона. Линии, пейзажи и силуэты условны; схема не предназначена для навигации.'));
+      ui.mapSources = makeElement('div', 'source-interactives__map-sources');
+      details.append(ui.mapSources); panel.append(details);
+    }
     refreshUI();
   }
 
@@ -626,6 +648,7 @@ export function createSourceInteractives({
     if (record.id === 'bells') return record.soundStatus || 'Нажмите на голос колокола';
     if (record.id === 'well') return SOURCE_WELL_THEMES.find(item => item.id === state.theme)?.title || '';
     if (record.id === 'bobbins') return SOURCE_BOBBIN_THEMES.find(item => item.id === state.theme)?.title || '';
+    if (record.id === 'map') return mapSelectionInfo(state.layer, state.city).text;
     if (record.id === 'finale') return state.daylight > .7 ? 'Дневная панорама' : state.daylight > .38 ? 'Сумерки' : 'Ночная панорама';
     if (record.id === 'boats' && !record.curve) return 'Медиарассказ на исходной композиции';
     if (record.id === 'workshops') return state.craft === 'glass' ? SOURCE_GLASS_STAGE_NAMES[state.step] : SOURCE_CRAFTS.find(item => item.id === state.craft)?.title || '';
@@ -650,6 +673,22 @@ export function createSourceInteractives({
       ui.range.input.value = String(Math.round(state[ui.range.action] * 100));
     }
     if (ui.route) ui.route.textContent = state.route.map(cityTitle).join(' → ');
+    if (record.id === 'map') {
+      const info = mapSelectionInfo(state.layer, state.city);
+      if (ui.mapHeading) ui.mapHeading.textContent = info.city ? info.title + ' · ' + info.tag : info.title;
+      if (ui.mapSources && ui.mapSources.dataset.selection !== state.layer + '|' + state.city) {
+        ui.mapSources.dataset.selection = state.layer + '|' + state.city;
+        ui.mapSources.replaceChildren();
+        for (const id of new Set(['concept', ...info.sourceIds])) {
+          const source = MAP_CONTENT_SOURCES.find(item => item.id === id);
+          if (!source) continue;
+          const element = makeElement(source.url ? 'a' : 'span', '', source.title + (source.pages ? ' · с. ' + source.pages : ''));
+          element.style.cssText = 'display:block;margin:6px 0;color:inherit';
+          if (source.url) { element.href = source.url; element.target = '_blank'; element.rel = 'noopener noreferrer'; }
+          ui.mapSources.append(element);
+        }
+      }
+    }
     const message = status(record);
     if (ui.status) ui.status.setAttribute('aria-live', state.running && !paused ? 'off' : 'polite');
     if (ui.status && ui.status.textContent !== message) ui.status.textContent = message;
@@ -738,6 +777,17 @@ export function createSourceInteractives({
     return null;
   }
 
+  function handleSurfacePick(hit) {
+    if (disposed || activeId !== 'map' || !hit?.uv || !hit.object) return false;
+    const definition = findInteractive(hit.object);
+    if (definition?.id !== 'map' || !hit.object.userData?.sourceDisplayId) return false;
+    const materials = Array.isArray(hit.object.material) ? hit.object.material : [hit.object.material];
+    const uniforms = materials.find(material => material?.uniforms?.uMode?.value === 5)?.uniforms;
+    if (!uniforms) return false;
+    const city = pickMapCity(hit.uv, uniforms);
+    return city ? perform('map', 'city', city, false) : false;
+  }
+
   function setPaused(value) {
     if (disposed) return;
     paused = Boolean(value);
@@ -747,7 +797,10 @@ export function createSourceInteractives({
 
   function snapshot() {
     return {
-      version: 1, activeId, paused, reducedMotion: reduced, disposed,
+      version: 2, activeId, paused, reducedMotion: reduced, disposed,
+      map: records.has('map') ? { theme: records.get('map').state.layer, selectedCity: records.get('map').state.city,
+        cityCount: MAP_CITY_OPTIONS.length - 1, layerCount: SOURCE_MAP_LAYERS.length,
+        selection: mapSelectionSummary(records.get('map').state.layer, records.get('map').state.city) } : null,
       frame, lastAction, warnings: [...warnings],
       audio: { created: Boolean(audio), state: audio?.state || 'not-created',
         voices: audioVoiceCount, playCount: audioPlayCount, type: 'synthesized' },
@@ -790,7 +843,7 @@ export function createSourceInteractives({
     applyPose(record); display(record);
   }
   return {
-    definitions, setActive, update, isAnimating, setPaused, snapshot, findInteractive, dispose,
+    definitions, setActive, update, isAnimating, setPaused, snapshot, findInteractive, handleSurfacePick, dispose,
     invoke: (id, action, value) => perform(id, action, value, false)
   };
 }

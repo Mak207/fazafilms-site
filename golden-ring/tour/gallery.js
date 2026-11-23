@@ -1,4 +1,5 @@
 import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
+export { finishWallMaterials } from './wall-materials.js?v=20261123-wall-design-01';
 
 // The three arched faces keep the original Screen material outline. The final
 // ribbon follows Object174075804 and the two straight returns in the FBX.

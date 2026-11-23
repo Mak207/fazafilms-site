@@ -1,7 +1,7 @@
 import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
 
-const ASSET_URL = new URL('./assets/source-objects.glb?v=20261123-source-05', import.meta.url);
-const SELECTION_URL = new URL('./assets/source-surface-selections.json?v=20261123-source-05', import.meta.url);
+const ASSET_URL = new URL('./assets/source-objects.glb?v=20261123-source-06', import.meta.url);
+const SELECTION_URL = new URL('./assets/source-surface-selections.json?v=20261123-source-06', import.meta.url);
 
 function indexFingerprint(index) {
   let value = 2166136261;
@@ -11,7 +11,7 @@ function indexFingerprint(index) {
 
 /**
  * Replace only source-verified triangles of the original pavilion.
- * Source objects retain native positions except the two explicitly requested front screens; pavilion walls,
+ * Source objects keep native geometry; front screens and FR20 mating transforms are documented corrections. Pavilion walls,
  * supports and visitor rigs are never selected by a bounding-box guess.
  *
  * @returns {Promise<{bindings:Object,surfaces:Array,report:Object,root:THREE.Group}>}
@@ -104,7 +104,8 @@ export async function prepareSourceGeometry(model, loader) {
   }
   model.add(root);
   root.updateMatrixWorld(true);
-  const report = {version: metadata.version, status: metadata.status, sourceSha256: metadata.sourceSha256,
+  const report = {version: metadata.version, revision: metadata.revision, status: metadata.status, sourceSha256: metadata.sourceSha256,
+    robotAssemblyRepair: metadata.robotAssemblyRepair || null,
     surfaces: surfaces.length, bindings: Object.keys(bindings),
     replacedMeshes: staged.length, removedTriangles: staged.reduce((sum, item) => sum + item.removed, 0),
     sourceAsset: ASSET_URL.pathname, coverage: metadata.coverage || []};

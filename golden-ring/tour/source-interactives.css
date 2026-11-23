@@ -94,3 +94,16 @@
 @media (prefers-reduced-motion: reduce) {
   .source-interactives, .source-interactives * { scroll-behavior: auto; transition: none; }
 }
+
+/* The map keeps its field visible while its controls use one scroll surface. */
+[data-active-interactive="map"] .source-interactives { max-height:none; overflow:visible; }
+@media(max-width:720px) {
+  .tour[data-active-interactive="map"] .view-card {
+    top:10px; bottom:auto; width:calc(100% - 82px); max-width:330px;
+    max-height:min(285px,calc(100% - var(--nav-space,170px) - 160px));
+  }
+  .tour[data-active-interactive="map"] #view-kicker,
+  .tour[data-active-interactive="map"] #interactive-picker { display:none; }
+  .tour[data-active-interactive="map"] #view-description { margin-top:5px; }
+  .tour[data-active-interactive="map"] .source-interactives__hint { font-size:11px; }
+}
