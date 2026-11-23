@@ -27,7 +27,7 @@ function filterDecisions() {
 function showSection(focus = false) {
   const hash = location.hash.slice(1);
   const target = document.getElementById(legacyAnchors[hash] || hash);
-  const section = target?.closest('.panel') || document.getElementById('approved');
+  const section = target?.closest('.panel') || document.getElementById('tour');
 
   for (const panel of panels) panel.hidden = panel !== section;
   for (const link of navigation) {
