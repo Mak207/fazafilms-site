@@ -1,5 +1,5 @@
 import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
-import { SOURCE_MEDIA, SOURCE_FINALE_CITIES, SOURCE_GLASS_STEPS } from './source-media-data.js?v=1';
+import { SOURCE_MEDIA, SOURCE_FINALE_CITIES, SOURCE_GLASS_STEPS } from './source-media-data.js?v=2';
 
 const VERTEX = `
 varying vec2 vUv;
@@ -117,6 +117,7 @@ void main() {
 `;
 
 function collectionKey(surface) {
+  if (surface.kind === 'arched-vitrine') return 'tverVitrines';
   if (surface.interactiveId && SOURCE_MEDIA[surface.interactiveId]) return surface.interactiveId;
   if (SOURCE_MEDIA[surface.zoneId]) return surface.zoneId;
   return surface.zoneId === 'nizhny-novgorod' ? 'nizhny' : 'tver';
@@ -247,7 +248,7 @@ export async function installSourceDisplays({surfaces,renderer,clock}) {
       uniforms:{
         uImage:{value:image},uNext:{value:next},uThird:{value:resolved.get(slides[(ordinal+2)%Math.max(1,slides.length)]?.src)||image},uCaption:{value:caption.texture},
         uTiles:{value:surface.kind==='history-ribbon'?Math.max(1,Math.round(surface.aspect/3)):surface.kind==='panorama'?3:1},
-        uCaptionOffset:{value:surface.kind==='textile-panel'?.16:0},
+        uCaptionOffset:{value:surface.kind==='textile-panel'||surface.kind==='arched-vitrine'?.16:0},
         uCrop:{value:new THREE.Vector4(...crop)},uNextCrop:{value:new THREE.Vector4(...nextCrop)},
         uThirdCrop:{value:new THREE.Vector4(0,0,1,1)},uThirdFocal:{value:new THREE.Vector2(.5,.5)},uThirdAspect:{value:3},
         uFocal:{value:new THREE.Vector2(first?.focal?.[0]??.5,1-(first?.focal?.[1]??.5))},

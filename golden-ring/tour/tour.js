@@ -2,11 +2,11 @@ import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
 import { GLTFLoader } from '../interactives/vendor/three-0.180/GLTFLoader.js';
 import { MeshoptDecoder } from './vendor/meshopt_decoder.mjs';
 import { lightGallery, finishGallery, screens } from './gallery.js?v=3';
-import { sourceZones } from './source-zones.js?v=2';
+import { sourceZones } from './source-zones.js?v=3';
 import { createZoneLabels } from './zone-labels.js?v=1';
-import { prepareSourceGeometry } from './source-geometry.js?v=3';
-import { installSourceDisplays } from './source-display-content.js?v=1';
-import { createSourceInteractives } from './source-interactives.js?v=1';
+import { prepareSourceGeometry } from './source-geometry.js?v=4';
+import { installSourceDisplays } from './source-display-content.js?v=2';
+import { createSourceInteractives } from './source-interactives.js?v=2';
 
 const root = document.getElementById('tour');
 const stage = document.getElementById('stage');
@@ -37,6 +37,8 @@ const sourceZoneById = new Map(sourceZones.map(zone => [zone.id, zone]));
 const interactiveMount = document.getElementById('source-interactive-controls');
 const interactivePicker = document.getElementById('interactive-picker');
 const screenPicker = document.getElementById('screen-picker');
+const navigationPanel = document.querySelector('.camera-nav');
+const navigationGroups = [...navigationPanel.querySelectorAll('[data-nav-group]')];
 let sourceGeometry = null;
 let sourceDisplays = null;
 let sourceInteractives = null;
@@ -46,6 +48,7 @@ let focusedCraft = 'pottery';
 const mediaViews = screens.map((screen,index) => ({...screen, fov:[72,61,64,70][index],
   zoneId:index===3?'finale':'tver', id:'original-screen-'+(index+1)}));
 let screenIndex = 0;
+let interactiveIndex = 0;
 const mediaTime = { value: 0 };
 const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 let motionEnabled = !motionPreference.matches;
@@ -139,6 +142,7 @@ camera.lookAt(target);
 let pavilion = null;
 let pavilionBounds = null;
 let activeView = 'overview';
+let walkReturnView = 'overview';
 let cameraMotion = null;
 let orbitDistance = camera.position.distanceTo(target);
 let mode = 'orbit';
@@ -159,7 +163,6 @@ let webglLost = false;
 let lastDraw = 0;
 const zoneLabels = createZoneLabels({ stage, camera, zones: sourceZones, toggle: zoneToggle,
   selectZone: zone => {
-    history.replaceState(null, '', '#zone-' + zone.id);
     setView('zone-' + zone.id);
   }
 });
@@ -213,29 +216,116 @@ function resize() {
     camera.lookAt(target);
     orbitDistance = camera.position.distanceTo(target);
   }
+  updateNavigationSpace();
   zoneLabels.invalidate();
   refreshFrame = true;
 }
 
+function cyclicIndex(index, count) {
+  return count > 0 ? ((Math.trunc(index) % count) + count) % count : 0;
+}
+
+function currentNavigationCategory() {
+  if (mode === 'walk') return null;
+  if (activeView === 'visitors') return 'visitors';
+  if (activeView.startsWith('screen-')) return 'media';
+  return views[activeView]?.interactiveId ? 'interactives' : null;
+}
+
+function navigationSnapshot() {
+  const definitions = sourceInteractives?.definitions || [];
+  return {
+    view: activeView, mode, active: currentNavigationCategory(),
+    visitors: { index: followedVisitor, total: visitors?.count || 0 },
+    media: { index: screenIndex, total: mediaViews.length, id: mediaViews[screenIndex]?.id || null },
+    interactives: { index: interactiveIndex, total: definitions.length, id: definitions[interactiveIndex]?.id || null },
+    motion: { screens: motionEnabled, visitors: visitorsEnabled }
+  };
+}
+
+function updateNavigation() {
+  const state = navigationSnapshot();
+  const labels = { visitors: 'Посетители', media: 'Экраны', interactives: 'Интерактивы' };
+  for (const button of navigationPanel.querySelectorAll('[data-view]')) {
+    const selected = button.dataset.view === activeView || button.dataset.view === state.active;
+    button.classList.toggle('is-active', selected);
+    button.setAttribute('aria-pressed', String(selected));
+  }
+  for (const group of navigationGroups) {
+    const category = group.dataset.navGroup, entry = state[category];
+    const main = group.querySelector('[data-view]');
+    const counter = group.querySelector('[data-nav-counter]');
+    group.classList.toggle('is-active', state.active === category);
+    counter.textContent = entry.total ? (entry.index + 1) + '/' + entry.total : '…';
+    main.setAttribute('aria-label', labels[category] + (entry.total
+      ? ': ' + (entry.index + 1) + ' из ' + entry.total : ': загружаются'));
+    main.disabled = category === 'interactives' && !entry.total;
+    for (const arrow of group.querySelectorAll('[data-nav-step]')) arrow.disabled = entry.total < 2;
+  }
+}
+
+function updateNavigationSpace() {
+  const bottom = parseFloat(getComputedStyle(navigationPanel).bottom) || 0;
+  const space = Math.ceil(navigationPanel.getBoundingClientRect().height + bottom + 12);
+  stage.style.setProperty('--nav-space', space + 'px');
+  zoneLabels.invalidate();
+  refreshFrame = true;
+}
+
+// All category controls use the same retained index and the same view transition.
+// Navigation never starts or pauses a mechanism, screen sequence, or visitor.
+function selectNavigation(category, { step = 0, index, immediate = false } = {}) {
+  const entry = navigationSnapshot()[category];
+  if (!entry) return;
+  if (!entry.total) {
+    if (category === 'visitors') setView('visitors', immediate);
+    else showNotice('Подготавливаем интерактивы…');
+    return;
+  }
+  const selected = cyclicIndex(Number.isFinite(index) ? index : entry.index + step, entry.total);
+  if (category === 'visitors') {
+    followedVisitor = selected;
+    setView('visitors', immediate);
+  } else if (category === 'media') {
+    screenIndex = selected;
+    setView('screen-' + mediaViews[selected].id, immediate);
+  } else {
+    interactiveIndex = selected;
+    setView(sourceInteractives.definitions[selected].viewId, immediate);
+  }
+}
+
 function setView(name, immediate = false) {
   if (name === 'interactives') {
-    const definition = sourceInteractives?.definitions.find(item => item.id === interactivePicker.value)
-      || sourceInteractives?.definitions[0];
+    const definition = sourceInteractives?.definitions[interactiveIndex] || sourceInteractives?.definitions[0];
     if (!definition) return showNotice('Подготавливаем интерактивы…');
     name = definition.viewId;
   }
+  if (name === 'media') name = 'screen-' + mediaViews[screenIndex].id;
+  const visitorLink = /^visitor-(\d+)$/.exec(name);
+  if (visitorLink) { followedVisitor = Math.max(0, Number(visitorLink[1]) - 1); name = 'visitors'; }
+  if (visitors) followedVisitor = cyclicIndex(followedVisitor, visitors.count);
+  const selectedScreenIndex = mediaViews.findIndex(item => 'screen-' + item.id === name);
+  const isScreen = selectedScreenIndex >= 0;
+  if (isScreen) screenIndex = selectedScreenIndex;
   if (mode === 'walk') setWalk(false, false);
-  activeView = name === 'media' || views[name] ? name : 'overview';
+  activeView = isScreen || views[name] ? name : 'overview';
+  name = activeView;
   root.dataset.view = activeView;
   zoneLabels.setView(activeView);
-  const isScreen = name === 'media';
+  history.replaceState(null, '', '#' + (name === 'visitors' ? 'visitor-' + (followedVisitor + 1) : name));
   const selectedScreen = mediaViews[screenIndex];
   const hall = sourceZoneById.get(selectedScreen.zoneId)?.title || 'Экспозиция';
-  const view = isScreen ? { ...selectedScreen, kicker: `${hall} · Экран ${screenIndex + 1} из ${mediaViews.length}`,
+  const view = isScreen ? { ...views[name], ...selectedScreen, objectId: selectedScreen.id,
+    kicker: `${hall} · Экран ${screenIndex + 1} из ${mediaViews.length}`,
     description: selectedScreen.description || '' } : views[name] || views.overview;
+  if (view.interactiveId) {
+    const index = sourceInteractives?.definitions.findIndex(item => item.id === view.interactiveId) ?? -1;
+    if (index >= 0) interactiveIndex = index;
+  }
   if (view.interactiveId) root.dataset.activeInteractive = view.interactiveId;
   else delete root.dataset.activeInteractive;
-  if(view.interactiveId==='workshops'&&view.craftId) {
+  if(view.interactiveId==='workshops'&&view.craftId&&view.craftId!==focusedCraft) {
     choosingSourceView=true;
     try { sourceInteractives?.invoke('workshops','craft',view.craftId); }
     finally { choosingSourceView=false; }
@@ -259,7 +349,6 @@ function setView(name, immediate = false) {
     button.textContent = label;
     button.dataset.sourceView = nextView;
     button.addEventListener('click', () => {
-      history.replaceState(null, '', '#' + nextView);
       setView(nextView);
     });
     zoneObjects.append(button);
@@ -277,7 +366,7 @@ function setView(name, immediate = false) {
     ? `Посетитель ${followedVisitor + 1} из ${visitors.count}` : view.kicker;
   viewTitle.textContent = view.title;
   viewDescription.textContent = view.description;
-  document.querySelectorAll('.camera-nav [data-view]').forEach(button => button.classList.toggle('is-active', button.dataset.view === name));
+  updateNavigation();
   const followView = visitorFollow && visitors ? visitors.focusView(followedVisitor) : null;
   const endFov = followView?.fov || view.fov || 46;
   const endPosition = followView?.position || fittedViewPosition(view, name, endFov);
@@ -352,6 +441,7 @@ function updateWalkTarget() {
 }
 
 function setWalk(enabled, moveToStart = true) {
+  if (enabled && mode !== 'walk') walkReturnView = activeView;
   visitorFollow = false;
   visitorControls.hidden = true;
   mode = enabled ? 'walk' : 'orbit';
@@ -386,10 +476,11 @@ function setWalk(enabled, moveToStart = true) {
     viewKicker.textContent = 'Свободное перемещение';
     viewTitle.textContent = 'Прогулка по павильону';
     viewDescription.textContent = 'Осмотрите пространство с высоты глаз посетителя.';
-    document.querySelectorAll('.camera-nav [data-view]').forEach(button => button.classList.remove('is-active'));
+    history.replaceState(null, '', '#walk');
+    updateNavigation();
     canvas.focus({ preventScroll: true });
-  } else {
-    setView('overview');
+  } else if (moveToStart) {
+    setView(walkReturnView);
   }
 }
 
@@ -492,6 +583,7 @@ function updateVisitorButton() {
   const loadingVisitors = visitorStatus === 'waiting' || visitorStatus === 'loading';
   visitorMotionButton.disabled = loadingVisitors;
   nextVisitorButton.disabled = !visitors;
+  updateNavigation();
   visitorMotionButton.setAttribute('aria-pressed', String(!visitorsEnabled));
   visitorMotionButton.textContent = loadingVisitors ? 'Загрузка посетителей…'
     : visitorStatus === 'error' ? 'Повторить загрузку посетителей'
@@ -517,7 +609,7 @@ async function loadVisitors(loader) {
       visitors = await createPavilionVisitors(scene, loader);
       visitorStatus = 'ready';
       root.dataset.visitorsCount = String(visitors.count);
-      document.querySelector('[data-view="visitors"]').textContent = `Посетители · ${visitors.count}`;
+      followedVisitor = cyclicIndex(followedVisitor, visitors.count);
       if (visitorFollow) setView('visitors', true);
       visitorFrameTime = 0;
       refreshFrame = true;
@@ -595,7 +687,7 @@ async function loadModel() {
         if(state.craft===focusedCraft||!sourceInteractives||root.dataset.activeInteractive!=='workshops')return;
         focusedCraft=state.craft;
         const selected=mediaViews.find(item=>item.craftId===state.craft);
-        if(selected){history.replaceState(null,'','#screen-'+selected.id);setView('screen-'+selected.id);}
+        if(selected)setView('screen-'+selected.id);
       },
       onChange:()=>{refreshFrame=true;zoneLabels.invalidate();},
       onSelectView:name=>setView(name)
@@ -642,20 +734,23 @@ canvas.addEventListener('pointerdown', event => {
   }
 });
 function openTourLocation() {
-  const hash = location.hash;
-  if (hash === '#panorama' || hash === '#screens') {
-    screenIndex = hash === '#panorama' ? 3 : 0;
-    setView('media', true);
-  } else if (hash === '#interactives') {
-    setView('interactives', true);
-  } else if (hash === '#visitors') {
-    setView('visitors', true);
-  } else if (hash === '#cities' || hash === '#plan') {
+  if (root.dataset.state !== 'ready') return;
+  const name = location.hash.slice(1);
+  if (name === 'panorama') {
+    const index = mediaViews.findIndex(item => item.id === 'original-screen-4');
+    selectNavigation('media', { index: Math.max(0, index), immediate: true });
+  } else if (name === 'screens') {
+    selectNavigation('media', { index: 0, immediate: true });
+  } else if (name === 'media' || name === 'interactives' || name === 'visitors') {
+    selectNavigation(name, { immediate: true });
+  } else if (/^visitor-\d+$/.test(name)) {
+    setView(name, true);
+  } else if (name === 'walk') {
+    setWalk(true);
+  } else if (name === 'cities') {
     setView('plan', true);
-  } else if (views[hash.slice(1)]?.zoneId) {
-    setView(hash.slice(1), true);
   } else {
-    setView('overview', true);
+    setView(name || 'overview', true);
   }
 }
 window.addEventListener('hashchange', openTourLocation);
@@ -692,11 +787,15 @@ canvas.addEventListener('wheel', event => {
   zoom(Math.exp(event.deltaY * 0.0011));
 }, { passive: false });
 
-document.querySelectorAll('.camera-nav [data-view]').forEach(button => button.addEventListener('click', () => setView(button.dataset.view)));
-document.getElementById('next-screen').addEventListener('click', () => {
-  screenIndex = (screenIndex + 1) % mediaViews.length;
-  setView('media');
-});
+navigationPanel.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => {
+  const name = button.dataset.view;
+  if (['visitors', 'media', 'interactives'].includes(name)) selectNavigation(name);
+  else setView(name);
+}));
+navigationPanel.querySelectorAll('[data-nav-step]').forEach(button => button.addEventListener('click', () => {
+  selectNavigation(button.closest('[data-nav-group]').dataset.navGroup, { step: Number(button.dataset.navStep) });
+}));
+document.getElementById('next-screen').addEventListener('click', () => selectNavigation('media', { step: 1 }));
 function setScreenMotion(enabled) {
   motionEnabled = enabled;
   sourceInteractives?.setPaused(!enabled);
@@ -715,10 +814,7 @@ visitorMotionButton.addEventListener('click', () => {
   if (visitorStatus === 'error' && visitorLoader) void loadVisitors(visitorLoader);
   else setVisitorMotion(!visitorsEnabled);
 });
-nextVisitorButton.addEventListener('click', () => {
-  followedVisitor = (followedVisitor + 1) % visitors.count;
-  setView('visitors');
-});
+nextVisitorButton.addEventListener('click', () => selectNavigation('visitors', { step: 1 }));
 document.addEventListener('visibilitychange', () => {
   lastFrameTime = undefined;
   visitorFrameTime = 0;
@@ -812,18 +908,22 @@ retry.addEventListener('click', () => {
 
 
 function registerSourceViews(surfaces) {
+  const rememberedScreenId = mediaViews[screenIndex]?.id;
+  mediaViews.splice(screens.length);
+  interactivePicker.replaceChildren();
+  screenPicker.replaceChildren();
   for (const definition of sourceInteractives.definitions) {
     const zone = sourceZoneById.get(definition.zoneId);
     const firstSurface=surfaces.find(surface=>surface.interactiveId===definition.id&&surface.camera);
     const sourceCamera=['workshops','ornament'].includes(definition.id)&&firstSurface?firstSurface.camera:definition.camera;
     views[definition.viewId] = {
-      kicker:(zone?.title||'Павильон')+' · интерактив исходного проекта',
+      kicker:(zone?.title||'Павильон')+' · предмет исходной 3D-сборки',
       title:definition.title,description:definition.description,
       ...sourceCamera,zoneId:definition.zoneId,objectId:definition.objectId,
       ...(definition.id==='workshops'?{craftId:'pottery'}:{}),
       ...(definition.id==='bobbins'?{position:[-6.5,7.5,13],target:[-6.5,1.5,8.9],bounds:definition.bounds}:{}),
       ...(definition.id==='map'?{position:[20,16,-4],target:[20,.52,-8],bounds:definition.bounds}:{}),
-      interactiveId:definition.id,concept:zone?.concept,reference:definition.reference
+      interactiveId:definition.id,concept:definition.conceptDescription||zone?.concept,reference:definition.reference
     };
     for (const zoneId of definition.zoneIds || [definition.zoneId]) {
       const owner=sourceZoneById.get(zoneId);if(!owner)continue;
@@ -872,19 +972,23 @@ function registerSourceViews(surfaces) {
     views['screen-'+surface.id]={...mediaView,kicker:(zone?.title||'Экспозиция')+' · экран',objectId:surface.id};
   }
   mediaViews.forEach((item,index)=>{
+    views['screen-'+item.id] = {...item, ...views['screen-'+item.id],
+      objectId:item.id, kicker:(sourceZoneById.get(item.zoneId)?.title||'Экспозиция')+' · экран'};
     const option=document.createElement('option');option.value=String(index);
     option.textContent=(index+1)+'. '+(sourceZoneById.get(item.zoneId)?.title||'')+' · '+item.title;
     screenPicker.append(option);
   });
-  document.querySelector('[data-view="media"]').textContent='Экраны · '+mediaViews.length;
-  document.querySelector('[data-view="interactives"]').textContent='Интерактивы · '+sourceInteractives.definitions.length;
+  const rememberedIndex = mediaViews.findIndex(item => item.id === rememberedScreenId);
+  screenIndex = rememberedIndex >= 0 ? rememberedIndex : cyclicIndex(screenIndex, mediaViews.length);
+  interactiveIndex = cyclicIndex(interactiveIndex, sourceInteractives.definitions.length);
+  updateNavigation();
 }
 
 interactivePicker.addEventListener('change',()=>{
-  const definition=sourceInteractives?.definitions.find(item=>item.id===interactivePicker.value);
-  if(definition){history.replaceState(null,'','#'+definition.viewId);setView(definition.viewId);}
+  const index=sourceInteractives?.definitions.findIndex(item=>item.id===interactivePicker.value) ?? -1;
+  if(index>=0) selectNavigation('interactives', { index });
 });
-screenPicker.addEventListener('change',()=>{screenIndex=Number(screenPicker.value);setView('media');});
+screenPicker.addEventListener('change',()=>selectNavigation('media', { index:Number(screenPicker.value) }));
 
 const sourceRaycaster=new THREE.Raycaster(), sourcePointer=new THREE.Vector2();
 let sourcePointerDown=null;
@@ -898,7 +1002,7 @@ canvas.addEventListener('pointerup',event=>{
   sourceRaycaster.setFromCamera(sourcePointer,camera);
   const hit=sourceRaycaster.intersectObject(pavilion,true)[0];
   const definition=hit&&sourceInteractives.findInteractive(hit.object);
-  if(definition){history.replaceState(null,'','#'+definition.viewId);setView(definition.viewId);}
+  if(definition)setView(definition.viewId);
 });
 
 window.__GOLDEN_RING_TOUR = {
@@ -910,7 +1014,8 @@ window.__GOLDEN_RING_TOUR = {
   interactives: () => sourceInteractives?.snapshot() || null,
   sourceViews: () => sourceInteractives?.definitions.map(item=>({id:item.id,viewId:item.viewId,title:item.title})) || [],
   screens: () => mediaViews.map(item=>({id:item.id,title:item.title,zoneId:item.zoneId})),
-  state: () => ({ release:'source-interactives-20261123-1', mode, ready: root.dataset.state === 'ready' && !webglLost, webglLost, view: viewTitle.textContent,
+  navigation: navigationSnapshot,
+  state: () => ({ release:'source-navigation-20261123-1', mode, ready: root.dataset.state === 'ready' && !webglLost, webglLost, view: viewTitle.textContent,
     visitors: visitorStatus, visitorCount: visitors?.count || 0, visitorFollow, followedVisitor }),
   visitors: () => ({ status: visitorStatus, enabled: visitorsEnabled, ...(visitors?.snapshot() || { ready: false, actors: [] }) }),
   camera: () => ({
@@ -920,6 +1025,8 @@ window.__GOLDEN_RING_TOUR = {
   })
 };
 
+new ResizeObserver(updateNavigationSpace).observe(navigationPanel);
+updateNavigation();
 resize();
 requestAnimationFrame(animate);
 loadModel();

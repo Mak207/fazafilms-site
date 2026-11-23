@@ -2,7 +2,7 @@ import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
 import {
   SOURCE_INTERACTIVE_DEFINITIONS, SOURCE_CITIES, SOURCE_INTERESTS, SOURCE_CRAFTS, SOURCE_MAP_LAYERS,
   SOURCE_SCROLL_CHAPTERS, SOURCE_WELL_THEMES, SOURCE_BOBBIN_THEMES, SOURCE_GLASS_STAGE_NAMES, sourceJourney
-} from './source-interactive-data.js';
+} from './source-interactive-data.js?v=2';
 
 const TAU = Math.PI * 2;
 const clamp = (n, low = 0, high = 1) => Math.min(high, Math.max(low, Number(n) || 0));
@@ -554,6 +554,7 @@ export function createSourceInteractives({
     }
     panel.hidden = false;
     ui = { id: record.id, buttons: [], selects: [], range: null, status: null, route: null };
+    if (record.definition.webDemo) panel.append(makeElement('p', 'source-interactives__hint', record.definition.webDemo));
     panel.append(makeElement('p', 'source-interactives__hint', record.definition.instruction));
     switch (record.id) {
       case 'scroll': {

@@ -5,14 +5,15 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="theme-color" content="#14231e">
+  <link rel="icon" href="/favicon.svg">
   <title>Интерактивный 3D-тур по павильону · Золотое кольцо</title>
-  <link rel="stylesheet" href="tour.css?v=5">
+  <link rel="stylesheet" href="tour.css?v=6">
   <link rel="stylesheet" href="zone-labels.css?v=1">
   <link rel="stylesheet" href="source-interactives.css?v=1">
   <script type="importmap">
     {"imports":{"three":"../interactives/vendor/three-0.180/three.module.min.js"}}
   </script>
-  <script type="module" src="tour.js?v=7"></script>
+  <script type="module" src="tour.js?v=8"></script>
 <link rel="stylesheet" href="/css/project-navigation.css?v=20261123-1">
 </head>
 <body>
@@ -49,7 +50,7 @@
         <select id="interactive-picker" aria-label="Выбрать интерактив" hidden></select>
         <div id="source-interactive-controls" hidden></div>
         <details class="source-zone-details" id="source-zone-details" hidden>
-          <summary>Замысел в исходном проекте</summary>
+          <summary>Сценарий в концепции 21.10.2026</summary>
           <p id="source-zone-concept"></p>
           <p class="source-reference" id="source-zone-reference"></p>
         </details>
@@ -77,17 +78,33 @@
       </div>
 
       <nav class="camera-nav" aria-label="Точки обзора">
-        <button type="button" data-view="overview" class="is-active">Общий вид</button>
-        <button type="button" data-view="visitors">Посетители</button>
-        <button type="button" data-view="media">Экраны</button>
-        <button type="button" data-view="interactives">Интерактивы</button>
-        <button type="button" data-view="entrance">Вход</button>
-        <button type="button" data-view="center">Центральная зона</button>
-        <button type="button" data-view="regions">Региональные залы</button>
-        <button type="button" data-view="workshops">Мастерские</button>
-        <button type="button" data-view="plan">Города · сверху</button>
-        <button type="button" id="walk" aria-pressed="false">Прогулка</button>
-        <button type="button" id="visitor-motion" aria-pressed="false" disabled>Загрузка посетителей…</button>
+        <div class="nav-primary">
+          <div class="nav-group" data-nav-group="visitors" role="group" aria-label="Выбор посетителя">
+            <button type="button" class="nav-step" data-nav-step="-1" aria-label="Предыдущий посетитель" title="Предыдущий посетитель" disabled><span aria-hidden="true">‹</span></button>
+            <button type="button" class="nav-category" data-view="visitors" aria-pressed="false"><span>Посетители</span><span class="nav-counter" data-nav-counter="visitors" aria-hidden="true">…</span></button>
+            <button type="button" class="nav-step" data-nav-step="1" aria-label="Следующий посетитель" title="Следующий посетитель" disabled><span aria-hidden="true">›</span></button>
+          </div>
+          <div class="nav-group" data-nav-group="media" role="group" aria-label="Выбор экрана">
+            <button type="button" class="nav-step" data-nav-step="-1" aria-label="Предыдущий экран" title="Предыдущий экран" disabled><span aria-hidden="true">‹</span></button>
+            <button type="button" class="nav-category" data-view="media" aria-pressed="false"><span>Экраны</span><span class="nav-counter" data-nav-counter="media" aria-hidden="true">…</span></button>
+            <button type="button" class="nav-step" data-nav-step="1" aria-label="Следующий экран" title="Следующий экран" disabled><span aria-hidden="true">›</span></button>
+          </div>
+          <div class="nav-group" data-nav-group="interactives" role="group" aria-label="Выбор интерактива">
+            <button type="button" class="nav-step" data-nav-step="-1" aria-label="Предыдущий интерактив" title="Предыдущий интерактив" disabled><span aria-hidden="true">‹</span></button>
+            <button type="button" class="nav-category" data-view="interactives" aria-pressed="false"><span>Интерактивы</span><span class="nav-counter" data-nav-counter="interactives" aria-hidden="true">…</span></button>
+            <button type="button" class="nav-step" data-nav-step="1" aria-label="Следующий интерактив" title="Следующий интерактив" disabled><span aria-hidden="true">›</span></button>
+          </div>
+        </div>
+        <div class="nav-secondary">
+          <button type="button" data-view="overview" class="is-active" aria-pressed="true">Общий вид</button>
+          <button type="button" data-view="entrance">Вход</button>
+          <button type="button" data-view="center">Центральная зона</button>
+          <button type="button" data-view="regions">Региональные залы</button>
+          <button type="button" data-view="workshops">Мастерские</button>
+          <button type="button" data-view="plan">Города · сверху</button>
+          <button type="button" id="walk" aria-pressed="false">Прогулка</button>
+          <button type="button" id="visitor-motion" aria-pressed="false" disabled>Загрузка посетителей…</button>
+        </div>
       </nav>
 
       <div class="walk-pad" id="walk-pad" aria-label="Управление прогулкой">

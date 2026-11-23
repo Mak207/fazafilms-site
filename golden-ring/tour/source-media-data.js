@@ -8,8 +8,8 @@
  */
 const art = (file) => '../interactives/art/' + file;
 const media = (file) => 'assets/source-media/' + file;
-const concept = (pages) => 'Концепция заказчика «Золотое кольцо», 21.10.2026, с. ' + pages;
-const conceptCaption = 'Иллюстрация из концепции заказчика.';
+const concept = (pages) => 'Полученная концепция «Золотое кольцо», 21.10.2026, с. ' + pages;
+const conceptCaption = 'Иллюстрация из полученной концепции.';
 const themeCaption = 'Художественная визуализация темы.';
 const nicheCrop = [0.30, 0.49, 0.42, 0.30];
 
@@ -101,7 +101,15 @@ export const SOURCE_TVER_CLOTHS = [
   {...bellsDusk, title: 'Кружево памяти · вечер', focal: [0.70, 0.48], lace: 0.54}
 ];
 
+// These are exhibition backboards inside original vitrines, not additional LED hardware.
+export const SOURCE_VITRINE_CONTENT = [
+  {...cloth, title: 'Арочная витрина · Текстильный узор', caption: 'Экспозиционное наполнение для веб-тура.', kind: 'web-exposition', focal: [.48, .52]},
+  {...river, title: 'Арочная витрина · Волжские берега', caption: 'Экспозиционное наполнение для веб-тура.', kind: 'web-exposition', focal: [.54, .50]}
+];
+
 export const SOURCE_MEDIA = {
+  tverVitrines: {title: 'Арочные витрины Твери', slides: SOURCE_VITRINE_CONTENT,
+    sourceRef: 'Форма: Group_Vitrina_01 / Group_Vitrina_02 в сборке 1911. Изображения добавлены для веб-тура.'},
   tver: {title: 'Кружево памяти', slides: SOURCE_TVER_CLOTHS, sourceRef: concept('26–30')},
   history: {title: 'История Золотого кольца', slides: history, sourceRef: concept('13–14, 18')},
   map: {
@@ -124,7 +132,7 @@ export const SOURCE_MEDIA = {
   bobbins: {
     title: 'Оборот',
     slides: [
-      {...SOURCE_WORKSHOP_CRAFTS[7], title: 'Скань Красного-на-Волге', caption: 'Филигрань. Иллюстрация ремесла из концепции заказчика.'},
+      {...SOURCE_WORKSHOP_CRAFTS[7], title: 'Скань Красного-на-Волге', caption: 'Филигрань. Иллюстрация ремесла из полученной концепции.'},
       {...fair, title: 'Капитал и торговые пути', caption: 'Художественный образ к теме капитала Чижова.'},
       {...river, title: 'Соль и речной путь', caption: 'Художественный образ к теме соли Нерехты.'}
     ],
