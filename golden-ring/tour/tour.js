@@ -4,9 +4,12 @@ import { MeshoptDecoder } from './vendor/meshopt_decoder.mjs';
 import { lightGallery, finishGallery, finishWallMaterials, screens } from './gallery.js?v=4';
 import { sourceZones } from './source-zones.js?v=4';
 import { createZoneLabels } from './zone-labels.js?v=1';
-import { prepareSourceGeometry } from './source-geometry.js?v=6';
-import { installSourceDisplays } from './source-display-content.js?v=4';
-import { createSourceInteractives } from './source-interactives.js?v=3';
+import { prepareSourceGeometry } from './source-geometry.js?v=7';
+import { installSourceDisplays } from './source-display-content.js?v=5';
+import { createSourceInteractives } from './source-interactives.js?v=4';
+import { installEntranceScreen } from './entrance-screen.js?v=1';
+import { createMap3D } from './map-3d.js?v=1';
+import { createMapRobotMotion } from './robot-map-motion.js?v=1';
 
 const root = document.getElementById('tour');
 const stage = document.getElementById('stage');
@@ -42,6 +45,11 @@ const navigationGroups = [...navigationPanel.querySelectorAll('[data-nav-group]'
 let sourceGeometry = null;
 let sourceDisplays = null;
 let sourceInteractives = null;
+let entranceScreen = null;
+let map3D = null;
+let robotMotion = null;
+let mapState = {layer:'cities',city:'all',running:false,motionPaused:false};
+let mapFrameTime = 0;
 let interactiveFrameTime = 0;
 let choosingSourceView = false;
 let focusedCraft = 'pottery';
@@ -538,11 +546,13 @@ function animate(now) {
     lastFrameTime = undefined;
     visitorFrameTime = 0;
     interactiveFrameTime = 0;
+    mapFrameTime = 0;
     return;
   }
   const delta = lastFrameTime === undefined ? 0 : Math.min((now - lastFrameTime) / 1000, .25);
   lastFrameTime = now;
-  if (motionEnabled) mediaTime.value += delta;
+  if (motionEnabled) { mediaTime.value += delta; mapFrameTime += delta; }
+  if (motionEnabled && entranceScreen) entranceScreen.update(delta);
   if (visitors && visitorsEnabled) visitorFrameTime += delta;
   if (sourceInteractives?.isAnimating()) interactiveFrameTime += delta;
   updateCameraMotion();
@@ -553,11 +563,18 @@ function animate(now) {
     frustum.setFromProjectionMatrix(projectionView);
     screenInView = mediaMeshes.some(mesh => frustum.intersectsObject(mesh));
   } else {
-    const hasAnimation = (motionEnabled && screenInView) || (visitors && visitorsEnabled) || sourceInteractives?.isAnimating();
+    const hasAnimation = (motionEnabled && (screenInView || !!robotMotion)) || (visitors && visitorsEnabled) || sourceInteractives?.isAnimating();
     if (!hasAnimation || now - lastDraw < 1000 / 30) return;
   }
   if (sourceInteractives && interactiveFrameTime > 0) sourceInteractives.update(interactiveFrameTime);
   interactiveFrameTime = 0;
+  if (mapFrameTime > 0) {
+    map3D?.setPaused(!motionEnabled || !!mapState.motionPaused);
+    robotMotion?.pause(!motionEnabled || !!mapState.motionPaused);
+    robotMotion?.update(mapFrameTime, mapState);
+    map3D?.update(mapFrameTime);
+  }
+  mapFrameTime = 0;
   if (visitors && visitorsEnabled && visitorFrameTime > 0) visitors.update(visitorFrameTime);
   visitorFrameTime = 0;
   if (visitorFollow && visitors) {
@@ -688,6 +705,8 @@ async function loadModel() {
     loadingDetail.textContent = 'Наполняем исходные экраны и механизмы…';
     sourceGeometry = await prepareSourceGeometry(pavilion, loader);
     await finishWallMaterials(pavilion, renderer);
+    entranceScreen = await installEntranceScreen({model:pavilion,renderer});
+    entranceScreen.setPaused(!motionEnabled);
     const sourceSurfaces = [...sourceGeometry.surfaces];
     // The existing final panorama is an original display, already installed by
     // finishGallery. Its content is now governed by the journey controls.
@@ -703,11 +722,27 @@ async function loadModel() {
       sourceGeometry.bindings[surface.interactiveId] = {id:surface.interactiveId,displayOnly:true,parts:[],roles:{}};
     }
     sourceDisplays = await installSourceDisplays({surfaces:sourceSurfaces,renderer,clock:mediaTime});
+    map3D = await createMap3D({model:pavilion,surfaceMesh:sourceSurfaces.find(surface=>surface.id==='map-surface')?.mesh,renderer,atlas:sourceDisplays.mapAtlas()});
+    robotMotion = await createMapRobotMotion(pavilion,{
+      sampleSurface:(x,z)=>map3D.sampleSurface(x,z),
+      getDrawingPaths:layer=>map3D.getDrawingPaths(layer),
+      onStroke:stroke=>map3D.applyStroke(stroke),
+      onReset:()=>map3D.clearStrokes?.(),autoStart:true
+    });
+    map3D.setPaused(!motionEnabled);
+    robotMotion.pause(!motionEnabled);
     sourceInteractives = createSourceInteractives({
       model:pavilion,bindings:sourceGeometry.bindings,renderer,clock:mediaTime,
       mount:interactiveMount,reducedMotion:motionPreference.matches,
       setDisplayState:(id,state)=>{
         sourceDisplays.setDisplayState(id,state);
+        if(id==='map') {
+          const changedCity=mapState.city!==state.city;
+          mapState={...state};map3D?.setState(mapState);
+          if(changedCity&&sourceInteractives&&root.dataset.activeInteractive==='map')focusMapCity(state.city);
+          map3D?.setPaused(!motionEnabled||!!mapState.motionPaused);
+          robotMotion?.pause(!motionEnabled||!!mapState.motionPaused);
+        }
         if(id!=='workshops')return;
         if(choosingSourceView){focusedCraft=state.craft;return;}
         if(state.craft===focusedCraft||!sourceInteractives||root.dataset.activeInteractive!=='workshops')return;
@@ -716,16 +751,17 @@ async function loadModel() {
         if(selected)setView('screen-'+selected.id);
       },
       onChange:()=>{refreshFrame=true;zoneLabels.invalidate();},
-      onSelectView:name=>setView(name)
+      onSelectView:name=>setView(name),
+      onRequestMotion:()=>{if(!motionEnabled)setScreenMotion(true);}
     });
     sourceInteractives.setPaused(!motionEnabled);
-    registerSourceViews(sourceSurfaces);
+    registerSourceViews([...sourceSurfaces,entranceScreen.surface]);
     scene.add(pavilion);
     pavilion.updateMatrixWorld(true);
     pavilionBounds = new THREE.Box3().setFromObject(pavilion);
     mediaMeshes.length = 0;
     pavilion.traverse(mesh => { if (mesh.isMesh && /^Pavilion_(display|panorama)/.test(mesh.name)) mediaMeshes.push(mesh); });
-    mediaMeshes.push(...sourceDisplays.meshes.filter(mesh=>!mediaMeshes.includes(mesh)));
+    mediaMeshes.push(...sourceDisplays.meshes.filter(mesh=>!mediaMeshes.includes(mesh)),entranceScreen.mesh);
     refreshFrame = true;
     if (renderer.compileAsync) {
       await Promise.race([
@@ -832,6 +868,10 @@ document.getElementById('next-screen').addEventListener('click', () => selectNav
 function setScreenMotion(enabled) {
   motionEnabled = enabled;
   sourceInteractives?.setPaused(!enabled);
+  entranceScreen?.setPaused(!enabled);
+  map3D?.setPaused(!enabled||!!mapState.motionPaused);
+  robotMotion?.pause(!enabled||!!mapState.motionPaused);
+  mapFrameTime = 0;
   interactiveFrameTime = 0;
   refreshFrame = true;
   motionButton.textContent = enabled ? 'Пауза' : 'Запустить';
@@ -931,7 +971,11 @@ canvas.addEventListener('webglcontextrestored', () => { webglLost = false; refre
 window.addEventListener('resize', resize);
 retry.addEventListener('click', () => {
   sourceInteractives?.dispose();
+  robotMotion?.dispose();
+  map3D?.dispose();
+  entranceScreen?.dispose();
   sourceDisplays?.dispose();
+  robotMotion=null;map3D=null;entranceScreen=null;
   sourceInteractives = null;
   sourceDisplays = null;
   sourceGeometry = null;
@@ -953,9 +997,8 @@ function registerSourceViews(surfaces) {
       kicker:(zone?.title||'Павильон')+' · предмет исходной 3D-сборки',
       title:definition.title,description:definition.description,
       ...sourceCamera,zoneId:definition.zoneId,objectId:definition.objectId,
-      ...(definition.id==='workshops'?{craftId:'pottery'}:{}),
       ...(definition.id==='bobbins'?{position:[-6.5,7.5,13],target:[-6.5,1.5,8.9],bounds:definition.bounds}:{}),
-      ...(definition.id==='map'?{position:[20,16,-4],target:[20,.52,-8],bounds:definition.bounds}:{}),
+      ...(definition.id==='map'?{position:[20.5,11,-1],target:[20.5,.52,-8],bounds:definition.bounds}:{}),
       interactiveId:definition.id,concept:definition.conceptDescription||zone?.concept,reference:definition.reference
     };
     for (const zoneId of definition.zoneIds || [definition.zoneId]) {
@@ -996,10 +1039,10 @@ function registerSourceViews(surfaces) {
       min:[shot.target[0]-1.6,shot.target[1]-.6,shot.target[2]-.4],
       max:[shot.target[0]+1.6,shot.target[1]+.6,shot.target[2]+.4]
     }:undefined;
-    if(surface.interactiveId==='map')shot={position:[20,16,-4],target:[20,.52,-8],fov:58};
+    if(surface.interactiveId==='map')shot={position:[20.5,11,-1],target:[20.5,.52,-8],fov:58};
     const mediaView={...shot,id:surface.id,zoneId:surface.zoneId,craftId:content?.craftId,
       bounds:surface.interactiveId==='map'?{min:[15.5,0,-10.6],max:[31.3,1.05,-5.5]}:detailBounds,
-      title:content?.title||zone?.title||'Экран',description:content?.kind==='hanging-cloth'?'Проекционное полотно «Кружево памяти».':'',
+      title:content?.title||surface.title||zone?.title||'Экран',description:surface.description||(content?.kind==='hanging-cloth'?'Проекционное полотно «Кружево памяти».':''),
       interactiveId:surface.interactiveId||undefined};
     mediaViews.push(mediaView);
     views['screen-'+surface.id]={...mediaView,kicker:(zone?.title||'Экспозиция')+' · экран',objectId:surface.id};
@@ -1032,29 +1075,84 @@ canvas.addEventListener('pointerdown',event=>{
 canvas.addEventListener('pointercancel',()=>{sourcePointerDown=null;});
 canvas.addEventListener('pointerup',event=>{
   const start=sourcePointerDown;sourcePointerDown=null;
-  if(!sourceInteractives||!pavilion||!start||mode!=='orbit'||event.button!==0||event.pointerId!==start.pointerId)return;
+  if(!sourceInteractives||!pavilion||!start||event.button!==0||event.pointerId!==start.pointerId)return;
   if(Math.hypot(event.clientX-start.x,event.clientY-start.y)>6||performance.now()-start.time>550)return;
   const rect=canvas.getBoundingClientRect();
   sourcePointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);
   sourceRaycaster.setFromCamera(sourcePointer,camera);
-  const hit=sourceRaycaster.intersectObject(pavilion,true)[0];
-  if(activeView==='object-map-sand-map'&&sourceInteractives.handleSurfacePick?.(hit))return;
-  const definition=hit&&sourceInteractives.findInteractive(hit.object);
-  if(definition)setView(definition.viewId);
+  const hit=sourceRaycaster.intersectObject(pavilion,true).find(isVisibleInteractionHit);
+  if(!hit)return;
+  if(hit.object.userData.entranceScreen) {
+    if(!motionEnabled)setScreenMotion(true);
+    entranceScreen.start();setView('screen-entrance-prologue');
+    showNotice('Пролог запущен · шесть сцен путешествия');refreshFrame=true;return;
+  }
+  const mapPick=map3D?.pick(hit);
+  const definition=sourceInteractives.findInteractive(hit.object)||(mapPick?sourceInteractives.definitions.find(item=>item.id==='map'):null);
+  if(definition) {
+    if(!motionEnabled)setScreenMotion(true);
+    const clickedScreen=mediaViews.find(item=>item.id===hit.object.userData.sourceDisplayId);
+    if(definition.id==='workshops'&&clickedScreen?.craftId) {
+      setView('screen-'+clickedScreen.id);
+      sourceInteractives.activate('workshops',{source:'object',event,hit,focus:false});
+    } else {
+      sourceInteractives.activate(definition.id,{source:'object',event,hit,city:typeof mapPick==='string'?mapPick:undefined});
+    }
+    if(definition.id==='map'&&typeof mapPick==='string')focusMapCity(mapPick);
+    showNotice('Запущено: '+definition.title);refreshFrame=true;
+  }
 });
 
+function focusMapCity(cityId) {
+  const base=views['object-map-sand-map'];
+  if(!base||!map3D)return;
+  const shot=map3D.cityFocus(cityId);
+  if(!shot){setView('object-map-sand-map');return;}
+  const id='object-map-city-'+cityId;
+  views[id]={...base,...shot,title:shot.title+' · объёмная карта',description:'Рассмотрите архитектурную миниатюру. Выберите «Все города», чтобы вернуться к стенду целиком.'};
+  setView(id);
+}
+
+function isVisibleInteractionHit(hit) {
+  for(let object=hit.object;object;object=object.parent)if(!object.visible)return false;
+  return hit.object.name!=='Pavilion_glass';
+}
+function interactionTargets() {
+  const result=[];
+  for(const definition of sourceInteractives?.definitions||[]) {
+    const binding=sourceGeometry?.bindings[definition.id];
+    const meshes=[...(binding?.parts||[]).map(part=>part.mesh),...((definition.id==='map'?map3D?.meshes:[])||[])];
+    const points=[];
+    for(const mesh of meshes) {
+      if(!mesh?.isMesh||!mesh.visible)continue;
+      const box=new THREE.Box3().setFromObject(mesh),center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());
+      for(const dx of [0,-.3,.3])for(const dy of [0,-.3,.3]) {
+        const p=center.clone().add(new THREE.Vector3(size.x*dx,size.y*dy,0));const projected=p.clone().project(camera);
+        if(projected.z>=-1&&projected.z<=1)points.push({world:p.toArray(),ndc:projected.toArray(),object:mesh.name});
+      }
+      if(points.length>=81)break;
+    }
+    result.push({id:definition.id,points});
+  }
+  if(entranceScreen){const p=new THREE.Vector3(...entranceScreen.surface.camera.target);result.push({id:'entrance',points:[{world:p.toArray(),ndc:p.clone().project(camera).toArray(),object:entranceScreen.mesh.name}]});}
+  return result;
+}
 window.__GOLDEN_RING_TOUR = {
   zones: () => zoneLabels.snapshot(),
   renderer: () => ({calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,
     textures:renderer.info.memory.textures,geometries:renderer.info.memory.geometries,webglLost}),
   sourceGeometry: () => sourceGeometry?.report || null,
   walls: () => pavilion?.userData.wallFinishReport || null,
+  entrance: () => entranceScreen?.snapshot() || null,
+  map3d: () => map3D?.snapshot() || null,
+  robots: () => robotMotion?.snapshot() || null,
+  interactionTargets,
   displays: () => sourceDisplays?.snapshot() || null,
   interactives: () => sourceInteractives?.snapshot() || null,
   sourceViews: () => sourceInteractives?.definitions.map(item=>({id:item.id,viewId:item.viewId,title:item.title})) || [],
   screens: () => mediaViews.map(item=>({id:item.id,title:item.title,zoneId:item.zoneId})),
   navigation: navigationSnapshot,
-  state: () => ({ release:'source-map-walls-20261123-1', mode, ready: root.dataset.state === 'ready' && !webglLost, webglLost, view: viewTitle.textContent,
+  state: () => ({ release:'source-live-interactions-20261123-1', mode, ready: root.dataset.state === 'ready' && !webglLost, webglLost, view: viewTitle.textContent,
     visitors: visitorStatus, visitorCount: visitors?.count || 0, visitorFollow, followedVisitor }),
   visitors: () => ({ status: visitorStatus, enabled: visitorsEnabled, ...(visitors?.snapshot() || { ready: false, actors: [] }) }),
   camera: () => ({

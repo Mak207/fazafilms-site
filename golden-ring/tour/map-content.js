@@ -242,12 +242,18 @@ const RIVERS=[
   {id:'nerl',name:'Нерль',width:5,points:[[2205,485],[2205,600],[2185,680],[2190,750],[2200,823]]},
   {id:'kamenka',name:'Каменка',width:5,points:[[2010,620],at('suzdal'),[2110,720],[2190,750]]}
 ];
-function waterways(ctx,active=false){
+// Shared schematic geometry for the relief and projection layers. These are
+// exhibition coordinates, never a surveyed river network or driving route.
+export const MAP_RIVERS=RIVERS;
+export const MAP_THEME_KEYS=Object.freeze(Object.keys(THEMES));
+function waterways(ctx,active=false,labelsOnly=false){
+  if(!labelsOnly){
   for(const river of RIVERS){stroke(ctx,river.points,active?'#f9f3dd':'#e5debd',river.width+10);stroke(ctx,river.points,active?P.water:'#82aaa5',river.width);
     if(active)stroke(ctx,river.points,'#afd9d7',Math.max(2,river.width*.28));}
   for(const [x,y,rx,ry] of [[1025,520,65,40],[1335,485,70,35]]) {
     ctx.beginPath();ctx.ellipse(x,y,rx,ry,-.24,0,TAU);ctx.fillStyle=active?'#91c7ce':'#afd0c5';ctx.fill();ctx.strokeStyle='#698f88';ctx.lineWidth=2;ctx.stroke();
     if(active){ctx.beginPath();ctx.ellipse(x,y,rx*.76,ry*.63,-.24,0,TAU);ctx.strokeStyle='#d5e9db';ctx.stroke();}
+  }
   }
   if(active){label(ctx,'В О Л Г А',1210,240,28,P.water,'center');label(ctx,'В О Л Г А',2490,407,28,P.water,'center');
     label(ctx,'О К А',2550,780,27,P.water,'center');label(ctx,'Клязьма',2050,852,26,P.water,'center');
@@ -308,7 +314,7 @@ export function createMapAtlas(renderer,aspect=3.2) {
   const ctx=canvas.getContext('2d',{alpha:false}),texture=new THREE.CanvasTexture(canvas);
   texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
   texture.name='GoldenRing_ExhibitionMap_Atlas';texture.userData={type:'exhibition-diagram',version:2};
-  let state={layer:'cities',city:'all'},drawCount=0,layoutBoxes=[];
+  let state={layer:'cities',city:'all'},drawCount=0,layoutBoxes=[],spatialMode=false;
   function draw(layer='cities',city='all'){
     layer=THEMES[layer]?layer:'cities';city=cityById.has(city)?city:'all';state={layer,city};drawCount++;
     const theme=THEMES[layer],selected=cityById.get(city),info=mapSelectionInfo(layer,city);
@@ -320,25 +326,28 @@ export function createMapAtlas(renderer,aspect=3.2) {
     ctx.save();ctx.strokeStyle='rgba(139,112,58,.09)';ctx.lineWidth=1.4;
     for(let i=0;i<20;i++){ctx.beginPath();ctx.moveTo(70,180+i*32);ctx.bezierCurveTo(650,110+i*39,2200,290+i*22,3130,190+i*32);ctx.stroke();}ctx.restore();
     ctx.strokeStyle='#b8a678';ctx.lineWidth=3;shape(ctx,insetHull(22),true);ctx.stroke();
-    landscape(ctx,layer==='nature');waterways(ctx,layer==='rivers'||layer==='nature');
+    if(!spatialMode){landscape(ctx,layer==='nature');waterways(ctx,layer==='rivers'||layer==='nature');}
+    else if(layer==='rivers'||layer==='nature')waterways(ctx,true,true);
     const ring=['sergiev-posad','pereslavl','rostov','yaroslavl','kostroma','ivanovo','suzdal','vladimir','sergiev-posad'].map(id=>{const c=cityById.get(id);return[c.x,c.y];});
-    if(layer==='cities'||layer==='architecture'){stroke(ctx,ring,'#fcf3d8',13);stroke(ctx,ring,P.gold,6);
+    if(!spatialMode&&(layer==='cities'||layer==='architecture')){stroke(ctx,ring,'#fcf3d8',13);stroke(ctx,ring,P.gold,6);
       stroke(ctx,[at('tver'),at('sergiev-posad')],P.gold,5,[9,12]);stroke(ctx,[at('suzdal'),at('nizhny-novgorod')],P.gold,5,[9,12]);}
-    if(layer==='trade')tradeDecor(ctx);
+    if(!spatialMode&&layer==='trade')tradeDecor(ctx);
     // Typography backplate keeps labels distinct from landscape and line work.
     for(const c of MAP_CITIES){
       const active=c.id===city,focused=city==='all'||active;
-      if(layer==='architecture'||layer==='cities')landmark(ctx,c.symbol,c.x,c.labelY<c.y?c.y+(layer==='architecture'?110:80):c.y-30,layer==='architecture'?58:39,focused?P.ink:'#73857b');
-      if(layer==='crafts'){
+      if(!spatialMode&&(layer==='architecture'||layer==='cities'))landmark(ctx,c.symbol,c.x,c.labelY<c.y?c.y+(layer==='architecture'?110:80):c.y-30,layer==='architecture'?58:39,focused?P.ink:'#73857b');
+      if(!spatialMode&&layer==='crafts'){
         const craftY=c.y+(c.labelY<c.y?78:-74);
         noteBounds(ctx,'craft:'+c.id,c.x-52,craftY-52,104,104);
         circle(ctx,c.x,craftY,49,active?P.paper:'#f7e9cd',theme.color,active?5:2);
         craft(ctx,c.id,c.x,craftY,32,theme.color);
       }
       noteBounds(ctx,'marker:'+c.id,c.x-(active?46:27),c.y-(active?46:27),active?92:54,active?92:54);
-      if(active){circle(ctx,c.x,c.y,43,'#f9edce',theme.color,5);circle(ctx,c.x,c.y,29,theme.color);}
-      else circle(ctx,c.x,c.y,24,focused?P.paper:'#e4dbbd',theme.color,3);
-      label(ctx,c.number,c.x,c.y+8,active?23:20,active?P.paper:theme.color,'center');
+      if(!spatialMode){
+        if(active){circle(ctx,c.x,c.y,43,'#f9edce',theme.color,5);circle(ctx,c.x,c.y,29,theme.color);}
+        else circle(ctx,c.x,c.y,24,focused?P.paper:'#e4dbbd',theme.color,3);
+        label(ctx,c.number,c.x,c.y+8,active?23:20,active?P.paper:theme.color,'center');
+      }
       const titleSize=c.id==='pereslavl'?35:c.id==='nizhny-novgorod'?36:40;
       ctx.font='600 '+titleSize+'px Arial, sans-serif';
       const textWidth=ctx.measureText(c.title).width+32;
@@ -362,7 +371,7 @@ export function createMapAtlas(renderer,aspect=3.2) {
     Object.keys(THEMES).forEach((key,i)=>circle(ctx,1800+i*29,149,key===layer?7:4,key===layer?P.gold:'#b7bc9f'));
     // Both explanatory lines are fully inside the physical front edge.
     label(ctx,theme.legend,250,877,23,'#526154');
-    label(ctx,'СХЕМА · РАССТОЯНИЯ И ФОРМЫ УСЛОВНЫ',2945,877,20,'#68735f','right');
+    label(ctx,spatialMode?'ОБЪЁМНАЯ ПРОЕКЦИЯ · СХЕМА УСЛОВНА':'СХЕМА · РАССТОЯНИЯ И ФОРМЫ УСЛОВНЫ',2945,877,20,'#68735f','right');
     noteBounds(ctx,'information-strip',230,898,2740,74);
     ctx.fillStyle='#183e38';rounded(ctx,230,898,2740,74,17);ctx.fill();
     label(ctx,selected?selected.title:'Выберите город',265,932,selected&&selected.title.length>17?30:34,P.paper,'left',true);
@@ -373,8 +382,9 @@ export function createMapAtlas(renderer,aspect=3.2) {
   draw();
   return {
     texture,draw,aspect:width/height,
+    setSpatialMode(value=true){if(spatialMode!==Boolean(value)){spatialMode=Boolean(value);draw(state.layer,state.city);}},
     pick:(uv,uniforms)=>pickMapCity(uv,uniforms),
-    snapshot:()=>({version:2,kind:'exhibition-diagram',theme:state.layer,selectedCity:state.city,
+    snapshot:()=>({version:3,kind:spatialMode?'relief-projection-labels':'exhibition-diagram',spatialMode,theme:state.layer,selectedCity:state.city,
       atlas:{width,height,aspect:width/height},cityCount:MAP_CITIES.length,labels:MAP_CITIES.map(c=>c.title),
       layerCount:Object.keys(THEMES).length,waterLabels:state.layer==='rivers'||state.layer==='nature'?10:0,
       sourceCount:MAP_CONTENT_SOURCES.length,drawCount,
@@ -387,5 +397,3 @@ export function createMapAtlas(renderer,aspect=3.2) {
       convention:'Города экспозиции; расстояния, русла, ландшафт и силуэты условны.'})
   };
 }
-
-

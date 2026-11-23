@@ -1,7 +1,7 @@
 import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
 
-const ASSET_URL = new URL('./assets/source-objects.glb?v=20261123-source-06', import.meta.url);
-const SELECTION_URL = new URL('./assets/source-surface-selections.json?v=20261123-source-06', import.meta.url);
+const ASSET_URL = new URL('./assets/source-objects.glb?v=20261123-source-07', import.meta.url);
+const SELECTION_URL = new URL('./assets/source-surface-selections.json?v=20261123-source-07', import.meta.url);
 
 function indexFingerprint(index) {
   let value = 2166136261;
@@ -105,7 +105,7 @@ export async function prepareSourceGeometry(model, loader) {
   model.add(root);
   root.updateMatrixWorld(true);
   const report = {version: metadata.version, revision: metadata.revision, status: metadata.status, sourceSha256: metadata.sourceSha256,
-    robotAssemblyRepair: metadata.robotAssemblyRepair || null,
+    robotAssemblyRepair: metadata.robotAssemblyRepair || null, robotRig: metadata.robotRig || null,
     surfaces: surfaces.length, bindings: Object.keys(bindings),
     replacedMeshes: staged.length, removedTriangles: staged.reduce((sum, item) => sum + item.removed, 0),
     sourceAsset: ASSET_URL.pathname, coverage: metadata.coverage || []};
