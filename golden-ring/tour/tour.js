@@ -1,12 +1,12 @@
 import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
 import { GLTFLoader } from '../interactives/vendor/three-0.180/GLTFLoader.js';
 import { MeshoptDecoder } from './vendor/meshopt_decoder.mjs';
-import { lightGallery, finishGallery, screens } from './gallery.js?v=3';
+import { lightGallery, finishGallery, finishWallMaterials, screens } from './gallery.js?v=4';
 import { sourceZones } from './source-zones.js?v=4';
 import { createZoneLabels } from './zone-labels.js?v=1';
-import { prepareSourceGeometry } from './source-geometry.js?v=5';
-import { installSourceDisplays } from './source-display-content.js?v=3';
-import { createSourceInteractives } from './source-interactives.js?v=2';
+import { prepareSourceGeometry } from './source-geometry.js?v=6';
+import { installSourceDisplays } from './source-display-content.js?v=4';
+import { createSourceInteractives } from './source-interactives.js?v=3';
 
 const root = document.getElementById('tour');
 const stage = document.getElementById('stage');
@@ -687,6 +687,7 @@ async function loadModel() {
     await finishGallery(pavilion, renderer, mediaTime);
     loadingDetail.textContent = 'Наполняем исходные экраны и механизмы…';
     sourceGeometry = await prepareSourceGeometry(pavilion, loader);
+    await finishWallMaterials(pavilion, renderer);
     const sourceSurfaces = [...sourceGeometry.surfaces];
     // The existing final panorama is an original display, already installed by
     // finishGallery. Its content is now governed by the journey controls.
@@ -1037,6 +1038,7 @@ canvas.addEventListener('pointerup',event=>{
   sourcePointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);
   sourceRaycaster.setFromCamera(sourcePointer,camera);
   const hit=sourceRaycaster.intersectObject(pavilion,true)[0];
+  if(activeView==='object-map-sand-map'&&sourceInteractives.handleSurfacePick?.(hit))return;
   const definition=hit&&sourceInteractives.findInteractive(hit.object);
   if(definition)setView(definition.viewId);
 });
@@ -1046,12 +1048,13 @@ window.__GOLDEN_RING_TOUR = {
   renderer: () => ({calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,
     textures:renderer.info.memory.textures,geometries:renderer.info.memory.geometries,webglLost}),
   sourceGeometry: () => sourceGeometry?.report || null,
+  walls: () => pavilion?.userData.wallFinishReport || null,
   displays: () => sourceDisplays?.snapshot() || null,
   interactives: () => sourceInteractives?.snapshot() || null,
   sourceViews: () => sourceInteractives?.definitions.map(item=>({id:item.id,viewId:item.viewId,title:item.title})) || [],
   screens: () => mediaViews.map(item=>({id:item.id,title:item.title,zoneId:item.zoneId})),
   navigation: navigationSnapshot,
-  state: () => ({ release:'source-front-screens-20261123-1', mode, ready: root.dataset.state === 'ready' && !webglLost, webglLost, view: viewTitle.textContent,
+  state: () => ({ release:'source-map-walls-20261123-1', mode, ready: root.dataset.state === 'ready' && !webglLost, webglLost, view: viewTitle.textContent,
     visitors: visitorStatus, visitorCount: visitors?.count || 0, visitorFollow, followedVisitor }),
   visitors: () => ({ status: visitorStatus, enabled: visitorsEnabled, ...(visitors?.snapshot() || { ready: false, actors: [] }) }),
   camera: () => ({

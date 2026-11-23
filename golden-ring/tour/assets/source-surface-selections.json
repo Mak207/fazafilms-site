@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "51 source-shaped media surfaces; the two arched panels are placed in front of their original grids at user request",
+  "status": "51 source-shaped media surfaces with source05 front screen placement preserved; seven native FR20 assemblies rejoined and detailed",
   "sourceSha256": "b3baac592a3b46b0a9577e61f92142e23aa44ee945ed2afbf2c8c905270712dc",
   "sourceBlend": "Общая сборка 1911-review.blend",
   "coordinateSystem": "GLB metres Y-up",
@@ -7615,7 +7615,7 @@
   ],
   "geometryStats": {
     "sourceObjects": 504,
-    "meshes": 139,
+    "meshes": 135,
     "surfaces": 51,
     "kinds": {
       "hanging-cloth": 11,
@@ -7634,15 +7634,18 @@
       "arched-vitrine": 2
     },
     "mergedGroups": [],
-    "triangles": 331188,
-    "nodes": 194,
+    "triangles": 542628,
+    "nodes": 208,
     "pivotGroups": 55,
-    "materials": 10,
-    "textures": 0
+    "materials": 13,
+    "textures": 0,
+    "meshInstances": 153,
+    "robotTrianglesPerInstance": 44888,
+    "robotSharedMeshes": 3
   },
-  "assetSha256": "48fa35677e8b77257a87671e9d0ecc018e3b75653bae2e281da48345307b5931",
-  "assetBytes": 6071196,
-  "revision": "20261123-source-05",
+  "assetSha256": "a64522c5a661238532ee11e7667a7bb1e4739ee42f833223a3285c05331c82bc",
+  "assetBytes": 6437200,
+  "revision": "20261123-source-06",
   "UVcorrections": [
     "history-ribbon-01",
     "history-ribbon-02",
@@ -7692,7 +7695,7 @@
       ]
     }
   },
-  "verificationRevision": "source05-two-front-screens-above-grid",
+  "verificationRevision": "source06-native-robot-assembly-and-source05-front-screens",
   "projectionShellCorrection": {
     "sourceObject": "Object041",
     "surfaces": [
@@ -7836,6 +7839,146 @@
           -12.412964436542063
         ]
       }
+    ]
+  },
+  "robotAssemblyRepair": {
+    "revision": "source06",
+    "robotCount": 7,
+    "sourcePartsPerRobot": 57,
+    "sourceSourceTrianglesPerRobot": 142966,
+    "renderTrianglesPerRobot": 44888,
+    "sharedGeometryResources": 3,
+    "materials": [
+      "warm white enamel",
+      "graphite joint covers",
+      "brushed metal flanges"
+    ],
+    "finding": "The native source CAD subassemblies already had separated transforms. Web merge and meshopt did not cause the gaps. All 57 source parts were present.",
+    "method": "Rejoin native CAD subassemblies at mating axes and faces; retain seven source XZ mount positions and orientations; lift bases to map surface; reattach existing stylus. No external robot mesh.",
+    "referenceURDF": "https://github.com/FAIR-INNOVATION/frcobot_ros2/blob/main/fairino_description/urdf/fairino20_v6.urdf",
+    "baseSurfaceY": 0.2621168047,
+    "baseClearanceMetres": 0.001,
+    "copies": [
+      {
+        "partId": "robot-1",
+        "sourceGroup": "Group2132582202",
+        "sourceBaseObject": "NONE057",
+        "sourceBaseGLB": [
+          20.066219329833984,
+          0.02837386727333069,
+          -8.969107627868652
+        ],
+        "mountGLB": [
+          20.066219329833984,
+          0.2631168673130306,
+          -8.969107627868652
+        ],
+        "baseMinimumY": 0.2631168047
+      },
+      {
+        "partId": "robot-2",
+        "sourceGroup": "Group2132582210",
+        "sourceBaseObject": "NONE065",
+        "sourceBaseGLB": [
+          26.156198501586914,
+          0.028373822569847107,
+          -10.202194213867188
+        ],
+        "mountGLB": [
+          26.156198501586914,
+          0.2631168697115843,
+          -10.202194213867188
+        ],
+        "baseMinimumY": 0.2631168047
+      },
+      {
+        "partId": "robot-3",
+        "sourceGroup": "Group2132582214",
+        "sourceBaseObject": "NONE069",
+        "sourceBaseGLB": [
+          20.778139114379883,
+          0.02837391197681427,
+          -5.719343185424805
+        ],
+        "mountGLB": [
+          20.778139114379883,
+          0.263116862226684,
+          -5.719343185424805
+        ],
+        "baseMinimumY": 0.2631168047
+      },
+      {
+        "partId": "robot-4",
+        "sourceGroup": "Group2132582218",
+        "sourceBaseObject": "NONE073",
+        "sourceBaseGLB": [
+          26.86811637878418,
+          0.028373897075653076,
+          -6.952426433563232
+        ],
+        "mountGLB": [
+          26.86811637878418,
+          0.26311687132854045,
+          -6.952426433563232
+        ],
+        "baseMinimumY": 0.2631168047
+      },
+      {
+        "partId": "robot-5",
+        "sourceGroup": "Group2132582225",
+        "sourceBaseObject": "NONE077",
+        "sourceBaseGLB": [
+          28.867630004882812,
+          0.028373748064041138,
+          -8.001566886901855
+        ],
+        "mountGLB": [
+          28.867630004882812,
+          0.263116872235918,
+          -8.001566886901855
+        ],
+        "baseMinimumY": 0.2631168047
+      },
+      {
+        "partId": "robot-6",
+        "sourceGroup": "Group2132582229",
+        "sourceBaseObject": "NONE081",
+        "sourceBaseGLB": [
+          18.61306381225586,
+          0.028373941779136658,
+          -6.712289810180664
+        ],
+        "mountGLB": [
+          18.61306381225586,
+          0.26311686222668884,
+          -6.712289810180664
+        ],
+        "baseMinimumY": 0.2631168047
+      },
+      {
+        "partId": "robot-7",
+        "sourceGroup": "Group004",
+        "sourceBaseObject": "NONE",
+        "sourceBaseGLB": [
+          23.94630241394043,
+          0.07315884530544281,
+          -7.856144905090332
+        ],
+        "mountGLB": [
+          23.94630241394043,
+          0.2631168675536732,
+          -7.856144905090332
+        ],
+        "baseMinimumY": 0.2631168047
+      }
+    ],
+    "contactAudit": {
+      "majorParts": 21,
+      "majorPartsWithin12mm": 21
+    },
+    "limitations": [
+      "Static exhibition visualization; no robot control or physical motion simulation.",
+      "Native 3D assembly is unchanged on disk; repaired transforms exist only in the derived web asset."
     ]
   }
 }
