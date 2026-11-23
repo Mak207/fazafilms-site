@@ -20,11 +20,22 @@ const fullscreenButton = document.getElementById('fullscreen');
 const notice = document.getElementById('notice');
 const screenControls = document.getElementById('screen-controls');
 const motionButton = document.getElementById('screen-motion');
+const visitorMotionButton = document.getElementById('visitor-motion');
+const visitorControls = document.getElementById('visitor-controls');
+const nextVisitorButton = document.getElementById('next-visitor');
 let screenIndex = 0;
 const mediaTime = { value: 0 };
 const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 let motionEnabled = !motionPreference.matches;
 let lastFrameTime;
+let visitors = null;
+let visitorLoader = null;
+let visitorLoadPromise = null;
+let visitorStatus = 'waiting';
+let visitorsEnabled = !motionPreference.matches;
+let visitorFrameTime = 0;
+let visitorFollow = false;
+let followedVisitor = 1;
 
 const views = {
   overview: {
@@ -32,6 +43,12 @@ const views = {
     title: 'Павильон целиком',
     description: 'Архитектура и сценография без добавленных объектов интерактивов.',
     position: [55, 31, 43], target: [5, 0.8, 1]
+  },
+  visitors: {
+    kicker: 'Посетители павильона',
+    title: 'Прогулка по центральному залу',
+    description: 'Камера следит за посетителем. Выберите другого человека или перетащите обзор для свободного осмотра.',
+    position: [9.5, 2.6, 2.6], target: [14, 1, 6]
   },
   entrance: {
     kicker: 'Точка посетителя',
@@ -113,13 +130,15 @@ function setView(name, immediate = false) {
   const view = isScreen ? { ...screens[screenIndex], kicker: `${hall} · Экран ${screenIndex + 1} из ${screens.length}`,
     description: '' } : views[name] || views.overview;
   if (mode === 'walk') setWalk(false, false);
+  visitorFollow = name === 'visitors';
+  visitorControls.hidden = !visitorFollow;
   screenControls.hidden = !isScreen;
   viewKicker.textContent = view.kicker;
   viewTitle.textContent = view.title;
   viewDescription.textContent = view.description;
   document.querySelectorAll('[data-view]').forEach(button => button.classList.toggle('is-active', button.dataset.view === name));
   const endPosition = new THREE.Vector3(...view.position);
-  const endTarget = new THREE.Vector3(...view.target);
+  const endTarget = visitorFollow && visitors ? visitors.focusTarget(followedVisitor) : new THREE.Vector3(...view.target);
   const endFov = isScreen ? [72,61,64,70][screenIndex] : 46;
   if (immediate || matchMedia('(prefers-reduced-motion: reduce)').matches) {
     camera.fov = endFov;
@@ -156,6 +175,7 @@ function updateCameraMotion() {
 }
 
 function orbit(dx, dy) {
+  visitorFollow = false;
   const offset = camera.position.clone().sub(target);
   const spherical = new THREE.Spherical().setFromVector3(offset);
   spherical.theta -= dx * 0.006;
@@ -188,6 +208,8 @@ function updateWalkTarget() {
 }
 
 function setWalk(enabled, moveToStart = true) {
+  visitorFollow = false;
+  visitorControls.hidden = true;
   mode = enabled ? 'walk' : 'orbit';
   root.dataset.mode = mode;
   walkButton.setAttribute('aria-pressed', String(enabled));
@@ -239,11 +261,15 @@ function updateWalk(delta) {
 
 function animate(now) {
   requestAnimationFrame(animate);
-  if (document.hidden) { lastFrameTime = undefined; return; }
-  if (motionEnabled && !document.hidden && lastFrameTime !== undefined) {
-    mediaTime.value += Math.min((now - lastFrameTime) / 1000, .25);
+  if (document.hidden) {
+    lastFrameTime = undefined;
+    visitorFrameTime = 0;
+    return;
   }
+  const delta = lastFrameTime === undefined ? 0 : Math.min((now - lastFrameTime) / 1000, .25);
   lastFrameTime = now;
+  if (motionEnabled) mediaTime.value += delta;
+  if (visitors && visitorsEnabled) visitorFrameTime += delta;
   updateCameraMotion();
   camera.updateMatrixWorld();
   projectionView.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
@@ -251,8 +277,24 @@ function animate(now) {
   if (refreshFrame || cameraMoved) {
     frustum.setFromProjectionMatrix(projectionView);
     screenInView = mediaMeshes.some(mesh => frustum.intersectsObject(mesh));
-  } else if (!motionEnabled || !screenInView || now - lastDraw < 1000 / 30) {
-    return;
+  } else {
+    const hasAnimation = (motionEnabled && screenInView) || (visitors && visitorsEnabled);
+    if (!hasAnimation || now - lastDraw < 1000 / 30) return;
+  }
+  if (visitors && visitorsEnabled && visitorFrameTime > 0) visitors.update(visitorFrameTime);
+  visitorFrameTime = 0;
+  if (visitorFollow && visitors) {
+    const followTarget = visitors.focusTarget(followedVisitor);
+    if (cameraMotion) cameraMotion.endTarget.copy(followTarget);
+    else {
+      target.copy(followTarget);
+      orbitDistance = camera.position.distanceTo(target);
+      camera.lookAt(target);
+      camera.updateMatrixWorld();
+      projectionView.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+      frustum.setFromProjectionMatrix(projectionView);
+      screenInView = mediaMeshes.some(mesh => frustum.intersectsObject(mesh));
+    }
   }
   previousProjectionView.copy(projectionView);
   refreshFrame = false;
@@ -272,6 +314,50 @@ function showNotice(message) {
   notice.textContent = message;
   notice.classList.add('is-visible');
   noticeTimer = setTimeout(() => notice.classList.remove('is-visible'), 2800);
+}
+
+function updateVisitorButton() {
+  const loadingVisitors = visitorStatus === 'waiting' || visitorStatus === 'loading';
+  visitorMotionButton.disabled = loadingVisitors;
+  nextVisitorButton.disabled = !visitors;
+  visitorMotionButton.setAttribute('aria-pressed', String(!visitorsEnabled));
+  visitorMotionButton.textContent = loadingVisitors ? 'Загрузка посетителей…'
+    : visitorStatus === 'error' ? 'Повторить загрузку посетителей'
+      : visitorsEnabled ? 'Пауза посетителей' : 'Запустить посетителей';
+}
+
+function setVisitorMotion(enabled) {
+  visitorsEnabled = enabled;
+  visitorFrameTime = 0;
+  updateVisitorButton();
+  refreshFrame = true;
+}
+
+async function loadVisitors(loader) {
+  if (visitors || visitorLoadPromise) return visitorLoadPromise;
+  visitorLoader = loader;
+  visitorStatus = 'loading';
+  root.dataset.visitors = visitorStatus;
+  updateVisitorButton();
+  visitorLoadPromise = (async () => {
+    try {
+      const { createPavilionVisitors } = await import('./visitors.js?v=1');
+      visitors = await createPavilionVisitors(scene, loader);
+      visitorStatus = 'ready';
+      root.dataset.visitorsCount = '2';
+      visitorFrameTime = 0;
+      refreshFrame = true;
+    } catch (error) {
+      console.error('Pavilion visitors:', error);
+      visitorStatus = 'error';
+      showNotice('Посетители не загрузились. Можно повторить загрузку кнопкой внизу.');
+    } finally {
+      root.dataset.visitors = visitorStatus;
+      visitorLoadPromise = null;
+      updateVisitorButton();
+    }
+  })();
+  return visitorLoadPromise;
 }
 
 async function loadModel() {
@@ -323,6 +409,7 @@ async function loadModel() {
     root.dataset.state = 'ready';
     loading.setAttribute('aria-hidden', 'true');
     openTourLocation();
+    void loadVisitors(loader);
   } catch (error) {
     console.error(error);
     root.dataset.state = 'error';
@@ -334,6 +421,7 @@ async function loadModel() {
 
 canvas.addEventListener('pointerdown', event => {
   canvas.focus({ preventScroll: true });
+  visitorFollow = false;
   canvas.setPointerCapture(event.pointerId);
   pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
   lastPointer = { x: event.clientX, y: event.clientY };
@@ -348,6 +436,8 @@ function openTourLocation() {
   if (hash === '#panorama' || hash === '#screens') {
     screenIndex = hash === '#panorama' ? screens.length - 1 : 0;
     setView('media', true);
+  } else if (hash === '#visitors') {
+    setView('visitors', true);
   } else {
     setView('overview', true);
   }
@@ -398,7 +488,24 @@ function setScreenMotion(enabled) {
 }
 setScreenMotion(motionEnabled);
 motionButton.addEventListener('click', () => setScreenMotion(!motionEnabled));
-motionPreference.addEventListener('change', event => setScreenMotion(!event.matches));
+motionPreference.addEventListener('change', event => {
+  setScreenMotion(!event.matches);
+  setVisitorMotion(!event.matches);
+});
+visitorMotionButton.addEventListener('click', () => {
+  if (visitorStatus === 'error' && visitorLoader) void loadVisitors(visitorLoader);
+  else setVisitorMotion(!visitorsEnabled);
+});
+nextVisitorButton.addEventListener('click', () => {
+  followedVisitor = (followedVisitor + 1) % 2;
+  setView('visitors');
+});
+document.addEventListener('visibilitychange', () => {
+  lastFrameTime = undefined;
+  visitorFrameTime = 0;
+  refreshFrame = true;
+});
+updateVisitorButton();
 walkButton.addEventListener('click', () => setWalk(mode !== 'walk'));
 
 const keyMap = { KeyW: 'forward', ArrowUp: 'forward', KeyS: 'back', ArrowDown: 'back', KeyA: 'left', ArrowLeft: 'left', KeyD: 'right', ArrowRight: 'right' };
@@ -475,7 +582,9 @@ retry.addEventListener('click', () => {
 });
 
 window.__GOLDEN_RING_TOUR = {
-  state: () => ({ mode, ready: root.dataset.state === 'ready', view: viewTitle.textContent }),
+  state: () => ({ mode, ready: root.dataset.state === 'ready', view: viewTitle.textContent,
+    visitors: visitorStatus, visitorCount: visitors ? 2 : 0, visitorFollow, followedVisitor }),
+  visitors: () => ({ status: visitorStatus, enabled: visitorsEnabled, ...(visitors?.snapshot() || { ready: false, actors: [] }) }),
   camera: () => ({
     position: camera.position.toArray().map(value => Number(value.toFixed(4))),
     target: target.toArray().map(value => Number(value.toFixed(4)))

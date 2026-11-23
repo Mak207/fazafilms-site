@@ -74,8 +74,8 @@ button:focus-visible, canvas:focus-visible { outline: 3px solid #edb95d; outline
   pointer-events: none;
 }
 .view-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
-#screen-controls:not([hidden]) { display:flex; flex-wrap:wrap; gap:5px; pointer-events:auto; }
-#screen-controls button { min-height:44px; padding:4px 9px; color:var(--ink); background:#263b32; border:1px solid var(--line); border-radius:7px; cursor:pointer; font-size:12px; }
+#screen-controls:not([hidden]), #visitor-controls:not([hidden]) { display:flex; flex-wrap:wrap; gap:5px; pointer-events:auto; }
+#screen-controls button, #visitor-controls button { min-height:44px; padding:4px 9px; color:var(--ink); background:#263b32; border:1px solid var(--line); border-radius:7px; cursor:pointer; font-size:12px; }
 .view-card > p:first-child { margin-bottom: 5px; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; font-size: 11px; }
 .view-card h1 { margin: 0 0 7px; font: 400 clamp(22px, 3vw, 31px)/1.08 Georgia, serif; }
 .help { position: absolute; z-index: 5; top: clamp(12px, 2vw, 26px); right: clamp(12px, 2vw, 26px); display: grid; justify-items: end; gap: 7px; }
@@ -102,6 +102,7 @@ button:focus-visible, canvas:focus-visible { outline: 3px solid #edb95d; outline
 }
 .camera-nav button { flex: 0 0 auto; padding: 7px 13px; border-color: transparent; background: transparent; color: #c9cac3; font-size: 13px; font-weight: 700; }
 .camera-nav button:hover, .camera-nav button.is-active, .camera-nav button[aria-pressed="true"] { color: #152019; background: #f0eadc; }
+.camera-nav button:disabled, #visitor-controls button:disabled { opacity: .55; cursor: progress; }
 .walk-pad { position: absolute; z-index: 5; right: 22px; bottom: 86px; display: none; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(2, 50px); gap: 5px; touch-action: none; }
 [data-mode="walk"] .walk-pad { display: grid; }
 .walk-pad button { padding: 0; font-size: 21px; background: #111c19e8; backdrop-filter: blur(12px); }
