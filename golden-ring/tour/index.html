@@ -6,12 +6,13 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="theme-color" content="#14231e">
   <title>Интерактивный 3D-тур по павильону · Золотое кольцо</title>
-  <link rel="stylesheet" href="tour.css?v=4">
+  <link rel="stylesheet" href="tour.css?v=5">
   <link rel="stylesheet" href="zone-labels.css?v=1">
+  <link rel="stylesheet" href="source-interactives.css?v=1">
   <script type="importmap">
     {"imports":{"three":"../interactives/vendor/three-0.180/three.module.min.js"}}
   </script>
-  <script type="module" src="tour.js?v=6"></script>
+  <script type="module" src="tour.js?v=7"></script>
 <link rel="stylesheet" href="/css/project-navigation.css?v=20261123-1">
 </head>
 <body>
@@ -45,6 +46,8 @@
         <p id="view-kicker">Общий вид</p>
         <h1 id="view-title">Павильон целиком</h1>
         <p id="view-description">Исходная сборка заказчика. Нажмите название города, чтобы рассмотреть зал и его объекты.</p>
+        <select id="interactive-picker" aria-label="Выбрать интерактив" hidden></select>
+        <div id="source-interactive-controls" hidden></div>
         <details class="source-zone-details" id="source-zone-details" hidden>
           <summary>Замысел в исходном проекте</summary>
           <p id="source-zone-concept"></p>
@@ -55,6 +58,7 @@
           <button type="button" id="next-visitor" disabled>Другой посетитель</button>
         </div>
         <div id="screen-controls" hidden>
+          <select id="screen-picker" aria-label="Выбрать экран"></select>
           <button type="button" id="next-screen">Следующий экран</button>
           <button type="button" id="screen-motion">Пауза</button>
         </div>
@@ -68,6 +72,7 @@
           <p><b>Мышь или касание</b> — повернуть обзор</p>
           <p><b>Колесо или два пальца</b> — приблизить</p>
           <p><b>Прогулка</b> — WASD, стрелки или экранные кнопки</p>
+          <p><a href="assets/source-media/credits.html" target="_blank" rel="noopener">Изображения и авторы</a></p>
         </div>
       </div>
 
@@ -75,6 +80,7 @@
         <button type="button" data-view="overview" class="is-active">Общий вид</button>
         <button type="button" data-view="visitors">Посетители</button>
         <button type="button" data-view="media">Экраны</button>
+        <button type="button" data-view="interactives">Интерактивы</button>
         <button type="button" data-view="entrance">Вход</button>
         <button type="button" data-view="center">Центральная зона</button>
         <button type="button" data-view="regions">Региональные залы</button>
