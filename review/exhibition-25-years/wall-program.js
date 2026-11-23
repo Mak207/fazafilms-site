@@ -1,5 +1,5 @@
-// All panels share the arc-length UV of the real wall. Artwork and type have
-// square pixels; the joints between the three editorial areas are on the arcs.
+// Each screen band uses the arc-length UV of its own physical contour.
+// The upper wall is curved; the lower ribbon follows the shelf front edges.
 const themes = [
   {id:"technology", title:"Технологии России", ink:"#78f5ed", cells:[0,9,2,10,11,12,13,14,2]},
   {id:"construction", title:"Строительство России", ink:"#c8ee8d", cells:[3,15,16,4,17,18,19,20,5]},
@@ -62,11 +62,14 @@ export function createWallProgram(topics, catalog, pavilion, videos, art, object
   const back=2*pavilion.screenBackHalf;
   const length=2*(side+arc)+back;
   const edges=[0,(side+arc/2)/length,1-(side+arc/2)/length,1];
+  const lowerSide=pavilion.screenFrontZ-pavilion.lowerScreenBackZ;
+  const lowerLength=2*lowerSide+2*pavilion.lowerScreenX;
+  const lowerEdges=[0,lowerSide/lowerLength,1-lowerSide/lowerLength,1];
   const strip=catalog.map(e=>{
     const t=e.index/13, z=-8.88+t*17.76, x=-5.70+t*11.4;
     const metres=e.zone==="technology" ? pavilion.screenFrontZ-z :
-      e.zone==="transport" ? length-(pavilion.screenFrontZ-z) : side+arc+pavilion.screenBackHalf+x;
-    return {...e,u:metres/length};
+      e.zone==="transport" ? lowerLength-(pavilion.screenFrontZ-z) : lowerSide+pavilion.lowerScreenX+x;
+    return {...e,u:metres/lowerLength};
   }).sort((a,b)=>a.u-b.u);
 
   function photo(ctx,index,x,y,w,h) {
@@ -95,9 +98,10 @@ export function createWallProgram(topics, catalog, pavilion, videos, art, object
     const blend=Math.max(2,Math.round(w*.012));
     const {buffer,join,mask}=cornerBuffer(blend,h);
     ctx.fillStyle="#06386c"; ctx.fillRect(0,0,w,h);
+    const bandEdges=lower?lowerEdges:edges;
     themes.forEach(({id},i)=>{
-      const x=Math.round(edges[i]*w);
-      const span=Math.round(edges[i+1]*w)-x+(i<themes.length-1?blend:0);
+      const x=Math.round(bandEdges[i]*w);
+      const span=Math.round(bandEdges[i+1]*w)-x+(i<themes.length-1?blend:0);
       if(i){
         join.clearRect(0,0,blend,h);
         join.drawImage(ctx.canvas,x,0,blend,h,0,0,blend,h);

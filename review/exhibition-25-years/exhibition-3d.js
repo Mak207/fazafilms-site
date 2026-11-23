@@ -1,6 +1,6 @@
 import { addWalkers } from "./visitors-v44.js?v=44";
 import { mountRailPanel, signPlinth } from "./plinths.js?v=33";
-import { createWallProgram } from "./wall-program.js?v=32";
+import { createWallProgram } from "./wall-program.js?v=33";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -68,6 +68,9 @@ const prototypePalettes = {
   utilities: [0xb9bec0, 0xd0a548, 0x343d41, 0x658d98]
 };
 const exhibitionPeriod = "2000–2025";
+const nicheShelf = { sideX: 6.02, backZ: -9.94, depth: 0.72 };
+// Keep the screen face 2 mm ahead of the shelf fascia to avoid coplanar flicker.
+const lowerScreenFaceOffset = 0.002;
 const pavilion = {
   width: 13,
   depth: 21,
@@ -79,7 +82,9 @@ const pavilion = {
   screenFrontZ: 10.35,
   screenCornerZ: -9.20,
   screenBackZ: -10.30,
-  screenBackHalf: 5.35
+  screenBackHalf: 5.35,
+  lowerScreenX: nicheShelf.sideX - nicheShelf.depth / 2 - lowerScreenFaceOffset,
+  lowerScreenBackZ: nicheShelf.backZ + nicheShelf.depth / 2 + lowerScreenFaceOffset
 };
 
 const content = Object.fromEntries(zones.map((zone) => [zone, allItems.filter((item) => item.zone === zone)]));
@@ -536,9 +541,9 @@ function buildPavilion(scene) {
   addSeamlessMediaWalls(scene);
 
   const shelfMaterial = new THREE.MeshPhysicalMaterial({ color: 0xeff1ec, roughness: 0.34, metalness: 0.03, clearcoat: 0.22, clearcoatRoughness: 0.36, envMapIntensity: 0.68 });
-  addBox(scene, [0.72, 0.10, 20.55], [-6.02, 0.54, 0.12], shelfMaterial);
-  addBox(scene, [0.72, 0.10, 20.55], [6.02, 0.54, 0.12], shelfMaterial);
-  addBox(scene, [12.25, 0.10, 0.72], [0, 0.54, -9.94], shelfMaterial);
+  addBox(scene, [nicheShelf.depth, 0.10, 20.55], [-nicheShelf.sideX, 0.54, 0.12], shelfMaterial);
+  addBox(scene, [nicheShelf.depth, 0.10, 20.55], [nicheShelf.sideX, 0.54, 0.12], shelfMaterial);
+  addBox(scene, [12.25, 0.10, nicheShelf.depth], [0, 0.54, nicheShelf.backZ], shelfMaterial);
 
   if (!isNarrowScene()) {
     addDimension(scene, [-7.05, 0, 10.25], [-7.05, 4, 10.25], "4 м");
@@ -562,17 +567,29 @@ function addSeamlessMediaWalls(scene) {
   }
   add(pavilion.screenX, pavilion.screenFrontZ);
 
-  const segments = [];
-  let totalLength = 0;
-  for (let i = 0; i < path.length - 1; i += 1) {
-    const a = path[i];
-    const b = path[i + 1];
-    const length = Math.hypot(b.x - a.x, b.z - a.z);
-    segments.push({ a, b, start: totalLength, length, index: i });
-    totalLength += length;
-  }
+  const measurePath = (points) => {
+    const segments = [];
+    let totalLength = 0;
+    for (let i = 0; i < points.length - 1; i += 1) {
+      const a = points[i];
+      const b = points[i + 1];
+      const length = Math.hypot(b.x - a.x, b.z - a.z);
+      segments.push({ a, b, start: totalLength, length, index: i });
+      totalLength += length;
+    }
+    return { segments, totalLength };
+  };
+  const upperLayout = measurePath(path);
+  // The lower ribbon follows the front edges of the rectangular niche shelves.
+  const lowerPath = [
+    { x: -pavilion.lowerScreenX, z: pavilion.screenFrontZ },
+    { x: -pavilion.lowerScreenX, z: pavilion.lowerScreenBackZ },
+    { x: pavilion.lowerScreenX, z: pavilion.lowerScreenBackZ },
+    { x: pavilion.lowerScreenX, z: pavilion.screenFrontZ }
+  ];
+  const lowerLayout = measurePath(lowerPath);
 
-  createScreenLayers(totalLength);
+  createScreenLayers({ upper: upperLayout.totalLength, lower: lowerLayout.totalLength });
 
   const pathOffsets = path.map((point, index) => {
     const normalFor = (from, to) => {
@@ -589,16 +606,16 @@ function addSeamlessMediaWalls(scene) {
     return miter.multiplyScalar(0.012 / Math.max(miter.dot(next), 0.25));
   });
 
-  const buildStrip = (y0, y1, material) => {
+  const buildStrip = (y0, y1, material, layout = upperLayout, offsets = pathOffsets) => {
     const positions = [];
     const uvs = [];
     const indices = [];
     let vertex = 0;
-    segments.forEach((segment) => {
-      const offsetA = pathOffsets[segment.index];
-      const offsetB = pathOffsets[segment.index + 1];
-      const u0 = segment.start / totalLength;
-      const u1 = (segment.start + segment.length) / totalLength;
+    layout.segments.forEach((segment) => {
+      const offsetA = offsets[segment.index];
+      const offsetB = offsets[segment.index + 1];
+      const u0 = segment.start / layout.totalLength;
+      const u1 = (segment.start + segment.length) / layout.totalLength;
       positions.push(
         segment.a.x + offsetA.x, y0, segment.a.z + offsetA.y,
         segment.b.x + offsetB.x, y0, segment.b.z + offsetB.y,
@@ -614,11 +631,13 @@ function addSeamlessMediaWalls(scene) {
     geometry.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
     geometry.setIndex(indices);
     geometry.computeVertexNormals();
-    scene.add(new THREE.Mesh(geometry, material));
+    const mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+    return mesh;
   };
 
-  buildStrip(0, 0.5, screenMaterials.lower);
-  buildStrip(1.5, 4, screenMaterials.upper);
+  buildStrip(0, 0.5, screenMaterials.lower, lowerLayout, lowerPath.map(() => new THREE.Vector2())).name = "media-wall-lower";
+  buildStrip(1.5, 4, screenMaterials.upper).name = "media-wall-upper";
   const niche = new THREE.MeshPhysicalMaterial({ color: 0xe5e8e3, roughness: 0.46, metalness: 0.02, clearcoat: 0.16, envMapIntensity: 0.62 });
   const wash = document.createElement("canvas");
   wash.width = 128;
@@ -634,7 +653,7 @@ function addSeamlessMediaWalls(scene) {
   niche.map.colorSpace = THREE.SRGBColorSpace;
   niche.map.wrapS = THREE.RepeatWrapping;
   niche.map.repeat.x = 42;
-  buildStrip(0.5, 1.5, niche);
+  buildStrip(0.5, 1.5, niche).name = "niche-back-wall";
 
   const portalMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.24, metalness: 0.04, clearcoat: 0.32, envMapIntensity: 0.86 });
   const portalGlow = new THREE.MeshBasicMaterial({ color: 0xe8fdff, transparent: true, opacity: 0.92, toneMapped: false });
@@ -651,11 +670,12 @@ function addSeamlessMediaWalls(scene) {
   });
 }
 
-function createScreenLayers(lengthMeters) {
+function createScreenLayers(lengthsByBand) {
   [
     ["upper", 2.5, 190],
     ["lower", 0.5, 210]
   ].forEach(([band, heightMeters, pixelsPerMeter]) => {
+    const lengthMeters = lengthsByBand[band];
     const layer = document.createElement("canvas");
     layer.width = Math.min(wallTextureLimit, Math.max(4096, Math.round(lengthMeters * pixelsPerMeter)));
     layer.height = Math.round(layer.width * heightMeters / lengthMeters);
