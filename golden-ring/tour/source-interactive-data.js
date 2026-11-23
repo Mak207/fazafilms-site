@@ -1,5 +1,6 @@
-// Geometry: customer assembly 1911. Scenarios: customer concept 21.10.2026.
-// Controls below are a browser adaptation; no unverified devices are added.
+// Geometry: original assembly 1911. The received concept dated 21.10.2026
+// is a separate design reference, not executable behavior or final approval.
+// Browser controls and media below are our demonstration of the source forms.
 export const SOURCE_CITIES = Object.freeze([
   { id: 'vladimir', title: 'Владимир', zoneId: 'vladimir' },
   { id: 'suzdal', title: 'Суздаль', zoneId: 'vladimir' },
@@ -65,7 +66,104 @@ const source = pages => ({
   assembly: '1911',
   concept: '2026-10-21',
   pages,
-  reference: 'Концепция заказчика 21.10.2026, с. ' + pages.join(', ') + '. Исходная сборка 1911.'
+  reference: 'Полученная концепция 21.10.2026, с. ' + pages.join(', ') + '. Исходная сборка 1911.'
+});
+
+export const SOURCE_OBJECT_EVIDENCE = Object.freeze({
+  "scroll": {
+    "title": "Стол-свиток",
+    "sourceObjects": [
+      "Group2146524701",
+      "Cylinder179",
+      "Cylinder180",
+      "Object174075797"
+    ],
+    "description": "Деревянный стол, два валика и полотно внутри белого павильона. Все эти части присутствуют в присланной 3D-сборке.",
+    "webDemo": "В туре: прокрутка изображений, вращение валиков и выбор главы."
+  },
+  "well": {
+    "title": "Колодец",
+    "sourceObjects": [
+      "Group2146524757",
+      "Circle010",
+      "Circle011",
+      "Circle012"
+    ],
+    "description": "Круглая чаша с деревянным бортом и внутренней круглой поверхностью. В исходнике детали объединены материалом Kolodec.",
+    "webDemo": "В туре: три темы, отражения на воде и переход через дымку."
+  },
+  "boats": {
+    "title": "Подвесная речная композиция",
+    "sourceObjects": [
+      "Layer:01 Install-0.009"
+    ],
+    "description": "Подвесная ферма с замкнутым контуром и формами, похожими на корпуса судов. Конструкция взята из исходной модели.",
+    "webDemo": "В туре: переключение речных сюжетов на исходных поверхностях. Ферма остаётся неподвижной."
+  },
+  "bells": {
+    "title": "Колоколообразные подвесы",
+    "sourceObjects": [
+      "Cylinder136",
+      "Cylinder256–263"
+    ],
+    "description": "Девять крупных подвесных объёмов колоколообразной формы. Их геометрия есть в исходной модели; это сценография зала.",
+    "webDemo": "В туре: синтезированный перезвон и подсветка подвесов по нажатию."
+  },
+  "bobbins": {
+    "title": "Катушки и бобины",
+    "sourceObjects": [
+      "Бобины.*",
+      "Object174075933",
+      "Object174075935"
+    ],
+    "description": "Крупные катушки и составные цилиндры в общем зале Костромы и Иванова. Принадлежность каждой группы конкретному региону пока не установлена.",
+    "webDemo": "В туре: вращение исходных катушек и смена цветовой темы."
+  },
+  "yarn": {
+    "title": "Составные веретёна",
+    "sourceObjects": [],
+    "description": "Назначение отдельных составных цилиндров в исходной модели требует сопоставления.",
+    "webDemo": "Световая волна — вариант демонстрации."
+  },
+  "ornament": {
+    "title": "Три плоские панели",
+    "sourceObjects": [
+      "Box2131647505",
+      "Box2131647506",
+      "Box2131647507"
+    ],
+    "description": "Три высокие прямоугольные панели в общем зале Костромы и Иванова. Их форма есть в модели; название устройства и способ управления в 3D-файле не указаны.",
+    "webDemo": "В туре: постепенное проявление текстильного узора."
+  },
+  "finale": {
+    "title": "Кольца, сфера и панорама",
+    "sourceObjects": [
+      "Sphere001",
+      "Circle008"
+    ],
+    "description": "Кольцевая композиция, центральная сфера и окружающая панорамная поверхность. Все основные формы присутствуют в исходной сборке.",
+    "webDemo": "В туре: выбор города и темы меняет изображения и освещение."
+  },
+  "map": {
+    "title": "Поле карты и роботизированные руки",
+    "sourceObjects": [
+      "Shape26",
+      "Object174075859",
+      "FR20-V6.0-*"
+    ],
+    "description": "Продолговатое поле и семь сборок роботизированных рук FR20. Их форма и расположение сохранены из исходной модели.",
+    "webDemo": "В туре: шесть тематических слоёв карты. Это экранная демонстрация; руки остаются неподвижными."
+  },
+  "workshops": {
+    "title": "Ремесленные ячейки",
+    "sourceObjects": [
+      "Box2131647155/7156/7158/7160/7164/7166",
+      "Object174075920/174075921",
+      "Apple_Vision_Pro"
+    ],
+    "description": "Восемь ячеек с экранными поверхностями и модель гарнитуры Apple Vision Pro на тумбе. Приложение для гарнитуры в 3D-файле отсутствует.",
+    "webDemo": "В туре: выбор ремесла и четыре иллюстрированных этапа стекольного процесса."
+  }
 });
 
 export const SOURCE_INTERACTIVE_DEFINITIONS = Object.freeze([
@@ -168,6 +266,9 @@ export const SOURCE_INTERACTIVE_DEFINITIONS = Object.freeze([
   }
 ].map(item => Object.freeze({
   ...item,
+  conceptTitle: item.title,
+  ...SOURCE_OBJECT_EVIDENCE[item.id],
+  reference: 'Форма: исходная сборка 1911. ' + (SOURCE_OBJECT_EVIDENCE[item.id]?.sourceObjects || []).join(', ') + '. Сценарное сопоставление: концепция 21.10.2026, с. ' + item.pages.join(', ') + '. Веб-управление добавлено Фазой.',
   viewId: 'object-' + item.zoneId + '-' + item.objectId
 })));
 

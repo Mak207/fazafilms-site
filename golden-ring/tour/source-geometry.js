@@ -1,7 +1,7 @@
 import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
 
-const ASSET_URL = new URL('./assets/source-objects.glb?v=20261123-source-03', import.meta.url);
-const SELECTION_URL = new URL('./assets/source-surface-selections.json?v=20261123-source-03', import.meta.url);
+const ASSET_URL = new URL('./assets/source-objects.glb?v=20261123-source-04', import.meta.url);
+const SELECTION_URL = new URL('./assets/source-surface-selections.json?v=20261123-source-04', import.meta.url);
 
 function indexFingerprint(index) {
   let value = 2166136261;

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "Source-verified 49 media surfaces; conservative complete component replacement",
+  "status": "51 source media surfaces; two existing closed arched display-case backs filled for the web exhibition",
   "sourceSha256": "b3baac592a3b46b0a9577e61f92142e23aa44ee945ed2afbf2c8c905270712dc",
   "sourceBlend": "Общая сборка 1911-review.blend",
   "coordinateSystem": "GLB metres Y-up",
@@ -48,9 +48,25 @@
         [
           1220,
           4058
+        ],
+        [
+          5290,
+          1
+        ],
+        [
+          5303,
+          1
+        ],
+        [
+          5316,
+          12
+        ],
+        [
+          5365,
+          11
         ]
       ],
-      "removedTriangles": 4058
+      "removedTriangles": 4083
     },
     {
       "mesh": "Pavilion_neutral",
@@ -3208,6 +3224,217 @@
         "source": "Original pavilion complete triangles, including all neighbouring sheets and columns.",
         "angle": 0,
         "heightOffset": 0
+      }
+    },
+    {
+      "id": "tver-arched-vitrine-01",
+      "zoneId": "tver",
+      "kind": "arched-vitrine",
+      "interactiveId": "",
+      "ordinal": 0,
+      "title": "Арочная витрина · Кружево",
+      "sourceObject": "Ellipse013",
+      "sourceGroup": "Group_Vitrina_01",
+      "sourceMaterial": [
+        "Water_Metall"
+      ],
+      "sourceRole": "closed arched display-case back",
+      "role": "surface",
+      "aspect": 0.3993684435169676,
+      "width": 1.5977210998535156,
+      "height": 4.000619292259216,
+      "UVorientation": "u-right on interior front; v-up",
+      "normal": [
+        -2.3734852719382836e-15,
+        -0.0,
+        1.0
+      ],
+      "center": [
+        -19.227380752563477,
+        2.099306881427765,
+        -13.406075954437256
+      ],
+      "sourceBounds": {
+        "min": [
+          -20.026241302490234,
+          0.09899723529815674,
+          -13.416075706481934
+        ],
+        "max": [
+          -18.42852020263672,
+          4.099616527557373,
+          -13.406075477600098
+        ]
+      },
+      "surfaceBounds": {
+        "min": [
+          -20.026241302490234,
+          0.09899723529815674,
+          -13.406076431274414
+        ],
+        "max": [
+          -18.42852020263672,
+          4.099616527557373,
+          -13.406075477600098
+        ]
+      },
+      "sourceTriangles": 272,
+      "frontTriangles": 67,
+      "sourceThickness": 0.01000022888183949,
+      "preservedObjects": [
+        "Ellipse005",
+        "Line119"
+      ],
+      "provenance": {
+        "assembly": "1911",
+        "originalGroupRole": "Vitrina",
+        "originalMaterial": "Water_Metall",
+        "webAdaptation": "Existing interior back panel receives exhibit media; not attributed as an original LED screen."
+      },
+      "originalSelection": {
+        "mesh": "Pavilion_metal",
+        "component": 18,
+        "rootVertex": 8620,
+        "frontTriangleIds": [
+          5365,
+          5366,
+          5367,
+          5368,
+          5369,
+          5370,
+          5371,
+          5372,
+          5373,
+          5374,
+          5375
+        ]
+      },
+      "camera": {
+        "position": [
+          -19.527380752563477,
+          2.15,
+          -11.35608
+        ],
+        "target": [
+          -19.227380752563477,
+          2.099306881427765,
+          -13.406075954437256
+        ],
+        "fov": 100
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 8,
+        "angle": -12,
+        "heightOffset": 0,
+        "note": "Original display-case ribs are intentionally retained; opaque shelf dividers can occlude portions of the back."
+      }
+    },
+    {
+      "id": "tver-arched-vitrine-02",
+      "zoneId": "tver",
+      "kind": "arched-vitrine",
+      "interactiveId": "",
+      "ordinal": 1,
+      "title": "Арочная витрина · Волжские берега",
+      "sourceObject": "Ellipse006",
+      "sourceGroup": "Group_Vitrina_02",
+      "sourceMaterial": [
+        "Water_Metall"
+      ],
+      "sourceRole": "closed arched display-case back",
+      "role": "surface",
+      "aspect": 0.5830045913952346,
+      "width": 1.5456226119897494,
+      "height": 2.6511328294873238,
+      "UVorientation": "u-right on interior front; v-up",
+      "normal": [
+        -0.49999991404657784,
+        -0.0,
+        0.8660254534096645
+      ],
+      "center": [
+        -14.701680183410645,
+        1.4245635233819485,
+        -12.779294490814209
+      ],
+      "sourceBounds": {
+        "min": [
+          -15.370954513549805,
+          0.09899710863828659,
+          -13.170029640197754
+        ],
+        "max": [
+          -14.029906272888184,
+          2.7501301765441895,
+          -12.392889022827148
+        ]
+      },
+      "surfaceBounds": {
+        "min": [
+          -15.370954513549805,
+          0.09899710863828659,
+          -13.16569995880127
+        ],
+        "max": [
+          -14.032405853271484,
+          2.7501299381256104,
+          -12.392889022827148
+        ]
+      },
+      "sourceTriangles": 288,
+      "frontTriangles": 71,
+      "sourceThickness": 0.005001812157958696,
+      "preservedObjects": [
+        "Ellipse003",
+        "Line118"
+      ],
+      "provenance": {
+        "assembly": "1911",
+        "originalGroupRole": "Vitrina",
+        "originalMaterial": "Water_Metall",
+        "webAdaptation": "Existing interior back panel receives exhibit media; not attributed as an original LED screen."
+      },
+      "originalSelection": {
+        "mesh": "Pavilion_metal",
+        "component": 17,
+        "rootVertex": 8566,
+        "frontTriangleIds": [
+          5290,
+          5303,
+          5316,
+          5317,
+          5318,
+          5319,
+          5320,
+          5321,
+          5322,
+          5323,
+          5324,
+          5325,
+          5326,
+          5327
+        ]
+      },
+      "camera": {
+        "position": [
+          -15.960968060936882,
+          1.4245635233819485,
+          -10.598143405643503
+        ],
+        "target": [
+          -14.701680183410645,
+          1.4245635233819485,
+          -12.779294490814209
+        ],
+        "fov": 60
+      },
+      "cameraVisibility": {
+        "rays": 15,
+        "unoccluded": 14,
+        "angle": 0,
+        "heightOffset": 0,
+        "note": "Original display-case ribs are intentionally retained; opaque shelf dividers can occlude portions of the back."
       }
     }
   ],
@@ -7242,13 +7469,34 @@
       "originalTriangles": 596,
       "matchedOriginalTriangles": 1253,
       "components": 1
+    },
+    {
+      "sourceObject": "Ellipse013",
+      "sourceGroup": "Group_Vitrina_01",
+      "interactiveId": "",
+      "kind": "arched-vitrine",
+      "originalTriangles": 272,
+      "exportedFrontTriangles": 67,
+      "matchedOriginalTriangles": 11,
+      "components": 1
+    },
+    {
+      "sourceObject": "Ellipse006",
+      "sourceGroup": "Group_Vitrina_02",
+      "interactiveId": "",
+      "kind": "arched-vitrine",
+      "originalTriangles": 288,
+      "exportedFrontTriangles": 71,
+      "matchedOriginalTriangles": 14,
+      "components": 1
     }
   ],
   "limitations": [
     "Boat hulls are not independently identifiable in the source merged mechanism; structural rail remains static.",
     "Robot arms have no verified active joint hierarchy in this web extraction; highlights are enabled without invented robot motion.",
     "Nizhny Novgorod and prologue contain no independently confirmed blank media surface in the current original 1911 object inventory.",
-    "Curved Object174075940 remains original architecture and is not counted as a display or invented yarn mechanism."
+    "Curved Object174075940 remains original architecture and is not counted as a display or invented yarn mechanism.",
+    "The two original Group_Vitrina backs receive web exhibit media. Their source name/material do not identify them as additional original LED screens."
   ],
   "coverage": [
     {
@@ -7273,8 +7521,8 @@
     },
     {
       "zoneId": "tver",
-      "newSurfaces": 17,
-      "note": "11 original straight hanging cloths, 3 full original curved cloths (both sides, 3 duplicate source overlay shells removed), 2 projection-tower shells, original well water. Three arched river screens were already filled by gallery."
+      "newSurfaces": 19,
+      "note": "11 original straight hanging cloths, 3 full original curved cloths (both sides, 3 duplicate source overlay shells removed), 2 projection-tower shells, original well water. Three arched river screens were already filled by gallery. Two original closed arched vitrine backs are filled as web exhibit surfaces; blue frames and white dividers remain unchanged."
     },
     {
       "zoneId": "yaroslavl",
@@ -7318,9 +7566,9 @@
     }
   ],
   "geometryStats": {
-    "sourceObjects": 502,
-    "meshes": 137,
-    "surfaces": 49,
+    "sourceObjects": 504,
+    "meshes": 139,
+    "surfaces": 51,
     "kinds": {
       "hanging-cloth": 11,
       "scroll": 1,
@@ -7334,18 +7582,19 @@
       "barge-screen": 2,
       "textile-panel": 3,
       "stage-flat-screen": 3,
-      "tver-curved": 3
+      "tver-curved": 3,
+      "arched-vitrine": 2
     },
     "mergedGroups": [],
-    "triangles": 331050,
-    "nodes": 192,
+    "triangles": 331188,
+    "nodes": 194,
     "pivotGroups": 55,
     "materials": 10,
     "textures": 0
   },
-  "assetSha256": "aeb1617d2d2f3eb03d6ca5d97fc7d300c0d21858af479b1ca27e91165ddb4bab",
-  "assetBytes": 6050136,
-  "revision": "20261123-source-03",
+  "assetSha256": "596767fc61d83696c5e3312f403161522062981caa15571bb21ea3f0e85dd199",
+  "assetBytes": 6069784,
+  "revision": "20261123-source-04",
   "UVcorrections": [
     "history-ribbon-01",
     "history-ribbon-02",
@@ -7372,7 +7621,7 @@
     "stage-flat-screen-03"
   ],
   "removalAudit": {
-    "removedTriangles": 183236,
+    "removedTriangles": 183261,
     "componentMembershipChecks": 7998,
     "partialSourceComponentsCompleted": true,
     "architecturalOverlapRestored": 2407,
@@ -7380,9 +7629,22 @@
     "unresolvedComponents": 0,
     "bobbinComponentsCompleted": 33,
     "bobbinDuplicateTrianglesRemoved": 22099,
-    "finalScope": "Whole named source components only. Original architectural plaster remains; 33 native spool components inside that material category are removed exactly."
+    "finalScope": "Whole named source components only. Original architectural plaster remains; 33 native spool components inside that material category are removed exactly.",
+    "archedVitrineFronts": {
+      "sourceObjects": [
+        "Ellipse013",
+        "Ellipse006"
+      ],
+      "oldFrontTrianglesRemoved": 25,
+      "preservedFramesAndRibs": [
+        "Ellipse005",
+        "Line119",
+        "Ellipse003",
+        "Line118"
+      ]
+    }
   },
-  "verificationRevision": "source03-final-bobbin-stage",
+  "verificationRevision": "source04-two-original-arched-vitrine-backs",
   "projectionShellCorrection": {
     "sourceObject": "Object041",
     "surfaces": [
