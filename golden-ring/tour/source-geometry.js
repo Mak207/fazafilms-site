@@ -1,7 +1,7 @@
 import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
 
-const ASSET_URL = new URL('./assets/source-objects.glb?v=20261123-source-04', import.meta.url);
-const SELECTION_URL = new URL('./assets/source-surface-selections.json?v=20261123-source-04', import.meta.url);
+const ASSET_URL = new URL('./assets/source-objects.glb?v=20261123-source-05', import.meta.url);
+const SELECTION_URL = new URL('./assets/source-surface-selections.json?v=20261123-source-05', import.meta.url);
 
 function indexFingerprint(index) {
   let value = 2166136261;
@@ -11,7 +11,7 @@ function indexFingerprint(index) {
 
 /**
  * Replace only source-verified triangles of the original pavilion.
- * All replacement assets retain customer source positions; pavilion walls,
+ * Source objects retain native positions except the two explicitly requested front screens; pavilion walls,
  * supports and visitor rigs are never selected by a bounding-box guess.
  *
  * @returns {Promise<{bindings:Object,surfaces:Array,report:Object,root:THREE.Group}>}

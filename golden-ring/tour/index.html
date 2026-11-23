@@ -13,7 +13,7 @@
   <script type="importmap">
     {"imports":{"three":"../interactives/vendor/three-0.180/three.module.min.js"}}
   </script>
-  <script type="module" src="tour.js?v=8"></script>
+  <script type="module" src="tour.js?v=9"></script>
 <link rel="stylesheet" href="/css/project-navigation.css?v=20261123-1">
 </head>
 <body>
@@ -70,7 +70,8 @@
       <div class="help" id="help">
         <button type="button" id="help-toggle" aria-expanded="false">Как управлять</button>
         <div class="help-copy" id="help-copy" hidden>
-          <p><b>Мышь или касание</b> — повернуть обзор</p>
+          <p><b>Левая кнопка мыши или касание</b> — повернуть обзор</p>
+          <p><b>Правая кнопка мыши + перетаскивание</b> — сдвинуть вид влево или вправо</p>
           <p><b>Колесо или два пальца</b> — приблизить</p>
           <p><b>Прогулка</b> — WASD, стрелки или экранные кнопки</p>
           <p><a href="assets/source-media/credits.html" target="_blank" rel="noopener">Изображения и авторы</a></p>
@@ -114,7 +115,7 @@
         <button type="button" data-move="right" aria-label="Идти вправо">→</button>
       </div>
 
-      <p class="walk-hint" id="walk-hint" hidden>Перетаскивайте, чтобы смотреть · WASD или стрелки — идти · Shift — быстрее</p>
+      <p class="walk-hint" id="walk-hint" hidden>Левая кнопка или касание — смотреть · Правая кнопка — сдвиг влево/вправо · WASD или стрелки — идти · Shift — быстрее</p>
       <p class="notice" id="notice" role="status" aria-live="polite"></p>
     </section>
   </main>
