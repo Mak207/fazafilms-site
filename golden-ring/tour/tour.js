@@ -2,10 +2,10 @@ import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
 import { GLTFLoader } from '../interactives/vendor/three-0.180/GLTFLoader.js';
 import { MeshoptDecoder } from './vendor/meshopt_decoder.mjs';
 import { lightGallery, finishGallery, screens } from './gallery.js?v=3';
-import { sourceZones } from './source-zones.js?v=3';
+import { sourceZones } from './source-zones.js?v=4';
 import { createZoneLabels } from './zone-labels.js?v=1';
-import { prepareSourceGeometry } from './source-geometry.js?v=4';
-import { installSourceDisplays } from './source-display-content.js?v=2';
+import { prepareSourceGeometry } from './source-geometry.js?v=5';
+import { installSourceDisplays } from './source-display-content.js?v=3';
 import { createSourceInteractives } from './source-interactives.js?v=2';
 
 const root = document.getElementById('tour');
@@ -418,6 +418,31 @@ function orbit(dx, dy) {
   camera.lookAt(target);
 }
 
+// Translate the camera and its target together: right-drag moves the view
+// sideways without changing its direction, distance, height or field of view.
+function panHorizontal(dx) {
+  if (!dx) return;
+  visitorFollow = false;
+  cameraMotion = null;
+  camera.updateMatrixWorld();
+  const distance = mode === 'walk' ? 4 : camera.position.distanceTo(target);
+  const unitsPerPixel = 2 * distance * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) / Math.max(1, canvas.clientHeight);
+  const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0);
+  right.y = 0;
+  right.normalize();
+  const next = camera.position.clone().addScaledVector(right, -dx * unitsPerPixel);
+  if (mode === 'walk') {
+    next.x = THREE.MathUtils.clamp(next.x, -35.2, 41.8);
+    next.z = THREE.MathUtils.clamp(next.z, -15.6, 16.2);
+    next.y = 1.65;
+  }
+  target.add(next.clone().sub(camera.position));
+  camera.position.copy(next);
+  camera.lookAt(target);
+  zoneLabels.invalidate();
+  refreshFrame = true;
+}
+
 function zoom(factor) {
   visitorFollow = false;
   const offset = camera.position.clone().sub(target);
@@ -721,11 +746,15 @@ async function loadModel() {
   }
 }
 
+canvas.addEventListener('contextmenu', event => event.preventDefault());
 canvas.addEventListener('pointerdown', event => {
+  if (event.pointerType === 'mouse' && event.button !== 0 && event.button !== 2) return;
   canvas.focus({ preventScroll: true });
   visitorFollow = false;
   canvas.setPointerCapture(event.pointerId);
-  pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+  const action = event.pointerType === 'mouse' && event.button === 2 ? 'pan' : 'rotate';
+  if (action === 'pan') event.preventDefault();
+  pointers.set(event.pointerId, { x: event.clientX, y: event.clientY, action });
   lastPointer = { x: event.clientX, y: event.clientY };
   cameraMotion = null;
   if (pointers.size === 2) {
@@ -757,7 +786,8 @@ window.addEventListener('hashchange', openTourLocation);
 
 canvas.addEventListener('pointermove', event => {
   if (!pointers.has(event.pointerId)) return;
-  pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+  const pointer = pointers.get(event.pointerId);
+  pointers.set(event.pointerId, { ...pointer, x: event.clientX, y: event.clientY });
   if (pointers.size === 2 && mode === 'orbit') {
     const points = [...pointers.values()];
     const pinch = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
@@ -768,7 +798,8 @@ canvas.addEventListener('pointermove', event => {
   if (pointers.size !== 1 || !lastPointer) return;
   const dx = event.clientX - lastPointer.x;
   const dy = event.clientY - lastPointer.y;
-  if (mode === 'walk') lookAround(dx, dy);
+  if (pointer.action === 'pan') panHorizontal(dx);
+  else if (mode === 'walk') lookAround(dx, dy);
   else orbit(dx, dy);
   lastPointer = { x: event.clientX, y: event.clientY };
 });
@@ -780,6 +811,7 @@ function releasePointer(event) {
 }
 canvas.addEventListener('pointerup', releasePointer);
 canvas.addEventListener('pointercancel', releasePointer);
+canvas.addEventListener('lostpointercapture', releasePointer);
 canvas.addEventListener('wheel', event => {
   if (mode !== 'orbit') return;
   event.preventDefault();
@@ -992,10 +1024,14 @@ screenPicker.addEventListener('change',()=>selectNavigation('media', { index:Num
 
 const sourceRaycaster=new THREE.Raycaster(), sourcePointer=new THREE.Vector2();
 let sourcePointerDown=null;
-canvas.addEventListener('pointerdown',event=>{sourcePointerDown={x:event.clientX,y:event.clientY,time:performance.now()};});
+canvas.addEventListener('pointerdown',event=>{
+  sourcePointerDown=event.button===0 && event.isPrimary
+    ? {x:event.clientX,y:event.clientY,time:performance.now(),pointerId:event.pointerId} : null;
+});
+canvas.addEventListener('pointercancel',()=>{sourcePointerDown=null;});
 canvas.addEventListener('pointerup',event=>{
-  if(!sourceInteractives||!pavilion||!sourcePointerDown||mode!=='orbit')return;
   const start=sourcePointerDown;sourcePointerDown=null;
+  if(!sourceInteractives||!pavilion||!start||mode!=='orbit'||event.button!==0||event.pointerId!==start.pointerId)return;
   if(Math.hypot(event.clientX-start.x,event.clientY-start.y)>6||performance.now()-start.time>550)return;
   const rect=canvas.getBoundingClientRect();
   sourcePointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);
@@ -1015,7 +1051,7 @@ window.__GOLDEN_RING_TOUR = {
   sourceViews: () => sourceInteractives?.definitions.map(item=>({id:item.id,viewId:item.viewId,title:item.title})) || [],
   screens: () => mediaViews.map(item=>({id:item.id,title:item.title,zoneId:item.zoneId})),
   navigation: navigationSnapshot,
-  state: () => ({ release:'source-navigation-20261123-1', mode, ready: root.dataset.state === 'ready' && !webglLost, webglLost, view: viewTitle.textContent,
+  state: () => ({ release:'source-front-screens-20261123-1', mode, ready: root.dataset.state === 'ready' && !webglLost, webglLost, view: viewTitle.textContent,
     visitors: visitorStatus, visitorCount: visitors?.count || 0, visitorFollow, followedVisitor }),
   visitors: () => ({ status: visitorStatus, enabled: visitorsEnabled, ...(visitors?.snapshot() || { ready: false, actors: [] }) }),
   camera: () => ({

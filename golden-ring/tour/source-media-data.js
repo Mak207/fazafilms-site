@@ -101,15 +101,16 @@ export const SOURCE_TVER_CLOTHS = [
   {...bellsDusk, title: 'Кружево памяти · вечер', focal: [0.70, 0.48], lace: 0.54}
 ];
 
-// These are exhibition backboards inside original vitrines, not additional LED hardware.
+// User-requested front screens on the two source arched constructions (23.11.2026).
+// Their original Group_Vitrina names describe source geometry, not the new display placement.
 export const SOURCE_VITRINE_CONTENT = [
-  {...cloth, title: 'Арочная витрина · Текстильный узор', caption: 'Экспозиционное наполнение для веб-тура.', kind: 'web-exposition', focal: [.48, .52]},
-  {...river, title: 'Арочная витрина · Волжские берега', caption: 'Экспозиционное наполнение для веб-тура.', kind: 'web-exposition', focal: [.54, .50]}
+  {...cloth, title: 'Арочный экран · Текстильный узор', caption: 'Экспозиционное наполнение для веб-тура.', kind: 'web-exposition', focal: [.48, .52]},
+  {...river, title: 'Арочный экран · Волжские берега', caption: 'Экспозиционное наполнение для веб-тура.', kind: 'web-exposition', focal: [.54, .50]}
 ];
 
 export const SOURCE_MEDIA = {
-  tverVitrines: {title: 'Арочные витрины Твери', slides: SOURCE_VITRINE_CONTENT,
-    sourceRef: 'Форма: Group_Vitrina_01 / Group_Vitrina_02 в сборке 1911. Изображения добавлены для веб-тура.'},
+  tverVitrines: {title: 'Арочные экраны Твери', slides: SOURCE_VITRINE_CONTENT,
+    sourceRef: 'Исходные формы: Group_Vitrina_01 / Group_Vitrina_02. По уточнению от 23.11.2026 экраны размещены перед решёткой. Контент добавлен для веб-тура.'},
   tver: {title: 'Кружево памяти', slides: SOURCE_TVER_CLOTHS, sourceRef: concept('26–30')},
   history: {title: 'История Золотого кольца', slides: history, sourceRef: concept('13–14, 18')},
   map: {

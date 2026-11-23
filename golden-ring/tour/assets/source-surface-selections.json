@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "51 source media surfaces; two existing closed arched display-case backs filled for the web exhibition",
+  "status": "51 source-shaped media surfaces; the two arched panels are placed in front of their original grids at user request",
   "sourceSha256": "b3baac592a3b46b0a9577e61f92142e23aa44ee945ed2afbf2c8c905270712dc",
   "sourceBlend": "Общая сборка 1911-review.blend",
   "coordinateSystem": "GLB metres Y-up",
@@ -3232,7 +3232,7 @@
       "kind": "arched-vitrine",
       "interactiveId": "",
       "ordinal": 0,
-      "title": "Арочная витрина · Кружево",
+      "title": "Арочный экран · Текстильный узор",
       "sourceObject": "Ellipse013",
       "sourceGroup": "Group_Vitrina_01",
       "sourceMaterial": [
@@ -3252,7 +3252,7 @@
       "center": [
         -19.227380752563477,
         2.099306881427765,
-        -13.406075954437256
+        -12.983073970794676
       ],
       "sourceBounds": {
         "min": [
@@ -3270,12 +3270,12 @@
         "min": [
           -20.026241302490234,
           0.09899723529815674,
-          -13.406076431274414
+          -12.983074447631834
         ],
         "max": [
           -18.42852020263672,
           4.099616527557373,
-          -13.406075477600098
+          -12.983073493957518
         ]
       },
       "sourceTriangles": 272,
@@ -3289,7 +3289,7 @@
         "assembly": "1911",
         "originalGroupRole": "Vitrina",
         "originalMaterial": "Water_Metall",
-        "webAdaptation": "Existing interior back panel receives exhibit media; not attributed as an original LED screen."
+        "webAdaptation": "At user request on 2026-11-23, the existing arched silhouette is used as an opaque front screen ahead of the original grid. This is an intentional web-tour modification."
       },
       "originalSelection": {
         "mesh": "Pavilion_metal",
@@ -3318,16 +3318,40 @@
         "target": [
           -19.227380752563477,
           2.099306881427765,
-          -13.406075954437256
+          -12.983073970794676
         ],
-        "fov": 100
+        "fov": 110
       },
       "cameraVisibility": {
-        "rays": 15,
-        "unoccluded": 8,
-        "angle": -12,
-        "heightOffset": 0,
-        "note": "Original display-case ribs are intentionally retained; opaque shelf dividers can occlude portions of the back."
+        "note": "Screen moved ahead of frame and lattice; visibility is validated against the unchanged pavilion. No depth-test or render-order override."
+      },
+      "sourceCenter": [
+        -19.227380752563477,
+        2.099306881427765,
+        -13.406075954437256
+      ],
+      "webPlacement": {
+        "type": "front-screen",
+        "requestedBy": "user",
+        "requestedAt": "2026-11-23",
+        "normalOffsetMetres": 0.42300198364258,
+        "offset": [
+          -1.0039889781763425e-15,
+          -0.0,
+          0.42300198364258
+        ],
+        "frameClearanceMetres": 0.003,
+        "gridClearanceMetres": 0.04299710083007646,
+        "originalBackCenter": [
+          -19.227380752563477,
+          2.099306881427765,
+          -13.406075954437256
+        ],
+        "preservedObjects": [
+          "Ellipse005",
+          "Line119"
+        ],
+        "note": "Opaque display moved to the visitor-facing front of the frame, over the original grid, at user request. This placement is a web-tour revision, not attributed to the unmodified source assembly."
       }
     },
     {
@@ -3336,7 +3360,7 @@
       "kind": "arched-vitrine",
       "interactiveId": "",
       "ordinal": 1,
-      "title": "Арочная витрина · Волжские берега",
+      "title": "Арочный экран · Волжские берега",
       "sourceObject": "Ellipse006",
       "sourceGroup": "Group_Vitrina_02",
       "sourceMaterial": [
@@ -3354,9 +3378,9 @@
         0.8660254534096645
       ],
       "center": [
-        -14.701680183410645,
+        -14.913180890379019,
         1.4245635233819485,
-        -12.779294490814209
+        -12.412964436542063
       ],
       "sourceBounds": {
         "min": [
@@ -3372,14 +3396,14 @@
       },
       "surfaceBounds": {
         "min": [
-          -15.370954513549805,
+          -15.58245522051818,
           0.09899710863828659,
-          -13.16569995880127
+          -12.799369904529124
         ],
         "max": [
-          -14.032405853271484,
+          -14.243906560239859,
           2.7501299381256104,
-          -12.392889022827148
+          -12.026558968555003
         ]
       },
       "sourceTriangles": 288,
@@ -3393,7 +3417,7 @@
         "assembly": "1911",
         "originalGroupRole": "Vitrina",
         "originalMaterial": "Water_Metall",
-        "webAdaptation": "Existing interior back panel receives exhibit media; not attributed as an original LED screen."
+        "webAdaptation": "At user request on 2026-11-23, the existing arched silhouette is used as an opaque front screen ahead of the original grid. This is an intentional web-tour modification."
       },
       "originalSelection": {
         "mesh": "Pavilion_metal",
@@ -3423,18 +3447,42 @@
           -10.598143405643503
         ],
         "target": [
+          -14.913180890379019,
+          1.4245635233819485,
+          -12.412964436542063
+        ],
+        "fov": 85
+      },
+      "cameraVisibility": {
+        "note": "Screen moved ahead of frame and lattice; visibility is validated against the unchanged pavilion. No depth-test or render-order override."
+      },
+      "sourceCenter": [
+        -14.701680183410645,
+        1.4245635233819485,
+        -12.779294490814209
+      ],
+      "webPlacement": {
+        "type": "front-screen",
+        "requestedBy": "user",
+        "requestedAt": "2026-11-23",
+        "normalOffsetMetres": 0.42300148665360027,
+        "offset": [
+          -0.21150070696837478,
+          -0.0,
+          0.3663300542721463
+        ],
+        "frameClearanceMetres": 0.003,
+        "gridClearanceMetres": 0.04299881553592222,
+        "originalBackCenter": [
           -14.701680183410645,
           1.4245635233819485,
           -12.779294490814209
         ],
-        "fov": 60
-      },
-      "cameraVisibility": {
-        "rays": 15,
-        "unoccluded": 14,
-        "angle": 0,
-        "heightOffset": 0,
-        "note": "Original display-case ribs are intentionally retained; opaque shelf dividers can occlude portions of the back."
+        "preservedObjects": [
+          "Ellipse003",
+          "Line118"
+        ],
+        "note": "Opaque display moved to the visitor-facing front of the frame, over the original grid, at user request. This placement is a web-tour revision, not attributed to the unmodified source assembly."
       }
     }
   ],
@@ -7496,7 +7544,7 @@
     "Robot arms have no verified active joint hierarchy in this web extraction; highlights are enabled without invented robot motion.",
     "Nizhny Novgorod and prologue contain no independently confirmed blank media surface in the current original 1911 object inventory.",
     "Curved Object174075940 remains original architecture and is not counted as a display or invented yarn mechanism.",
-    "The two original Group_Vitrina backs receive web exhibit media. Their source name/material do not identify them as additional original LED screens."
+    "The two Group_Vitrina panels have been moved to the front at user request on 2026-11-23. Their LCD interpretation and front placement are an approved web-tour revision, not a claim about original source construction."
   ],
   "coverage": [
     {
@@ -7522,7 +7570,7 @@
     {
       "zoneId": "tver",
       "newSurfaces": 19,
-      "note": "11 original straight hanging cloths, 3 full original curved cloths (both sides, 3 duplicate source overlay shells removed), 2 projection-tower shells, original well water. Three arched river screens were already filled by gallery. Two original closed arched vitrine backs are filled as web exhibit surfaces; blue frames and white dividers remain unchanged."
+      "note": "11 original straight hanging cloths, 3 full original curved cloths (both sides, 3 duplicate source overlay shells removed), 2 projection-tower shells, original well water. Three arched river screens were already filled by gallery. The two original arched silhouettes are placed as front screens above the unchanged white grids at user request; blue frames remain unchanged."
     },
     {
       "zoneId": "yaroslavl",
@@ -7592,9 +7640,9 @@
     "materials": 10,
     "textures": 0
   },
-  "assetSha256": "596767fc61d83696c5e3312f403161522062981caa15571bb21ea3f0e85dd199",
-  "assetBytes": 6069784,
-  "revision": "20261123-source-04",
+  "assetSha256": "48fa35677e8b77257a87671e9d0ecc018e3b75653bae2e281da48345307b5931",
+  "assetBytes": 6071196,
+  "revision": "20261123-source-05",
   "UVcorrections": [
     "history-ribbon-01",
     "history-ribbon-02",
@@ -7644,7 +7692,7 @@
       ]
     }
   },
-  "verificationRevision": "source04-two-original-arched-vitrine-backs",
+  "verificationRevision": "source05-two-front-screens-above-grid",
   "projectionShellCorrection": {
     "sourceObject": "Object041",
     "surfaces": [
@@ -7653,5 +7701,141 @@
       "stage-projection-09"
     ],
     "reason": "Whole original curved media shell now has continuous content; no angular normal threshold leaves a white tessellated band."
+  },
+  "placementAdjustments": {
+    "requestedAt": "2026-11-23",
+    "reason": "User identifies the arched faces as unfinished LCD screens in front of the grid; apply the same placement to both matching structures.",
+    "surfaces": [
+      {
+        "id": "tver-arched-vitrine-01",
+        "sourceGroup": "Group_Vitrina_01",
+        "normal": [
+          -2.3734852719382836e-15,
+          -0.0,
+          1.0
+        ],
+        "objects": {
+          "Ellipse013": {
+            "front": -13.40607547760005,
+            "back": -13.41607570648189,
+            "vertices": 138
+          },
+          "Ellipse005": {
+            "front": -12.98607444763179,
+            "back": -13.406075477600053,
+            "vertices": 414
+          },
+          "Line119": {
+            "front": -13.026071548461866,
+            "back": -13.376071929931596,
+            "vertices": 260
+          }
+        },
+        "shift": 0.42300198364258,
+        "delta": [
+          -1.0039889781763425e-15,
+          -0.0,
+          0.42300198364258
+        ],
+        "frameClearance": 0.0030000000000001137,
+        "gridClearance": 0.04299710083007646,
+        "oldCamera": {
+          "position": [
+            -19.527380752563477,
+            2.15,
+            -11.35608
+          ],
+          "target": [
+            -19.227380752563477,
+            2.099306881427765,
+            -13.406075954437256
+          ],
+          "fov": 100
+        },
+        "newCamera": {
+          "position": [
+            -19.527380752563477,
+            2.15,
+            -11.35608
+          ],
+          "target": [
+            -19.227380752563477,
+            2.099306881427765,
+            -12.983073970794676
+          ],
+          "fov": 110
+        },
+        "newCenter": [
+          -19.227380752563477,
+          2.099306881427765,
+          -12.983073970794676
+        ]
+      },
+      {
+        "id": "tver-arched-vitrine-02",
+        "sourceGroup": "Group_Vitrina_02",
+        "normal": [
+          -0.49999991404657784,
+          -0.0,
+          0.8660254534096645
+        ],
+        "objects": {
+          "Ellipse006": {
+            "front": -3.71635357384363,
+            "back": -3.721355386001589,
+            "vertices": 146
+          },
+          "Ellipse003": {
+            "front": -3.2963541278934967,
+            "back": -3.7163562957564737,
+            "vertices": 414
+          },
+          "Line118": {
+            "front": -3.336352943429419,
+            "back": -3.6863547439142614,
+            "vertices": 148
+          }
+        },
+        "shift": 0.42300148665360027,
+        "delta": [
+          -0.21150070696837478,
+          -0.0,
+          0.3663300542721463
+        ],
+        "frameClearance": 0.0029999999999992255,
+        "gridClearance": 0.04299881553592133,
+        "oldCamera": {
+          "position": [
+            -15.960968060936882,
+            1.4245635233819485,
+            -10.598143405643503
+          ],
+          "target": [
+            -14.701680183410645,
+            1.4245635233819485,
+            -12.779294490814209
+          ],
+          "fov": 60
+        },
+        "newCamera": {
+          "position": [
+            -15.960968060936882,
+            1.4245635233819485,
+            -10.598143405643503
+          ],
+          "target": [
+            -14.913180890379019,
+            1.4245635233819485,
+            -12.412964436542063
+          ],
+          "fov": 85
+        },
+        "newCenter": [
+          -14.913180890379019,
+          1.4245635233819485,
+          -12.412964436542063
+        ]
+      }
+    ]
   }
 }

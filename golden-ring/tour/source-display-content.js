@@ -1,5 +1,5 @@
 import * as THREE from '../interactives/vendor/three-0.180/three.module.min.js';
-import { SOURCE_MEDIA, SOURCE_FINALE_CITIES, SOURCE_GLASS_STEPS } from './source-media-data.js?v=2';
+import { SOURCE_MEDIA, SOURCE_FINALE_CITIES, SOURCE_GLASS_STEPS } from './source-media-data.js?v=3';
 
 const VERTEX = `
 varying vec2 vUv;
