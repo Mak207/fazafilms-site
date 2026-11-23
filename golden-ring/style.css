@@ -205,8 +205,12 @@ body:has(dialog[open]) { overflow: hidden; }
   dialog { width: 100vw; height: 100dvh; border-radius: 0; }
 }
 
-/* Interactive pavilion tour: loaded only when its project tab is opened. */
-.tour-heading { align-items: center; }
+/* The pavilion tour is the default section; explicit material links keep their target. */
+.tour-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-bottom: 18px; }
+.tour-heading h1 { font-size: clamp(28px, 3.4vw, 44px); }
+.tour-heading .eyebrow { margin-bottom: 6px; }
+.tour-heading > .button { margin-top: 0; }
+.tour-guide { max-width: 82ch; margin-top: 16px; color: var(--muted); font-size: 15px; }
 .tour-heading > div { max-width: 900px; }
 .tour-frame-shell {
   overflow: hidden;
