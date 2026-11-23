@@ -1,0 +1,191 @@
+import * as THREE from 'three';
+import { GLTFLoader } from '/golden-ring/interactives/vendor/three-0.180/GLTFLoader.js';
+import { MeshoptDecoder } from '/golden-ring/tour/vendor/meshopt_decoder.mjs';
+import { OrbitControls } from './vendor/OrbitControls.js';
+
+const $ = id => document.getElementById(id);
+const root = $('viewer'), stage = $('stage'), canvas = $('canvas');
+const loading = $('loading'), progress = $('progress'), detail = $('loading-detail');
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const diagnostics = window.__parkViewer = { state:'loading', errors:[], source:'выставка_3D вид.dwg' };
+Object.defineProperty(diagnostics,'camera',{get:()=>({position:camera.position.toArray(),target:controls?.target.toArray()})});
+let renderer, controls, model, bounds, size, center;
+let sourceMaterials=[],sourceMeshes=[];
+let needsRender = true, active = true, transition = null, currentView = 'overview', sectionOn = false;
+const clipPlane = new THREE.Plane(new THREE.Vector3(0,-1,0), 0);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(43, 1, 0.05, 4000);
+camera.position.set(90,70,100);
+const viewDirections = {overview:new THREE.Vector3(1.9,1.12,.72), top:new THREE.Vector3(0,1,.001), front:new THREE.Vector3(0,.16,1), back:new THREE.Vector3(-1,.55,-1.25)};
+const viewNames = {overview:'Общий вид',top:'Вид сверху',front:'Вид спереди',back:'С другой стороны'};
+
+function fail(error) {
+  const message = error?.message || String(error);
+  diagnostics.errors.push(message);diagnostics.state='error';root.dataset.state='error';
+  loading.hidden=false;$('loading-title').textContent='Не удалось открыть 3D-модель';
+  detail.textContent='Проверьте соединение и повторите загрузку.';$('retry').hidden=false;
+  console.error('Park viewer:',error);
+}
+$('retry').onclick=()=>location.reload();
+
+try {
+  renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1,1.6));
+  renderer.setClearColor(0x000000,0);
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;
+  renderer.localClippingEnabled=true;
+  controls=new OrbitControls(camera,canvas);
+  controls.enableDamping=true;controls.dampingFactor=.08;
+  controls.mouseButtons={LEFT:THREE.MOUSE.ROTATE,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:THREE.MOUSE.PAN};
+  controls.touches={ONE:THREE.TOUCH.ROTATE,TWO:THREE.TOUCH.DOLLY_PAN};
+  controls.screenSpacePanning=true;controls.zoomToCursor=true;
+  controls.minPolarAngle=.001;controls.maxPolarAngle=Math.PI*.499;
+  controls.addEventListener('change',()=>{needsRender=true});
+  controls.addEventListener('start',()=>{transition=null;currentView=null});
+  canvas.addEventListener('contextmenu',event=>event.preventDefault());
+  canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();fail(new Error('WebGL context lost'))});
+  const ambient = new THREE.HemisphereLight(0xf2f5ef,0x6a7667,1.2);scene.add(ambient);
+  const key = new THREE.DirectionalLight(0xfff3df,2.1);key.position.set(90,140,80);scene.add(key);
+  const fill = new THREE.DirectionalLight(0xd0e4f1,.7);fill.position.set(-100,55,-50);scene.add(fill);
+  const rim = new THREE.DirectionalLight(0xffffff,.3);rim.position.set(15,20,-110);scene.add(rim);
+  function resize(){
+    const width=stage.clientWidth,height=stage.clientHeight;if(!width||!height)return;
+    renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();
+    if(model&&currentView)setView(currentView,true);
+    needsRender=true;
+  }
+  new ResizeObserver(resize).observe(stage);resize();
+  const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
+  loader.load('assets/park.glb?v=1',gltf=>{
+    try {
+      model=gltf.scene;model.updateMatrixWorld(true);
+      bounds=new THREE.Box3().setFromObject(model);size=bounds.getSize(new THREE.Vector3());center=bounds.getCenter(new THREE.Vector3());
+      if(bounds.isEmpty()||!Number.isFinite(size.length())||size.length()===0)throw new Error('Empty model bounds');
+      let meshes=0,triangles=0;const materials=new Set();
+      model.traverse(node=>{
+        if(!node.isMesh)return;
+        meshes++;triangles+=(node.geometry.index?.count || node.geometry.attributes.position?.count || 0)/3;
+        for(const material of Array.isArray(node.material)?node.material:[node.material]){
+          if(material){materials.add(material);material.clippingPlanes=[];}
+        }
+      });
+      // Thin crease lines make the original CAD structure readable without replacing its materials.
+      const edgeMaterial=new THREE.LineBasicMaterial({color:0x26382e,transparent:true,opacity:.22,depthWrite:false});
+      const edgeCache=new Map();
+      sourceMeshes=[];model.traverse(node=>{if(node.isMesh&&!node.isInstancedMesh)sourceMeshes.push(node)});
+      let edgeBudget=500000;
+      for(const node of [...sourceMeshes].sort((a,b)=>a.geometry.attributes.position.count-b.geometry.attributes.position.count)){
+        const vertices=node.geometry.attributes.position.count;
+        if(vertices>120000||vertices>edgeBudget)continue;
+        edgeBudget-=vertices;
+        let geometry=edgeCache.get(node.geometry);
+        if(!geometry){geometry=new THREE.EdgesGeometry(node.geometry,32);edgeCache.set(node.geometry,geometry);}
+        const edges=new THREE.LineSegments(geometry,edgeMaterial);edges.name='CAD surface edges';edges.renderOrder=1;node.add(edges);
+      }
+      materials.add(edgeMaterial);
+      sourceMaterials=[...materials];
+      scene.add(model);
+      camera.near=Math.max(.02,size.length()/15000);camera.far=size.length()*12;camera.updateProjectionMatrix();
+      controls.minDistance=Math.max(.3,size.length()/700);controls.maxDistance=size.length()*4;
+      $('section-height').min=String(Math.max(0,bounds.min.y));
+      $('section-height').max=String(bounds.max.y);
+      $('section-height').step=String(Math.max(.05,Number((size.y/500).toFixed(2))));
+      $('section-height').value=String(bounds.min.y+size.y*.5);
+      updateSection();
+      Object.assign(diagnostics,{state:'ready',meshes,triangles:Math.round(triangles),materials:materials.size,bounds:{min:bounds.min.toArray(),max:bounds.max.toArray()},sourceUnits:'meters'});
+      root.dataset.state='ready';$('model-info').textContent='3D-предпросмотр из DWG';
+      setView('overview',true);progress.style.width='100%';loading.hidden=true;
+      root.querySelectorAll('[data-view],#section-toggle,#reset').forEach(button=>button.disabled=false);
+      needsRender=true;
+    }catch(error){fail(error);}
+  },event=>{
+    if(event.lengthComputable&&event.total){const percent=Math.min(99,Math.round(event.loaded/event.total*100));progress.style.width=percent+'%';detail.textContent=percent===99?'Подготавливаем геометрию…':'Загружено '+percent+'%';}
+    else{detail.textContent='Загружено '+(event.loaded/1048576).toFixed(1).replace('.',',')+' МБ';}
+  },fail);
+
+  function frame(time){
+    requestAnimationFrame(frame);
+    if(!active||document.hidden)return;
+    if(transition){
+      const t=Math.min(1,(time-transition.start)/transition.duration),e=t*t*(3-2*t);
+      camera.position.lerpVectors(transition.from,transition.to,e);controls.target.lerpVectors(transition.fromTarget,transition.toTarget,e);needsRender=true;
+      if(t===1)transition=null;
+    }
+    controls.update();
+    if(needsRender){renderer.render(scene,camera);needsRender=false;diagnostics.renderedFrames=(diagnostics.renderedFrames||0)+1;diagnostics.renderTriangles=renderer.info.render.triangles;}
+  }
+  requestAnimationFrame(frame);
+}catch(error){fail(error);}
+
+function fittedView(direction){
+  const d=direction.clone().normalize(),right=new THREE.Vector3().crossVectors(camera.up,d).normalize(),up=new THREE.Vector3().crossVectors(d,right).normalize();
+  const vTan=Math.tan(THREE.MathUtils.degToRad(camera.fov)/2),hTan=vTan*camera.aspect;
+  let rightLimit=-Infinity,leftLimit=-Infinity,topLimit=-Infinity,bottomLimit=-Infinity;
+  const p=new THREE.Vector3();
+  model.updateMatrixWorld(true);
+  // Fit the actual source vertices: a sparse CAD assembly can have a much larger bounding box than its visible silhouette.
+  model.traverse(node=>{
+    if(!node.isMesh)return;
+    const positions=node.geometry.attributes.position;
+    if(!positions)return;
+    for(let i=0;i<positions.count;i++){
+      p.fromBufferAttribute(positions,i).applyMatrix4(node.matrixWorld).sub(center);
+      const x=p.dot(right),y=p.dot(up),z=p.dot(d);
+      rightLimit=Math.max(rightLimit,x/hTan+z);leftLimit=Math.max(leftLimit,-x/hTan+z);
+      topLimit=Math.max(topLimit,y/vTan+z);bottomLimit=Math.max(bottomLimit,-y/vTan+z);
+    }
+  });
+  const target=center.clone().addScaledVector(right,(rightLimit-leftLimit)*hTan/2).addScaledVector(up,(topLimit-bottomLimit)*vTan/2);
+  const distance=Math.max((rightLimit+leftLimit)/2,(topLimit+bottomLimit)/2)*1.12;
+  return {position:target.clone().addScaledVector(d,distance),target};
+}
+function moveCamera(position,target,instant=false){
+  if(!controls)return;
+  if(instant||reduceMotion){camera.position.copy(position);controls.target.copy(target);controls.update();transition=null;}
+  else transition={from:camera.position.clone(),to:position,fromTarget:controls.target.clone(),toTarget:target.clone(),start:performance.now(),duration:650};
+  needsRender=true;
+}
+function setView(view,instant=false){
+  if(!model)return;
+  currentView=view;
+  const direction=view==='overview'&&camera.aspect<1 ? new THREE.Vector3(.45,1.6,2.3) : view==='top'&&camera.aspect>1 ? new THREE.Vector3(.001,1,0) : viewDirections[view];
+  const fitted=fittedView(direction);moveCamera(fitted.position,fitted.target,instant);
+  document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.view===view)));
+  $('view-name').textContent=viewNames[view];diagnostics.view=view;
+}
+function updateSection(){
+  if(!model)return;
+  const height=Number($('section-height').value);clipPlane.constant=height;
+  for(const material of sourceMaterials){
+    if(Boolean(material.clippingPlanes?.length)!==sectionOn){material.clippingPlanes=sectionOn?[clipPlane]:[];material.clipShadows=true;material.needsUpdate=true;}
+  }
+  $('section-value').textContent=height.toLocaleString('ru-RU',{maximumFractionDigits:1})+' м';
+  diagnostics.section={enabled:sectionOn,height};needsRender=true;
+}
+root.querySelectorAll('[data-view],#section-toggle,#reset').forEach(button=>button.disabled=true);
+document.querySelectorAll('[data-view]').forEach(button=>button.onclick=()=>setView(button.dataset.view));
+$('reset').onclick=()=>{sectionOn=false;$('section-toggle').setAttribute('aria-pressed','false');$('section-controls').hidden=true;updateSection();setView('overview');};
+$('section-toggle').onclick=()=>{sectionOn=!sectionOn;$('section-toggle').setAttribute('aria-pressed',String(sectionOn));$('section-controls').hidden=!sectionOn;updateSection();};
+$('section-height').addEventListener('input',updateSection);
+function showHelp(show){$('help').hidden=!show;$('help-toggle').setAttribute('aria-expanded',String(show));}
+$('help-toggle').onclick=()=>showHelp($('help').hidden);$('close-help').onclick=()=>showHelp(false);
+document.addEventListener('keydown',event=>{if(event.key==='Escape')showHelp(false);if(event.key==='Home'&&document.activeElement===canvas){event.preventDefault();setView('overview');}});
+$('fullscreen').onclick=async()=>{
+  try{if(document.fullscreenElement)await document.exitFullscreen();else await root.requestFullscreen();}
+  catch{const notice=$('scene-notice');notice.textContent='Для просмотра во весь экран откройте 3D-тур отдельно.';notice.hidden=false;}
+};
+document.addEventListener('fullscreenchange',()=>{$('fullscreen').textContent=document.fullscreenElement?'Свернуть':'На весь экран';needsRender=true;});
+window.addEventListener('message',event=>{
+  if(event.origin!==location.origin||event.source!==window.parent||event.data?.type!=='park-tour-visibility')return;
+  active=Boolean(event.data.visible);if(active){window.dispatchEvent(new Event('resize'));needsRender=true;}
+});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)needsRender=true;});
+const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
+canvas.addEventListener('dblclick',event=>{
+  if(!model||!controls)return;
+  const rect=canvas.getBoundingClientRect();pointer.set((event.clientX-rect.left)/rect.width*2-1,1-(event.clientY-rect.top)/rect.height*2);raycaster.setFromCamera(pointer,camera);
+  const hits=raycaster.intersectObjects(sourceMeshes,false);const hit=hits.find(item=>item.object.isMesh&&(!sectionOn||item.point.y<=Number($('section-height').value)));if(!hit)return;
+  const direction=camera.position.clone().sub(controls.target).normalize();const distance=Math.max(size.length()*.055,camera.position.distanceTo(hit.point)*.4);
+  currentView=null;moveCamera(hit.point.clone().addScaledVector(direction,distance),hit.point);document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));$('view-name').textContent='Детальный обзор';diagnostics.view='detail';
+});

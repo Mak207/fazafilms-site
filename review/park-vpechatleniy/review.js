@@ -166,7 +166,7 @@ function makeCard(clip,role){
    const info=el("div","meta");info.append(el("h2","",clip.title));if(role!=="lead")mountApproval(info,clip,true);
    card.append(info);mountEditor(card,clip);mountForm(card,clip,null);return card;
  }
- const card=el("article","card");const v=el("video","player");v.controls=true;v.playsInline=true;v.preload=role==="lead"?"metadata":"none";v.setAttribute("aria-label",clip.title+". Просмотр без звука");
+ const card=el("article","card");const v=el("video","player");v.controls=true;v.playsInline=true;v.preload=role==="lead"&&document.body.dataset.folder==="film"?"metadata":"none";v.setAttribute("aria-label",clip.title+". Просмотр без звука");
  v.defaultMuted=true;v.muted=true;v.volume=0;v.addEventListener("volumechange",()=>{if(!v.muted||v.volume!==0){v.muted=true;v.volume=0}});if(clip.poster)v.poster=clip.poster;v.src=clip.src;card.append(v);
  mediaList.push(v);v.addEventListener("play",()=>mediaList.forEach(o=>{if(o!==v)o.pause()}));
  const info=el("div","meta"),heading=el(role==="clip"?"h3":"h2","",clip.title);
@@ -183,14 +183,25 @@ function makeCard(clip,role){
  mountEditor(card,clip);mountForm(card,clip,v);return card;
 }
 function selectFolder(){
- const photos=location.hash==="#photos";
- document.querySelector("#photos").hidden=!photos;
- for(const id of ["film","scenes"])document.getElementById(id).hidden=photos;
- for(const [id,selected] of [["movies-tab",!photos],["photos-tab",photos]]){
+ const hash=location.hash.split("?")[0];
+ const active=hash==="#photos"?"photos":(!hash||hash==="#tour"?"tour":"film");
+ document.body.dataset.folder=active;
+ document.getElementById("tour").hidden=active!=="tour";
+ document.getElementById("photos").hidden=active!=="photos";
+ for(const id of ["film","scenes"])document.getElementById(id).hidden=active!=="film";
+ document.getElementById("notice").hidden=active==="tour";
+ for(const [id,folder] of [["tour-tab","tour"],["movies-tab","film"],["photos-tab","photos"]]){
    const tab=document.getElementById(id);
-   if(selected)tab.setAttribute("aria-current","page");else tab.removeAttribute("aria-current");
+   if(active===folder)tab.setAttribute("aria-current","page");else tab.removeAttribute("aria-current");
  }
- if(photos)mediaList.forEach(player=>player.pause());
+ const frame=document.getElementById("park-tour");
+ const visibility=()=>frame.contentWindow?.postMessage({type:"park-tour-visibility",visible:document.body.dataset.folder==="tour"},location.origin);
+ if(active==="tour"&&!frame.getAttribute("src")){
+   frame.addEventListener("load",visibility,{once:true});
+   frame.src=frame.dataset.src;
+ }
+ if(frame.getAttribute("src"))visibility();
+ if(active!=="film")mediaList.forEach(player=>player.pause());
 }
 window.addEventListener("hashchange",selectFolder);
 selectFolder();
