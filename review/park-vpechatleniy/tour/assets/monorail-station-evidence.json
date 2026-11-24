@@ -1,0 +1,447 @@
+{
+  "schemaVersion": 1,
+  "updatedAtUtc": "2026-11-24T09:40:28.127Z",
+  "status": "provisional",
+  "title": "Существующая площадка 16,65 м и рабочий челночный подход",
+  "platform": {
+    "existsInCad": true,
+    "passengerPurposeConfirmed": false,
+    "selectionSource": "User screenshot beside glass block, reactor and former icebreaker position",
+    "sourceNode": "A-FLOR__f4cc95ff",
+    "sourceObject": "Перекрытие ATR_ВН_ОТ_Пол_Керамо_56ecded",
+    "height": 16.65,
+    "boundsXZ": {
+      "xMin": -34.8843421936,
+      "xMax": -16.1843414307,
+      "zMin": -80.2923660278,
+      "zMax": -61.1673660278
+    },
+    "areaSquareMeters": 356.029,
+    "stairs": [
+      {
+        "name": "Монолитная лестница Лестница _03d5fb0",
+        "b": {
+          "x0": -16.21433672881335,
+          "x1": -8.264339780571163,
+          "z0": -77.88174189565962,
+          "z1": -76.28176630972212,
+          "y0": 13.199999237070427,
+          "y1": 16.599998855600703
+        }
+      },
+      {
+        "name": "Монолитная лестница Лестница _45104e1",
+        "b": {
+          "x0": -33.10894427275866,
+          "x1": -31.508938169243038,
+          "z0": -61.16235102651899,
+          "z1": -53.24737299917524,
+          "y0": 13.199999237070427,
+          "y1": 16.634998703012812
+        }
+      }
+    ]
+  },
+  "boarding": {
+    "workingUse": true,
+    "vehicleIndex": 0,
+    "vehicleCenter": [
+      -14.8898232343,
+      15.85,
+      -68.5
+    ],
+    "platformEdgeX": -16.1843414307,
+    "sideGap": 0.15,
+    "passengerFloorOffset": 0.8,
+    "passengerFloorOffsetConfidence": "visual calibration; no separate cabin-floor mesh in vehicle GLB",
+    "gate": {
+      "meshName": "Ограждение__7f7f7fff",
+      "min": [
+        -16.19,
+        16.6501,
+        -69.1
+      ],
+      "max": [
+        -16.13,
+        17.8,
+        -67.9
+      ],
+      "width": 1.2,
+      "provisional": true,
+      "sourceTriangleIndices": [
+        12260,
+        12261,
+        12266,
+        12267,
+        12268,
+        12269
+      ],
+      "method": "Local polygon/AABB subtraction preserving all outside triangle fragments; source CAD file unchanged"
+    }
+  },
+  "route": {
+    "mode": "shuttle",
+    "closed": false,
+    "length": 212.8157082508685,
+    "railHeightRange": [
+      15.85,
+      16.6
+    ],
+    "heightTransitionLength": 25,
+    "maxGrade": 0.045,
+    "vehicles": 2,
+    "vehicleLength": 12,
+    "vehicleWidth": 2.2890363928,
+    "vehicleHeight": 3.1035019455,
+    "centerSpacing": 13.5,
+    "nominalBodyGap": 1.5,
+    "leadingDistanceRange": [
+      19.8,
+      206.5157082508685
+    ],
+    "dwellAtPlatformSeconds": 8,
+    "dwellAtOtherEndSeconds": 4,
+    "reversal": "Both vehicles change travel direction while retaining orientation",
+    "boardingNote": "Only vehicle 0 aligns with the 19m CAD platform at the station stop",
+    "supportCount": 19,
+    "supports": [
+      {
+        "index": 0,
+        "distance": 0.6,
+        "x": 28,
+        "z": -42.4,
+        "floorY": 7.2,
+        "railY": 16.6,
+        "beamBottom": 15.820000000000002,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": 0
+      },
+      {
+        "index": 1,
+        "distance": 12.356428236159362,
+        "x": 28,
+        "z": -30.64357176384064,
+        "floorY": 7.2,
+        "railY": 16.6,
+        "beamBottom": 15.820000000000002,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": 0
+      },
+      {
+        "index": 2,
+        "distance": 24.112856472318725,
+        "x": 28,
+        "z": -18.887143527681275,
+        "floorY": 7.2,
+        "railY": 16.6,
+        "beamBottom": 15.820000000000002,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": 0
+      },
+      {
+        "index": 3,
+        "distance": 35.86928470847809,
+        "x": 28,
+        "z": -7.130715291521909,
+        "floorY": 13.2,
+        "railY": 16.6,
+        "beamBottom": 15.820000000000002,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": 0
+      },
+      {
+        "index": 4,
+        "distance": 47.62571294463745,
+        "x": 28,
+        "z": 4.625712944637449,
+        "floorY": 13.2,
+        "railY": 16.6,
+        "beamBottom": 15.820000000000002,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": 0
+      },
+      {
+        "index": 5,
+        "distance": 59.38214118079681,
+        "x": 27.47240111697521,
+        "z": 16.343922909661806,
+        "floorY": 13.2,
+        "railY": 16.6,
+        "beamBottom": 15.820000000000002,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": -0.21698413757730392
+      },
+      {
+        "index": 6,
+        "distance": 71.13856941695617,
+        "x": 22.123243533372502,
+        "z": 26.663039749014356,
+        "floorY": 13.2,
+        "railY": 16.6,
+        "beamBottom": 15.820000000000002,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": -0.7394922641030857
+      },
+      {
+        "index": 7,
+        "distance": 82.89499765311554,
+        "x": 12.338014266522457,
+        "z": 32.93575426456544,
+        "floorY": 7.2,
+        "railY": 16.6,
+        "beamBottom": 15.820000000000002,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": -1.2620003906288677
+      },
+      {
+        "index": 8,
+        "distance": 94.65142588927489,
+        "x": 0.7096367672681758,
+        "z": 33.678438776522455,
+        "floorY": 7.2,
+        "railY": 16.6,
+        "beamBottom": 15.820000000000002,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": -1.740064055279851
+      },
+      {
+        "index": 9,
+        "distance": 106.40785412543426,
+        "x": -9.85288047505511,
+        "z": 28.827574038762087,
+        "floorY": 7.2,
+        "railY": 16.6,
+        "beamBottom": 15.820000000000002,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": -2.2625721818056324
+      },
+      {
+        "index": 10,
+        "distance": 118.1642823615936,
+        "x": -16.58519415207526,
+        "z": 19.352680279324453,
+        "floorY": 13.2,
+        "railY": 16.6,
+        "beamBottom": 15.820000000000002,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": -2.785080308331412
+      },
+      {
+        "index": 11,
+        "distance": 129.92071059775296,
+        "x": -18,
+        "z": 7.765096386249027,
+        "floorY": 7.2,
+        "railY": 16.6,
+        "beamBottom": 15.820000000000002,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": 3.141592653589793
+      },
+      {
+        "index": 12,
+        "distance": 141.67713883391235,
+        "x": -18,
+        "z": -3.9913318499103667,
+        "floorY": 7.2,
+        "railY": 16.6,
+        "beamBottom": 15.820000000000002,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": 3.141592653589793
+      },
+      {
+        "index": 13,
+        "distance": 153.43356707007172,
+        "x": -18,
+        "z": -15.747760086069732,
+        "floorY": 13.2,
+        "railY": 16.6,
+        "beamBottom": 15.820000000000002,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": 3.141592653589793
+      },
+      {
+        "index": 14,
+        "distance": 165.18999530623108,
+        "x": -18,
+        "z": -27.504188322229098,
+        "floorY": 13.2,
+        "railY": 16.6,
+        "beamBottom": 15.820000000000002,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": 3.141592653589793
+      },
+      {
+        "index": 15,
+        "distance": 176.94642354239042,
+        "x": -18,
+        "z": -39.260616558388435,
+        "floorY": 7.2,
+        "railY": 16.592912138856825,
+        "beamBottom": 15.812912138856825,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": 3.141592653589793
+      },
+      {
+        "index": 16,
+        "distance": 188.70285177854979,
+        "x": -16.67856096975192,
+        "z": -50.88302681653607,
+        "floorY": 7.2,
+        "railY": 16.194109688067204,
+        "beamBottom": 15.414109688067205,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": 2.8801183461216895
+      },
+      {
+        "index": 17,
+        "distance": 199.75928001470916,
+        "x": -14.88982323428045,
+        "z": -61.743571763840635,
+        "floorY": 13.2,
+        "railY": 15.852018310909894,
+        "beamBottom": 15.072018310909893,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": 3.141592653589793
+      },
+      {
+        "index": 18,
+        "distance": 211.71570825086852,
+        "x": -14.88982323428045,
+        "z": -73.69999999999999,
+        "floorY": 7.2,
+        "railY": 15.85,
+        "beamBottom": 15.069999999999999,
+        "footRadius": 0.6,
+        "columnRadius": 0.34,
+        "capHalfWidth": 0.56,
+        "capHalfLength": 0.29,
+        "heading": 3.141592653589793
+      }
+    ],
+    "crowd": {
+      "api": "getCollisionObstacles()",
+      "records": 259,
+      "mainMezzanineHeadroom": 2.62,
+      "restrictedApproach": {
+        "xRange": [
+          -15.84,
+          -14.88
+        ],
+        "zRange": [
+          -62,
+          -54
+        ],
+        "headroomRange": [
+          1.87,
+          2.08
+        ],
+        "meaning": "Prevent pedestrians under the low approach beam; use obstacle minY/maxY against floor plus person height"
+      }
+    }
+  },
+  "validation": {
+    "moduleSha256": "02e3ba2acf34c6c94facc47800335391b30a2b986bd76d6e83ed5e4f36eebf64",
+    "buildingSha256": "0fe60c53a9fc72c9ed0ad15ac8808ca721b3a7af8e96d81329cdc748c78fd792",
+    "cadTriangles": 2927007,
+    "routeSamples": 852,
+    "stepMeters": 0.25,
+    "cadCarIntersections": 0,
+    "cadBeamIntersections": 0,
+    "pairIntersections": 0,
+    "minPairSeparatingAxisGap": 1.0892558244808095,
+    "minPairCenterDistance": 13.298414357760382,
+    "exhibitIntersections": 0,
+    "exhibitScenario": "24 objects, with O12 replaced by center(33.05,7.2,-47),yawPI,length25.2 and its north bridge",
+    "supportIntersections": 0,
+    "reversalTests": [
+      {
+        "time": 70.26666666666667,
+        "distance": 19.8,
+        "direction": 1,
+        "dwell": 4,
+        "angles": [
+          0,
+          0
+        ]
+      },
+      {
+        "time": 136.56666666666666,
+        "distance": 206.5157082508685,
+        "direction": -1,
+        "dwell": 8,
+        "angles": [
+          0,
+          0.00035936641112595697
+        ]
+      }
+    ],
+    "method": "CAD triangles versus conservative oriented car/rail/support boxes; full pair cycle and current transformed exhibit bounds; behavioral harness uses dimension-matched stub, browser checks actual GLB separately",
+    "scope": "Presentation geometry check, not engineering certification"
+  },
+  "decision": {
+    "northClosedLoop": "Rejected: actual stairs/rooms and 12m rigid-car rear swing intersect CAD",
+    "cfoReconstruction": "Removed from final scene; checked alternative archived in D project evidence",
+    "cadChanged": false
+  },
+  "evidenceFiles": [
+    "nw-beige-platform-source.json",
+    "nw-beige-edge-probes.json",
+    "nw-boarding-gate-triangles.json",
+    "nw-shuttle-route-probes.json",
+    "shuttle-runtime-qa.json"
+  ]
+}

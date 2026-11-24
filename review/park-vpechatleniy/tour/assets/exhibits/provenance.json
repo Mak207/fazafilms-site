@@ -735,6 +735,59 @@
         ],
         "geometryMatchesHighQuality": true,
         "uvAndMaterialMappingPreserved": true
+      },
+      "sceneCorrections": {
+        "revision": "park-compact-20261124",
+        "sourceMasterUnchanged": true,
+        "lettering": "АТОМФЛОТ",
+        "letteringSides": 2,
+        "letteringMethod": "Native scene labels cover only generated incorrect hull relief; derived GLBs unchanged.",
+        "workingScale": {
+          "lengthMeters": 25.2,
+          "widthMeters": 6.395751694,
+          "heightMeters": 8.839919429
+        },
+        "workingPose": {
+          "x": 33.05,
+          "y": 7.2,
+          "z": -47,
+          "rotationY": 3.141592653589793
+        },
+        "access": {
+          "mezzanineY": 13.2,
+          "wingAboveBaseMeters": 6,
+          "bridgeWidthMeters": 1.2,
+          "path": [
+            [
+              28.2,
+              13.2,
+              -61.567
+            ],
+            [
+              28.2,
+              13.2,
+              -54.14
+            ],
+            [
+              29.97,
+              13.2,
+              -54.14
+            ]
+          ],
+          "status": "provisional; exterior wheelhouse wing, not a verified interior door"
+        },
+        "evidence": {
+          "videoSeconds": [
+            64,
+            65.52,
+            70
+          ],
+          "cadSurfaceIntersections": 0,
+          "otherExhibitIntersections": 0,
+          "floorSupportSamples": 9,
+          "clearanceWestOfHullMeters": 1.252124
+        },
+        "validationScope": "Working exhibit layout based on video and measured CAD, not engineering approval."
       }
     },
     {
@@ -997,5 +1050,6 @@
     "geometry": "Exact meshopt bytes, accessor/node/scene data and UV/PBR mapping match the existing high-quality copies.",
     "textures": "Two original JPEG textures resized to 2048x2048 with LANCZOS; JPEG quality 92 and no chroma subsampling.",
     "purpose": "Reduce first-load transfer while retaining high-quality 4K and original production 8K versions."
-  }
+  },
+  "layoutRevision": "park-compact-20261124"
 }

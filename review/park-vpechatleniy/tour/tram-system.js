@@ -3,7 +3,8 @@ import * as THREE from 'three';
 /**
  * Monorail for the Park Impressions viewer. Three.js r180, metres, Y up.
  * The alignment is a presentation reconstruction, not a surveyed CAD axis.
- * No DOM, animation loop, network dependency, or substitute wagon is created.
+ * No animation loop, network dependency, or substitute wagon is created.
+ * A local canvas labels the provisional use of the existing CAD terrace.
  */
 export const DEFAULT_ROUTE_CONFIG = Object.freeze({
   centerX: 5, centerZ: -15.75, width: 46, length: 99.5,
@@ -115,6 +116,121 @@ export function createRoundedRectangleRoute(input = {}) {
   });
 }
 
+
+/** Existing NW terrace, selected in the user's screenshot; open shuttle alignment. */
+export const MONORAIL_ROUTE_CONFIG = Object.freeze({
+  centerX: 5, centerZ: -20.4, width: 46, length: 108.8,
+  cornerRadius: 22.5, height: 16.6, floorHeight: 13.2,
+  routeMode: 'shuttle', stationRailHeight: 15.85,
+  vehicleSpacing: 13.5, endClearance: 6.3,
+});
+
+export const MONORAIL_BOARDING_GATE = Object.freeze({
+  id: 'nw-terrace-boarding-gate', provisional: true,
+  meshName: 'Ограждение__7f7f7fff',
+  min: Object.freeze([-16.19, 16.6501, -69.10]),
+  max: Object.freeze([-16.13, 17.80, -67.90]),
+  sourceTriangleIndices: Object.freeze([12260, 12261, 12266, 12267, 12268, 12269]),
+  method: 'Subtract this local box from polygons; preserve the rest of each long triangle.',
+  sourceCadFileModified: false,
+});
+
+export const MONORAIL_STATION_EVIDENCE = Object.freeze({
+  label: 'Посадка на существующей площадке · рабочий вариант',
+  status: 'provisional', existingCadPlatformConfirmed: true,
+  passengerPurposeConfirmed: false,
+  evidence: Object.freeze([
+    'Скриншот пользователя: бежевая площадка рядом со стеклянным блоком, реактором и прежним местом ледокола.',
+    'CAD: Перекрытие ATR_ВН_ОТ_Пол_Керамо_56ecded, верх Y=16.65 м.',
+    'Существующие лестницы _03d5fb0 и _45104e1 соединяют площадку с антресолью Y=13.2 м.',
+    'Посадочное назначение, локальная калитка 1.2 м и челночная трасса — рабочее сценовое решение.',
+  ]),
+  platformBounds: Object.freeze({ min: Object.freeze([-34.884342, 16.65, -80.292366]), max: Object.freeze([-16.184341, 16.65, -61.167366]) }),
+  passengerFloorOffset: 0.8,
+  passengerFloorOffsetNote: 'В GLB вагона отдельный пол салона не выделен; +0.8 м — рабочая визуальная калибровка.',
+  buildingSha256: '0fe60c53a9fc72c9ed0ad15ac8808ca721b3a7af8e96d81329cdc748c78fd792',
+  boardingVehicle: 0,
+});
+
+/**
+ * Open C-shaped route. Both vehicles keep their body orientation when the pair
+ * reverses; no in-place turn or hidden path through the northern rooms is used.
+ */
+export function createMonorailRoute(input = MONORAIL_ROUTE_CONFIG) {
+  if (input.routeMode !== 'shuttle') return createRoundedRectangleRoute(input);
+  const config = Object.freeze({ ...MONORAIL_ROUTE_CONFIG, ...input });
+  for (const key of ['height', 'stationRailHeight', 'vehicleSpacing', 'endClearance']) finiteNumber(config[key], key);
+  if (config.vehicleSpacing < TRAM_CONSTANTS.vehicleLength + 1) throw new RangeError('Монорельс: между вагонами нужен рабочий интервал.');
+  const segments = [];
+  let total = 0;
+  function add(raw) {
+    const divisions = raw.type === 'line' ? 1 : 512, lengths = [0];
+    let previous = raw.point(0);
+    for (let i = 1; i <= divisions; i++) {
+      const point = raw.point(i / divisions);
+      lengths.push(lengths[lengths.length - 1] + Math.hypot(point[0] - previous[0], point[1] - previous[1]));
+      previous = point;
+    }
+    const length = lengths[lengths.length - 1];
+    segments.push(Object.freeze({ ...raw, divisions, lengths: Object.freeze(lengths), length, start: total, end: total + length }));
+    total += length;
+  }
+  const line = (x, z, tx, tz, length) => add({ type: 'line',
+    point: u => [x + tx * length * u, z + tz * length * u], tangent: () => [tx, tz] });
+  const arc = (x, z, radius, angle) => add({ type: 'arc',
+    point: u => [x + radius * Math.cos(angle + Math.PI * u / 2), z + radius * Math.sin(angle + Math.PI * u / 2)],
+    tangent: u => [-radius * Math.sin(angle + Math.PI * u / 2), radius * Math.cos(angle + Math.PI * u / 2)] });
+  const cubic = (a, b, c, d) => add({ type: 'cubic',
+    point: u => { const v = 1 - u; return [0, 1].map(i => v*v*v*a[i] + 3*v*v*u*b[i] + 3*v*u*u*c[i] + u*u*u*d[i]); },
+    tangent: u => { const v = 1 - u; return [0, 1].map(i => 3*v*v*(b[i]-a[i]) + 6*v*u*(c[i]-b[i]) + 3*u*u*(d[i]-c[i])); } });
+  const stationX = -14.88982323428045;
+  line(28, -43, 0, 1, 54.5);
+  arc(5.5, 11.5, 22.5, 0);
+  line(5.5, 34, -1, 0, 1);
+  arc(4.5, 11.5, 22.5, Math.PI / 2);
+  line(-18, 11.5, 0, -1, 54.5);
+  cubic([-18, -43], [-18, -49], [stationX, -54.5], [stationX, -60.5]);
+  line(stationX, -60.5, 0, -1, 14.3);
+  const lowerEnd = segments[segments.length - 1].start + 2, lowerStart = lowerEnd - 25;
+  const drop = config.height - config.stationRailHeight;
+  function sampleDistance(distance, target) {
+    const d = Math.max(0, Math.min(total, finiteNumber(distance, 'distance')));
+    const segment = segments.find(item => d < item.end) || segments[segments.length - 1], local = d - segment.start;
+    let lo = 0, hi = segment.divisions;
+    while (hi - lo > 1) {
+      const middle = (lo + hi) >> 1;
+      if (segment.lengths[middle] <= local) lo = middle; else hi = middle;
+    }
+    const span = segment.lengths[hi] - segment.lengths[lo];
+    const u = (lo + (span > 0 ? (local - segment.lengths[lo]) / span : 0)) / segment.divisions;
+    const point = segment.point(u), tangent = segment.tangent(u), horizontalLength = Math.hypot(...tangent);
+    const p = Math.max(0, Math.min(1, (d - lowerStart) / 25));
+    const y = config.height - drop * (3*p*p - 2*p*p*p);
+    const grade = p > 0 && p < 1 ? -drop * (6*p - 6*p*p) / 25 : 0;
+    const result = target || { position: new THREE.Vector3(), tangent: new THREE.Vector3() };
+    result.position.set(point[0], y, point[1]);
+    result.tangent.set(tangent[0] / horizontalLength, grade, tangent[1] / horizontalLength).normalize();
+    result.heading = Math.atan2(tangent[0], tangent[1]); result.grade = grade;
+    result.distance = d; result.phase = d / total;
+    return result;
+  }
+  const minLeadingDistance = config.endClearance + config.vehicleSpacing;
+  const maxLeadingDistance = total - config.endClearance;
+  const supportCount = Math.ceil(total / TRAM_CONSTANTS.supportSpacing) + 1;
+  const supportDistances = Array.from({ length: supportCount }, (_, i) => 0.6 + i * (total - 1.2) / (supportCount - 1));
+  // Move the final approach foot away from the existing mezzanine guardrail.
+  // The end support follows by 0.5 m; every resulting span remains below 12 m.
+  if (supportCount === 19) { supportDistances[17] -= 0.7; supportDistances[18] -= 0.5; }
+  return Object.freeze({
+    config, closed: false, routeMode: 'shuttle', length: total, segments: Object.freeze(segments),
+    lowerStart, lowerEnd, minLeadingDistance, maxLeadingDistance, supportDistances: Object.freeze(supportDistances),
+    station: Object.freeze({ id: 'nw-existing-terrace', railX: stationX, railY: config.stationRailHeight, platformY: 16.65, centerZ: -68.5, boardingVehicle: 0 }),
+    sampleDistance,
+    getPointAt(phase, target = new THREE.Vector3()) { return target.copy(sampleDistance(finiteNumber(phase, 'phase') * total).position); },
+    getTangentAt(phase, target = new THREE.Vector3()) { return target.copy(sampleDistance(finiteNumber(phase, 'phase') * total).tangent); },
+  });
+}
+
 function routeStations(route) {
   const result = [];
   // Every exact line/arc boundary is represented; no smoothing spline cuts corners.
@@ -122,16 +238,17 @@ function routeStations(route) {
     const count = Math.max(1, Math.ceil(segment.length / TRAM_CONSTANTS.geometryStep));
     for (let i = 0; i < count; i++) result.push(route.sampleDistance(segment.start + segment.length * i / count));
   }
-  result.push(route.sampleDistance(0));
+  result.push(route.sampleDistance(route.closed === false ? route.length : 0));
   return result;
 }
 
 /** Closed rectangular sweep, with explicit hard top/bottom edges and smooth side normals. */
-function sweptRectangle(stations, width, top, bottom) {
+function sweptRectangle(stations, width, top, bottom, closeEnds = false) {
   const positions = [], normals = [], indices = [];
-  const half = width / 2;
+  const half = width / 2, referenceHeight = stations[0].position.y;
   function at(s, offset, y) {
-    return [s.position.x + s.tangent.z * offset, y, s.position.z - s.tangent.x * offset];
+    const horizontal = Math.hypot(s.tangent.x, s.tangent.z) || 1;
+    return [s.position.x + s.tangent.z / horizontal * offset, y + s.position.y - referenceHeight, s.position.z - s.tangent.x / horizontal * offset];
   }
   function quad(points, faceNormals) {
     const base = positions.length / 3;
@@ -143,15 +260,22 @@ function sweptRectangle(stations, width, top, bottom) {
     if (forward) indices.push(base, base + 1, base + 2, base, base + 2, base + 3);
     else indices.push(base, base + 2, base + 1, base, base + 3, base + 2);
   }
-  const yUp = [0, 1, 0], yDown = [0, -1, 0];
   for (let i = 0; i < stations.length - 1; i++) {
     const a = stations[i], b = stations[i + 1];
-    const ar = [a.tangent.z, 0, -a.tangent.x], br = [b.tangent.z, 0, -b.tangent.x];
+    const ah = Math.hypot(a.tangent.x, a.tangent.z) || 1, bh = Math.hypot(b.tangent.x, b.tangent.z) || 1;
+    const ar = [a.tangent.z / ah, 0, -a.tangent.x / ah], br = [b.tangent.z / bh, 0, -b.tangent.x / bh];
+    const au = [-a.tangent.x * a.tangent.y / ah, ah, -a.tangent.z * a.tangent.y / ah], bu = [-b.tangent.x * b.tangent.y / bh, bh, -b.tangent.z * b.tangent.y / bh];
     const al = ar.map(value => -value), bl = br.map(value => -value);
-    quad([at(a, -half, top), at(b, -half, top), at(b, half, top), at(a, half, top)], [yUp, yUp, yUp, yUp]);
-    quad([at(a, -half, bottom), at(b, -half, bottom), at(b, half, bottom), at(a, half, bottom)], [yDown, yDown, yDown, yDown]);
+    quad([at(a, -half, top), at(b, -half, top), at(b, half, top), at(a, half, top)], [au, bu, bu, au]);
+    quad([at(a, -half, bottom), at(b, -half, bottom), at(b, half, bottom), at(a, half, bottom)], [au.map(v => -v), bu.map(v => -v), bu.map(v => -v), au.map(v => -v)]);
     quad([at(a, half, bottom), at(b, half, bottom), at(b, half, top), at(a, half, top)], [ar, br, br, ar]);
     quad([at(a, -half, bottom), at(b, -half, bottom), at(b, -half, top), at(a, -half, top)], [al, bl, bl, al]);
+  }
+  if (closeEnds) {
+    for (const [s, sign] of [[stations[0], -1], [stations[stations.length - 1], 1]]) {
+      const h = Math.hypot(s.tangent.x, s.tangent.z) || 1, normal = [s.tangent.x / h * sign, 0, s.tangent.z / h * sign];
+      quad([at(s, -half, bottom), at(s, half, bottom), at(s, half, top), at(s, -half, top)], [normal, normal, normal, normal]);
+    }
   }
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
@@ -172,7 +296,7 @@ function buildMonorail(route, supportFloorHeight) {
   const metal = new THREE.MeshStandardMaterial({ color: 0x9c9d96, roughness: 0.36, metalness: 0.72 });
   const glow = new THREE.MeshStandardMaterial({ color: 0xc8a57a, emissive: 0xd1a56b, emissiveIntensity: 0.40, roughness: 0.75, metalness: 0 });
   const addSweep = (name, width, top, bottom, material) => {
-    const mesh = new THREE.Mesh(sweptRectangle(stations, width, top, bottom), material);
+    const mesh = new THREE.Mesh(sweptRectangle(stations, width, top, bottom, route.closed === false), material);
     mesh.name = name;
     mesh.receiveShadow = true;
     mesh.castShadow = false;
@@ -184,9 +308,10 @@ function buildMonorail(route, supportFloorHeight) {
   // A single discreet strip UNDER the centre of the beam; no second visual rail.
   addSweep('Одна тёплая линия под балкой', 0.055, beamBottom + 0.006, beamBottom - 0.018, glow);
 
-  const supportCount = Math.max(4, Math.ceil(route.length / c.supportSpacing));
+  const fallbackSupportCount = Math.max(4, Math.ceil(route.length / c.supportSpacing));
+  const supportDistances = route.supportDistances || Array.from({ length: fallbackSupportCount }, (_, i) => i * route.length / fallbackSupportCount);
+  const supportCount = supportDistances.length, supportRecords = [];
   const footHeight = 0.20, capHeight = 0.20;
-  const columnTop = beamBottom - capHeight;
   let minFloorHeight = Infinity, maxFloorHeight = -Infinity;
   const columns = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.27, 0.34, 1, 10, 1), concrete, supportCount);
   const caps = new THREE.InstancedMesh(new THREE.BoxGeometry(1.12, capHeight, 0.58), concrete, supportCount);
@@ -195,21 +320,24 @@ function buildMonorail(route, supportFloorHeight) {
   const matrix = new THREE.Matrix4(), quaternion = new THREE.Quaternion();
   const position = new THREE.Vector3(), scale = new THREE.Vector3(1, 1, 1);
   for (let i = 0; i < supportCount; i++) {
-    const sample = route.sampleDistance(i * route.length / supportCount);
+    const sample = route.sampleDistance(supportDistances[i]);
+    const sampleBeamBottom = sample.position.y - c.runningSurfaceDepth - c.beamDepth;
+    const sampleColumnTop = sampleBeamBottom - capHeight;
     let baseY = floorHeight;
     try {
       const candidate = typeof supportFloorHeight === 'function' ? supportFloorHeight(sample.position.x, sample.position.z) : floorHeight;
-      if (Number.isFinite(candidate) && candidate <= columnTop - footHeight - 0.25) baseY = candidate;
+      if (Number.isFinite(candidate) && candidate <= sampleColumnTop - footHeight - 0.25) baseY = candidate;
     } catch { /* Failed surface query: retain the configured floor height. */ }
-    const columnBottom = baseY + footHeight, columnHeight = columnTop - columnBottom;
+    const columnBottom = baseY + footHeight, columnHeight = sampleColumnTop - columnBottom;
     minFloorHeight = Math.min(minFloorHeight, baseY); maxFloorHeight = Math.max(maxFloorHeight, baseY);
-    position.set(sample.position.x, (columnTop + columnBottom) / 2, sample.position.z);
+    position.set(sample.position.x, (sampleColumnTop + columnBottom) / 2, sample.position.z);
     matrix.compose(position, quaternion.identity(), scale.set(1, columnHeight, 1)); columns.setMatrixAt(i, matrix);
-    position.y = beamBottom - capHeight / 2;
+    position.y = sampleBeamBottom - capHeight / 2;
     quaternion.setFromAxisAngle(UP, sample.heading);
     matrix.compose(position, quaternion, scale.set(1, 1, 1)); caps.setMatrixAt(i, matrix);
     position.y = baseY + footHeight / 2;
     matrix.compose(position, quaternion.identity(), scale); feet.setMatrixAt(i, matrix);
+    supportRecords.push({ index: i, distance: supportDistances[i], x: sample.position.x, z: sample.position.z, floorY: baseY, railY: sample.position.y, beamBottom: sampleBeamBottom, footRadius: 0.60, columnRadius: 0.34, capHalfWidth: 0.56, capHalfLength: 0.29, heading: sample.heading });
   }
   for (const mesh of [columns, caps, feet]) {
     mesh.instanceMatrix.needsUpdate = true;
@@ -217,7 +345,56 @@ function buildMonorail(route, supportFloorHeight) {
     mesh.receiveShadow = true;
     group.add(mesh);
   }
-  group.userData = { supportCount, supportSpacing: route.length / supportCount, beamTop, beamBottom, floorHeight, minFloorHeight, maxFloorHeight };
+  const supportSpans = supportDistances.slice(1).map((d, i) => d - supportDistances[i]);
+  if (route.closed !== false) supportSpans.push(route.length - supportDistances[supportCount - 1] + supportDistances[0]);
+  const collisionObstacles = supportRecords.map(p => ({ id: 'monorail-support-' + p.index, kind: 'monorail-support', shape: 'cylinder', x: p.x, z: p.z, radius: p.footRadius, minY: p.floorY, maxY: p.beamBottom }));
+  for (let i = 0; i < stations.length - 1; i++) {
+    const a = stations[i].position, b = stations[i + 1].position;
+    collisionObstacles.push({ id: 'monorail-beam-' + i, kind: 'monorail-beam', shape: 'capsule', start: [a.x, a.y - 0.78, a.z], end: [b.x, b.y - 0.78, b.z], radius: c.beamWidth / 2, minY: Math.min(a.y, b.y) - 0.78, maxY: Math.max(a.y, b.y) });
+  }
+  group.userData = { supportCount, supportSpacing: supportSpans.reduce((a,b) => a+b, 0) / supportSpans.length, minSupportSpacing: Math.min(...supportSpans), maxSupportSpacing: Math.max(...supportSpans), supportRecords, collisionObstacles, beamTop, beamBottom, minBeamBottom: Math.min(...stations.map(s => s.position.y - 0.78)), floorHeight, minFloorHeight, maxFloorHeight };
+  return group;
+}
+
+
+/** Marks the real CAD terrace; no replacement platform or stairs are generated. */
+function buildBoardingStation(route) {
+  if (!route.station) return null;
+  const group = new THREE.Group(); group.name = MONORAIL_STATION_EVIDENCE.label;
+  const floorY = 16.65, edgeX = -16.184341430664062, z = -68.5;
+  const gold = new THREE.MeshStandardMaterial({ color: 0xe1bc73, roughness: 0.75 });
+  const steel = new THREE.MeshStandardMaterial({ color: 0xb3c8d0, roughness: 0.42, metalness: 0.55 });
+  function box(name, dimensions, position, material) {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(...dimensions), material);
+    mesh.name = name; mesh.position.set(...position); group.add(mesh); return mesh;
+  }
+  box('Метка рабочего посадочного проёма', [0.09, 0.008, 1.18], [edgeX - 0.07, floorY + 0.005, z], gold);
+  for (const side of [-1, 1]) box('Стойка рабочей калитки', [0.045, 1.0, 0.045], [edgeX - 0.06, floorY + 0.5, z + side * 0.64], steel);
+  const canvas = typeof OffscreenCanvas !== 'undefined' ? new OffscreenCanvas(1100, 250)
+    : typeof document !== 'undefined' ? document.createElement('canvas') : null;
+  if (canvas) {
+    canvas.width = 1100; canvas.height = 250; const context = canvas.getContext('2d');
+    if (context) {
+      context.fillStyle = 'rgba(16,36,47,0.93)'; context.fillRect(0, 0, 1100, 250);
+      context.strokeStyle = '#74d0df'; context.lineWidth = 5; context.strokeRect(3, 3, 1094, 244);
+      context.textAlign = 'center'; context.fillStyle = '#f1f8fb'; context.font = '600 52px sans-serif';
+      context.fillText('Посадочная площадка', 550, 82);
+      context.fillStyle = '#b7e7ef'; context.font = '36px sans-serif';
+      context.fillText('Существующий настил 16,65 м', 550, 142);
+      context.font = '32px sans-serif'; context.fillText('Рабочая калитка · посадка в первый вагон', 550, 198);
+      const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace;
+      const label = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false }));
+      label.name = 'Рабочая посадка в первый вагон'; label.position.set(edgeX - 2.8, floorY + 2.6, z);
+      label.scale.set(7.6, 1.73, 1); group.add(label);
+    }
+  }
+  group.userData = {
+    ...MONORAIL_STATION_EVIDENCE, id: route.station.id, kind: 'boarding-on-existing-terrace',
+    provisional: true, sourceCadFileModified: false, platformY: floorY, railY: route.station.railY,
+    boardingVehicle: 0, sideGap: 0.15, gate: MONORAIL_BOARDING_GATE,
+    center: [-24.5, floorY, -70.5], focusPosition: [-5, 25.0, -48],
+    boardingPoint: [edgeX, floorY, z], stoppedVehicleCenter: [route.station.railX, route.station.railY, z],
+  };
   return group;
 }
 
@@ -249,13 +426,15 @@ export async function createTramSystem({ scene, modelUrl, loader, routeConfig, o
   if (!loader || (typeof loader.loadAsync !== 'function' && typeof loader.load !== 'function')) {
     throw new TypeError('Монорельс: передайте настроенный GLTFLoader.');
   }
-  const route = createRoundedRectangleRoute(routeConfig);
+  const route = createMonorailRoute(routeConfig || MONORAIL_ROUTE_CONFIG);
   const group = new THREE.Group(); group.name = 'Монорельс — два вагона';
   const resources = { geometries: new Set(), materials: new Set(), textures: new Set(), instances: new Set() };
   const vehicles = [];
-  let track, sourceBounds, sourceSize, scaledSize, wagonScale;
+  let track, station, sourceBounds, sourceSize, scaledSize, wagonScale;
   let loaded = false, disposed = false, playing = true, speedMultiplier = 1;
-  let distance = 0, simulatedSeconds = 0, lastDelta = 0, sinceState = 0, errorMessage = null;
+  const shuttle = route.routeMode === 'shuttle';
+  let distance = shuttle ? route.maxLeadingDistance : 0, travelDirection = shuttle ? -1 : 1, dwellRemaining = shuttle ? 8 : 0;
+  let simulatedSeconds = 0, lastDelta = 0, sinceState = 0, errorMessage = null;
   let callbackError = null;
   const samples = Array.from({ length: TRAM_CONSTANTS.vehicleCount }, () => ({ position: new THREE.Vector3(), tangent: new THREE.Vector3() }));
 
@@ -266,12 +445,18 @@ export async function createTramSystem({ scene, modelUrl, loader, routeConfig, o
       vehicleCount: vehicles.length, expectedVehicleCount: TRAM_CONSTANTS.vehicleCount,
       trackLength: route.length, distance, phase: distance / route.length,
       baseSpeed: TRAM_CONSTANTS.baseSpeed, speedMultiplier,
-      speedMetersPerSecond: playing && !disposed ? TRAM_CONSTANTS.baseSpeed * speedMultiplier : 0,
+      speedMetersPerSecond: playing && !disposed && dwellRemaining <= 0 ? TRAM_CONSTANTS.baseSpeed * speedMultiplier : 0,
+      routeMode: shuttle ? 'shuttle' : 'loop', travelDirection, dwellRemaining,
+      shuttle: shuttle ? { enabled: true, direction: travelDirection, dwellRemaining, spacing: route.config.vehicleSpacing, nominalBodyGap: route.config.vehicleSpacing - TRAM_CONSTANTS.vehicleLength, leadingRange: [route.minLeadingDistance, route.maxLeadingDistance] } : null,
+      boardingVehicle: shuttle && Math.abs(distance - route.maxLeadingDistance) < 0.02 ? 0 : null,
       simulatedSeconds, lastDeltaSeconds: lastDelta,
       dimensions: { ...route.config, beamWidth: TRAM_CONSTANTS.beamWidth, beamDepth: TRAM_CONSTANTS.beamDepth,
         vehicleLength: TRAM_CONSTANTS.vehicleLength, vehicleWidth: scaledSize?.x ?? null, vehicleHeight: scaledSize?.y ?? null },
       supports: track ? { count: track.userData.supportCount, spacing: track.userData.supportSpacing,
-        minFloorHeight: track.userData.minFloorHeight, maxFloorHeight: track.userData.maxFloorHeight } : null,
+        minFloorHeight: track.userData.minFloorHeight, maxFloorHeight: track.userData.maxFloorHeight,
+        minSpacing: track.userData.minSupportSpacing, maxSpacing: track.userData.maxSupportSpacing,
+        records: track.userData.supportRecords } : null,
+      stations: station ? [station.userData] : [],
       source: { modelUrl, scale: wagonScale ?? null, bounds: sourceBounds ? { min: sourceBounds.min.toArray(), max: sourceBounds.max.toArray() } : null },
       coordinateSystem: 'scene metres; Y up; route XZ; GLB nose +Z',
       alignmentStatus: 'presentation reconstruction, not surveyed or approved CAD alignment',
@@ -300,9 +485,12 @@ export async function createTramSystem({ scene, modelUrl, loader, routeConfig, o
   }
   function placeVehicles() {
     for (let index = 0; index < vehicles.length; index++) {
-      const sample = route.sampleDistance(distance + index * route.length / TRAM_CONSTANTS.vehicleCount, samples[index]);
+      const vehicleDistance = shuttle ? distance - index * route.config.vehicleSpacing : distance + index * route.length / TRAM_CONSTANTS.vehicleCount;
+      const sample = route.sampleDistance(vehicleDistance, samples[index]);
       vehicles[index].position.copy(sample.position);
-      vehicles[index].rotation.set(0, sample.heading, 0);
+      const right = new THREE.Vector3(sample.tangent.z, 0, -sample.tangent.x).normalize();
+      const up = sample.tangent.clone().cross(right).normalize();
+      vehicles[index].quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(right, up, sample.tangent));
       vehicles[index].updateMatrix();
     }
   }
@@ -329,6 +517,8 @@ export async function createTramSystem({ scene, modelUrl, loader, routeConfig, o
     scaledSize = sourceSize.clone().multiplyScalar(wagonScale);
     const sourceCenter = sourceBounds.getCenter(new THREE.Vector3());
     track = buildMonorail(route, supportFloorHeight); group.add(track); collectResources(track, resources);
+    station = buildBoardingStation(route);
+    if (station) { group.add(station); collectResources(station, resources); }
     for (let index = 0; index < TRAM_CONSTANTS.vehicleCount; index++) {
       const vehicle = new THREE.Group(); vehicle.name = `Вагон монорельса ${index + 1}`;
       const normalization = new THREE.Group(); normalization.name = 'Масштаб 12 м и опора нижней точки на направляющую';
@@ -337,7 +527,7 @@ export async function createTramSystem({ scene, modelUrl, loader, routeConfig, o
       const clone = source.clone(true);
       clone.traverse(node => { if (node.isMesh) { node.castShadow = false; node.receiveShadow = true; } });
       normalization.add(clone); vehicle.add(normalization);
-      vehicle.userData = { index, phaseOffset: index / TRAM_CONSTANTS.vehicleCount, sourceModelUrl: modelUrl };
+      vehicle.userData = { index, phaseOffset: shuttle ? null : index / TRAM_CONSTANTS.vehicleCount, distanceOffset: shuttle ? -index * route.config.vehicleSpacing : null, sourceModelUrl: modelUrl };
       vehicles.push(vehicle); group.add(vehicle);
     }
     placeVehicles();
@@ -353,14 +543,21 @@ export async function createTramSystem({ scene, modelUrl, loader, routeConfig, o
   }
 
   return {
-    group, route, vehicles,
+    group, route, vehicles, station,
     update(deltaSeconds) {
       if (disposed || !loaded) return false;
       if (typeof deltaSeconds !== 'number' || !Number.isFinite(deltaSeconds) || deltaSeconds <= 0) return false;
       lastDelta = Math.min(deltaSeconds, TRAM_CONSTANTS.maxDeltaSeconds);
       if (!playing || speedMultiplier === 0) return false;
       simulatedSeconds += lastDelta;
-      distance = modulo(distance + TRAM_CONSTANTS.baseSpeed * speedMultiplier * lastDelta, route.length);
+      if (shuttle) {
+        if (dwellRemaining > 0) dwellRemaining = Math.max(0, dwellRemaining - lastDelta * speedMultiplier);
+        else {
+          distance += travelDirection * TRAM_CONSTANTS.baseSpeed * speedMultiplier * lastDelta;
+          if (distance >= route.maxLeadingDistance) { distance = route.maxLeadingDistance; travelDirection = -1; dwellRemaining = 8; }
+          if (distance <= route.minLeadingDistance) { distance = route.minLeadingDistance; travelDirection = 1; dwellRemaining = 4; }
+        }
+      } else distance = modulo(distance + TRAM_CONSTANTS.baseSpeed * speedMultiplier * lastDelta, route.length);
       placeVehicles();
       sinceState += lastDelta;
       if (sinceState >= 0.25) { sinceState %= 0.25; emit(); }
@@ -381,6 +578,12 @@ export async function createTramSystem({ scene, modelUrl, loader, routeConfig, o
       group.visible = Boolean(value); emit();
     },
     getState,
+    getStationPose(index = 0) {
+      if (disposed || !loaded || !station || index !== 0) return null;
+      return { position: new THREE.Vector3(...station.userData.focusPosition), target: new THREE.Vector3(...station.userData.center), up: UP.clone(), station: station.userData };
+    },
+    getSupportRecords() { return track ? track.userData.supportRecords.map(record => ({ ...record })) : []; },
+    getCollisionObstacles() { return track ? track.userData.collisionObstacles : []; },
     getFollowPose(index = 0) {
       if (disposed || !loaded) return null;
       if (!Number.isInteger(index) || index < 0 || index >= vehicles.length) throw new RangeError('Монорельс: индекс вагона должен быть 0 или 1.');
@@ -394,7 +597,7 @@ export async function createTramSystem({ scene, modelUrl, loader, routeConfig, o
         index,
         position: vehiclePosition.clone().addScaledVector(tangent, -19.2).addScaledVector(up, Math.max(6, scaledSize.y * 1.4)),
         target: vehiclePosition.clone().addScaledVector(tangent, 4.2).addScaledVector(up, scaledSize.y * 0.55),
-        up, tangent, vehiclePosition, heading: samples[index].heading,
+        up, tangent, travelTangent: tangent.clone().multiplyScalar(travelDirection), vehiclePosition, heading: samples[index].heading, travelDirection,
       };
     },
     dispose() {
