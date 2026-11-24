@@ -1,5 +1,6 @@
 import { CONTENT_DEFAULTS, computeContentPlan } from '../content-model.js';
-import { computeScreenScenario, countsFromContentModel } from './screen-model.js';
+import { computeScreenScenario, countsFromContentModel, DEFAULT_SCREEN_INPUT, SCREEN_CATEGORY_KEYS, validateScreenInput } from './screen-model.js';
+import { computeLedPlan } from './led-model.js?v=20261124-led-zones1';
 
 export const AUXILIARY_DEFAULTS = Object.freeze({ stationComputer:180, heroServer:600, commonServer:400, mediaPlayer:25, navigationPlayer:15, zoneSwitch:80, coreControl:600 });
 export const AUXILIARY_LABELS = Object.freeze({ stationComputer:'Вычислитель интерактивной станции', heroServer:'Сервер главного шоу', commonServer:'Сервер общей инсталляции', mediaPlayer:'Медиаплеер медийной точки', navigationPlayer:'Плеер навигации', zoneSwitch:'Коммутация и управление территории', coreControl:'Центральное управление' });
@@ -8,7 +9,7 @@ const isRecord = value => value !== null && typeof value === 'object' && !Array.
 const issue = (field, message) => ({ field, message });
 const invalid = (errors, details = {}) => ({
   valid:false, errors, content:null, screen:null, auxiliaryGroups:[], auxiliaryBudgets:null,
-  reservePercent:null, reservedBudgetW:null, distribution:null, input:null, ...details,
+  reservePercent:null, reservedBudgetW:null, distribution:null, input:null, led:null, ...details,
 });
 
 // Zero devices consume zero even when a unit budget is unknown. A present device
@@ -57,37 +58,119 @@ export function computeEngineering(overrides = {}) {
     ['navigationPlayer', c.navigationSurfaces], ['zoneSwitch', 8], ['coreControl', 1],
   ].map(([key, count]) => ({ key, label:AUXILIARY_LABELS[key], count, budgetInputW:auxiliaryBudgets[key] }));
 
+  const counts = countsFromContentModel(content);
+  const useLed = overrides.led !== undefined && overrides.led !== null;
+  let led = null, screenTypes = overrides.types, targetTypes = null;
+  if (useLed) {
+    for (const key of SCREEN_CATEGORY_KEYS) {
+      if (Object.hasOwn(overrides.types??{},key) && !isRecord(overrides.types[key])) {
+        return invalid([issue(`types.${key}`,'Параметры типа LED должны быть объектом.')],{content});
+      }
+    }
+    targetTypes = Object.fromEntries(SCREEN_CATEGORY_KEYS.map(key => [key, {
+      ...DEFAULT_SCREEN_INPUT.types[key], ...overrides.types?.[key],
+    }]));
+    const targetValidation = validateScreenInput({ counts, types:targetTypes, auxiliaryEquipment:[], powerScopeComplete:false });
+    if (!targetValidation.valid) return invalid(targetValidation.errors, { content });
+    led = computeLedPlan({ counts, types:targetTypes, config:overrides.led });
+    const targetInput = { flow:content.input, types:targetTypes, auxiliaryBudgets, reservePercent, led:led.config };
+    if (!led.valid) return invalid(led.errors, { content, led, input:targetInput });
+    // Quantise the range scenarios too; never compare a cabinet-rounded result
+    // against silently continuous LCD/projection dimensions.
+    const ranges = {};
+    for (const [name, field] of [['lower','minDimensionsM'], ['upper','maxDimensionsM']]) {
+      const rangeTypes = Object.fromEntries(SCREEN_CATEGORY_KEYS.map(key => [key, {
+        widthM:targetTypes[key][field]?.[0] ?? null,
+        heightM:targetTypes[key][field]?.[1] ?? null,
+      }]));
+      ranges[name] = computeLedPlan({ counts, types:rangeTypes, config:led.config });
+      if (!ranges[name].valid) return invalid(ranges[name].errors, { content, led, input:targetInput });
+    }
+    led.range = ranges;
+    screenTypes = Object.fromEntries(SCREEN_CATEGORY_KEYS.map(key => {
+      const row=led.rows.find(r=>r.key===key), lower=ranges.lower.rows.find(r=>r.key===key), upper=ranges.upper.rows.find(r=>r.key===key);
+      return [key, { ...targetTypes[key], widthM:row.widthM, heightM:row.heightM,
+        assumedDeviceBudgetW:row.budgetW,
+        minDimensionsM:[lower.widthM,lower.heightM], maxDimensionsM:[upper.widthM,upper.heightM] }];
+    }));
+  }
+
   // Guard allocation before Array.from: an arbitrary shared URL must not create
   // millions of per-device records. This is a software limit, not a design norm.
-  const anticipatedDeviceCount = c.physicalSurfaces + groups.reduce((sum, group) => sum + group.count, 0);
+  // An unresolved LED surface gets one explicit unknown assembly record until its
+  // cabinet count is known; this is not reported as an exact physical device count.
+  const displayRecordCount = led ? led.totals.knownCabinetCount + led.totals.unknownCabinetSurfaceCount : c.physicalSurfaces;
+  const anticipatedDeviceCount = displayRecordCount + groups.reduce((sum, group) => sum + group.count, 0);
   if (!Number.isSafeInteger(anticipatedDeviceCount) || anticipatedDeviceCount > 20000) {
-    return invalid([issue('equipment', 'Для интерактивного сценария допускается не более 20 000 записей оборудования; уменьшите исходные количества.')], { content, auxiliaryGroups:groups, auxiliaryBudgets, reservePercent });
+    return invalid([issue('equipment', 'Для интерактивного сценария допускается не более 20 000 записей оборудования; уменьшите исходные количества.')], { content, led, auxiliaryGroups:groups, auxiliaryBudgets, reservePercent,
+      ...(led ? { input:{flow:content.input,types:targetTypes,auxiliaryBudgets,reservePercent,led:led.config} } : {}) });
   }
   const equipment = groups.flatMap(group => Array.from({ length:group.count }, (_, i) => ({
     id:`aux-${group.key}-${String(i + 1).padStart(3, '0')}`, category:group.key,
     powerBoundary:'AC_input', countAsBuildingLoad:true, budgetInputW:group.budgetInputW,
     maximumInputW:null, operatingInputW:null, status:'assumption',
   })));
+  let displayEquipment;
+  if (led) {
+    const p=led.profile, cabinetArea=p.cabinetWidthM*p.cabinetHeightM;
+    const powerPerCabinet=density=>density===null?null:cabinetArea*density;
+    displayEquipment=led.rows.flatMap(row=>Array.from({length:row.count},(_,surfaceIndex)=>{
+      const surfaceId=`${row.key}-surface-${String(surfaceIndex+1).padStart(3,'0')}`;
+      if(row.cabinetsPerSurface===null) return [{
+        id:`${surfaceId}-unresolved-led-assembly`,category:row.key,surfaceId,
+        powerBoundary:'AC_input',countAsBuildingLoad:true,budgetInputW:null,maximumInputW:null,operatingInputW:null,
+        massKg:null,status:'unknown_cabinet_quantity',isUnresolvedAssembly:true,
+      }];
+      return Array.from({length:row.cabinetsPerSurface},(_,cabinetIndex)=>({
+        id:`${surfaceId}-cabinet-${String(cabinetIndex+1).padStart(3,'0')}`,category:row.key,surfaceId,
+        cabinetColumn:cabinetIndex%row.columns+1,cabinetRow:Math.floor(cabinetIndex/row.columns)+1,
+        profileId:p.id,powerBoundary:'AC_input',countAsBuildingLoad:true,
+        budgetInputW:powerPerCabinet(p.budgetDensityWm2),maximumInputW:powerPerCabinet(p.maximumDensityWm2),
+        operatingInputW:null,publishedAverageInputW:powerPerCabinet(p.averageDensityWm2),massKg:p.massKg,
+        mounting:null,model:p.label,status:p.status,
+        maximumEvidence:'published_series_upper_bound_not_delivery_passport',
+        sourceUrl:p.maximumDensityWm2===null?p.sourceUrl:(p.manufacturerUrl??p.sourceUrl),
+      }));
+    }).flat());
+  }
   const screen = computeScreenScenario({
-    counts:countsFromContentModel(content), types:overrides.types, auxiliaryEquipment:equipment,
+    counts, types:screenTypes, auxiliaryEquipment:equipment,
+    ...(led ? { equipment:displayEquipment } : {}),
     powerScopeComplete:false,
-    missingPowerSubsystems:['звук', 'эффекты и приводы экспонатов', 'выставочный свет', 'HVAC', 'лифты и монорельс'],
+    missingPowerSubsystems:[...(led?['внешние LED-процессоры и дополнительные контроллеры']:[]),'звук', 'эффекты и приводы экспонатов', 'выставочный свет', 'HVAC', 'лифты и монорельс'],
   });
-  const input = { flow:content.input, types:screen.input?.types ?? null, auxiliaryBudgets, reservePercent };
+  const input = { flow:content.input, types:led?targetTypes:(screen.input?.types ?? null), auxiliaryBudgets, reservePercent,
+    ...(led?{led:led.config}:{}) };
   // Invalid screen inputs have no categories/power. Do not dereference them or
   // return a distribution made from stale/default values.
-  if (!screen.valid) return invalid(screen.errors ?? [], { content, screen, auxiliaryGroups:groups, auxiliaryBudgets, reservePercent, input });
+  if (!screen.valid) return invalid(screen.errors ?? [], { content, screen, led, auxiliaryGroups:groups, auxiliaryBudgets, reservePercent, input });
+  if (led) {
+    for (const category of screen.categories) {
+      const row=led.rows.find(r=>r.key===category.key);
+      Object.assign(category, { targetWidthM:row.targetWidthM,targetHeightM:row.targetHeightM,
+        cabinetsPerSurface:row.cabinetsPerSurface,totalCabinets:row.totalCabinets,pixelWidth:row.pixelWidth,pixelHeight:row.pixelHeight,
+        massKg:row.massKg,totalMassKg:row.totalMassKg,maximumInputW:row.maximumW,publishedAverageInputW:row.averageW,
+        maximumEvidence:led.maximumEvidence });
+    }
+    screen.range.status='cabinet_rounded_size_scenarios_not_confidence_interval';
+    screen.power.generationAssumption='individual_led_cabinets_plus_listed_auxiliary';
+    screen.power.physicalEquipmentCount=led.totals.unknownCabinetSurfaceCount?null:anticipatedDeviceCount;
+    screen.power.unresolvedAssemblyCount=led.totals.unknownCabinetSurfaceCount;
+    screen.power.maximum.evidence=led.maximumEvidence;
+    screen.warnings.push(...led.warnings);
+  }
 
   const totalW = screen.power.budget.totalW;
   const reservedBudgetW = totalW === null ? null : totalW * (1 + reservePercent / 100);
   if (reservedBudgetW !== null && !Number.isFinite(reservedBudgetW)) {
-    return invalid([issue('reservePercent', 'Расчёт мощности с резервом выходит за числовой диапазон.')], { content, screen, auxiliaryGroups:groups, auxiliaryBudgets, reservePercent, input });
+    return invalid([issue('reservePercent', 'Расчёт мощности с резервом выходит за числовой диапазон.')], { content, screen, led, auxiliaryGroups:groups, auxiliaryBudgets, reservePercent, input });
   }
   const byType = Object.fromEntries(screen.categories.map(row => [row.key, row]));
   const displayLoad = key => ({ count:byType[key].count, budgetInputW:byType[key].assumedDeviceBudgetW });
   const auxiliaryLoad = key => groups.find(group => group.key === key);
   const territorial = sumLoads([
     ...['hero', 'interactive', 'media'].map(displayLoad),
+    ...(led&&c.objectSurfaces?[{count:c.objectSurfaces,budgetInputW:null}]:[]),
     ...['stationComputer', 'heroServer', 'mediaPlayer', 'zoneSwitch'].map(auxiliaryLoad),
   ]);
   const common = sumLoads([displayLoad('common'), auxiliaryLoad('commonServer')]);
@@ -100,7 +183,7 @@ export function computeEngineering(overrides = {}) {
     ? null : zoneW * 4 + commonPerFloorW + navigationPerFloorW;
 
   return {
-    valid:true, errors:[], content, screen, auxiliaryGroups:groups, auxiliaryBudgets,
+    valid:true, errors:[], content, screen, led, auxiliaryGroups:groups, auxiliaryBudgets,
     reservePercent, reservedBudgetW,
     distribution:{
       status:'proposed_equal_4_territories_per_level', zoneW, commonPerFloorW,
