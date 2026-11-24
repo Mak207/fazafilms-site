@@ -1,0 +1,116 @@
+{
+  "threeRevision": "180",
+  "checks": [
+    {
+      "name": "Closed route continuity, arc length, constant speed, half-loop spacing",
+      "passed": true,
+      "config": {
+        "centerX": 5,
+        "centerZ": -15.75,
+        "width": 46,
+        "length": 99.5,
+        "cornerRadius": 22.5,
+        "height": 19.2,
+        "floorHeight": 13.2
+      },
+      "length": 252.37166941154067,
+      "measuredLength": 252.37166755877632,
+      "maxJoinGap": 0.00000200000000916134,
+      "maxTangentGap": 4.4444445962580553e-8,
+      "worstRelativeChordSpeedError": 1.8520451172676644e-8
+    },
+    {
+      "name": "Closed route continuity, arc length, constant speed, half-loop spacing",
+      "passed": true,
+      "config": {
+        "centerX": -140,
+        "centerZ": 230,
+        "width": 52,
+        "length": 100,
+        "cornerRadius": 13,
+        "height": 19.2,
+        "floorHeight": 13.2
+      },
+      "length": 281.6814089933346,
+      "measuredLength": 281.68140499862704,
+      "maxJoinGap": 0.0000020000000233721953,
+      "maxTangentGap": 7.692307889516759e-8,
+      "worstRelativeChordSpeedError": 5.548392001397673e-8
+    },
+    {
+      "name": "Closed route continuity, arc length, constant speed, half-loop spacing",
+      "passed": true,
+      "config": {
+        "centerX": 5,
+        "centerZ": -15.75,
+        "width": 48,
+        "length": 48,
+        "cornerRadius": 24,
+        "height": 19.2,
+        "floorHeight": 13.2
+      },
+      "length": 150.79644737231007,
+      "measuredLength": 150.7964467521812,
+      "maxJoinGap": 0.000002000000000279556,
+      "maxTangentGap": 8.333333336786624e-8,
+      "worstRelativeChordSpeedError": 1.6277245884488423e-8
+    },
+    {
+      "name": "Invalid/degenerate route parameters are rejected",
+      "passed": true,
+      "cases": 6
+    },
+    {
+      "name": "Per-support floor sampling with invalid-height and exception fallback",
+      "passed": true,
+      "supportCount": 22,
+      "minFloorHeight": 7.199999999999999,
+      "maxFloorHeight": 13.2
+    },
+    {
+      "name": "Real GLB geometry integration and lifecycle",
+      "passed": true,
+      "realPositionCount": 1048985,
+      "trackTriangles": 9064
+    },
+    {
+      "name": "Clear failed-load diagnostics without substitute vehicle",
+      "passed": true
+    }
+  ],
+  "integration": {
+    "source": "tram-hitem/Вагон_Hitem3D_оригинал.glb",
+    "realPositionCount": 1048985,
+    "scaledVehicleDimensions": {
+      "centerX": 5,
+      "centerZ": -15.75,
+      "width": 46,
+      "length": 99.5,
+      "cornerRadius": 22.5,
+      "height": 19.2,
+      "floorHeight": 13.2,
+      "beamWidth": 0.95,
+      "beamDepth": 0.72,
+      "vehicleLength": 12,
+      "vehicleWidth": 2.288674702457133,
+      "vehicleHeight": 3.103345835681186
+    },
+    "trackLength": 252.37166941154067,
+    "supportCount": 22,
+    "supportSpacing": 11.471439518706394,
+    "trackTriangles": 9064,
+    "checkpoints": [
+      "real GLB normalization",
+      "nose direction",
+      "two clones",
+      "arc-length speed",
+      "pause",
+      "speed multiplier",
+      "delta clamp",
+      "visibility",
+      "follow camera",
+      "resource ownership"
+    ]
+  },
+  "passed": true
+}

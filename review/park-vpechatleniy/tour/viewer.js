@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from '/golden-ring/interactives/vendor/three-0.180/GLTFLoader.js';
 import { MeshoptDecoder } from '/golden-ring/tour/vendor/meshopt_decoder.mjs';
 import { OrbitControls } from './vendor/OrbitControls.js';
+import { createTramSystem } from './tram-system.js?v=monorail-20261124';
 
 const $ = id => document.getElementById(id);
 const root = $('viewer'), stage = $('stage'), canvas = $('canvas');
@@ -10,7 +11,10 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const diagnostics = window.__parkViewer = { state:'loading', errors:[], source:'выставка_3D вид.dwg' };
 Object.defineProperty(diagnostics,'camera',{get:()=>({position:camera.position.toArray(),target:controls?.target.toArray()})});
 let renderer, controls, model, bounds, size, center;
-let sourceMaterials=[],sourceMeshes=[];
+let sourceMaterials=[],sourceMeshes=[],envelopeMeshes=[];
+let monorail=null,followVehicle=-1,hallOpen=true,lastFrameTime=null;
+const monorailRoute={centerX:5,centerZ:-15.75,width:46,length:99.5,cornerRadius:22.5,height:19.2,floorHeight:13.2};
+Object.defineProperty(diagnostics,'monorail',{get:()=>monorail?.getState()||{status:diagnostics.monorailStatus||'waiting',loaded:false,vehicleCount:0}});
 let needsRender = true, active = true, transition = null, currentView = 'overview', sectionOn = false;
 const clipPlane = new THREE.Plane(new THREE.Vector3(0,-1,0), 0);
 const scene = new THREE.Scene();
@@ -42,7 +46,7 @@ try {
   controls.screenSpacePanning=true;controls.zoomToCursor=true;
   controls.minPolarAngle=.001;controls.maxPolarAngle=Math.PI*.499;
   controls.addEventListener('change',()=>{needsRender=true});
-  controls.addEventListener('start',()=>{transition=null;currentView=null});
+  controls.addEventListener('start',setFreeView);
   canvas.addEventListener('contextmenu',event=>event.preventDefault());
   canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();fail(new Error('WebGL context lost'))});
   const ambient = new THREE.HemisphereLight(0xf2f5ef,0x6a7667,1.2);scene.add(ambient);
@@ -74,6 +78,7 @@ try {
       const edgeMaterial=new THREE.LineBasicMaterial({color:0x26382e,transparent:true,opacity:.22,depthWrite:false});
       const edgeCache=new Map();
       sourceMeshes=[];model.traverse(node=>{if(node.isMesh&&!node.isInstancedMesh)sourceMeshes.push(node)});
+      envelopeMeshes=sourceMeshes.filter(node=>/^A-(ROOF|WALL|CLNG|GLAZ)/.test(node.name));
       let edgeBudget=500000;
       for(const node of [...sourceMeshes].sort((a,b)=>a.geometry.attributes.position.count-b.geometry.attributes.position.count)){
         const vertices=node.geometry.attributes.position.count;
@@ -86,6 +91,7 @@ try {
       materials.add(edgeMaterial);
       sourceMaterials=[...materials];
       scene.add(model);
+      setHallOpen(true);
       camera.near=Math.max(.02,size.length()/15000);camera.far=size.length()*12;camera.updateProjectionMatrix();
       controls.minDistance=Math.max(.3,size.length()/700);controls.maxDistance=size.length()*4;
       $('section-height').min=String(Math.max(0,bounds.min.y));
@@ -96,8 +102,9 @@ try {
       Object.assign(diagnostics,{state:'ready',meshes,triangles:Math.round(triangles),materials:materials.size,bounds:{min:bounds.min.toArray(),max:bounds.max.toArray()},sourceUnits:'meters'});
       root.dataset.state='ready';$('model-info').textContent='3D-предпросмотр из DWG';
       setView('overview',true);progress.style.width='100%';loading.hidden=true;
-      root.querySelectorAll('[data-view],#section-toggle,#reset').forEach(button=>button.disabled=false);
+      root.querySelectorAll('[data-view],#section-toggle,#reset,#envelope-toggle').forEach(button=>button.disabled=false);
       needsRender=true;
+      startMonorail(loader);
     }catch(error){fail(error);}
   },event=>{
     if(event.lengthComputable&&event.total){const percent=Math.min(99,Math.round(event.loaded/event.total*100));progress.style.width=percent+'%';detail.textContent=percent===99?'Подготавливаем геометрию…':'Загружено '+percent+'%';}
@@ -106,7 +113,17 @@ try {
 
   function frame(time){
     requestAnimationFrame(frame);
+    const delta=lastFrameTime===null?0:Math.min(.1,Math.max(0,(time-lastFrameTime)/1000));lastFrameTime=time;
     if(!active||document.hidden)return;
+    if(monorail){
+      if(monorail.update(delta))needsRender=true;
+      if(followVehicle>=0){
+        const pose=monorail.getFollowPose(followVehicle),blend=1-Math.exp(-delta*7);
+        if(camera.position.distanceToSquared(pose.position)>1e-8||controls.target.distanceToSquared(pose.target)>1e-8){
+          camera.position.lerp(pose.position,blend);controls.target.lerp(pose.target,blend);needsRender=true;
+        }
+      }
+    }
     if(transition){
       const t=Math.min(1,(time-transition.start)/transition.duration),e=t*t*(3-2*t);
       camera.position.lerpVectors(transition.from,transition.to,e);controls.target.lerpVectors(transition.fromTarget,transition.toTarget,e);needsRender=true;
@@ -148,6 +165,17 @@ function moveCamera(position,target,instant=false){
 }
 function setView(view,instant=false){
   if(!model)return;
+  stopFollowing();
+  if(view==='route'){
+    if(!monorail)return setView('overview',instant);
+    currentView='route';$('tram-camera').value='route';
+    const box=new THREE.Box3().setFromObject(monorail.group);
+    const d=camera.aspect<1?new THREE.Vector3(.45,1.55,2.1):new THREE.Vector3(1.9,1.2,.7);
+    const fitted=fitBox(box,d);moveCamera(fitted.position,fitted.target,instant);
+    document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.view===view)));
+    $('view-name').textContent='Кольцо монорельса';diagnostics.view='route';return;
+  }
+  $('tram-camera').value='free';
   currentView=view;
   const direction=view==='overview'&&camera.aspect<1 ? new THREE.Vector3(.45,1.6,2.3) : view==='top'&&camera.aspect>1 ? new THREE.Vector3(.001,1,0) : viewDirections[view];
   const fitted=fittedView(direction);moveCamera(fitted.position,fitted.target,instant);
@@ -163,9 +191,9 @@ function updateSection(){
   $('section-value').textContent=height.toLocaleString('ru-RU',{maximumFractionDigits:1})+' м';
   diagnostics.section={enabled:sectionOn,height};needsRender=true;
 }
-root.querySelectorAll('[data-view],#section-toggle,#reset').forEach(button=>button.disabled=true);
+root.querySelectorAll('[data-view],#section-toggle,#reset,#envelope-toggle').forEach(button=>button.disabled=true);
 document.querySelectorAll('[data-view]').forEach(button=>button.onclick=()=>setView(button.dataset.view));
-$('reset').onclick=()=>{sectionOn=false;$('section-toggle').setAttribute('aria-pressed','false');$('section-controls').hidden=true;updateSection();setView('overview');};
+$('reset').onclick=()=>{sectionOn=false;$('section-toggle').setAttribute('aria-pressed','false');$('section-controls').hidden=true;setHallOpen(true);updateSection();setView(monorail?'route':'overview');};
 $('section-toggle').onclick=()=>{sectionOn=!sectionOn;$('section-toggle').setAttribute('aria-pressed',String(sectionOn));$('section-controls').hidden=!sectionOn;updateSection();};
 $('section-height').addEventListener('input',updateSection);
 function showHelp(show){$('help').hidden=!show;$('help-toggle').setAttribute('aria-expanded',String(show));}
@@ -185,7 +213,79 @@ const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 canvas.addEventListener('dblclick',event=>{
   if(!model||!controls)return;
   const rect=canvas.getBoundingClientRect();pointer.set((event.clientX-rect.left)/rect.width*2-1,1-(event.clientY-rect.top)/rect.height*2);raycaster.setFromCamera(pointer,camera);
-  const hits=raycaster.intersectObjects(sourceMeshes,false);const hit=hits.find(item=>item.object.isMesh&&(!sectionOn||item.point.y<=Number($('section-height').value)));if(!hit)return;
+  const targets=[...sourceMeshes.filter(mesh=>mesh.visible),...(monorail?.vehicles||[])];
+  const hits=raycaster.intersectObjects(targets,true);const hit=hits.find(item=>item.object.isMesh&&(item.object.userData.monorail||!sectionOn||item.point.y<=Number($('section-height').value)));if(!hit)return;
+  stopFollowing();$('tram-camera').value='free';
   const direction=camera.position.clone().sub(controls.target).normalize();const distance=Math.max(size.length()*.055,camera.position.distanceTo(hit.point)*.4);
   currentView=null;moveCamera(hit.point.clone().addScaledVector(direction,distance),hit.point);document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));$('view-name').textContent='Детальный обзор';diagnostics.view='detail';
 });
+
+function fitBox(box,direction){
+  const target=box.getCenter(new THREE.Vector3()),d=direction.clone().normalize();
+  const right=new THREE.Vector3().crossVectors(camera.up,d).normalize(),up=new THREE.Vector3().crossVectors(d,right).normalize();
+  const vt=Math.tan(THREE.MathUtils.degToRad(camera.fov)/2),ht=vt*camera.aspect;
+  let distance=0;
+  for(const x of [box.min.x,box.max.x])for(const y of [box.min.y,box.max.y])for(const z of [box.min.z,box.max.z]){
+    const p=new THREE.Vector3(x,y,z).sub(target),depth=p.dot(d);
+    distance=Math.max(distance,Math.abs(p.dot(right))/ht+depth,Math.abs(p.dot(up))/vt+depth);
+  }
+  return {position:target.clone().addScaledVector(d,distance*1.13),target};
+}
+function stopFollowing(){followVehicle=-1;diagnostics.followVehicle=null;}
+function setFreeView(){
+  stopFollowing();currentView=null;transition=null;$('tram-camera').value='free';
+  $('view-name').textContent='Свободный обзор';diagnostics.view='free';
+  document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));
+}
+function setHallOpen(open){
+  hallOpen=Boolean(open);envelopeMeshes.forEach(mesh=>{mesh.visible=!hallOpen});
+  $('envelope-toggle').setAttribute('aria-pressed',String(hallOpen));
+  diagnostics.hallOpen=hallOpen;needsRender=true;
+}
+$('envelope-toggle').onclick=()=>setHallOpen(!hallOpen);
+function syncMonorailControls(state){
+  $('tram-play').textContent=state.playing?'Пауза':'Пуск';
+  $('tram-play').setAttribute('aria-label',state.playing?'Приостановить оба вагона':'Запустить оба вагона');
+  $('tram-play').setAttribute('aria-pressed',String(state.playing));
+  if(state.loaded)$('model-info').textContent=state.playing?'Монорельс · два вагона в пути':'Монорельс · движение на паузе';
+}
+async function startMonorail(loader){
+  diagnostics.monorailStatus='loading';$('model-info').textContent='Загружаем вагоны монорельса…';
+  try{
+    const floors=sourceMeshes.filter(mesh=>/^(A-FLOR|S-SLAB)/.test(mesh.name));
+    const floorRay=new THREE.Raycaster(),down=new THREE.Vector3(0,-1,0),floorOrigin=new THREE.Vector3();
+    diagnostics.supportFloors=[];
+    const supportFloorHeight=(x,z)=>{
+      floorOrigin.set(x,monorailRoute.height-1.2,z);floorRay.set(floorOrigin,down);
+      floorRay.far=Math.max(30,monorailRoute.height-bounds.min.y+2);
+      const hit=floorRay.intersectObjects(floors,false)[0],y=hit?hit.point.y:bounds.min.y;
+      diagnostics.supportFloors.push({x,z,y,matchedFloor:Boolean(hit)});return y;
+    };
+    monorail=await createTramSystem({scene,loader,modelUrl:'assets/tram-monorail.glb?v=20261124',routeConfig:monorailRoute,supportFloorHeight,onState:state=>{diagnostics.monorailStatus=state.status;if(state.loaded)syncMonorailControls(state);}});
+    // Respect a visitor's motion preference; an explicit press on «Пуск» always starts both wagons.
+    if(reduceMotion)monorail.setPlaying(false);
+    monorail.group.traverse(node=>{node.userData.monorail=true;for(const material of Array.isArray(node.material)?node.material:[node.material])if(material?.map)material.map.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());});
+    root.querySelectorAll('#tram-play,#tram-camera,#tram-speed').forEach(control=>control.disabled=false);
+    syncMonorailControls(monorail.getState());
+    if(currentView==='overview'||currentView==='route')setView('route',true);
+    needsRender=true;
+  }catch(error){
+    diagnostics.monorailStatus='error';diagnostics.errors.push('Монорельс: '+(error?.message||error));
+    $('model-info').textContent='Модель здания';$('scene-notice').textContent='Вагоны не загрузились. Обновите страницу, чтобы повторить загрузку монорельса.';$('scene-notice').hidden=false;
+    console.error('Monorail:',error);
+  }
+}
+$('tram-play').onclick=()=>{if(monorail){monorail.setPlaying(!monorail.getState().playing);needsRender=true;}};
+$('tram-speed').onchange=()=>{if(monorail)monorail.setSpeed(Number($('tram-speed').value));};
+$('tram-camera').onchange=()=>{
+  if(!monorail)return;
+  const value=$('tram-camera').value;
+  if(value==='route'){setView('route');return;}
+  if(value==='free'){setFreeView();return;}
+  followVehicle=value==='follow-1'?1:0;currentView=null;transition=null;diagnostics.followVehicle=followVehicle;
+  setHallOpen(true);
+  const pose=monorail.getFollowPose(followVehicle);
+  camera.position.copy(pose.position);controls.target.copy(pose.target);controls.update();
+  $('view-name').textContent='За вагоном '+(followVehicle+1);diagnostics.view='follow';
+  document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));needsRender=true;
+};
