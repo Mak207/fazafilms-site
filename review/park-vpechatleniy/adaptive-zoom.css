@@ -1,0 +1,267 @@
+/* Adaptive Zoom/Reflow. Two independently persisted, pinch-only zones.
+   Native media/canvas gestures are never assigned touch-action restrictions. */
+@media (max-width: 900px), (pointer: coarse) {
+  html[data-az-pending] body { visibility: hidden; }
+  html[data-az-adjusting], html[data-az-adjusting] [data-az-scroll] {
+    scroll-behavior: auto !important;
+    overflow-anchor: none;
+  }
+  [data-az-zone], [data-az-text] { min-inline-size: 0; }
+  [data-az-kind="content"] {
+    --az-font-factor: var(--az-content-font, 1);
+    --az-space-factor: var(--az-content-space, 1);
+    --az-touch: var(--az-content-touch, 44px);
+  }
+  [data-az-kind="controls"] {
+    --az-font-factor: var(--az-controls-font, 1);
+    --az-space-factor: var(--az-controls-space, 1);
+    --az-touch: var(--az-controls-touch, 44px);
+  }
+  /* The deliberately strong selector also covers existing component !important fonts.
+     Measured px baselines prevent inherited text from being multiplied twice. */
+  :root:not(#park-zoom-baseline)[data-az-ready]:not([data-az-measuring]) [data-az-text] {
+    font-size: calc(var(--az-base-font) * var(--az-font-factor)) !important;
+    line-height: calc(var(--az-base-line) * var(--az-font-factor)) !important;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    max-inline-size: 100%;
+  }
+  :root:not(#park-zoom-baseline)[data-az-ready]:not([data-az-measuring]) [data-az-lines="wrap"] {
+    white-space: normal !important;
+  }
+  :root:not(#park-zoom-baseline)[data-az-ready]:not([data-az-measuring]) [data-az-lines="preserve"] {
+    white-space: pre-wrap !important;
+  }
+  :root:not(#park-zoom-baseline)[data-az-ready]:not([data-az-measuring]) [data-az-control] {
+    min-block-size: max(var(--az-touch), calc(var(--az-base-height) * var(--az-space-factor))) !important;
+    min-inline-size: var(--az-touch) !important;
+    max-inline-size: 100%;
+    height: auto !important;
+    padding-top: calc(var(--az-base-padTop) * var(--az-space-factor)) !important;
+    padding-right: calc(var(--az-base-padRight) * var(--az-space-factor)) !important;
+    padding-bottom: calc(var(--az-base-padBottom) * var(--az-space-factor)) !important;
+    padding-left: calc(var(--az-base-padLeft) * var(--az-space-factor)) !important;
+  }
+  /* Native select auto-height can ignore an enlarged CSS line box.
+     Reserve its native text box (at least 1.8em), both paddings and two 1px borders. */
+  :root:not(#park-zoom-baseline)[data-az-ready]:not([data-az-measuring]) select[data-az-control] {
+    min-block-size: max(var(--az-touch), calc(max(calc(var(--az-base-line) * var(--az-font-factor)), 1.8em) + (var(--az-base-padTop) + var(--az-base-padBottom)) * var(--az-space-factor) + 2px)) !important;
+  }
+  a[data-az-control], label[data-az-control] { display: inline-flex; align-items: center; flex-wrap: wrap; }
+  label[data-az-control]:has(input:not([type=checkbox]):not([type=radio]),textarea,select) { display: block; }
+  [data-az-control]:is(input,select,textarea) { max-width: 100%; }
+  input[type=range][data-az-control] { padding-block: 0 !important; }
+  /* A large label supplies the target; checkbox/radio geometry stays native. */
+  label[data-az-control]:has(input[type=checkbox],input[type=radio]) { align-items: flex-start; gap: 10px; }
+  input:is([type=checkbox],[type=radio]) { flex-shrink: 0; }
+
+  body[data-az-page="review"] .header-inner {
+    height: auto; min-height: 58px; padding-block: 10px; flex-wrap: wrap;
+  }
+  body[data-az-page="review"] .header-inner nav { flex-wrap: wrap; gap: 6px 13px; }
+  body[data-az-page="review"] .header-inner nav a { padding-block: 7px; }
+  body[data-az-page="review"] .folder-tabs {
+    display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; border-bottom: 0;
+  }
+  body[data-az-page="review"] .folder-tabs a {
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    border: 1px solid #545650; border-radius: 7px; min-width: 0;
+  }
+  body[data-az-page="review"] footer { flex-wrap: wrap; gap: 12px; }
+  .mg-reading-guide, .mg-document-heading, .mg-responsibility-heading,
+  .ic-field label, .ic-floor-control label, .ic-scenario-label,
+  .ic-section-title, .iq-group-summary { flex-wrap: wrap; }
+  .mg-section-label, .mg-transcript-label, .iq-group-name { min-width: 0; }
+  .mg-section > summary { align-items: flex-start; }
+  .mg-role-table td::before { font-size: .8em; }
+  .mg-number { width: auto; min-width: calc(29px * var(--az-controls-font,1)); height: auto; padding: 5px; }
+  .mg-section, .mg-source-page { overflow: visible; }
+  .mg-reading-guide > *, .ic-downloads, .ic-document-heading > *, .ic-next > * { min-width: 0; max-width: 100%; }
+  .mg-lecture-chapters button { height: auto; flex-wrap: wrap; }
+  .mg-sources a, .mg-lecture-reference-list a { align-items: center; }
+  .mg-button, .tour-open, .download-link, .ic-downloads a { justify-content: center; text-align: center; }
+  .ic-downloads a, .ic-proposal, .ic-field label span, .ic-legend strong,
+  .ic-bar-line strong, .iq-group-count { white-space: normal; }
+  .ic-heading > div, .ic-summary > div, .ic-block, .ic-prose,
+  .iq-question, .ic-control-pair, .ic-results { min-width: 0; }
+  .ic-toggle { flex-wrap: wrap; }
+  .ic-prose table, .ic-table-scroll { max-width: 100%; }
+  /* Mobile tables reflow into labelled records instead of overflowing the page. */
+  .ic-table-scroll { overflow: visible; margin-inline: 0; }
+  #park-installations table[data-az-table],
+  #park-installations [data-az-table] :is(tbody,tfoot,tr,th,td) {
+    display: block; width: 100%; min-width: 0; max-width: 100%; table-layout: auto;
+  }
+  #park-installations [data-az-table] thead {
+    position: absolute; width: 1px; height: 1px; padding: 0;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+  #park-installations [data-az-table] tbody tr,
+  #park-installations [data-az-table] tfoot tr {
+    margin: 0 0 12px; padding: 12px; border: 1px solid #38463b; border-radius: 7px;
+  }
+  #park-installations [data-az-table] :is(th,td) { padding: 8px 0; border: 0; }
+  #park-installations [data-az-table] [data-az-label]::before {
+    content: attr(data-az-label); display: block; font-size: .8em;
+    color: var(--ic-muted); font-weight: 400; margin-bottom: 3px;
+  }
+  .take-row { grid-template-columns: minmax(0,1fr); }
+  .take-columns { display: none; }
+  .take-left { padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+  .take-empty { height: auto; min-height: 90px; padding: 16px; }
+  .feedback-thumb .remove-picture { width: auto; }
+
+  /* Engineering iframe: forms are controls regions; explanations are content.
+     SVG plans keep their own coordinate system and native gestures. */
+  body[data-az-page="engineering"] :is(main,.hero,.hero-side,.metric,.panel,.card,.detail-body,.plan-layout,.plan-shell,.sld-shell,.table-wrap) {
+    min-width: 0; max-width: 100%;
+  }
+  body[data-az-page="engineering"] .topbar { flex-wrap: wrap; gap: 12px; }
+  body[data-az-page="engineering"] .tabs {
+    display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); overflow: visible; gap: 8px;
+  }
+  body[data-az-page="engineering"] :is(.actions,.plan-toolbar,.segmented) { flex-wrap: wrap; }
+  body[data-az-page="engineering"] .plan-toolbar > * { min-width: 0; max-width: 100%; }
+  body[data-az-page="engineering"] .plan-toolbar label { white-space: normal; }
+  body[data-az-page="engineering"] :is(input:not([type=checkbox]):not([type=radio]),select,textarea) {
+    font-size: 16px;
+  }
+  body[data-az-page="engineering"] .flow-inputs input { font-size: 22px; }
+  body[data-az-page="engineering"] label > span { float: none; display: block; }
+  body[data-az-page="engineering"] details { overflow: visible; }
+  body[data-az-page="engineering"] .table-wrap { overflow: visible; }
+  body[data-az-page="engineering"] table[data-az-table],
+  body[data-az-page="engineering"] [data-az-table] :is(tbody,tfoot,tr,th,td) {
+    display: block; width: 100%; min-width: 0; max-width: 100%; table-layout: auto;
+  }
+  body[data-az-page="engineering"] [data-az-table] thead {
+    position: absolute; width: 1px; height: 1px; padding: 0;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+  body[data-az-page="engineering"] [data-az-table] :is(tbody,tfoot) > tr {
+    padding: 14px; border-bottom: 1px solid var(--line);
+  }
+  body[data-az-page="engineering"] [data-az-table] :is(th,td) { padding: 8px 0; border: 0; }
+  body[data-az-page="engineering"] [data-az-table] [data-az-label]::before {
+    content: attr(data-az-label); display: block; font-size: .8em;
+    color: var(--muted); font-weight: 400; margin-bottom: 5px;
+  }
+  body[data-az-page="engineering"] [data-az-table] td input { width: 100% !important; }
+  html:not([data-az-controls="100"]) body[data-az-page="engineering"] :is(.tabs,.flow-inputs,.question-grid) {
+    grid-template-columns: minmax(0,1fr);
+  }
+  html:not([data-az-controls="100"]) body[data-az-page="engineering"] .plan-toolbar {
+    display: grid; grid-template-columns: minmax(0,1fr);
+  }
+  html:not([data-az-controls="100"]) body[data-az-page="engineering"] :is(.actions,.segmented) {
+    display: grid; grid-template-columns: minmax(0,1fr); width: 100%;
+  }
+  html:not([data-az-content="100"]) body[data-az-page="engineering"] :is(.hero,.metrics,.two-col,.plan-layout,.evidence-grid) {
+    grid-template-columns: minmax(0,1fr);
+  }
+  html:not([data-az-content="100"]) body[data-az-page="engineering"] .metric {
+    border-right: 0; border-bottom: 1px solid var(--line);
+  }
+  html:not([data-az-content="100"]) body[data-az-page="engineering"] .metric:last-child { border-bottom: 0; }
+  html:not([data-az-content="100"]) body[data-az-page="engineering"] .range-row {
+    grid-template-columns: minmax(0,1fr); gap: 7px;
+  }
+  html:not([data-az-content="100"]) body[data-az-page="engineering"] .range-row strong { text-align: left; }
+  html:not([data-az-content="100"]) body[data-az-page="engineering"] .selection dl { grid-template-columns: minmax(0,1fr); }
+  html:not([data-az-content="100"]) body[data-az-page="engineering"] .selection dd { text-align: left; margin-bottom: 10px; }
+
+  /* Controls and text have different topology thresholds. */
+  html:not([data-az-controls="100"]) .folder-tabs,
+  html:is([data-az-controls="175"],[data-az-controls="200"]) .ic-presets {
+    grid-template-columns: minmax(0,1fr);
+  }
+  html:not([data-az-controls="100"]) .ic-tabs,
+  html:not([data-az-controls="100"]) .ic-toggle { display: grid; grid-template-columns: minmax(0,1fr); }
+  html:not([data-az-controls="100"]) .ic-tabs button { width: 100%; }
+  html:not([data-az-controls="100"]) .ic-control-pair.has-range { grid-template-columns: minmax(0,1fr); }
+  html:is([data-az-controls="150"],[data-az-controls="175"],[data-az-controls="200"]) .mg-document-actions,
+  html:is([data-az-controls="150"],[data-az-controls="175"],[data-az-controls="200"]) .ic-downloads {
+    display: grid; grid-template-columns: minmax(0,1fr); width: 100%;
+  }
+  html:not([data-az-content="100"]) :is(.ic-kpis,.ic-facts,.ic-point-types,.pp-stream,.pp-floor-data) {
+    grid-template-columns: minmax(0,1fr) !important;
+  }
+  html:not([data-az-content="100"]) .ic-scope-row {
+    grid-template-columns: repeat(3,minmax(0,1fr)); align-items: start;
+  }
+  html:not([data-az-content="100"]) .ic-scope-row > span:nth-child(2) { grid-column: 1 / -1; grid-row: 1; }
+  html:not([data-az-content="100"]) .ic-scope-metric { text-align: left; }
+  html:is([data-az-content="175"],[data-az-content="200"]) .ic-scope-row { grid-template-columns: minmax(0,1fr); }
+  html:not([data-az-content="100"]) :is(.mg-overview,.ic-summary,.ic-workspace,.mg-lecture-reference-list) {
+    grid-template-columns: minmax(0,1fr);
+  }
+  html:not([data-az-controls="100"]) :is(.iq-fields,.iq-scope-grid,.pp-district-grid,.pp-district-metrics,.mg-lecture-chapters ol) {
+    grid-template-columns: minmax(0,1fr) !important;
+  }
+  html:not([data-az-controls="100"]) .pp-district-grid::before,
+  html:not([data-az-controls="100"]) .pp-district::before { display: none; }
+  html:not([data-az-content="100"]) .ic-plan-block { overflow: visible; }
+
+  /* The tour remains a bounded canvas with independently scrollable UI panels.
+     No listener or CSS touch-action on canvas, stage, or iframe is changed. */
+  body[data-az-page="tour"] #viewer { grid-template-rows: auto minmax(0,1fr) auto; }
+  body[data-az-page="tour"] .viewer-header { align-items: flex-start; flex-wrap: wrap; max-height: 26dvh; overflow-y: auto; }
+  body[data-az-page="tour"] .viewer-title { flex: 1 1 180px; }
+  body[data-az-page="tour"] .header-actions { flex-wrap: wrap; min-width: 0; }
+  body[data-az-page="tour"] #help-toggle { font-size: .875rem; width: auto; padding: 8px 12px; }
+  body[data-az-page="tour"] #help-toggle::after { display: none; }
+  body[data-az-page="tour"] .viewer-toolbar {
+    max-height: 44dvh; overflow-y: auto; min-height: 0; align-content: start;
+    display: grid; grid-template-columns: minmax(0,1fr); gap: 9px;
+    padding-bottom: max(10px,env(safe-area-inset-bottom));
+  }
+  body[data-az-page="tour"] .view-controls,
+  body[data-az-page="tour"] .utility-controls {
+    display: grid; grid-template-columns: repeat(2,minmax(0,1fr));
+    overflow: visible; width: 100%; padding-left: 0; border: 0;
+  }
+  body[data-az-page="tour"] .view-controls button,
+  body[data-az-page="tour"] .utility-controls button { width: 100%; min-width: 0; }
+  body[data-az-page="tour"] .exhibit-controls { display: grid; grid-template-columns: minmax(0,1fr); }
+  body[data-az-page="tour"] :is(.exhibit-choice,.quality-choice,.camera-control,.speed-control) {
+    width: 100%; min-width: 0; grid-column: auto;
+  }
+  body[data-az-page="tour"] .monorail-controls {
+    display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; min-width: 0;
+  }
+  body[data-az-page="tour"] #tram-onboard { grid-column: auto; min-width: 0; }
+  body[data-az-page="tour"] .camera-control { grid-column: 1 / -1; }
+  body[data-az-page="tour"] .speed-control > span {
+    position: static; width: auto; height: auto; margin: 0 0 5px;
+    overflow: visible; clip: auto; white-space: normal;
+  }
+  body[data-az-page="tour"] .exhibit-status { white-space: normal; }
+  body[data-az-page="tour"] .model-note { width: 100%; }
+  body[data-az-page="tour"] .help-card { max-height: calc(100% - 24px); overflow-y: auto; }
+  body[data-az-page="tour"] .section-controls { max-height: calc(100% - 24px); overflow-y: auto; }
+  body[data-az-page="tour"] .view-caption { max-width: calc(100% - 32px); }
+  html:not([data-az-controls="100"]) body[data-az-page="tour"] :is(.view-controls,.utility-controls,.monorail-controls) {
+    grid-template-columns: minmax(0,1fr);
+  }
+  html:not([data-az-controls="100"]) body[data-az-page="tour"] .camera-control { grid-column: auto; }
+}
+/* A project title is already large at baseline. On narrow screens, interpolate
+   gently towards the available line width; ordinary reading text keeps its full scale. */
+@media (max-width: 600px) {
+  html[data-az-content="100"] { --az-title-progress: 0; }
+  html[data-az-content="125"] { --az-title-progress: .25; }
+  html[data-az-content="150"] { --az-title-progress: .5; }
+  html[data-az-content="175"] { --az-title-progress: .75; }
+  html[data-az-content="200"] { --az-title-progress: 1; }
+  :root:not(#park-zoom-baseline)[data-az-ready]:not([data-az-measuring]) .intro h1[data-az-text],
+  :root:not(#park-zoom-baseline)[data-az-ready]:not([data-az-measuring]) .intro h1 [data-az-text],
+  :root:not(#park-zoom-baseline)[data-az-ready]:not([data-az-measuring]) body[data-az-page="engineering"] .hero h1[data-az-text],
+  :root:not(#park-zoom-baseline)[data-az-ready]:not([data-az-measuring]) body[data-az-page="engineering"] .hero h1 [data-az-text] {
+    --az-title-limit: max(var(--az-base-font), min(46px, calc((100vw - 32px) * .132)));
+    font-size: calc(var(--az-base-font) + (var(--az-title-limit) - var(--az-base-font)) * var(--az-title-progress, 0)) !important;
+    line-height: 1.08 !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-az-text], [data-az-control] { transition: none !important; }
+}
