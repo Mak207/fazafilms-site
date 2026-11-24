@@ -12,7 +12,7 @@ export function createMappedRgoGallery({assets,layout,program}){
   const parts=[],pickables=[],caseRecords=[],screenRecords=[],hallViews=new Map(),movingGlobes=[];
   let activeHall='00',elapsed=0,cutaway=false;
   const halls=new Map(program.halls.map(h=>[h.id,h]));
-  function collider(id,size,position,yaw=0,bottom=0){parts.push({id,min:[-size[0]/2,bottom,-size[2]/2],max:[size[0]/2,bottom+size[1],size[2]/2],position:[position[0],position[1]||0,position[2]],rotationY:yaw});}
+  function collider(id,size,position,yaw=0,bottom=0){parts.push({id,min:[-size[0]/2,bottom,-size[2]/2],max:[size[0]/2,bottom+size[1],size[2]/2],position:[position[0],position[1]||0,position[2]],rotationY:yaw,socialTarget:!/^wall-|^slat-|^column-finish-/.test(id)});}
   function box(name,size,position,material,parent=group,yaw=0){const m=new THREE.Mesh(new THREE.BoxGeometry(...size),material);m.name=name;m.position.fromArray(position);m.rotation.y=yaw;parent.add(m);return m;}
   function panel(title,subtitle,width,height,x,y,z,yaw,options={}){
     const plane=new THREE.Mesh(new THREE.PlaneGeometry(width,height),new THREE.MeshBasicMaterial({map:textTexture(title,subtitle,{width:1200,height:640,...options}),side:THREE.DoubleSide,toneMapped:false}));
@@ -41,18 +41,18 @@ export function createMappedRgoGallery({assets,layout,program}){
   // Cladding is hollow around the original CAD columns, rather than a second
   // solid column intersecting the structural model.
   for(const [index,c] of layout.columns.entries()){
-    const radius=Math.max(c.bounds[2]-c.bounds[0],c.bounds[3]-c.bounds[1])/2+.05;
-    if(radius>.85)continue;
+    const radius=Math.hypot(c.bounds[2]-c.bounds[0],c.bounds[3]-c.bounds[1])/2+.09;
+    const excluded=new Set(layout.excludedColumnRings||[]);
     const holder=new THREE.Group();holder.position.set(c.x,0,c.z);group.add(holder);
     for(let tier=0;tier<25;tier++){
       const y=.085+tier*.162,r=radius+.6*Math.pow(y/4.05,5);
-      const ring=new THREE.Mesh(new THREE.TorusGeometry(r,.055,4,36),wood);ring.rotation.x=Math.PI/2;ring.position.y=y;holder.add(ring);
+      const ring=new THREE.Mesh(new THREE.TorusGeometry(r,.055,4,36),wood);ring.rotation.x=Math.PI/2;ring.position.y=y;ring.userData.rgoColumnRing=index+':'+tier;if(!excluded.has(ring.userData.rgoColumnRing))holder.add(ring);
     }
-    for(const y of [3.42,3.91]){const r=radius+.6*Math.pow(y/4.05,5)+.065;const light=new THREE.Mesh(new THREE.TorusGeometry(r,.015,4,48),glow);light.rotation.x=Math.PI/2;light.position.y=y;holder.add(light);}
+    for(const y of [3.42,3.91]){const r=radius+.6*Math.pow(y/4.05,5)+.065;const light=new THREE.Mesh(new THREE.TorusGeometry(r,.015,4,48),glow);light.rotation.x=Math.PI/2;light.position.y=y;light.userData.rgoColumnRing=index+':light:'+y;if(!excluded.has(light.userData.rgoColumnRing))holder.add(light);}
     collider('column-finish-'+index,[radius*2+.16,4.1,radius*2+.16],[c.x,0,c.z]);
   }
   const walk=layout.routePolyline.map(([x,z])=>new THREE.Vector3(x,.045,z));
-  const path=new THREE.CatmullRomCurve3(walk,false,'centripetal');
+  const path=new THREE.CurvePath();for(let i=1;i<walk.length;i++)path.add(new THREE.LineCurve3(walk[i-1],walk[i]));
   group.add(new THREE.Mesh(new THREE.TubeGeometry(path,420,.018,5,false),glow));
   const caseTitles={
     '00':['Проложить путь','Измерить мир','Зафиксировать открытие','Увидеть невидимое'],
@@ -81,7 +81,7 @@ export function createMappedRgoGallery({assets,layout,program}){
     }else if(f.kind==='screen'||f.kind==='future-wall'){
       const anchor=layout.hallAnchors.find(h=>h.id===f.hall).position;
       const facing=yaw+(Math.sin(yaw)*(anchor[0]-x)+Math.cos(yaw)*(anchor[1]-z)<0?Math.PI:0),width=f.kind==='future-wall'?7:2.7,height=f.kind==='future-wall'?2.6:1.55,bottom=f.kind==='future-wall'?.65:.85;
-      const subtitle=(f.kind==='future-wall'?'Куда отправится следующая экспедиция?\nМечта становится маршрутом':hall.primaryExhibits.slice(0,3).map(t=>t.length>65?t.slice(0,62)+'…':t).join('\n'));
+      const subtitle=(f.kind==='future-wall'?'Куда отправится следующая экспедиция?\nМечта становится маршрутом':f.hall==='06'?'«МИР» · модель глубоководного аппарата\n«Консул» · в исходной программе зала':'По исходной программе\n'+hall.primaryExhibits.slice(0,2).map(t=>t.length>65?t.slice(0,62)+'…':t).join('\n'));
       box('Экран РГО '+f.hall,[width+.1,height+.1,.12],[x,bottom+height/2,z],dark,group,facing);
       const front=new THREE.Vector3(0,0,.072).applyAxisAngle(new THREE.Vector3(0,1,0),facing);
       const screen=panel(f.hall+'  '+hall.title,subtitle,width,height,x+front.x,bottom+height/2,z+front.z,facing,{background:f.hall==='06'?'#0b3655':'#102c3e',accent:'#d6b273'});
@@ -115,7 +115,7 @@ export function createMappedRgoGallery({assets,layout,program}){
     const light=new THREE.PointLight(0xffd5a0,7,11,2);light.position.set(h.position[0],3.75,h.position[1]);group.add(light);
     if(!hallViews.has(h.id))hallViews.set(h.id,{position:[h.position[0],1.65,h.position[1]],target:[h.position[0]+2,1.7,h.position[1]]});
   }
-  const defaultPose={position:[center[0]+.7,1.65,center[1]+.45],target:[center[0]+.15,1.48,center[1]-2.1]};hallViews.set('00',defaultPose);
+  const defaultPose={position:[center[0]+.7,1.65,center[1]+.45],target:[center[0]+.15,1.48,center[1]-2.1]};hallViews.set('00',defaultPose);for(const [id,pose] of Object.entries(layout.hallViews||{}))hallViews.set(id,pose);
   return {group,pickables,supportSamples:layout.supportSamples,
     getCollisionParts:()=>parts,
     setHall(id){if(!halls.has(id))return false;activeHall=id;return true;},
@@ -125,6 +125,6 @@ export function createMappedRgoGallery({assets,layout,program}){
     setCutaway(value){cutaway=Boolean(value);canopy.visible=!cutaway;},
     action(action){if(action==='rgo-next'){activeHall=String((Number(activeHall)+1)%9).padStart(2,'0');return true;}if(action==='rgo-previous'){activeHall=String((Number(activeHall)+8)%9).padStart(2,'0');return true;}if(action.startsWith('rgo-hall-'))return this.setHall(action.slice(9));return false;},
     update(dt,camera){elapsed+=Math.max(0,dt);for(const globe of movingGlobes)globe.rotation.y=elapsed*.045;let change=false;if(camera){const local=group.worldToLocal(camera.position.clone());const show=!cutaway&&local.y<4.5;if(canopy.visible!==show){canopy.visible=show;change=true;}}return dt>0||change;},
-    getState:()=>({scope:'primary-nine-hall-route',hallCount:9,activeHall,programmeHallAreaM2:1120,programmeOverallM2:1400,displayCases:caseRecords.length,ships:assets.has('X02_SAILSHIP')?2:0,mir:assets.has('X01_MIR'),screens:screenRecords.length,screenRecords,caseRecords,referenceStyle:'warm-timber-lamellae-sand-floor-amber-light-blue-media',plannedHeroes:['Полноразмерный коч','Трёхпалубная «Надежда» в разрезе','«Таймыр»','АНТ-25','«Консул»','«Орёл»'],sourceLayout:'rgo-primary-layout.json',workingRouteReserveMetres:2.9}),
+    getState:()=>({scope:'primary-nine-hall-route',hallCount:9,activeHall,programmeHallAreaM2:1120,programmeOverallM2:1400,displayCases:caseRecords.length,ships:assets.has('X02_SAILSHIP')?2:0,mir:assets.has('X01_MIR'),screens:screenRecords.length,screenRecords,caseRecords,referenceStyle:'warm-timber-lamellae-sand-floor-amber-light-blue-media',plannedHeroes:['Полноразмерный коч','Трёхпалубная «Надежда» в разрезе','«Таймыр»','АНТ-25','«Консул»','«Орёл»'],sourceLayout:'rgo-primary-layout.json',workingRouteReserveMetres:layout.routeWorkingWidth}),
   };
 }

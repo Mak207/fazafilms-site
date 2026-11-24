@@ -68,46 +68,49 @@ export async function loadZoneAssets(loader,manifestUrl='assets/zones/manifest.j
 
 export {canvasTexture,textTexture,woodMaterial,tubeBetween,normalise,boxPart,localBoxPart};
 
-export function createIcebreakerEnvironment({panoramaUrl='assets/zones/arctic-panorama.webp'}={}){
-  const group=new THREE.Group();group.name='Арктическая среда «Лидера»';
-  const parts=[],pickables=[];
-  const water=new THREE.MeshStandardMaterial({color:0x174f75,metalness:.2,roughness:.23});
-  const iceMaterial=new THREE.MeshPhysicalMaterial({color:0xa7def2,roughness:.34,metalness:.05,transparent:true,opacity:.96});
-  const dark=new THREE.MeshStandardMaterial({color:0x162c3a,roughness:.7});
-  const glow=new THREE.MeshBasicMaterial({color:0x58cbf9,toneMapped:false});
-  const floor=new THREE.Mesh(new THREE.BoxGeometry(9.6,.12,28),water);floor.position.y=.03;group.add(floor);
-  parts.push(boxPart('Ледовый остров',[0,.42,0],[9.6,.84,28]));
-  const ice=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,0),iceMaterial,210);const random=seeded(2030),matrix=new THREE.Matrix4(),rotation=new THREE.Quaternion();
-  for(let i=0;i<210;i++){
-    let x,z;for(let j=0;j<30;j++){x=(random()-.5)*9.3;z=(random()-.5)*27.4;if(Math.abs(x)>3.25||Math.abs(z)>12.5)break;}
-    const size=.25+random()*.6;rotation.setFromEuler(new THREE.Euler(random(),random()*6.28,random()));
-    matrix.compose(new THREE.Vector3(x,.12+size*.12,z),rotation,new THREE.Vector3(size,size*.28,size*1.3));ice.setMatrixAt(i,matrix);
-  }ice.instanceMatrix.needsUpdate=true;group.add(ice);
+export function createIcebreakerEnvironment({panoramaUrl='assets/zones/arctic-aurora-panorama.webp',layout}={}){
+  if(!layout?.ship||!layout?.led||!layout?.iceIsland)throw new Error('Не загружена согласованная схема «Лидера».');
+  const group=new THREE.Group();group.name='Арктика · льды и северное сияние';
+  const parts=[],pickables=[],ship=layout.ship,yaw=ship.rotationY,c=Math.cos(yaw),s=Math.sin(yaw);
+  const local=([x,y,z])=>[c*(x-ship.x)-s*(z-ship.z),y-ship.y,s*(x-ship.x)+c*(z-ship.z)];
+  const rings=layout.iceIsland.geometry.coordinates.map(r=>r.map(([x,z])=>{const p=local([x,ship.y,z]);return [p[0],p[2]];}));
+  const hull=layout.ship.footprint.coordinates[0].map(([x,z])=>{const p=local([x,ship.y,z]);return [p[0],p[2]];});
+  const inside=(x,z,p)=>{let found=false;for(let i=0,j=p.length-1;i<p.length;j=i++)if((p[i][1]>z)!==(p[j][1]>z)&&x<(p[j][0]-p[i][0])*(z-p[i][1])/(p[j][1]-p[i][1])+p[i][0])found=!found;return found;};
+  const water=new THREE.MeshStandardMaterial({color:0x21658b,metalness:.24,roughness:.25});
+  const iceMaterial=new THREE.MeshPhysicalMaterial({color:0xbceaf6,roughness:.32,metalness:.04,transparent:true,opacity:.98});
+  const dark=new THREE.MeshStandardMaterial({color:0x102534,roughness:.6});
+  const glow=new THREE.MeshBasicMaterial({color:0x73d6f4,toneMapped:false});
+  const shape=new THREE.Shape(rings[0].map(([x,z])=>new THREE.Vector2(x,-z)));
+  for(const ring of rings.slice(1))shape.holes.push(new THREE.Path(ring.map(([x,z])=>new THREE.Vector2(x,-z))));
+  const geometry=new THREE.ExtrudeGeometry(shape,{depth:layout.iceIsland.height,bevelEnabled:false,steps:1});geometry.rotateX(-Math.PI/2);
+  const floor=new THREE.Mesh(geometry,water);floor.position.y=layout.iceIsland.baseY-ship.y;floor.name='Ледовый остров по контуру зоны СЗФО';group.add(floor);
+  const top=floor.position.y+layout.iceIsland.height;
+  for(const ring of rings)for(let i=1;i<ring.length;i++){
+    const a=ring[i-1],b=ring[i],length=Math.hypot(b[0]-a[0],b[1]-a[1]);if(length<.02)continue;
+    group.add(tubeBetween([a[0],top+.015,a[1]],[b[0],top+.015,b[1]],.014,glow,5));
+    parts.push({id:'Кромка ледового острова '+parts.length,min:[-length/2,0,-.06],max:[length/2,.25,.06],position:[(a[0]+b[0])/2,floor.position.y,(a[1]+b[1])/2],rotationY:-Math.atan2(b[1]-a[1],b[0]-a[0]),socialTarget:false});
+  }
+  const bounds=new THREE.Box2().setFromPoints(rings[0].map(p=>new THREE.Vector2(...p))),random=seeded(2030),positions=[];
+  for(let attempt=0;attempt<18000&&positions.length<160;attempt++){
+    const x=bounds.min.x+random()*(bounds.max.x-bounds.min.x),z=bounds.min.y+random()*(bounds.max.y-bounds.min.y),size=.06+random()*.07;
+    if(!inside(x,z,rings[0])||rings.slice(1).some(p=>inside(x,z,p))||inside(x,z,hull))continue;
+    if(![[-size,-size],[-size,size],[size,-size],[size,size]].every(([dx,dz])=>inside(x+dx,z+dz,rings[0])))continue;
+    positions.push({x,z,size,angle:random()*Math.PI*2});
+  }
+  const ice=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,0),iceMaterial,positions.length),matrix=new THREE.Matrix4(),rotation=new THREE.Quaternion();
+  positions.forEach((p,i)=>{rotation.setFromEuler(new THREE.Euler(.15,p.angle,.2));matrix.compose(new THREE.Vector3(p.x,top+.015,p.z),rotation,new THREE.Vector3(p.size,p.size*.45,p.size));ice.setMatrixAt(i,matrix);});ice.instanceMatrix.needsUpdate=true;group.add(ice);
+  const led=layout.led,centre=local(led.center),angle=led.rotationY-yaw;
+  const frame=new THREE.Mesh(new THREE.BoxGeometry(led.width,led.height,led.thickness-.01),dark);frame.position.fromArray(centre);frame.rotation.y=angle;frame.name='LED-фон «Полярные льды и северное сияние»';group.add(frame);
   const image=new THREE.TextureLoader().load(panoramaUrl);image.colorSpace=THREE.SRGBColorSpace;
-  const panoramaMaterial=new THREE.MeshBasicMaterial({map:image,side:THREE.DoubleSide,toneMapped:false});
-  function screen(name,center,size,yaw){
-    const frame=new THREE.Mesh(new THREE.BoxGeometry(size[0]+.12,size[1]+.12,.16),dark);frame.position.fromArray(center);frame.rotation.y=yaw;group.add(frame);
-    const plane=new THREE.Mesh(new THREE.PlaneGeometry(...size),panoramaMaterial);plane.position.fromArray(center);plane.rotation.y=yaw;plane.translateZ(.087);plane.name=name;group.add(plane);
-    const horizontal=[Math.abs(Math.cos(yaw))*size[0]+.18, size[1]+.12,Math.abs(Math.sin(yaw))*size[0]+.18];parts.push(boxPart(name,center,horizontal));
-  }
-  // Screen faces the public side. The open west edge retains the existing bridge.
-  screen('Арктическая медиапанорама',[-5.25,3.8,0],[28.5,6.4],Math.PI/2);
-  screen('Северное сияние',[0,3.8,14.35],[10.6,6.4],Math.PI);
-  for(const z of [-10,0,10]){const light=new THREE.PointLight(0x2a92ef,11,10,2);light.position.set(4.2,2,z);group.add(light);}
-  // Low museum barrier is a visual separation from the ice island, not a fall guard.
-  const glass=new THREE.MeshPhysicalMaterial({color:0xa9dcf1,transparent:true,opacity:.18,roughness:.15,depthWrite:false,side:THREE.DoubleSide});
-  const rail=new THREE.Mesh(new THREE.BoxGeometry(.035,.95,27.4),glass);rail.position.set(4.9,.5,0);group.add(rail);parts.push(boxPart('Кромка ледового острова',[4.9,.5,0],[.1,1,27.4]));
-  for(let z=-13;z<=13;z+=2){const post=new THREE.Mesh(new THREE.CylinderGeometry(.018,.018,1,8),dark);post.position.set(4.92,.5,z);group.add(post);}
-  group.add(tubeBetween([4.92,1,-13.6],[4.92,1,13.6],.025,dark));
-  for(const z of [-5,5]){
-    const panel=new THREE.Mesh(new THREE.BoxGeometry(.1,.8,2.6),dark);panel.position.set(4.98,.65,z);group.add(panel);
-    const texture=textTexture('«ЛИДЕР»','Атомный ледокол\nСеверный морской путь',{width:1200,height:420,background:'#0b1d2d',accent:'#4dc7fb'});
-    const face=new THREE.Mesh(new THREE.PlaneGeometry(2.5,.76),new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide}));face.rotation.y=Math.PI/2;face.position.set(5.04,.65,z);group.add(face);
-  }
+  const cover=(led.width-.12)/(led.height-.12)/3;image.repeat.set(cover,1);image.offset.set((1-cover)/2,0);
+  const face=new THREE.Mesh(new THREE.PlaneGeometry(led.width-.12,led.height-.12),new THREE.MeshBasicMaterial({map:image,side:THREE.DoubleSide,toneMapped:false}));face.position.fromArray(centre);face.rotation.y=angle;face.translateZ(led.thickness/2-.001);group.add(face);
+  parts.push({id:'Арктическая LED-медиапанорама',min:[-led.width/2,-led.height/2,-led.thickness/2],max:[led.width/2,led.height/2,led.thickness/2],position:centre,rotationY:angle});
+  for(const z of [-4,4]){const light=new THREE.PointLight(0x67c7ef,5,7,2);light.position.set(1.6,1.8,z);group.add(light);}
+  const overviewPose={position:local([8,13.0,30]),target:local([-7.5,9.6,42]),fov:51};
   let time=0;
-  return {group,pickables,getCollisionParts:()=>parts,
-    update(dt){time+=Math.max(0,dt);water.roughness=.22+Math.sin(time*.5)*.025;return dt>0;},
-    getState:()=>({iceBlocks:210,panoramas:2,informationPanels:2,iceIsland:[9.6,28],reference:'supplied-lider-image'}),
-    overviewPose:{position:[23,15,-28],target:[0,3,0]},interiorPose:{position:[18,9,-22],target:[0,3,0]},
+  return {group,pickables,getCollisionParts:()=>parts,overviewPose,interiorPose:overviewPose,
+    update(dt){time+=Math.max(0,dt);water.roughness=.24+Math.sin(time*.5)*.025;return dt>0;},
+    getState:()=>({iceBlocks:positions.length,panoramas:1,ledSizeMetres:[led.width,led.height],iceIslandSquareMetres:layout.iceIsland.area,sourceZone:'northwest-main',screenContent:'Полярные льды и северное сияние',originalGLBUnchanged:true}),
+    dispose(){group.removeFromParent();const gs=new Set(),ms=new Set(),ts=new Set();group.traverse(node=>{if(node.geometry)gs.add(node.geometry);for(const m of Array.isArray(node.material)?node.material:[node.material])if(m){ms.add(m);if(m.map)ts.add(m.map);}});gs.forEach(g=>g.dispose());ms.forEach(m=>m.dispose());ts.forEach(t=>t.dispose());},
   };
 }

@@ -1,0 +1,439 @@
+{
+  "schemaVersion": 1,
+  "objectId": "O16",
+  "title": "Новый Херсонес",
+  "sourceRegion": "south",
+  "sourceZoneEntry": "south-upper",
+  "placement": {
+    "x": -10,
+    "y": 13.2,
+    "z": 55,
+    "floor": "upper",
+    "rotationY": 0,
+    "scaleTo": 24,
+    "floorDatumOffset": 0.31
+  },
+  "sourceEvidence": {
+    "mappingPath": "D:\\Парк впечатлений\\01_Вложения_переписки\\061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+    "mappingLine": 55,
+    "mappingText": "Херсонес — ЮФО",
+    "zoningImage": {
+      "kind": "primary Figma embedded image",
+      "fileKey": "vnoVHaMbnhqrGthhT0YT7j",
+      "nodeId": "3395:644",
+      "localPath": "/workspace/scratch/80db2b497c1c/interactive_work/source-zones-upper.jpg",
+      "sha256": "f66fea1c0605ce73f207ff0656097310a385b0c36b713a4544b72d026de66630",
+      "printedLevel": 28.05,
+      "registration": "upper"
+    }
+  },
+  "adaptedDimensionsMetres": [
+    8.9,
+    5.8406885186,
+    14
+  ],
+  "effectiveAboveFloorHeightMetres": 5.5306885186,
+  "footprintOutsideSourceZoneSquareMetres": 0.0,
+  "footprintMinimumSourceBoundaryDistanceMetres": 0.2967999999999975,
+  "exactShellCadIntersection": false,
+  "floorSamples": [
+    {
+      "x": -10,
+      "z": 55,
+      "supported": true
+    },
+    {
+      "x": -14.3,
+      "z": 48.15,
+      "supported": true
+    },
+    {
+      "x": -5.7,
+      "z": 48.15,
+      "supported": true
+    },
+    {
+      "x": -5.7,
+      "z": 61.85,
+      "supported": true
+    },
+    {
+      "x": -14.3,
+      "z": 61.85,
+      "supported": true
+    },
+    {
+      "x": -10,
+      "z": 48.15,
+      "supported": true
+    },
+    {
+      "x": -5.7,
+      "z": 55,
+      "supported": true
+    },
+    {
+      "x": -10,
+      "z": 61.85,
+      "supported": true
+    },
+    {
+      "x": -14.3,
+      "z": 55,
+      "supported": true
+    }
+  ],
+  "passedFloorSamples": 9,
+  "furnishings": [
+    {
+      "id": "chersonesus-interior:panorama-wall",
+      "cadHits": 0
+    },
+    {
+      "id": "chersonesus-interior:case-1",
+      "cadHits": 0
+    },
+    {
+      "id": "chersonesus-interior:case-2",
+      "cadHits": 0
+    },
+    {
+      "id": "chersonesus-interior:case-3",
+      "cadHits": 0
+    },
+    {
+      "id": "chersonesus-interior:case-4",
+      "cadHits": 0
+    },
+    {
+      "id": "chersonesus-interior:case-5",
+      "cadHits": 0
+    },
+    {
+      "id": "chersonesus-interior:vr-bay-1",
+      "cadHits": 0
+    },
+    {
+      "id": "chersonesus-interior:vr-bay-2",
+      "cadHits": 0
+    },
+    {
+      "id": "chersonesus-interior:information--1",
+      "cadHits": 0
+    },
+    {
+      "id": "chersonesus-interior:information-1",
+      "cadHits": 0
+    }
+  ],
+  "aisles": [
+    {
+      "id": "central-2.2m",
+      "min": [
+        -0.45,
+        0.04,
+        -5.75
+      ],
+      "max": [
+        1.75,
+        2.24,
+        3.55
+      ],
+      "shellHits": 0,
+      "furniture": [],
+      "cadHits": 0,
+      "worldMin": [
+        -10.45,
+        13.239999999999998,
+        49.25
+      ],
+      "worldMax": [
+        -8.25,
+        15.44,
+        58.55
+      ],
+      "continuousActualFloorAreaSquareMetres": 20.459999999999987,
+      "unsupportedAreaSquareMetres": 0.0,
+      "unsupportedPolygons": [],
+      "architectureBaseGridSamples": {
+        "step": 0.25,
+        "passed": 333,
+        "required": 333,
+        "note": "Base grid is already eroded for a visitor body; false samples near boundaries can be more conservative than the exact swept-volume check."
+      }
+    },
+    {
+      "id": "entry-1.8m",
+      "min": [
+        -0.25,
+        0.04,
+        -5.75
+      ],
+      "max": [
+        11.4,
+        2.24,
+        -3.95
+      ],
+      "shellHits": 0,
+      "furniture": [],
+      "cadHits": 0,
+      "worldMin": [
+        -10.25,
+        13.239999999999998,
+        49.25
+      ],
+      "worldMax": [
+        1.4000000000000004,
+        15.44,
+        51.05
+      ],
+      "continuousActualFloorAreaSquareMetres": 20.969999999999967,
+      "unsupportedAreaSquareMetres": 0.0,
+      "unsupportedPolygons": [],
+      "architectureBaseGridSamples": {
+        "step": 0.25,
+        "passed": 329,
+        "required": 329,
+        "note": "Base grid is already eroded for a visitor body; false samples near boundaries can be more conservative than the exact swept-volume check."
+      }
+    },
+    {
+      "id": "east-side-of-stair-core-1.8m",
+      "min": [
+        9.6,
+        0.04,
+        -5.75
+      ],
+      "max": [
+        11.4,
+        2.24,
+        8.44
+      ],
+      "shellHits": 0,
+      "furniture": [],
+      "cadHits": 0,
+      "worldMin": [
+        -0.40000000000000036,
+        13.239999999999998,
+        49.25
+      ],
+      "worldMax": [
+        1.4000000000000004,
+        15.44,
+        63.44
+      ],
+      "continuousActualFloorAreaSquareMetres": 25.542000000000005,
+      "unsupportedAreaSquareMetres": 0.0,
+      "unsupportedPolygons": [],
+      "architectureBaseGridSamples": {
+        "step": 0.25,
+        "passed": 399,
+        "required": 399,
+        "note": "Base grid is already eroded for a visitor body; false samples near boundaries can be more conservative than the exact swept-volume check."
+      }
+    },
+    {
+      "id": "stairs7-upper-landing-1.8m",
+      "min": [
+        4.840659356,
+        0.04,
+        6.64
+      ],
+      "max": [
+        11.4,
+        2.24,
+        8.44
+      ],
+      "shellHits": 0,
+      "furniture": [],
+      "cadHits": 0,
+      "worldMin": [
+        -5.159340644,
+        13.239999999999998,
+        61.64
+      ],
+      "worldMax": [
+        1.4000000000000004,
+        15.44,
+        63.44
+      ],
+      "continuousActualFloorAreaSquareMetres": 11.806813159199983,
+      "unsupportedAreaSquareMetres": 0.0,
+      "unsupportedPolygons": [],
+      "architectureBaseGridSamples": {
+        "step": 0.25,
+        "passed": 182,
+        "required": 182,
+        "note": "Base grid is already eroded for a visitor body; false samples near boundaries can be more conservative than the exact swept-volume check."
+      }
+    }
+  ],
+  "selectedEntry": {
+    "localXZ": [
+      4.45,
+      -4.85
+    ],
+    "worldXZ": [
+      -5.55,
+      50.15
+    ],
+    "publicApproachFromStair": "stairs_7",
+    "stairUpperEndpoint": [
+      -4.2593406438827515,
+      13.2,
+      61.63263130187988
+    ],
+    "widthMetres": 1.8,
+    "bodyHeightMetres": 2.2,
+    "portalClearMetres": [
+      2.4,
+      2.5
+    ],
+    "centralAisleWidthMetres": 2.2
+  },
+  "recommendedOtherObjectMoves": [],
+  "reservedCorridors": [
+    "Keep the adapted north portal at localZ−4.85 and all four exact aisle boxes free of other exhibits.",
+    "The public approach goes around the east side of the existing stair core; no route crosses that core."
+  ],
+  "checksPass": true,
+  "method": "Actual fitted/cut O16 shell+stone portal vs actual CAD triangles; all current monorail path samples at0.05m with complete12m vehicle OBB,10cm margin and grade orientation; beam and conservative support volumes. Interior boxes are full dimensions, never proportionally shrunk.; complete corridor floor polygons intersected with upward actual CAD floor triangles. Source zone polygons remain fixed.",
+  "inputFiles": {
+    "cadSha256": "0fe60c53a9fc72c9ed0ad15ac8808ca721b3a7af8e96d81329cdc748c78fd792",
+    "sourceZonesSha256": "4f1bdec2ee46397a05dbf4831438d9635c2037d5aa756c053704f41898257e7b",
+    "shellResult": "o16-compact-fit-check.json",
+    "interiorResult": "o16-compact-fit-check.json",
+    "chersonesus-fit.jsSha256": "8bd64a5109bec87e2a091fd2847dad17b38f57bf60d4ce357b015c93117e39b8",
+    "o16-compact-collision-parts.jsonSha256": "06aab296abf5cb04b55ff9ead2a9c86a3f02236c5a6845ecd20af30ac9a05be5",
+    "o16-compact-fit-triangles.f32Sha256": "3fabe46fd8780e80c95d2c6961be03d306343cf3580b12dd2f30990ca0797765"
+  },
+  "limitations": [
+    "Checks refer to the supplied converted CAD geometry and current O16 asset; they are design coordination evidence, not structural/load/fire certification.",
+    "The selected adapted entrance is2.4m wide and2.5m high. Other original decorative arches are not claimed as public entries. Horizontal proportions of the exhibit are deliberately adapted; the human height and2.5mVR zones stay unchanged.",
+    "Other new exhibition assemblies must remain outside the reserved aisle boxes."
+  ],
+  "adaptation": {
+    "sourceWidth": 10.58707196484,
+    "sourceLength": 24,
+    "width": 8.9,
+    "length": 14,
+    "height": 5.5306885186,
+    "portal": {
+      "min": [
+        2.75,
+        -0.08,
+        -6.2
+      ],
+      "max": [
+        4.7,
+        2.7,
+        -3.5
+      ],
+      "clearWidth": 2.4,
+      "clearHeight": 2.5,
+      "centerZ": -4.85
+    },
+    "frame": [
+      {
+        "id": "compact-portal-left",
+        "min": [
+          3.25,
+          0,
+          -6.21
+        ],
+        "max": [
+          4,
+          2.7,
+          -6.05
+        ]
+      },
+      {
+        "id": "compact-portal-right",
+        "min": [
+          3.25,
+          0,
+          -3.65
+        ],
+        "max": [
+          4,
+          2.7,
+          -3.49
+        ]
+      },
+      {
+        "id": "compact-portal-lintel",
+        "min": [
+          3.7,
+          2.5,
+          -6.21
+        ],
+        "max": [
+          4.45,
+          2.7,
+          -3.49
+        ]
+      }
+    ]
+  },
+  "interiorLayout": "compact-source-zone",
+  "monorail": {
+    "transportHitCount": 0,
+    "envelopeVehicleHits": 0,
+    "samplesChecked": 958,
+    "supportHits": [],
+    "routeSampleFile": "monorail_work/route-samples-final.json",
+    "sampleStepMetres": 0.05,
+    "vehiclePaddingMetres": 0.1
+  },
+  "transitionCorridors": {
+    "parts": 381,
+    "corridors": 714,
+    "bodyRadiusMetres": 0.51,
+    "bodyHeightMetres": 2.17,
+    "passed": true,
+    "contacts": [],
+    "method": "Unmodified production bodyHitsProxy against all actual transition corridors and lift queues; both portal meshes and matching proxies recessed by 0.45 m."
+  },
+  "portalClearance": {
+    "passed": true,
+    "portalClearMetres": [
+      2.4,
+      2.5
+    ],
+    "numericalBoundaryInsetMetres": 0.001,
+    "portalTriangleContacts": 0,
+    "collisionPartCount": 273,
+    "aisleCollisionParts": [
+      {
+        "id": "central-2.2m",
+        "contacts": []
+      },
+      {
+        "id": "entry-1.8m",
+        "contacts": []
+      },
+      {
+        "id": "east-side-of-stair-core-1.8m",
+        "contacts": []
+      },
+      {
+        "id": "stairs7-upper-landing-1.8m",
+        "contacts": []
+      }
+    ]
+  },
+  "portalPostRevision": {
+    "recessMetres": 0.45,
+    "localX": [
+      3.25,
+      4.0
+    ],
+    "worldX": [
+      -6.75,
+      -6.0
+    ],
+    "clearOpeningUnchanged": true,
+    "physicalMeshAndColliderMovedTogether": true,
+    "reason": "Keep the actual lift-20-15 upper queue body envelopes clear without disabling any obstacle."
+  }
+}

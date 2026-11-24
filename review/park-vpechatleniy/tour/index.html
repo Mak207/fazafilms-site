@@ -55,12 +55,13 @@
     <aside data-az-zone="controls" data-az-scroll id="monorail-panel" class="context-panel" hidden aria-labelledby="monorail-title">
       <div class="panel-heading"><strong id="monorail-title">Монорельс</strong><button class="panel-close" data-close-panel="monorail-panel" type="button" aria-label="Закрыть монорельс">×</button></div>
       <div class="monorail-controls" aria-label="Управление монорельсом">
-        <div class="panel-button-row"><button id="tram-play" type="button" aria-pressed="false" disabled>Пуск</button><button id="tram-onboard" type="button" aria-pressed="false" disabled>Вид из вагона</button></div>
+        <div class="panel-button-row"><button id="tram-play" type="button" aria-pressed="false" disabled>Пуск</button><button id="tram-onboard" type="button" aria-pressed="false" disabled>Ждём посадку</button></div>
         <label class="camera-control"><span>Камера</span><select id="tram-camera" disabled><option value="route">Весь маршрут</option><option value="inside-0">Внутри вагона 1</option><option value="inside-1">Внутри вагона 2</option><option value="follow-0">За вагоном 1</option><option value="follow-1">За вагоном 2</option><option value="free">Свободный вид</option></select></label>
         <label class="speed-control" for="tram-speed"><span>Скорость</span><select id="tram-speed" disabled><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
         <div class="panel-button-row"><button data-view="route" aria-pressed="false" type="button">Весь маршрут</button><button id="tram-station" type="button" disabled>Площадка</button></div>
       </div>
-      <p class="panel-note">Внутри вагона потяните вид мышью или пальцем, чтобы оглядеться.</p>
+      <div id="tram-stations"></div>
+      <p class="panel-note">Посадка и высадка — на остановках. Внутри вагона потяните вид мышью или пальцем, чтобы оглядеться.</p>
     </aside>
 
     <aside data-az-zone="controls" data-az-scroll id="crowd-panel" class="context-panel crowd-panel" data-state="loading" hidden aria-labelledby="crowd-title">
@@ -95,7 +96,8 @@
       <p><b>Монорельс:</b> в виде из вагона потяните мышью или пальцем, чтобы повернуть голову. Стрелки меняют взгляд, Esc возвращает маршрут. Пауза людей и пауза вагонов независимы.</p>
       <p><b>Вид:</b> ракурсы, качество и срез здания собраны в одной панели. При осмотре объекта мешающие поверхности временно скрываются; «Экспозиция» возвращает общий вид.</p>
     </aside>
-    <aside id="zone-map-panel" data-az-zone="controls" class="context-panel zone-map-panel" hidden aria-label="Зоны парка"><div class="panel-heading"><strong>Карта зон</strong><button class="panel-close" type="button" data-close-panel="zone-map-panel" aria-label="Закрыть карту зон">×</button></div><label class="zone-boundary-switch"><input id="zone-boundaries" type="checkbox" checked> Границы и названия в 3D</label><p id="zone-map-current" class="panel-note">Выберите зону, чтобы рассмотреть её целиком.</p><div id="zone-map-buttons" class="zone-map-buttons"></div></aside>
+    <aside id="zone-map-panel" data-az-zone="controls" class="context-panel zone-map-panel" hidden aria-label="Зоны парка"><div class="panel-heading"><strong>Карта зон</strong><button class="panel-close" type="button" data-close-panel="zone-map-panel" aria-label="Закрыть карту зон">×</button></div><label class="zone-boundary-switch"><input id="zone-boundaries" type="checkbox" checked> Границы и названия в 3D</label><label class="zone-map-level">Границы уровней<select id="zone-map-level"><option value="both">Оба уровня</option><option value="main">Основной уровень</option><option value="upper">Антресоль</option></select></label><p id="zone-map-current" class="panel-note">Выберите зону, чтобы рассмотреть её целиком.</p><p class="panel-note" id="zone-source-note">Заливка — зоны общей исходной схемы. Пунктир — рабочий контур Аллеи РГО из презентации 018; на стыках с ДФО и СФО версии требуют согласования.</p>
+      <div id="zone-map-buttons" class="zone-map-buttons"></div></aside>
     <aside id="zone-actions" data-az-zone="controls" class="zone-actions" hidden aria-label="Управление разделом"><div class="zone-actions-heading"><p id="zone-description"></p><button id="zone-close" type="button" aria-label="Скрыть управление разделом">×</button></div><label id="rgo-hall-control" class="rgo-hall-control" hidden><span>Залы РГО</span><select id="rgo-hall-select" aria-label="Залы РГО"></select></label><div class="zone-navigation"><button id="zone-inside" type="button">Внутри раздела</button><button id="zone-overview" type="button">Зона целиком</button></div><div id="zone-action-buttons" class="zone-action-buttons"></div></aside>
     <p data-az-zone="content" id="scene-notice" class="scene-notice" hidden role="status"></p>
   </section>

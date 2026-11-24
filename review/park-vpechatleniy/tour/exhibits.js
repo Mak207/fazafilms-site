@@ -440,7 +440,8 @@ export async function createExhibitSystem({
       for (let index = 0; index < object.instances.length; index++) {
         const placement = object.instances[index];
         const instanceId = placement.id || object.id + '-' + (index + 1);
-        const evidence = supportEvidence(size, placement);
+        const supportSamples=placement.supportSamples||object.supportSamples||null;
+        const evidence=supportEvidence(size,placement,supportSamples);
         if (!evidence.valid) {
           problem(row, instanceId, 'Позиция не добавлена: недостаточно подтверждённой опоры на выбранном уровне пола.', {
             x: placement.x, z: placement.z, requestedFloorY: placement.floorY, ...evidence,
@@ -464,7 +465,7 @@ export async function createExhibitSystem({
           dimensions: vectorData(size), worldBounds: boxData(getPlacementBounds(size, placement, baseY)),
           ...evidence,
         });
-        instances.set(instanceId, { root: instance, row, placement: row.placements.at(-1), size: size.clone() });
+        instances.set(instanceId, { root: instance, row, placement:row.placements.at(-1),size:size.clone(),supportSamples });
       }
       row.status = 'loaded';
       emit();

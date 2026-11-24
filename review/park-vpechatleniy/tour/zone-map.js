@@ -1,10 +1,13 @@
 import * as THREE from 'three';
 
+/** Primary drawing contours; the source records keep their own level and precision. */
 export async function createZoneMap({scene,onFocus,requestRender=()=>{}}){
-  const response=await fetch('assets/zones/source-zones.json',{cache:'no-store'});if(!response.ok)throw new Error('Не загружена карта зон.');
-  const data=await response.json(),group=new THREE.Group();group.name='Зоны по исходной схеме';scene.add(group);
-  const entries=new Map(),buttons=document.getElementById('zone-map-buttons'),checkbox=document.getElementById('zone-boundaries');
-  let selected=null,visible=true;
+  const response=await fetch('assets/zones/source-zones.json',{cache:'no-store'});
+  if(!response.ok)throw new Error('Не загружена карта зон.');
+  const data=await response.json(),group=new THREE.Group();group.name='Зоны по исходным схемам';scene.add(group);
+  const entries=new Map(),regions=new Map(),buttons=document.getElementById('zone-map-buttons');
+  const checkbox=document.getElementById('zone-boundaries'),levelSelect=document.getElementById('zone-map-level');
+  let selected=null,visible=true,level='both';
   function label(title,color){
     const canvas=document.createElement('canvas');canvas.width=768;canvas.height=160;const c=canvas.getContext('2d');
     c.fillStyle='#10251fec';c.beginPath();c.roundRect(3,3,762,154,24);c.fill();c.strokeStyle=color;c.lineWidth=6;c.stroke();
@@ -12,31 +15,69 @@ export async function createZoneMap({scene,onFocus,requestRender=()=>{}}){
     const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
     const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthWrite:false}));sprite.scale.set(10.2,2.125,1);sprite.renderOrder=7;return sprite;
   }
-  for(const [index,zone] of data.zones.entries()){
+  const ordered=data.zones.slice().sort((a,b)=>(a.regionId==='rgo'?-2:a.regionId==='rgo-museum'?-1:a.sourceNumber||20)-(b.regionId==='rgo'?-2:b.regionId==='rgo-museum'?-1:b.sourceNumber||20));
+  for(const [index,zone] of ordered.entries()){
+    if(!Array.isArray(zone.polygons)||!zone.polygons.length)continue;
     const root=new THREE.Group();root.name=zone.title;root.userData.zoneId=zone.id;group.add(root);
-    const color=zone.color||'#ceaa63',bounds=new THREE.Box3();
+    const color=zone.color||'#ceaa63',bounds=new THREE.Box3(),surfaces=[];
     for(const polygon of zone.polygons){
+      if(polygon.length<3)continue;
       const shape=new THREE.Shape(polygon.map(([x,z])=>new THREE.Vector2(x,-z)));
       const plane=new THREE.Mesh(new THREE.ShapeGeometry(shape),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.15,depthWrite:false,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-1}));
-      plane.rotation.x=-Math.PI/2;plane.position.y=zone.floorY+.085+index*.0004;plane.renderOrder=3;root.add(plane);
+      plane.rotation.x=-Math.PI/2;plane.position.y=zone.floorY+.085+index*.0004;plane.renderOrder=3;root.add(plane);surfaces.push(plane);
       const points=polygon.map(([x,z])=>new THREE.Vector3(x,zone.floorY+.1,z));points.forEach(p=>bounds.expandByPoint(p));
       const line=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points),new THREE.LineBasicMaterial({color,transparent:true,opacity:.95,depthWrite:false}));line.renderOrder=4;root.add(line);
     }
+    if(bounds.isEmpty()){root.removeFromParent();continue;}
     const center=bounds.getCenter(new THREE.Vector3()),where=zone.labelXZ||[center.x,center.z];
-    const sign=label(zone.title,color);sign.position.set(where[0],zone.floorY+1.7,where[1]);root.add(sign);
-    const button=document.createElement('button');button.type='button';button.className='zone-map-button';button.dataset.mapZone=zone.id;button.style.setProperty('--zone-color',color);button.textContent=zone.title;button.onclick=()=>focus(zone.id);buttons.append(button);
-    entries.set(zone.id,{...zone,root,bounds,button});
+    const sign=label(zone.abbreviation||zone.title,color);sign.position.set(where[0],zone.floorY+1.65,where[1]);root.add(sign);
+    const entry={...zone,root,bounds,surfaces,sign};entries.set(zone.id,entry);
+    const regionId=zone.regionId||zone.id;
+    if(!regions.has(regionId))regions.set(regionId,{id:regionId,title:zone.title,color,entries:[],button:null});
+    regions.get(regionId).entries.push(entry);
   }
-  function setVisible(value){visible=Boolean(value);group.visible=visible;checkbox.checked=visible;requestRender();}
+  if(data.workingDetailedRgo){
+    const detail=data.workingDetailedRgo;
+    for(const polygon of detail.polygons){
+      const points=polygon.map(([x,z])=>new THREE.Vector3(x,detail.floorY+.14,z));points.push(points[0].clone());
+      const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),new THREE.LineDashedMaterial({color:0xf5e7bd,dashSize:.5,gapSize:.3,transparent:true,opacity:.85,depthWrite:false}));
+      line.name='Аллея РГО · отдельная версия018';line.computeLineDistances();line.renderOrder=5;line.userData.detailedRgo=true;group.add(line);
+    }
+  }
+  for(const region of regions.values()){
+    const button=document.createElement('button');button.type='button';button.className='zone-map-button';button.dataset.mapZone=region.id;
+    button.style.setProperty('--zone-color',region.color);button.textContent=region.title;button.setAttribute('aria-pressed','false');
+    button.onclick=()=>focus(region.id);buttons.append(button);region.button=button;
+  }
+  const displayed=entry=>level==='both'||entry.floorId===level;
+  function refresh(){
+    group.visible=visible;checkbox.checked=visible;levelSelect.value=level;
+    for(const child of group.children)if(child.userData.detailedRgo)child.visible=level!=='upper';
+    for(const region of regions.values()){
+      const active=region.id===selected;region.button.setAttribute('aria-pressed',String(active));
+      region.button.disabled=!region.entries.some(displayed);
+      for(const entry of region.entries){entry.root.visible=displayed(entry);for(const surface of entry.surfaces)surface.material.opacity=selected?(active?.29:.07):.15;}
+    }
+    requestRender();
+  }
+  function setVisible(value){visible=Boolean(value);refresh();}
+  function setLevel(value){level=['main','upper','both'].includes(value)?value:'both';refresh();if(selected)focus(selected);}
   function focus(id){
-    const zone=entries.get(id);if(!zone)return false;selected=id;setVisible(true);
-    for(const entry of entries.values()){entry.button.setAttribute('aria-pressed',String(entry.id===id));entry.root.traverse(node=>{if(node.isMesh)node.material.opacity=entry.id===id?.29:.09;});}
-    const size=zone.bounds.getSize(new THREE.Vector3()),center=zone.bounds.getCenter(new THREE.Vector3()),span=Math.max(size.x,size.z,16);
-    onFocus(new THREE.Vector3(center.x+span*.45,zone.floorY+span*.9,center.z+span*.62),center,zone.title);
-    document.getElementById('zone-map-current').textContent=zone.title;requestRender();return true;
+    const exact=entries.get(id),region=regions.get(exact?.regionId||id);if(!region)return false;
+    if(exact)level=exact.floorId;
+    const shown=region.entries.filter(displayed);if(!shown.length)return false;
+    selected=region.id;visible=true;refresh();
+    const bounds=new THREE.Box3();shown.forEach(entry=>bounds.union(entry.bounds));
+    const size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3()),span=Math.max(size.x,size.z,16);
+    onFocus(new THREE.Vector3(center.x+span*.45,Math.max(...shown.map(z=>z.floorY))+span*.9,center.z+span*.62),center,region.title);
+    const floors=shown.length>1?'Основной уровень и антресоль':shown[0].floorId==='upper'?'Антресоль':'Основной уровень';
+    document.getElementById('zone-map-current').textContent=region.title+' · '+floors;
+    requestRender();return true;
   }
-  checkbox.onchange=()=>setVisible(checkbox.checked);
+  checkbox.onchange=()=>setVisible(checkbox.checked);levelSelect.onchange=()=>setLevel(levelSelect.value);
   document.getElementById('zones-toggle').disabled=false;
   document.getElementById('zones-toggle').addEventListener('click',()=>{if(!document.getElementById('zone-map-panel').hidden)setVisible(true);});
-  return {group,data,focus,setVisible,getState:()=>({ready:true,visible,selected,zones:[...entries.values()].map(z=>({id:z.id,title:z.title,floorY:z.floorY,polygonCount:z.polygons.length,source:z.source,status:z.status}))})};
+  refresh();
+  return {group,data,focus,setVisible,setLevel,getState:()=>({ready:true,visible,selected,level,regionCount:regions.size,
+    zones:[...entries.values()].map(z=>({id:z.id,regionId:z.regionId,title:z.title,floorY:z.floorY,polygonCount:z.polygons.length,source:z.source,status:z.status,rasterBoundaryToleranceMetres:z.rasterBoundaryToleranceMetres}))})};
 }

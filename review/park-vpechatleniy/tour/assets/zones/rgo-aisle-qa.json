@@ -1,0 +1,254 @@
+{
+  "width": 2.3,
+  "length": 128.13144507914117,
+  "pieces": [
+    {
+      "a": [
+        -10.804890000000057,
+        -57.42009999999992
+      ],
+      "b": [
+        -6.804890000000071,
+        -57.62009999999992
+      ],
+      "length": 4.004996878900143,
+      "width": 2.3,
+      "cadContacts": 0,
+      "meshes": [],
+      "outsideSourceArea": 0.0,
+      "gridSamples": 588,
+      "gridBlocked": 0,
+      "blockedSample": [],
+      "furnitureContacts": []
+    },
+    {
+      "a": [
+        -6.804890000000071,
+        -57.62009999999992
+      ],
+      "b": [
+        -5.804890000000075,
+        -58.22009999999993
+      ],
+      "length": 1.1661903789690615,
+      "width": 2.3,
+      "cadContacts": 0,
+      "meshes": [],
+      "outsideSourceArea": 0.0,
+      "gridSamples": 189,
+      "gridBlocked": 0,
+      "blockedSample": [],
+      "furnitureContacts": []
+    },
+    {
+      "a": [
+        -5.804890000000075,
+        -58.22009999999993
+      ],
+      "b": [
+        -0.4048900000000941,
+        -58.62009999999994
+      ],
+      "length": 5.414794548272335,
+      "width": 2.3,
+      "cadContacts": 0,
+      "meshes": [],
+      "outsideSourceArea": 0.0,
+      "gridSamples": 777,
+      "gridBlocked": 0,
+      "blockedSample": [],
+      "furnitureContacts": []
+    },
+    {
+      "a": [
+        -0.4048900000000941,
+        -58.62009999999994
+      ],
+      "b": [
+        11.395109999999868,
+        -58.22009999999993
+      ],
+      "length": 11.806777714516315,
+      "width": 2.3,
+      "cadContacts": 0,
+      "meshes": [],
+      "outsideSourceArea": 0.0,
+      "gridSamples": 1680,
+      "gridBlocked": 0,
+      "blockedSample": [],
+      "furnitureContacts": []
+    },
+    {
+      "a": [
+        11.395109999999868,
+        -58.22009999999993
+      ],
+      "b": [
+        30.395109999999796,
+        -57.020099999999914
+      ],
+      "length": 19.037857022259555,
+      "width": 2.3,
+      "cadContacts": 0,
+      "meshes": [],
+      "outsideSourceArea": 0.0,
+      "gridSamples": 2688,
+      "gridBlocked": 0,
+      "blockedSample": [],
+      "furnitureContacts": []
+    },
+    {
+      "a": [
+        30.395109999999796,
+        -57.020099999999914
+      ],
+      "b": [
+        30.99510999999979,
+        -44.02009999999973
+      ],
+      "length": 13.013838787998136,
+      "width": 2.3,
+      "cadContacts": 0,
+      "meshes": [],
+      "outsideSourceArea": 0.0,
+      "gridSamples": 1848,
+      "gridBlocked": 0,
+      "blockedSample": [],
+      "furnitureContacts": []
+    },
+    {
+      "a": [
+        30.99510999999979,
+        -44.02009999999973
+      ],
+      "b": [
+        29.5951099999998,
+        -32.62009999999957
+      ],
+      "length": 11.485643212289144,
+      "width": 2.3,
+      "cadContacts": 0,
+      "meshes": [],
+      "outsideSourceArea": 0.0,
+      "gridSamples": 1617,
+      "gridBlocked": 0,
+      "blockedSample": [],
+      "furnitureContacts": []
+    },
+    {
+      "a": [
+        29.5951099999998,
+        -32.62009999999957
+      ],
+      "b": [
+        11.595109999999863,
+        -29.22009999999952
+      ],
+      "length": 18.318296864064575,
+      "width": 2.3,
+      "cadContacts": 0,
+      "meshes": [],
+      "outsideSourceArea": 0.0,
+      "gridSamples": 2583,
+      "gridBlocked": 0,
+      "blockedSample": [],
+      "furnitureContacts": []
+    },
+    {
+      "a": [
+        11.595109999999863,
+        -29.22009999999952
+      ],
+      "b": [
+        4.795109999999887,
+        -21.420099999999408
+      ],
+      "length": 10.347946656221291,
+      "width": 2.3,
+      "cadContacts": 0,
+      "meshes": [],
+      "outsideSourceArea": 0.0,
+      "gridSamples": 1470,
+      "gridBlocked": 0,
+      "blockedSample": [],
+      "furnitureContacts": []
+    },
+    {
+      "a": [
+        4.795109999999887,
+        -21.420099999999408
+      ],
+      "b": [
+        -9.80489000000006,
+        -10.020099999999246
+      ],
+      "length": 18.523498589629394,
+      "width": 2.3,
+      "cadContacts": 0,
+      "meshes": [],
+      "outsideSourceArea": 0.0,
+      "gridSamples": 2604,
+      "gridBlocked": 0,
+      "blockedSample": [],
+      "furnitureContacts": []
+    },
+    {
+      "a": [
+        -9.80489000000006,
+        -10.020099999999246
+      ],
+      "b": [
+        -10.00489000000006,
+        -9.020099999999232
+      ],
+      "length": 1.0198039027185708,
+      "width": 2.3,
+      "cadContacts": 0,
+      "meshes": [],
+      "outsideSourceArea": 0.0,
+      "gridSamples": 168,
+      "gridBlocked": 0,
+      "blockedSample": [],
+      "furnitureContacts": []
+    },
+    {
+      "a": [
+        -10.00489000000006,
+        -9.020099999999232
+      ],
+      "b": [
+        -10.00489000000006,
+        -7.220099999999206
+      ],
+      "length": 1.8000000000000256,
+      "width": 2.3,
+      "cadContacts": 0,
+      "meshes": [],
+      "outsideSourceArea": 0.0,
+      "gridSamples": 273,
+      "gridBlocked": 0,
+      "blockedSample": [],
+      "furnitureContacts": []
+    },
+    {
+      "a": [
+        -10.00489000000006,
+        -7.220099999999206
+      ],
+      "b": [
+        -18.00489000000003,
+        1.9799000000009244
+      ],
+      "length": 12.191800523302616,
+      "width": 2.3,
+      "cadContacts": 0,
+      "meshes": [],
+      "outsideSourceArea": 0.0,
+      "gridSamples": 1722,
+      "gridBlocked": 0,
+      "blockedSample": [],
+      "furnitureContacts": []
+    }
+  ],
+  "passed": true
+}

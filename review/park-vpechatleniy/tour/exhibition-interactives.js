@@ -262,65 +262,123 @@ function drawFlight(ctx, w, h, state, time) {
 export function createFlightCockpits(options = {}) {
   const kit = makeKit('mc21-cockpits', 'МС-21 · интерактивные кабины', options);
   const { root, standard, basic, box, cyl, tube, collider, action } = kit;
-  const body = standard(0xe1e5e3, { roughness: .37 }), navy = standard(0x142a38), seatMat = standard(0x40546a), frame = standard(0x8ca1ae, { metalness: .55 }), glow = basic(0x79cce2);
-  const states = [], stations = [], cabinCount = options.count === 1 ? 1 : 2; let elapsed = 0, lastRedraw = -1;
-  let externalShells = 0;
+  const body = standard(0xe1e5e3, { roughness: .37 }), navy = standard(0x142a38), seatMat = standard(0x40546a), frame = standard(0x8ca1ae, { metalness: .55 });
+  const states = [], stations = [], cabinCount = options.count === 1 ? 1 : 2;
+  const platformWidth = 4.65, platformDepth = 6.05, platformHeight = .06, cabinSpacing = 6.45;
+  // X04_COCKPIT web, SHA256 1d12198f9089d1dcd0f2a15027c74a3e856934ffdaa2e25078f40b4d6ee68d8d.
+  // Measured in the uniformly fitted 2.20m-high body: nose -Z, open entry +Z.
+  // The 45mm inward offset is already included; preserve the existing centre frame.
+  const windshieldQuads = [[[-0.7124148755959459,1.9637883013565638,-0.06354457754318947],[-0.16613781150351592,1.9707953187163887,-0.14519390705013308],[-0.16314381006820655,1.5763367485249833,-0.5135652476336102],[-0.8065393922353892,1.5873593586463655,-0.39733003689131147]],[[0.18197607313931652,1.9704484710349532,-0.14115226148598742],[0.7124609844847756,1.9637989020568545,-0.06366810229367863],[0.8060690084988207,1.5874833732951092,-0.39602228231475095],[0.17936726991642082,1.5764500658488678,-0.5123702980819677]]];
+  const windshieldUVs = [[0,1,0.5,1,0.5,0,0,0],[0.5,1,1,1,1,0,0.5,0]];
+  let elapsed = 0, lastRedraw = -1, externalShells = 0;
   for (let index = 0; index < cabinCount; index++) {
-    const cabin = new THREE.Group(); cabin.position.x = (index - (cabinCount - 1) / 2) * 4.6; root.add(cabin); cabin.name = `Кабина МС-21 ${index + 1}`;
+    const cabin = new THREE.Group(); cabin.position.x = (index - (cabinCount - 1) / 2) * cabinSpacing;
+    root.add(cabin); cabin.name = `Кабина МС-21 ${index + 1}`;
     const state = { active: false, bank: 0, pitch: 0, heading: 0, elapsed: 0 }; states.push(state);
     const externalSource = options.shellFactory?.(index) || options.shells?.[index] || options.shell;
-    let external = null;
+    let external = null, flight;
+    // Source ownership stays with its loader: clones share GPU resources.
     if (externalSource?.isObject3D) {
-      // Integrator supplies a metre-scaled, front-facing shell. Source ownership
-      // stays with its loader; clones share GPU resources and are not disposed here.
-      external = externalSource.clone(true); external.name = 'МС-21 · внешний корпус Hitem3D';
-      if (options.shellOffset) external.position.add(new THREE.Vector3(...options.shellOffset));
-      if (Number.isFinite(options.shellRotationY)) external.rotation.y += options.shellRotationY;
-      cabin.add(external); externalShells++;
+      const candidate = externalSource.clone(true); candidate.updateWorldMatrix(true, true);
+      const bounds = new THREE.Box3().setFromObject(candidate, true), size = bounds.getSize(new THREE.Vector3());
+      if (!bounds.isEmpty() && Number.isFinite(size.y) && size.y > 0) {
+        external = candidate; external.name = 'МС-21 · корпус и штатный интерьер Hitem3D';
+        const factor = 2.2 / size.y, center = bounds.getCenter(new THREE.Vector3());
+        const fitted = new THREE.Group(); fitted.name = 'МС-21 · корпус высотой 2,20 м';
+        fitted.scale.setScalar(factor); fitted.position.set(-center.x * factor, -bounds.min.y * factor, -center.z * factor);
+        fitted.add(external);
+        const assembly = new THREE.Group(); assembly.name = 'МС-21 · корпус и проекции'; assembly.position.y = platformHeight;
+        if (options.shellOffset) assembly.position.add(new THREE.Vector3(...options.shellOffset));
+        if (Number.isFinite(options.shellRotationY)) assembly.rotation.y = options.shellRotationY;
+        assembly.add(fitted); cabin.add(assembly); externalShells++;
+        assembly.userData = { sourceAsset: 'X04_COCKPIT', bodyHeightMetres: 2.2, entranceLocalAxis: '+Z', noseLocalAxis: '-Z' };
+        // The supplied GLB already includes both seats, dashboard and centre pedestal.
+        // Individual approximate collision envelopes leave the rear and centre aisle open.
+        for (const sign of [-1, 1]) {
+          collider(`cabin-${index + 1}-side-${sign}`, [[sign * 2.14 - .065, 0, -1.28], [sign * 2.14 + .065, 1.7, 2.88]], assembly);
+          const x = sign * .93;
+          collider(`cabin-${index + 1}-seat-${sign < 0 ? 1 : 2}`, [[x - .4, .12, .53], [x + .4, 1.53, 1.86]], assembly);
+        }
+        collider(`cabin-${index + 1}-nose`, [[-1.7, 0, -2.883], [1.7, 1.45, -.75]], assembly);
+        collider(`cabin-${index + 1}-console`, [[-1.65, .12, -.75], [1.65, 1.48, .31]], assembly);
+        collider(`cabin-${index + 1}-pedestal`, [[-.3, .12, .31], [.3, 1.02, .95]], assembly);
+        const s = kit.surface(1024, 512), projection = new THREE.Group(); projection.name = 'Полёт · две проекции в стёклах'; assembly.add(projection);
+        const projectionMaterial = basic(s.texture ? 0xffffff : 0x355f71, { map: s.texture, toneMapped: false, side: THREE.DoubleSide, depthTest: true });
+        const faces = windshieldQuads.map((corners, panelIndex) => {
+          const geometry = new THREE.BufferGeometry();
+          geometry.setAttribute('position', new THREE.Float32BufferAttribute(corners.flat(), 3));
+          geometry.setAttribute('uv', new THREE.Float32BufferAttribute(windshieldUVs[panelIndex], 2));
+          geometry.setIndex([0, 2, 1, 0, 3, 2]); geometry.computeVertexNormals();
+          return kit.mesh(geometry, projectionMaterial, null, projection, panelIndex ? 'Правая полётная проекция' : 'Левая полётная проекция');
+        });
+        flight = { ...s, group: projection, face: faces[0], faces, size: [1.62, .55], redraw() {
+          if (!s.context) return;
+          drawFlight(s.context, s.canvas.width, s.canvas.height, state, state.elapsed); s.texture.needsUpdate = true;
+        } };
+        flight.redraw(); kit.screens.push(flight);
+        const toggle = () => { state.active = !state.active; flight.redraw(); };
+        action(projection, `flight-${index + 1}-toggle`, toggle);
+        // Four controls beside the rear entry keep the central boarding route clear.
+        const controls = new THREE.Group(); controls.name = 'Управление полётом у входа'; controls.position.set(-1.7, 0, 2.98); assembly.add(controls);
+        box([.055, 1.77, .055], [0, .89, -.04], frame, controls);
+        collider(`cabin-${index + 1}-entry-controls`, [[-.4, 0, -.09], [.4, 1.92, .045]], controls);
+        const controlsSpec = [
+          ['toggle', 'ПОЛЁТ · ПУСК / ПАУЗА', toggle],
+          ['left', 'КРЕН ВЛЕВО', () => { state.active = true; state.bank = clamp(state.bank - .12, -.45, .45); flight.redraw(); }],
+          ['right', 'КРЕН ВПРАВО', () => { state.active = true; state.bank = clamp(state.bank + .12, -.45, .45); flight.redraw(); }],
+          ['reset', 'СБРОС', () => { Object.assign(state, { active: false, bank: 0, pitch: 0, heading: 0, elapsed: 0 }); flight.redraw(); }],
+        ];
+        controlsSpec.forEach(([name, text, callback], controlIndex) => {
+          const button = kit.label(text, [.68, .17], [0, 1.73 - controlIndex * .24, 0], controls, { background: '#163a48' });
+          action(button.group, `flight-${index + 1}-${name}`, callback);
+        });
+        kit.label('МС-21 · КАБИНА ' + (options.stationNumber || index + 1), [1.17, .22], [0, 2.04, 0], controls);
+      }
     }
-    box([3.45, .06, 4.2], [0, .03, 0], standard(0x83949a), cabin);
-    // Clear rear entry: physical sidewalls, console and chairs get individual obstacles.
-    for (const sign of [-1, 1]) {
-      const fallbackWall = box([.12, 1.35, 3.35], [sign * 1.48, .735, -.35], body, cabin);
-      fallbackWall.visible = !external;
-      collider(`cabin-${index + 1}-side-${sign}`, [[sign * 1.48 - .1, 0, -2.03], [sign * 1.48 + .1, 1.45, 1.33]], cabin);
-      tube([sign * 1.47, 1.4, .95], [sign * 1.27, 2.32, -1.48], .045, frame, cabin);
-      tube([sign * 1.27, 2.32, -1.48], [sign * .58, 2.56, -1.63], .045, frame, cabin);
+    box([platformWidth, platformHeight, platformDepth], [0, platformHeight / 2, 0], standard(0x83949a), cabin, 'Платформа кабины');
+    if (!external) {
+      // Clear rear entry: physical sidewalls, console and chairs get individual obstacles.
+      for (const sign of [-1, 1]) {
+        const fallbackWall = box([.12, 1.35, 3.35], [sign * 1.48, .735, -.35], body, cabin);
+        collider(`cabin-${index + 1}-side-${sign}`, [[sign * 1.48 - .1, 0, -2.03], [sign * 1.48 + .1, 1.45, 1.33]], cabin);
+        tube([sign * 1.47, 1.4, .95], [sign * 1.27, 2.32, -1.48], .045, frame, cabin);
+        tube([sign * 1.27, 2.32, -1.48], [sign * .58, 2.56, -1.63], .045, frame, cabin);
+      }
+      tube([-.58, 2.56, -1.63], [.58, 2.56, -1.63], .045, frame, cabin);
+      box([2.89, .82, .32], [0, .95, -1.25], navy, cabin);
+      collider(`cabin-${index + 1}-console`, [[-1.46, 0, -1.55], [1.46, 1.42, -.95]], cabin);
+      flight = kit.screen([2.68, 1.08], [0, 1.95, -1.43], (ctx, w, h) => drawFlight(ctx, w, h, state, state.elapsed), cabin);
+      action(flight.group, `flight-${index + 1}-toggle`, () => { state.active = !state.active; flight.redraw(); });
+      for (const seatX of [-.64, .64]) {
+        const chair = new THREE.Group(); chair.position.set(seatX, 0, .31); cabin.add(chair);
+        cyl(.13, .2, .42, [0, .27, 0], frame, chair);
+        box([.55, .15, .56], [0, .52, 0], seatMat, chair);
+        const back = box([.55, .71, .13], [0, .93, .25], seatMat, chair); back.rotation.x = -.08;
+        box([.34, .21, .12], [0, 1.38, .26], seatMat, chair);
+        for (const side of [-1, 1]) box([.075, .07, .42], [side * .33, .76, .04], navy, chair);
+        collider(`cabin-${index + 1}-seat-${seatX < 0 ? 1 : 2}`, [[seatX - .38, 0, -.03], [seatX + .38, 1.52, .72]], cabin);
+        const stickX = seatX + (seatX < 0 ? -.4 : .4);
+        box([.17, .12, .24], [stickX, .72, -.2], navy, cabin);
+        tube([stickX, .78, -.2], [stickX, 1.01, -.24], .027, frame, cabin);
+        const stick = box([.055, .13, .06], [stickX, 1.06, -.24], navy, cabin);
+        action(stick, `flight-${index + 1}-${seatX < 0 ? 'left' : 'right'}`, () => {
+          state.active = true; state.bank = clamp(state.bank + (seatX < 0 ? -.12 : .12), -.45, .45); flight.redraw();
+        });
+      }
+      box([.34, .67, .91], [0, .395, -.31], navy, cabin);
+      collider(`cabin-${index + 1}-pedestal`, [[-.21, .06, -.83], [.21, .86, .22]], cabin);
+      for (const x of [-.075, .075]) { tube([x, .75, -.31], [x, .93, -.43], .016, frame, cabin); box([.065, .055, .1], [x, .94, -.43], navy, cabin); }
+      const instruments = kit.screen([2.5, .45], [0, 1.13, -1.065], (ctx, w, h) => {
+        ctx.fillStyle = '#071c29'; ctx.fillRect(0, 0, w, h);
+        for (let i = 0; i < 5; i++) { const left = 20 + i * 198; ctx.fillStyle = i % 2 ? '#193d42' : '#244c5f'; ctx.fillRect(left, 32, 172, h - 64);
+          ctx.strokeStyle = '#8fcdbd'; ctx.lineWidth = 3; ctx.strokeRect(left + 11, 49, 150, h - 98);
+          ctx.fillStyle = '#ffffff'; ctx.font = '24px sans-serif'; ctx.fillText(['ВЫСОТА', 'СКОРОСТЬ', 'МАРШРУТ', 'СИСТЕМЫ', 'КУРС'][i], left + 14, 96);
+          ctx.fillStyle = '#8fdacb'; ctx.font = '42px sans-serif'; ctx.fillText(['850', '240', '01', 'НОРМА', '000'][i], left + 20, 202); }
+      }, cabin, { resolution: [1024, 320] });
+      action(instruments.group, `flight-${index + 1}-reset`, () => { Object.assign(state, { active: false, bank: 0, pitch: 0, heading: 0, elapsed: 0 }); flight.redraw(); });
+      kit.label('МС-21 · КАБИНА ' + (options.stationNumber || index + 1), [2.9, .26], [0, 2.82, -1.45], cabin);
+      kit.label('НАЖМИТЕ НА ЭКРАН · НАЧАТЬ ПОЛЁТ', [2.8, .22], [0, .15, 2.14], cabin, { background: '#163a48' });
     }
-    tube([-.58, 2.56, -1.63], [.58, 2.56, -1.63], .045, frame, cabin);
-    box([2.89, .82, .32], [0, .95, -1.25], navy, cabin);
-    collider(`cabin-${index + 1}-console`, [[-1.46, 0, -1.55], [1.46, 1.42, -.95]], cabin);
-    const flight = kit.screen([2.68, 1.08], [0, 1.95, -1.43], (ctx, w, h) => drawFlight(ctx, w, h, state, state.elapsed), cabin);
-    action(flight.group, `flight-${index + 1}-toggle`, () => { state.active = !state.active; flight.redraw(); });
-    for (const seatX of [-.64, .64]) {
-      const chair = new THREE.Group(); chair.position.set(seatX, 0, .31); cabin.add(chair);
-      cyl(.13, .2, .42, [0, .27, 0], frame, chair);
-      box([.55, .15, .56], [0, .52, 0], seatMat, chair);
-      const back = box([.55, .71, .13], [0, .93, .25], seatMat, chair); back.rotation.x = -.08;
-      box([.34, .21, .12], [0, 1.38, .26], seatMat, chair);
-      for (const side of [-1, 1]) box([.075, .07, .42], [side * .33, .76, .04], navy, chair);
-      collider(`cabin-${index + 1}-seat-${seatX < 0 ? 1 : 2}`, [[seatX - .38, 0, -.03], [seatX + .38, 1.52, .72]], cabin);
-      const stickX = seatX + (seatX < 0 ? -.4 : .4);
-      box([.17, .12, .24], [stickX, .72, -.2], navy, cabin);
-      tube([stickX, .78, -.2], [stickX, 1.01, -.24], .027, frame, cabin);
-      const stick = box([.055, .13, .06], [stickX, 1.06, -.24], navy, cabin);
-      action(stick, `flight-${index + 1}-${seatX < 0 ? 'left' : 'right'}`, () => {
-        state.active = true; state.bank = clamp(state.bank + (seatX < 0 ? -.12 : .12), -.45, .45); flight.redraw();
-      });
-    }
-    box([.34, .67, .91], [0, .395, -.31], navy, cabin);
-    collider(`cabin-${index + 1}-pedestal`, [[-.21, .06, -.83], [.21, .86, .22]], cabin);
-    for (const x of [-.075, .075]) { tube([x, .75, -.31], [x, .93, -.43], .016, frame, cabin); box([.065, .055, .1], [x, .94, -.43], navy, cabin); }
-    const instruments = kit.screen([2.5, .45], [0, 1.13, -1.065], (ctx, w, h) => {
-      ctx.fillStyle = '#071c29'; ctx.fillRect(0, 0, w, h);
-      for (let i = 0; i < 5; i++) { const left = 20 + i * 198; ctx.fillStyle = i % 2 ? '#193d42' : '#244c5f'; ctx.fillRect(left, 32, 172, h - 64);
-        ctx.strokeStyle = '#8fcdbd'; ctx.lineWidth = 3; ctx.strokeRect(left + 11, 49, 150, h - 98);
-        ctx.fillStyle = '#ffffff'; ctx.font = '24px sans-serif'; ctx.fillText(['ВЫСОТА', 'СКОРОСТЬ', 'МАРШРУТ', 'СИСТЕМЫ', 'КУРС'][i], left + 14, 96);
-        ctx.fillStyle = '#8fdacb'; ctx.font = '42px sans-serif'; ctx.fillText(['850', '240', '01', 'НОРМА', '000'][i], left + 20, 202); }
-    }, cabin, { resolution: [1024, 320] });
-    action(instruments.group, `flight-${index + 1}-reset`, () => { Object.assign(state, { active: false, bank: 0, pitch: 0, heading: 0, elapsed: 0 }); flight.redraw(); });
-    kit.label('МС-21 · КАБИНА ' + (options.stationNumber || index + 1), [2.9, .26], [0, 2.82, -1.45], cabin);
-    kit.label('НАЖМИТЕ НА ЭКРАН · НАЧАТЬ ПОЛЁТ', [2.8, .22], [0, .15, 2.14], cabin, { background: '#163a48' });
     stations.push({ cabin, state, screen: flight });
   }
   function update(delta) {
@@ -332,14 +390,17 @@ export function createFlightCockpits(options = {}) {
     return active && root.visible;
   }
   return { ...kit, update,
-    control(index, patch) { const state = states[index]; if (!state) return false;
+    control(index, patch = {}) { const state = states[index]; if (!state) return false;
       if (patch.active !== undefined) state.active = Boolean(patch.active);
       if (Number.isFinite(patch.bank)) state.bank = clamp(patch.bank, -.45, .45);
       if (Number.isFinite(patch.pitch)) state.pitch = clamp(patch.pitch, -.5, .5);
       stations[index].screen.redraw(); kit.changed(); return true;
     },
-    getState: () => ({ id: root.userData.installationId, cabins: cabinCount, seats: 2 * cabinCount, externalShells, floorFootprintMetres: [cabinCount === 1 ? 3.45 : 8.2, 4.3], heightMetres: 2.98,
-      clearRearEntryMetres: 2.84, provenance: 'procedural-threejs-functional-interior',
+    getState: () => ({ id: root.userData.installationId, cabins: cabinCount, seats: 2 * cabinCount, externalShells,
+      floorFootprintMetres: [platformWidth + (cabinCount - 1) * cabinSpacing, platformDepth], heightMetres: externalShells === cabinCount ? 2.26 : 2.98,
+      bodyHeightMetres: externalShells ? 2.2 : null, clearRearEntryMetres: externalShells ? 1.06 : 2.84,
+      entranceLocalAxis: '+Z', noseLocalAxis: '-Z', projectionPanels: externalShells * 2,
+      provenance: externalShells ? 'Hitem3D-X04-verified-interior-with-runtime-flight-projections' : 'procedural-threejs-functional-interior',
       fidelity: 'exhibition interpretation; exact MC-21 instruments require validated production reference',
       stations: states.map(s => ({ ...s })), actions: stations.flatMap((_, i) => ['toggle', 'left', 'right', 'reset'].map(a => `flight-${i + 1}-${a}`)) }) };
 }
@@ -379,38 +440,44 @@ function drawChersonesus(ctx, w, h, scene, time) {
 export function createChersonesusInterior(options = {}) {
   const kit = makeKit('chersonesus-interior', 'Херсонес · панорама, VR и музей', options);
   const { root, standard, basic, box, cyl, tube, collider, action } = kit;
+  const compact = options.layout === 'compact-source-zone';
+  const floorWidth = compact ? 6.22 : 7.4, floorLength = compact ? 9.2 : 16;
+  const screenWidth = compact ? 5.2 : 6.3, screenZ = compact ? 4.05 : -7.25, facing = compact ? Math.PI : 0;
   const sand = standard(0xc3ae88, { roughness: .93 }), pale = standard(0xd4c5a8, { roughness: .88 }), bronze = standard(0x705a42, { metalness: .22 }), dark = standard(0x282a29), led = basic(0xffcf87, { toneMapped: false });
   let sceneIndex = 0, elapsed = 0, lastRedraw = -1;
   const vrActive = [false, false], vrRings = [];
   // Thin deck and patterned lines are visible; it is NOT declared as a new CAD floor.
-  box([7.4, .035, 16], [0, .0175, 0], sand);
-  for (let z = -7.5; z <= 7.5; z += 1) box([7.36, .006, .015], [0, .038, z], bronze);
-  for (let x = -3; x <= 3; x += 1) box([.015, .006, 15.96], [x, .038, 0], bronze);
+  box([floorWidth, .035, floorLength], [0, .0175, 0], sand);
+  for (let z = -floorLength / 2 + .5; z <= floorLength / 2 - .5; z += 1) box([floorWidth - .04, .006, .015], [0, .038, z], bronze);
+  for (let x = -3; x <= 3; x += 1) box([.015, .006, floorLength - .04], [x, .038, 0], bronze);
   // Main screen faces along the long axis. Its 0.6-m lower edge keeps the
   // complete display below the actual roof triangles (verified against O16).
-  const panorama = kit.screen([6.3, 2.2], [0, 1.7, -7.25], (ctx, w, h, t) => {
+  const panorama = kit.screen([screenWidth, 2.2], [0, 1.7, screenZ], (ctx, w, h, t) => {
     if(options.panoramaImage?.complete && options.panoramaImage.naturalWidth){
       ctx.drawImage(options.panoramaImage,0,0,w,h);
       if(sceneIndex===1){ctx.fillStyle='rgba(18,76,95,.18)';ctx.fillRect(0,0,w,h);}
       if(sceneIndex===2){ctx.fillStyle='rgba(74,33,10,.22)';ctx.fillRect(0,0,w,h);}
     } else drawChersonesus(ctx,w,h,sceneIndex,t);
-  }, root, { resolution: [2048, 1024] });
-  collider('panorama-wall', [[-3.25, .04, -7.4], [3.25, 3.1, -7.1]]);
+  }, root, { resolution: [2048, 1024], rotationY: facing });
+  collider('panorama-wall', [[-screenWidth / 2 - .1, .04, screenZ - .15], [screenWidth / 2 + .1, compact ? 3.06 : 3.1, screenZ + .15]]);
   action(panorama.group, 'chersonesus-scene', () => { sceneIndex = (sceneIndex + 1) % 3; panorama.redraw(elapsed); });
-  kit.label('ХЕРСОНЕС ТАВРИЧЕСКИЙ', [5.9, .2], [0, 2.95, -7.26], root, { background: '#655945', color: '#fff0cc' });
+  kit.label('ХЕРСОНЕС ТАВРИЧЕСКИЙ', [compact ? 4.9 : 5.9, .2], [0, compact ? 2.9 : 2.95, screenZ - (compact ? -.01 : .01)], root, { background: '#655945', color: '#fff0cc', rotationY: facing });
   // A 2.2-m central viewing/through aisle remains free; cases are along the sides.
-  const cases = [[2.92, -4.5], [2.92, -1.7], [2.92, 1.1], [2.92, 5.3], [-2.9, -2.5]];
+  const cases = compact ? [[2.55, -3], [2.55, -1], [2.55, 1], [2.55, 3], [-2.65, 3]] : [[2.92, -4.5], [2.92, -1.7], [2.92, 1.1], [2.92, 5.3], [-2.9, -2.5]];
   const caseNames = ['КЕРАМИКА', 'КАМЕННАЯ РЕЗЬБА', 'МОНЕТЫ И ТОРГОВЛЯ', 'БЫТ И РЕМЁСЛА', 'АРХИТЕКТУРНЫЕ ДЕТАЛИ'];
   cases.forEach(([x, z], index) => {
     const c = new THREE.Group(); c.position.set(x, 0, z); root.add(c);
-    const w = .86, l = 1.75;
+    const w = compact ? .8 : .86, l = compact ? 1.5 : 1.75;
     box([w, .77, l], [0, .425, 0], bronze, c);
     box([w - .05, .055, l - .05], [0, .84, 0], pale, c);
     box([w, .46, l], [0, 1.105, 0], kit.glass, c);
     for (const dx of [-w / 2, w / 2]) box([.014, .016, l - .02], [dx, .86, 0], led, c);
     collider(`case-${index + 1}`, [[-w / 2 - .025, 0, -l / 2 - .025], [w / 2 + .025, 1.35, l / 2 + .025]], c);
     if(options.archaeology && [0,4].includes(index)){
-      const items=options.archaeology.clone(true);items.position.set(0,.875,0);c.add(items);
+      const items=options.archaeology.clone(true);items.updateMatrixWorld(true);
+      const fittedSize=new THREE.Box3().setFromObject(items,true).getSize(new THREE.Vector3());
+      const factor=Math.min(1,(w-.1)/fittedSize.x,.4/fittedSize.y,(l-.15)/fittedSize.z);
+      items.scale.multiplyScalar(factor);items.position.set(0,.875,0);c.add(items);
     } else if (index % 2 === 0) {
       const points = [[.055, 0], [.1, .035], [.16, .13], [.14, .22], [.085, .29], [.075, .36], [.12, .37]].map(p => new THREE.Vector2(...p));
       for (const dz of [-.46, .38]) {
@@ -423,12 +490,12 @@ export function createChersonesusInterior(options = {}) {
         for (let i = 0; i < 4; i++) { const carving = kit.mesh(new THREE.TorusGeometry(.055, .011, 5, 12), sand, [-.16 + i * .1, .995, dz], c); carving.rotation.x = Math.PI / 2; }
       }
     }
-    const sign = kit.label(caseNames[index], [.76, .17], [0, .7, l / 2 + .06], c, { background: '#252e2b' });
+    const sign = kit.label(caseNames[index], [.76, .17], [0, .7, (l / 2 + .06) * (compact ? -1 : 1)], c, { background: '#252e2b', rotationY: facing });
     action(sign.group, `chersonesus-case-${index + 1}`, () => { sceneIndex = index % 3; panorama.redraw(elapsed); });
   });
   // Two separate 2.5 × 2.5-m VR bays, 0.7-m separation; controls never cross the central aisle.
   for (let i = 0; i < 2; i++) {
-    const zone = new THREE.Group(); zone.position.set(-2.25, 0, 1.65 + i * 3.2); root.add(zone);
+    const zone = new THREE.Group(); zone.position.set(compact ? -1.85 : -2.25, 0, (compact ? -2.6 : 1.65) + i * 3.2); root.add(zone);
     const ringMaterial = basic(0xe0bd78, { toneMapped: false });
     const ring = kit.mesh(new THREE.TorusGeometry(1.12, .025, 6, 48), ringMaterial, [0, .055, 0], zone); ring.rotation.x = Math.PI / 2; vrRings.push(ring);
     for (const x of [-1.25, 1.25]) box([.025, .012, 2.5], [x, .05, 0], led, zone);
@@ -441,21 +508,22 @@ export function createChersonesusInterior(options = {}) {
     for (const x of [-.075, .075]) { const lens = cyl(.032, .032, .015, [x, 1.37, .075], dark, stand); lens.rotation.x = Math.PI / 2; }
     const strap = kit.mesh(new THREE.TorusGeometry(.12, .015, 6, 24, Math.PI * 1.5), dark, [0, 1.37, -.08], stand); strap.rotation.x = Math.PI / 2;
     for (const x of [-.2, .2]) { tube([x, 1.08, 0], [x, 1.21, -.03], .026, pale, stand); const handleRing = kit.mesh(new THREE.TorusGeometry(.046, .009, 6, 16), pale, [x, 1.245, -.03], stand); handleRing.rotation.x = .4; }
-    const label = kit.label('VR · ХЕРСОНЕС ' + (i + 1), [1.05, .22], [0, 1.6, -1.13], zone);
+    const label = kit.label('VR · ХЕРСОНЕС ' + (i + 1), [1.05, .22], [0, 1.6, -1.13], zone, { rotationY: facing });
     action(label.group, `chersonesus-vr-${i + 1}`, () => { vrActive[i] = !vrActive[i]; sceneIndex = i; panorama.redraw(elapsed);
       ringMaterial.color.setHex(vrActive[i] ? 0x80dcc6 : 0xe0bd78); });
   }
   // Museum information screens flank the viewing area, away from the through aisle.
   for (const [side, title] of [[-1, 'ПОРТ И МОРСКИЕ ПУТИ'], [1, 'ГОРОД И ЕГО ЖИТЕЛИ']]) {
-    const information = kit.screen([1.6, .92], [side * 2.8, 1.85, -5.7], (ctx, w, h) => {
+    const infoX = side * (compact ? 2.5 : 2.8), infoZ = compact ? 2.1 : -5.7, infoWidth = compact ? 1.1 : 1.6;
+    const information = kit.screen([infoWidth, .92], [infoX, 1.85, infoZ], (ctx, w, h) => {
       ctx.fillStyle = '#203a3e'; ctx.fillRect(0, 0, w, h); ctx.fillStyle = '#ead0a5'; ctx.font = '600 44px sans-serif'; ctx.fillText(title, 45, 92, w - 90);
       ctx.strokeStyle = '#bca477'; ctx.lineWidth = 4; ctx.strokeRect(45, 133, w - 90, h - 182);
       ctx.fillStyle = '#94bab9'; ctx.font = '34px sans-serif'; ctx.fillText('Выберите предмет в витрине', 75, 221, w - 150);
       ctx.fillText('или смените сцену на панораме', 75, 286, w - 150);
       ctx.fillStyle = '#ede5d3'; ctx.font = '30px sans-serif'; ctx.fillText('История · архитектура · археология', 75, 375, w - 150);
-    });
+    }, root, { rotationY: facing });
     action(information.group, `chersonesus-info-${side < 0 ? 1 : 2}`, () => { sceneIndex = side < 0 ? 0 : 1; panorama.redraw(elapsed); });
-    collider(`information-${side}`, [[side * 2.8 - .84, .04, -5.84], [side * 2.8 + .84, 2.36, -5.56]]);
+    collider(`information-${side}`, [[infoX - infoWidth / 2 - .04, .04, infoZ - .14], [infoX + infoWidth / 2 + .04, 2.36, infoZ + .14]]);
   }
   const bench = box([1.5, .45, .55], [0, .265, -2.55], standard(0x85755d));
   // The bench is kept to a short width and can be omitted by the integrator
@@ -472,8 +540,10 @@ export function createChersonesusInterior(options = {}) {
     setScene(index) { if (Number.isFinite(index)) sceneIndex = ((Math.trunc(index) % 3) + 3) % 3; panorama.redraw(elapsed); kit.changed(); },
     getState: () => ({ id: root.userData.installationId, provenance: 'procedural-threejs-functional-interior', museumCases: cases.length,
       vrBays: 2, vrBaySizeMetres: [2.5, 2.5], vrSeparationMetres: .7, screens: 3,
-      mainScreenMetres: [6.3, 2.2], mainScreenBottomMetres: .6,
-      footprintMetres: [7.4, 16], heightMetres: 3.1, centralAisleMetres: 2.2,
+      mainScreenMetres: [screenWidth, 2.2], mainScreenBottomMetres: .6,
+      footprintMetres: [floorWidth, floorLength], heightMetres: compact ? 3.06 : 3.1, centralAisleMetres: 2.2, centralAisleCentreX: compact ? .65 : .15,
+      layout: compact ? 'compact-source-zone' : 'original-24m',
+      hitemArchaeologyCases: options.archaeology ? 2 : 0, panoramaImageLoaded: Boolean(options.panoramaImage?.complete && options.panoramaImage?.naturalWidth),
       actualAisleRequiresShellVerification: true, safetyDimensionsAreDesignAllowancesNotCertifiedNorms: true,
       sceneIndex, vrActive: vrActive.slice(), actions: ['chersonesus-scene', 'chersonesus-vr-1', 'chersonesus-vr-2',
         ...cases.map((_, i) => `chersonesus-case-${i + 1}`), 'chersonesus-info-1', 'chersonesus-info-2'] }) };
