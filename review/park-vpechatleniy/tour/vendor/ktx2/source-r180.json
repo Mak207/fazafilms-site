@@ -1,0 +1,67 @@
+{
+  "version": "three.js r180",
+  "source": "https://github.com/mrdoob/three.js/tree/r180",
+  "verified_at_utc": "2026-11-24T06:48:44.788167+00:00",
+  "files": [
+    {
+      "path": "loaders/KTX2Loader.js",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r180/examples/jsm/loaders/KTX2Loader.js",
+      "bytes": 34635,
+      "sha256": "c43052b95310199d50935bdc41fcd0fc347f25eac3b4f0245e6e4de1ef6e1d93",
+      "relative_imports": [
+        "../utils/WorkerPool.js",
+        "../libs/ktx-parse.module.js",
+        "../libs/zstddec.module.js",
+        "../math/ColorSpaces.js"
+      ]
+    },
+    {
+      "path": "libs/basis/basis_transcoder.js",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r180/examples/jsm/libs/basis/basis_transcoder.js",
+      "bytes": 57529,
+      "sha256": "8478b5b6d6b74e7d3082b89f6417321d8d1dc0307f2b30d4484bb11b441696a1",
+      "relative_imports": []
+    },
+    {
+      "path": "libs/basis/basis_transcoder.wasm",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r180/examples/jsm/libs/basis/basis_transcoder.wasm",
+      "bytes": 527333,
+      "sha256": "6cf17dc889352c42e9acf8897107978d127005fe3386c36a0e3845e27967630a",
+      "relative_imports": []
+    },
+    {
+      "path": "utils/WorkerPool.js",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r180/examples/jsm/utils/WorkerPool.js",
+      "bytes": 3110,
+      "sha256": "5ac7095fd566bc9ae48376055fd66edf27cb9ebbf9e1269dc206bfd4933ae9eb",
+      "relative_imports": []
+    },
+    {
+      "path": "libs/ktx-parse.module.js",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r180/examples/jsm/libs/ktx-parse.module.js",
+      "bytes": 19932,
+      "sha256": "f40c491f6c44dde511268121f778a0050e73b1a15fd844c1ae2c78c73213eafc",
+      "relative_imports": []
+    },
+    {
+      "path": "libs/zstddec.module.js",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r180/examples/jsm/libs/zstddec.module.js",
+      "bytes": 39754,
+      "sha256": "5cbf818e842628a4464e748594a6deae18ceddda3c2f541e7b3a0ff5fc7611e2",
+      "relative_imports": []
+    },
+    {
+      "path": "math/ColorSpaces.js",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r180/examples/jsm/math/ColorSpaces.js",
+      "bytes": 4290,
+      "sha256": "cc35c01c793cd17ccded7bc8142abffd3ce0d60dd6de8d5d216983bd05aee262",
+      "relative_imports": []
+    }
+  ],
+  "favicon": {
+    "head_sha256": "70b60e15deef44c12337e29d626c08445a2c997cbdf312463c01fa7c2847ae75",
+    "worktree_sha256": "109b16ed691ff601d626d461531f673e3f100b8d0751ae5a2751c1ecd74f963b",
+    "git_clean_against_head": true,
+    "working_tree_crlf": true
+  }
+}

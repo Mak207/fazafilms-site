@@ -1,0 +1,81 @@
+{
+  "package": "three-mesh-bvh",
+  "version": "0.9.2",
+  "license": "MIT",
+  "fetched_at_utc": "2026-11-24T07:27:02.323143+00:00",
+  "metadata_url": "https://registry.npmjs.org/three-mesh-bvh/0.9.2",
+  "tarball_url": "https://registry.npmjs.org/three-mesh-bvh/-/three-mesh-bvh-0.9.2.tgz",
+  "repository": {
+    "url": "git+https://github.com/gkjohnson/three-mesh-bvh.git",
+    "type": "git"
+  },
+  "npm_dist_integrity": "sha512-W0oUU4AZv0QwisjlkYlLVaYTVxijhMXCztyNvVlDmTK/u0QB16Xbfem5nWkQBsz3oTzztA1B/ouiz4wYCMj78g==",
+  "verified_integrity": "sha512-W0oUU4AZv0QwisjlkYlLVaYTVxijhMXCztyNvVlDmTK/u0QB16Xbfem5nWkQBsz3oTzztA1B/ouiz4wYCMj78g==",
+  "integrity_algorithm": "SHA-512",
+  "integrity_verified": true,
+  "tarball_bytes": 292290,
+  "tarball_sha256": "ad363a79b1d3a53ab2c407a1290829504350368aa2553d6033ea7a59dd4a0a44",
+  "package_peer_dependencies": {
+    "three": ">= 0.159.0"
+  },
+  "scene_three_version": "0.180.0",
+  "three_peer_compatible": true,
+  "bundle_original_path": "package/build/index.module.js",
+  "bundle_modified": false,
+  "package_default_esm_entry": "src/index.js",
+  "static_imports": [
+    "three"
+  ],
+  "side_effect_imports": [],
+  "dynamic_imports": [],
+  "exports": [
+    "AVERAGE",
+    "BVHShaderGLSL",
+    "CENTER",
+    "CONTAINED",
+    "ExtendedTriangle",
+    "FloatVertexAttributeTexture",
+    "INTERSECTED",
+    "IntVertexAttributeTexture",
+    "MeshBVH",
+    "MeshBVHHelper",
+    "MeshBVHUniformStruct",
+    "NOT_INTERSECTED",
+    "OrientedBox",
+    "SAH",
+    "StaticGeometryGenerator",
+    "UIntVertexAttributeTexture",
+    "VertexAttributeTexture",
+    "acceleratedRaycast",
+    "computeBatchedBoundsTree",
+    "computeBoundsTree",
+    "disposeBatchedBoundsTree",
+    "disposeBoundsTree",
+    "estimateMemoryInBytes",
+    "getBVHExtremes",
+    "getJSONStructure",
+    "getTriangleHitPointInfo",
+    "shaderDistanceFunction",
+    "shaderIntersectFunction",
+    "shaderStructs",
+    "validateBounds"
+  ],
+  "files": {
+    "index.module.js": {
+      "bytes": 200129,
+      "sha256": "55e2e18292f7241d6089bfdc3271974d9a0b155f9ef4baed7b2fd2928acc77d6"
+    },
+    "LICENSE": {
+      "bytes": 1072,
+      "sha256": "b106ef6198a9862ed2b5b873e944ecf3583c631a84a7462d400ecc1910ce7fee"
+    }
+  },
+  "official_docs_url": "https://github.com/gkjohnson/three-mesh-bvh/blob/v0.9.2/README.md",
+  "api": {
+    "MeshBVH": "new MeshBVH(geometry, options)",
+    "acceleratedRaycast": "Assign to mesh.raycast; uses geometry.boundsTree and Raycaster.firstHitOnly when true.",
+    "CENTER": "Exported BVH split strategy constant.",
+    "indirect": "Use indirect:true to preserve geometry index buffer order by building a separate indirect buffer."
+  },
+  "installation": "No npm install or lifecycle scripts; selected bytes extracted from SHA512-verified official tarball."
+}

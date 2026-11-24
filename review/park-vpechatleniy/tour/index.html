@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="theme-color" content="#111715">
-  <title>Парк впечатлений — монорельс и 3D-экскурсия · ФАЗА</title>
+  <title>Парк впечатлений — экспонаты и 3D-экскурсия · ФАЗА</title>
   <link rel="icon" href="/favicon.svg">
-  <link rel="stylesheet" href="viewer.css?v=onboard-20261124">
+  <link rel="stylesheet" href="viewer.css?v=hitem-20261124">
   <script type="importmap">{"imports":{"three":"/golden-ring/interactives/vendor/three-0.180/three.module.min.js"}}</script>
-  <script type="module" src="viewer.js?v=onboard-20261124"></script>
+  <script type="module" src="viewer.js?v=hitem-20261124"></script>
 </head>
 <body>
 <main id="viewer" data-state="loading">
@@ -25,6 +25,7 @@
     <div id="view-caption" class="view-caption" aria-live="polite"><span class="eyebrow">Ракурс</span><strong id="view-name">Общий вид</strong><span id="onboard-hint" hidden>Потяните вид мышью или пальцем, чтобы оглядеться</span></div>
     <aside id="help" class="help-card" hidden aria-label="Как управлять моделью">
       <div class="help-title"><strong>Рассмотрите пространство</strong><button id="close-help" aria-label="Закрыть подсказку" type="button">×</button></div>
+      <p><b>Экспонаты</b> — выберите модель в списке, чтобы рассмотреть её. Мешающие обзору поверхности временно скрываются; кнопка «Экспозиция» возвращает общую расстановку.</p>
       <p><b>Левая кнопка</b> — повернуть модель.</p><p><b>Правая кнопка</b> — сдвинуть вид.</p><p><b>Колесо или два пальца</b> — приблизить и отдалить.</p><p><b>Двойной щелчок</b> — перейти к выбранному месту.</p><p><b>Вид из вагона</b> — смотреть на выставку с места пассажира. Потяните мышью или пальцем, чтобы повернуть голову; колесо или щипок меняют приближение. В списке ракурсов можно пересесть в другой вагон.</p><p><b>Стрелки</b> при выбранном 3D-виде поворачивают взгляд из вагона; двойной щелчок возвращает взгляд на выставку. <b>Esc</b> возвращает весь маршрут.</p><p><b>За вагоном 1 / 2</b> — внешняя камера. Вращение мышью возвращает свободный обзор.</p><p><b>Открытый зал</b> — показать пространство без оболочки здания. Кнопка возвращает её обратно.</p><p><b>Пауза и скорость</b> управляют обоими вагонами; на паузе можно продолжать осмотр из вагона.</p>
     </aside>
     <div id="section-controls" class="section-controls" hidden>
@@ -34,6 +35,11 @@
     <p id="scene-notice" class="scene-notice" hidden role="status"></p>
   </section>
   <footer class="viewer-toolbar" aria-label="Панель управления 3D">
+    <div class="exhibit-controls" aria-label="Экспонаты парка">
+      <button id="exhibit-visible" type="button" aria-pressed="true" disabled>Экспонаты</button>
+      <label for="exhibit-select" class="exhibit-choice"><span class="sr-only">Рассмотреть экспонат</span><select id="exhibit-select" disabled><option value="all">Все экспонаты</option></select></label>
+      <span id="exhibit-status" class="exhibit-status" role="status" aria-live="polite">Загружаем экспонаты…</span>
+    </div>
     <div class="monorail-controls" aria-label="Управление монорельсом">
       <button id="tram-play" type="button" aria-pressed="false" disabled>Пуск</button>
       <button id="tram-onboard" type="button" aria-pressed="false" disabled>Вид из вагона</button>
@@ -41,6 +47,7 @@
       <label class="speed-control" for="tram-speed"><span>Скорость</span><select id="tram-speed" disabled><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
     </div>
     <nav class="view-controls" aria-label="Ракурсы модели">
+      <button data-view="exhibits" aria-pressed="false" type="button" disabled>Экспозиция</button>
       <button data-view="route" aria-pressed="false" type="button">Монорельс</button>
       <button data-view="overview" aria-pressed="true" type="button">Общий вид</button>
       <button data-view="top" aria-pressed="false" type="button">Сверху</button>
@@ -48,7 +55,7 @@
       <button data-view="back" aria-pressed="false" type="button">С другой стороны</button>
     </nav>
     <div class="utility-controls"><button id="envelope-toggle" aria-pressed="true" type="button">Открытый зал</button><button id="section-toggle" aria-pressed="false" type="button">Разрез</button><button id="reset" type="button">Сбросить вид</button></div>
-    <p class="model-note">Кольцо для 3D-экскурсии построено по мотивам общих видов Figma и вписано в модель здания. Проектная привязка предварительная.</p>
+    <p class="model-note">Рабочая расстановка по ролику и концепции. Позиции и выставочный масштаб экспонатов, как и трасса монорельса, требуют проектного уточнения.</p>
   </footer>
 </main>
 </body>
