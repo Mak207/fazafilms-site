@@ -52,7 +52,12 @@ const FIELDS = [
   { id: 'interactiveApplicationMode', label: 'Как используются шаблоны интерактивного ПО?', type: 'select', choices: [['shared-by-type', 'Общий шаблон ПО для каждого типа точки'], ['unique-per-point', 'Отдельное приложение для каждой точки']], hint: 'Шаблоны ПО и контентные пакеты считаются отдельно: например, 3 шаблона могут обслуживать 24 региональных пакета. Количество рабочих станций рассчитывается по потоку.' },
   { id: 'commonZonesIncluded', label: 'Есть дополнительные общие зоны?', type: 'boolean', hint: 'РГО, галерея, площадь, входная зона и другие пространства вне восьми округов.' },
   txt('commonZonesDescription', 'Какие общие зоны входят в объём', 'Если общих зон нет, это поле можно оставить пустым.', true),
-  { id: 'rgoScope', label: 'Как учитывать экспозицию РГО?', type: 'select', choices: [['included', 'Уже учтена в площади и текущей программе'], ['additional', 'Нужна дополнительная программа в площади Парка'], ['separate_project', 'Отдельный проект / вне этой программы']], hint: 'В источнике указаны 9 зон, 45+ экспонатов и 1 400 м². Нужно проверить их привязку к 18 884 м² и текущей программе, включая общие установки. Этот ответ сам по себе не прибавляет площади или установки.' },
+  { id: 'rgoScope', label: 'РГО: в каком задании ФАЗА учитывать работы?', type: 'select', choices: [['included', 'В текущем объёме работ ФАЗА'], ['additional', 'В дополнительном задании ФАЗА'], ['separate_project', 'За рамками текущего задания / отдельный проект']], hint: 'РГО уже принят в программу: 9 последовательных залов, 45+ экспонатов; 1 120 м² — сумма площадей залов по программе 018. Общая площадь Парка остаётся 18 884 м² по 3D из DWG. Рабочее предложение — 26 LED-поверхностей: 25 новых + 1 общая навигационная. Здесь уточняется граница работ ФАЗА; прежний ответ сохранён, но не подтверждает новый состав. Выбор не меняет расчёт автоматически.' },
+  txt('rgoProgramDecision', 'Какая редакция программы РГО принята: 018 / 033?', '018 — рабочая презентация с девятью залами и площадями; 033 — комментарии с альтернативными решениями. Укажите принятый документ, дату и какие изменения согласованы.', true),
+  txt('rgoVisitorShare', 'Какая доля посетителей Парка входит в РГО?', 'Отдельно для экскурсантов и самостоятельных посетителей: доля в процентах или поток в час. В рабочем сценарии РГО условно входят все 300 + 500 человек в час; это не доля участия в интерактиве.', true),
+  txt('rgoRouteAllocation', 'Сколько времени РГО занимает внутри экскурсии 240 минут?', 'Укажите время на залы и переходы, а также какие части общего маршрута сокращаются или становятся выборочными. Время РГО не прибавляется к четырём часам автоматически.', true),
+  txt('rgoPlacementConflicts', 'Как согласовать размещение с O12-1 и O05-1?', 'В рабочей привязке РГО есть конфликты или соседство с ледоколом «Лидер» O12-1 и самолётом МС-21 O05-1. Укажите решение: совмещение, перенос объекта или изменение привязки зала. Нынешние координаты объектов сохранены; это не утверждённые границы помещений.', true),
+  txt('rgoSpecialMediaChannels', 'Какие специальные медиа и независимые каналы приняты?', 'Перечислите по залам проекции, портретные системы, купол и другие специальные медиа; укажите разные каналы контента и повторяющие копии. Эти системы пока не входят в предложение 26 LED-поверхностей. Неизвестные количества оставьте неуточнёнными.', true),
   { id: 'languages', label: 'Языки контента', type: 'languages', hint: 'Перечислите через запятую. Например: русский, английский.' },
   txt('contentApprover', 'Кто окончательно утверждает содержание', 'Имя или роль; при необходимости организация.'),
   txt('materialsProvider', 'Кто предоставляет исходные материалы', 'Ответственный за факты, тексты, архивы, изображения и права на их использование.'),
@@ -86,7 +91,7 @@ const QUESTIONS = [
   { id: 'Q04', title: 'Предлагаемый состав одного федерального округа', fields: ['geographicStructure', 'heroPointsPerDistrict', 'interactivePointsPerDistrict', 'mediaPointsPerDistrict', 'objectPointsPerDistrict'], required: ['geographicStructure', 'heroPointsPerDistrict', 'interactivePointsPerDistrict', 'mediaPointsPerDistrict', 'objectPointsPerDistrict'], advanced: ['districtExceptions', 'objectContentInScope', 'approvedScopeDocument', 'areaScheduleLink'] },
   { id: 'Q05', title: 'Наше предложение: поверхности и AV-решение', fields: ['heroSurfacesPerInstallation', 'mediaSurfacesPerInstallation', 'surfacesPerInteractiveStation', 'heroChannelMode'], required: ['heroSurfacesPerInstallation', 'mediaSurfacesPerInstallation', 'surfacesPerInteractiveStation', 'heroChannelMode'], advanced: ['AVspecification'] },
   { id: 'Q06', title: 'Тираж одной программы', fields: ['interactiveApplicationMode'], required: ['interactiveApplicationMode'], advanced: ['stationCopiesPerProgram', 'programReuseNotes'] },
-  { id: 'Q07', title: 'Общие зоны и включение РГО', fields: ['commonZonesIncluded', 'commonZonesDescription', 'rgoScope'], required: ['commonZonesIncluded', 'rgoScope'], advanced: ['commonInstallations', 'commonPackages', 'commonSurfaces', 'commonMinutesPerPackage', 'commonRouteMinutes'] },
+  { id: 'Q07', title: 'Общие зоны и граница работ по РГО', fields: ['commonZonesIncluded', 'commonZonesDescription', 'rgoScope'], required: ['commonZonesIncluded', 'rgoScope'], advanced: ['commonInstallations', 'commonPackages', 'commonSurfaces', 'commonMinutesPerPackage', 'commonRouteMinutes'], rgoDetails: { title: 'РГО · пять недостающих решений', hint: 'Необязательные ответы для следующей редакции расчёта и размещения. Пустое поле означает «не уточнено». Эти ответы сохраняются для передачи и не меняют калькулятор автоматически.', fields: ['rgoProgramDecision', 'rgoVisitorShare', 'rgoRouteAllocation', 'rgoPlacementConflicts', 'rgoSpecialMediaChannels'] } },
   { id: 'Q08', title: 'Языки и версии контента', fields: ['languages', 'deliveryVersions'], required: ['languages', 'deliveryVersions'], advanced: ['mediaMinutes', 'interactiveStopMinutes', 'objectStopMinutes', 'accessibilityVersions'] },
   { id: 'Q09', title: 'Кто принимает содержание', fields: ['contentApprover'], required: ['contentApprover'], advanced: ['approvalStages'] },
   { id: 'Q10', title: 'Кто даёт исходные материалы', fields: ['materialsProvider'], required: ['materialsProvider'], advanced: ['sourceMaterialsStatus', 'sourceMaterialsLinks'] },
@@ -282,7 +287,7 @@ export function buildQuestionnaireText(value) {
     for (const questionId of group.questions) {
       const question = QUESTION_BY_ID[questionId];
       lines.push(question.title);
-      for (const key of [...question.fields, ...(question.advanced || [])]) {
+      for (const key of [...question.fields, ...(question.rgoDetails?.fields || []), ...(question.advanced || [])]) {
         const field = FIELD_BY_ID[key];
         if (field.type === 'scope') {
           for (const [scopeKey, label] of SCOPE_ITEMS) lines.push(`  ${label}: ${state.answers.fazaScope[scopeKey] === null ? 'Не уточнено' : state.answers.fazaScope[scopeKey] ? 'Входит' : 'Не входит'}`);
@@ -520,6 +525,15 @@ export function createInstallationQuestionnaire(container, {
       fieldset.append(legend);
       for (const fieldId of question.fields) grid.append(buildField(fieldId));
       fieldset.append(grid);
+      if (question.rgoDetails?.fields.length) {
+        const rgoDetails = element('details', 'iq-advanced');
+        rgoDetails.id = `${instanceId}-rgo-decisions`;
+        const rgoSummary = element('summary', 'iq-advanced-summary', question.rgoDetails.title);
+        const rgoGrid = element('div', 'iq-fields');
+        for (const fieldId of question.rgoDetails.fields) rgoGrid.append(buildField(fieldId));
+        rgoDetails.append(rgoSummary, element('p', 'iq-hint', question.rgoDetails.hint), rgoGrid);
+        fieldset.append(rgoDetails);
+      }
       if (question.advanced?.length) {
         const advanced = element('details', 'iq-advanced');
         const advancedSummary = element('summary', 'iq-advanced-summary', 'Дополнительные параметры');
