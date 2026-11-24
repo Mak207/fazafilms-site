@@ -1,10 +1,12 @@
-import {AREA, CONTENT_DEFAULTS, computeContentPlan} from './content-model.js?v=20261124-ux2';
-import {createParkPlan} from './visitor-plan.js?v=20261124-ux2';
-import {createScreenPlan} from './screen-plan.js?v=20261124-ux2';
-import {createInstallationQuestionnaire, getQuestionnaireCalculationInputs} from './questionnaire.js?v=20261124-ux2';
+import {AREA, CONTENT_DEFAULTS, computeContentPlan} from './content-model.js?v=20261124-led-zones1';
+import {createParkPlan} from './visitor-plan.js?v=20261124-led-zones1';
+import {createScreenPlan} from './screen-plan.js?v=20261124-led-zones1';
+import {DEFAULT_SCREEN_INPUT,countsFromContentModel} from './engineering/screen-model.js';
+import {computeLedPlan,DEFAULT_LED_CONFIG} from './engineering/led-model.js?v=20261124-led-zones1';
+import {createInstallationQuestionnaire, getQuestionnaireCalculationInputs} from './questionnaire.js?v=20261124-led-zones1';
 
 const mount = document.getElementById('park-installations');
-const VERSION = '24.11.2026 · редакция 2';
+const VERSION = '24.11.2026 · редакция 3';
 const NF = (n,d=1) => n === null || n === undefined || !Number.isFinite(Number(n)) ? '—' : new Intl.NumberFormat('ru-RU',{maximumFractionDigits:d}).format(n);
 const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const colors = {hero:'#ffbd66',interactive:'#68b7ff',media:'#c4a0ff',objects:'#b7c3cb',common:'#55d4b0',navigation:'#ff91b6'};
@@ -73,6 +75,7 @@ let input = {...CONTENT_DEFAULTS};
 let result;
 let dossier;
 let engineeringTypes;
+let engineeringInputSnapshot={types:structuredClone(DEFAULT_SCREEN_INPUT.types),led:structuredClone(DEFAULT_LED_CONFIG)};
 let engineeringValid=true;
 let scenarioIssueCount=0;
 const baseCounts=computeContentPlan(CONTENT_DEFAULTS).counts;
@@ -97,15 +100,15 @@ if(mount){
  };
  mount.innerHTML=`
  <div class="ic-heading"><div><p class="ic-eyebrow">Парк впечатлений · рабочий вариант</p><h2 id="installations-title">Расчёт инсталляций</h2><p class="ic-intro">Сколько создаём, где размещаем и что меняется при другом потоке посетителей.</p></div></div>
- <div class="ic-basis" aria-label="Принятая основа проекта"><span><strong>18 884 м²</strong> по 3D из DWG</span><span><strong>8 округов</strong></span><span><strong>4 часа</strong> полная экскурсия</span></div>
+ <div class="ic-basis" aria-label="Принятая основа проекта"><span><strong>18 884 м²</strong> по 3D из DWG</span><span><strong>8 округов</strong></span><span><strong>4 часа</strong> полная экскурсия</span><span><strong>LED-кабинеты</strong></span></div>
  <nav class="ic-tabs" data-az-zone="controls" aria-label="Расчёт инсталляций: разделы"><button type="button" data-view="overview" aria-pressed="true"><span>Состав и план</span><small>Что и где размещаем</small></button><button type="button" data-view="calculator" aria-pressed="false"><span>Посетители и расчёт</span><small>Как поток меняет объём</small></button><button type="button" data-view="engineering" aria-pressed="false"><span>Размеры и электрика</span><small>Площадь экранов и питание</small></button><button type="button" data-view="documents" aria-pressed="false"><span>Обоснование</span><small>Документ, формулы, источники</small></button><button type="button" data-view="questionnaire" aria-pressed="false"><span>Решения и данные</span><small>Что ещё нужно согласовать</small></button></nav>
  <div id="ic-scenario-note" class="ic-current-label">Предложенный сценарий</div>
  <div id="ic-scenario-issues" class="ic-scenario-issues" role="status" hidden></div>
  <div class="ic-errors" id="ic-errors" role="alert" hidden></div>
  <section id="ic-overview" class="ic-view" aria-label="Состав и план экранов">
   <div id="ic-screen-plan"></div>
-  <div class="ic-after-plan"><h3>Объём выбранного сценария</h3><div class="ic-kpis" id="ic-kpis" aria-label="Предлагаемый объём текущего сценария"></div><div class="ic-overview-actions"><p>Состав оборудования и контента разрабатываем вместе. Эти количества — изменяемое предложение.</p><button type="button" data-go="calculator">Изменить сценарий</button></div></div>
-  <details class="ic-document-section ic-composition"><summary>Из чего складывается объём<span aria-hidden="true">+</span></summary><div class="ic-prose"><p><strong>Инсталляция</strong> — отдельный посетительский опыт. <strong>Экранная поверхность</strong> — одно изображение. <strong>Пакет контента</strong> — уникальная работа: копии на параллельных станциях не создают новых сюжетов.</p><div id="ic-scope-diagram" class="ic-scope-diagram" aria-label="Состав инсталляций"></div><div id="ic-register"></div><p class="ic-note">Навигация считается отдельно от посетительских инсталляций. Проекторы, серверы, опоры и свет уточняются в ведомости оборудования.</p></div></details>
+  <div class="ic-after-plan"><h3>Объём выбранного сценария</h3><div class="ic-kpis" id="ic-kpis" aria-label="Предлагаемый объём текущего сценария"></div><div class="ic-led-overview"><p id="ic-led-summary"></p><button type="button" data-go="engineering">LED-сборка и питание</button></div><div class="ic-overview-actions"><p>Состав оборудования и контента разрабатываем вместе. Эти количества — изменяемое предложение.</p><button type="button" data-go="calculator">Изменить сценарий</button></div></div>
+  <details class="ic-document-section ic-composition"><summary>Из чего складывается объём<span aria-hidden="true">+</span></summary><div class="ic-prose"><p><strong>Инсталляция</strong> — отдельный посетительский опыт. <strong>Экранная поверхность</strong> — одно изображение. <strong>Пакет контента</strong> — уникальная работа: копии на параллельных станциях не создают новых сюжетов.</p><div id="ic-scope-diagram" class="ic-scope-diagram" aria-label="Состав инсталляций"></div><div id="ic-register"></div><p class="ic-note">Навигация считается отдельно от посетительских инсталляций. LED-кабинеты, контроллеры, серверы, опоры и свет уточняются в ведомости оборудования. Кабинеты считаются отдельно от экранных полотен.</p></div></details>
  </section>
  <section id="ic-documents" class="ic-view" aria-label="Обоснование и документы" hidden>
   <div class="ic-document-heading"><div><p class="ic-eyebrow">Основания проекта</p><h3>Что принято и как считаем</h3><p class="ic-note">Площадь 18 884 м² принята по модели из DWG. Состав, оборудование и интерактивы — наша проектная работа. Документ описывает исходный сценарий; изменённые параметры отражаются в калькуляторе.</p></div><button type="button" id="ic-expand">Раскрыть разделы</button></div>
@@ -148,8 +151,8 @@ if(mount){
    const height=Number(event.data.height);if(Number.isFinite(height)&&height>=300&&height<=20000)frame.style.height=Math.ceil(height)+'px';
   }else if(event.data?.type==='faza-engineering-ready'){syncEngineering();}
   else if(event.data?.type==='faza-engineering-state'){
-   engineeringTypes=event.data.types;engineeringValid=event.data.valid===true;updateGlobalStatus();
-   screenPlan.update({result,input,screenTypes:engineeringTypes});
+   engineeringTypes=event.data.types;engineeringValid=event.data.valid===true;if(event.data.input)engineeringInputSnapshot=event.data.input;updateGlobalStatus();
+   refreshScreenPlan();
    if(event.data.valid===true&&event.data.input){const u=new URL('./installations/engineering/',location.href);u.searchParams.set('engineering',encode({schema:'faza.park.engineering.v1',input:event.data.input}));$('#ic-engineering-open').href=u.href;}
   }else if(event.data?.type==='faza-open-visitors')changeView('calculator');
   else if(event.data?.type==='faza-open-placement')changeView('overview');
@@ -199,12 +202,25 @@ if(mount){
  function tableHtml(){
   return `<div class="ic-table-scroll" tabindex="0" role="region" aria-label="Ведомость инсталляций, экранов и контента"><table><thead><tr><th>Состав</th><th>Инсталляции</th><th>Поверхности</th><th>Уникальные пакеты</th><th>Линейные минуты</th></tr></thead><tbody>${result.table.map(r=>`<tr><th><i style="background:${colors[r.id]}"></i>${esc(r.label)}${r.id==='interactive'?`<small>${NF(r.stations,0)} станции · ${NF(r.uniqueApplications,0)} программных шаблона/приложения</small>`:''}${r.id==='navigation'?'<small>Система, вне числа инсталляций</small>':''}</th><td>${r.id==='navigation'?'—':NF(r.installations,0)}</td><td>${NF(r.physicalSurfaces,0)}</td><td>${NF(r.uniquePackages,0)}${r.id==='objects'?' ред.':''}</td><td>${r.linearMinutes?NF(r.linearMinutes):'—'}</td></tr>`).join('')}</tbody><tfoot><tr><th>Всего</th><td>${NF(result.counts.totalInstallations,0)}</td><td>${NF(result.counts.physicalSurfaces,0)}</td><td>${NF(result.counts.scopedPackages,0)}<small>${NF(result.counts.digitalPackages,0)} цифровых + ${NF(result.content.scopedObjectPackages,0)} редакционных</small></td><td>${NF(result.runtime.uniqueLinearMinutes)}</td></tr></tfoot></table></div>`;
  }
+ function refreshScreenPlan(){
+  let types=engineeringInputSnapshot?.types??DEFAULT_SCREEN_INPUT.types,ledReport=null;
+  if(result?.valid&&engineeringValid&&engineeringInputSnapshot?.led){
+   const candidate=computeLedPlan({counts:countsFromContentModel(result),types,config:engineeringInputSnapshot.led});
+   if(candidate.valid){ledReport=candidate;types=Object.fromEntries(candidate.rows.map(r=>[r.key,{...types[r.key],widthM:r.widthM,heightM:r.heightM}]));}
+  }
+  engineeringTypes=types;
+  screenPlan.update({result,input,screenTypes:types,ledReport});
+  const summary=$('#ic-led-summary');
+  if(ledReport){const t=ledReport.totals;summary.innerHTML=`<strong>${NF(t.cabinetCount,0)} LED-кабинетов</strong> · ${NF(t.totalAreaM2,1)} м² изображения · ${esc(ledReport.profile.label)}. Число полотен и уникального контента от сборки не увеличивается.`;}
+  else summary.textContent=engineeringValid?'Открыт ручной вариант размеров. LED-профиль выбирается в разделе «Размеры и электрика».':'В инженерных параметрах есть ошибка; LED-итоги временно скрыты.';
+  summary.parentElement.hidden=!result?.valid;
+ }
  function render(){
   result=computeContentPlan(input); const valid=result.valid;
   $('#ic-errors').hidden=valid;$('#ic-engineering-frame').hidden=!valid;$('#ic-kpis').hidden=!valid;$('#ic-calculator-results').hidden=!valid;$('#ic-register').hidden=!valid;$('#ic-scope-diagram').hidden=!valid;
   $('#ic-share').disabled=!valid;$('#ic-export').disabled=!valid;$('#ic-seed-questionnaire').disabled=!valid;
   mount.querySelectorAll('[data-field]').forEach(e=>e.removeAttribute('aria-invalid'));
-  screenPlan.update({result,input,screenTypes:engineeringTypes});
+  refreshScreenPlan();
   if(!valid){$('#ic-errors').innerHTML='<strong>Проверьте параметры</strong><ul>'+result.errors.map(e=>`<li>${esc(labels[e.field]||e.field)}: ${esc(e.message)}</li>`).join('')+'</ul>';result.errors.forEach(e=>mount.querySelectorAll(`[data-field="${e.field}"]`).forEach(n=>n.setAttribute('aria-invalid','true')));set('#ic-live','Расчёт скрыт: проверьте исходные данные.');return;}
   const c=result.counts,a=result.areas,f=result.flows,cap=result.capacity,r=result.route,ct=result.content,rt=result.runtime;
   const kpis=[[c.totalInstallations,'инсталляции и точки',`${c.districtInstallations} территориальных + ${c.commonInstallations} общих`],[c.physicalSurfaces,'экранные поверхности',`${c.interactiveStations} интерактивные станции`],[c.scopedPackages,'пакетов контента',`${c.digitalPackages} цифровых + ${ct.scopedObjectPackages} редакционных`]];
@@ -245,7 +261,7 @@ if(mount){
  function download(content,name,type){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
  function rich(s){return esc(s).replace(/\[(S\d+)\]/g,(_,id)=>`<a class="ic-citation" href="#source-${id}" data-source="${id}">[${id}]</a>`);}
  function block(b){if(b.type==='table')return `<div class="ic-table-scroll" tabindex="0"><table><thead><tr>${b.headers.map(h=>`<th>${rich(h)}</th>`).join('')}</tr></thead><tbody>${b.rows.map(row=>`<tr>${row.map((v,i)=>`<${i?'td':'th'}>${rich(v)}</${i?'td':'th'}>`).join('')}</tr>`).join('')}</tbody></table></div>`;if(b.type==='list')return `<ul>${b.items.map(t=>`<li>${rich(t)}</li>`).join('')}</ul>`;if(b.type==='heading')return `<h4>${rich(b.text)}</h4>`;return `<p>${rich(b.text)}</p>`;}
- async function loadDossier(){try{const response=await fetch('./installations/dossier.json?v=20261124-ux2');if(!response.ok)throw Error();dossier=await response.json();if(dossier.regions?.length===8)regions=dossier.regions.map(r=>r.name);$('#ic-dossier').innerHTML=dossier.sections.map(s=>`<details class="ic-document-section" id="document-${esc(s.id)}"><summary>${esc(s.title)}<span aria-hidden="true">+</span></summary><div class="ic-prose">${s.lead?`<p class="ic-lead">${rich(s.lead)}</p>`:''}${s.blocks.map(block).join('')}</div></details>`).join('')+`<details class="ic-document-section" id="ic-sources"><summary>Реестр источников<span aria-hidden="true">+</span></summary><div class="ic-prose ic-source-list">${dossier.sources.map(s=>`<article id="source-${esc(s.id)}"><h4>[${esc(s.id)}] ${esc(s.title)}</h4><p>${esc(s.locator||'')}${s.note?' · '+esc(s.note):''}</p>${s.url&&/^https:\/\//.test(s.url)?`<a href="${esc(s.url)}" target="_blank" rel="noopener">Открыть источник</a>`:''}</article>`).join('')}</div></details>`;$('#ic-dossier').setAttribute('aria-busy','false');updatePlan();}catch{$('#ic-dossier').innerHTML='<p class="ic-warning">Не удалось загрузить текст. Сохранённые PDF и Word доступны ниже в архиве предыдущей редакции.</p>';$('#ic-dossier').setAttribute('aria-busy','false');}}
+ async function loadDossier(){try{const response=await fetch('./installations/dossier.json?v=20261124-led-zones1');if(!response.ok)throw Error();dossier=await response.json();if(dossier.regions?.length===8)regions=dossier.regions.map(r=>r.name);$('#ic-dossier').innerHTML=dossier.sections.map(s=>`<details class="ic-document-section" id="document-${esc(s.id)}"><summary>${esc(s.title)}<span aria-hidden="true">+</span></summary><div class="ic-prose">${s.lead?`<p class="ic-lead">${rich(s.lead)}</p>`:''}${s.blocks.map(block).join('')}</div></details>`).join('')+`<details class="ic-document-section" id="ic-sources"><summary>Реестр источников<span aria-hidden="true">+</span></summary><div class="ic-prose ic-source-list">${dossier.sources.map(s=>`<article id="source-${esc(s.id)}"><h4>[${esc(s.id)}] ${esc(s.title)}</h4><p>${esc(s.locator||'')}${s.note?' · '+esc(s.note):''}</p>${s.url&&/^https:\/\//.test(s.url)?`<a href="${esc(s.url)}" target="_blank" rel="noopener">Открыть источник</a>`:''}</article>`).join('')}</div></details>`;$('#ic-dossier').setAttribute('aria-busy','false');updatePlan();}catch{$('#ic-dossier').innerHTML='<p class="ic-warning">Не удалось загрузить текст. Сохранённые PDF и Word доступны ниже в архиве предыдущей редакции.</p>';$('#ic-dossier').setAttribute('aria-busy','false');}}
  $('#ic-dossier').addEventListener('click',e=>{const link=e.target.closest('[data-source]');if(!link)return;e.preventDefault();$('#ic-sources').open=true;document.getElementById('source-'+link.dataset.source)?.scrollIntoView({behavior:'smooth',block:'center'});});
  $('#ic-expand').addEventListener('click',()=>{const items=[...$('#ic-dossier').querySelectorAll('details')];const open=items.some(d=>!d.open);items.forEach(d=>d.open=open);set('#ic-expand',open?'Свернуть разделы':'Раскрыть разделы');});
  syncControls();render();loadDossier();

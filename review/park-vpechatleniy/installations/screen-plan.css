@@ -18,3 +18,45 @@
   .fsp-options-body{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding:4px 12px 12px}.fsp-options .fsp-check{min-height:38px}.fsp-options-meta{font-size:13px}.fsp-options .fsp-open{justify-self:start}
   .fsp-floor-info{font-size:13px;line-height:1.35;margin-bottom:8px!important}.fsp-map-tools{margin-bottom:7px;gap:5px}.fsp-map-tools>.fsp-button:last-child:disabled{display:none}
 }
+
+/* Working zone names are point callouts, not territorial polygons. */
+.fsp-sector-leader,.fsp-sector-anchor{fill:none;stroke:#293b33;stroke-width:1.5;pointer-events:none}
+.fsp-sector-box{fill:#17271e;stroke:#d0ddc8;stroke-width:1.25}
+.fsp-sector-title{fill:#f2f6ec;font:650 14px Arial,sans-serif;user-select:none}
+.fsp-sector-count{fill:#c8d7bd;font:12px Arial,sans-serif;user-select:none}
+.fsp-sector-name{overflow:visible}
+.fsp-sector-label:hover .fsp-sector-box,.fsp-sector-label:focus-visible .fsp-sector-box,.fsp-sector-label.is-active-zone .fsp-sector-box{fill:#38502f;stroke:#fff;stroke-width:2.5}
+.fsp-sector-label.is-active-zone .fsp-sector-leader,.fsp-sector-label.is-active-zone .fsp-sector-anchor{stroke:#153a22;stroke-width:2.5}
+.fsp-scene.is-outside-zone{opacity:.3}
+.fsp-scene.is-in-zone .fsp-equipment{fill-opacity:1;stroke:#142b1c;stroke-width:2.5}
+.fsp-scene.is-in-zone .fsp-map-glyph path{stroke:#fff;stroke-width:2.5}
+.fsp-zone-picker{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;font-size:14px;font-weight:550}
+.fsp-zone-picker select{width:100%;max-width:100%;min-width:0;min-height:44px;border:1px solid #65756a;border-radius:8px;background:#111914;color:var(--fsp-text);padding:9px 8px;font-size:14px}
+.fsp-object-list{grid-template-columns:minmax(0,1fr);max-height:230px}
+.fsp-object-button{align-items:flex-start;gap:8px;padding:8px;overflow-wrap:normal}
+.fsp-object-button .fsp-icon{margin-top:2px}
+.fsp-object-label{display:flex;flex-direction:column;gap:2px;min-width:0}
+.fsp-object-label strong{font-size:13px;line-height:1.4;font-weight:650;overflow-wrap:anywhere}
+.fsp-object-label small{font-size:12px;line-height:1.35;color:#c3cfbe}
+.fsp-zone-counts{width:100%;border-collapse:collapse;font-size:12px;margin:14px 0}
+.fsp-zone-counts caption{text-align:left;color:#cedbc7;font-size:13px;margin-bottom:7px}
+.fsp-zone-counts th,.fsp-zone-counts td{padding:7px 3px;border-bottom:1px solid #485740;text-align:right;font-variant-numeric:tabular-nums}
+.fsp-zone-counts th:first-child{text-align:left;font-weight:550}
+.fsp-zone-counts thead th{color:#c0ceba;font-weight:500;font-size:11px}
+.fsp-zone-note,.fsp-zone-missing{font-size:13px}
+.fsp-led-assembly{margin-top:15px;padding-top:14px;border-top:1px solid #66745c}
+.fsp-led-assembly h5{margin:0 0 7px;font-size:15px;line-height:1.4;color:#f0f4e9}
+.fsp-led-profile{font-weight:600;color:#d8e6ca}
+.fsp-led-note{font-size:12px;color:#c4d1bd;margin-top:10px!important}
+.fsp-led-source{display:inline-block;margin-top:10px;color:#ceebbe;text-underline-offset:3px}
+@media(max-width:760px){.fsp-object-list{grid-template-columns:minmax(0,1fr);max-height:200px}.fsp-zone-counts{font-size:14px}.fsp-zone-counts thead th{font-size:12px}.fsp-zone-picker{margin-top:5px}}
+
+/* Keep the mismatch visible while its full explanation remains keyboard-accessible. */
+.fsp-stale{margin-top:8px;padding:0;border-width:1px;border-radius:8px}
+.fsp-stale-summary{display:list-item;cursor:pointer;padding:9px 12px;min-height:40px;font-size:14px;font-weight:600;line-height:1.4;color:#f7e6b6}
+.fsp-stale-summary::marker{color:#e2c57e}
+.fsp-stale-body{padding:0 13px 11px;font-size:13px;line-height:1.45}
+.fsp-stale-body ul{margin:1px 0 7px;padding-left:19px}.fsp-stale-body li+li{margin-top:4px}
+.fsp-stale-body p{color:#ead9b0}
+.fsp-led-sources{display:flex;flex-wrap:wrap;gap:7px 16px;margin-top:10px}
+.fsp-led-sources .fsp-led-source{margin-top:0;font-size:13px}

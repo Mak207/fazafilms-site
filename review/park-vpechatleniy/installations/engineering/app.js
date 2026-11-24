@@ -1,8 +1,10 @@
-import {computeEngineering, AUXILIARY_DEFAULTS} from './engineering-model.js';
+import {computeEngineering, AUXILIARY_DEFAULTS, AUXILIARY_LABELS} from './engineering-model.js?v=20261124-led-zones1';
+import {DEFAULT_LED_CONFIG} from './led-model.js?v=20261124-led-zones1';
+import {createLedPanel} from './led-ui.js?v=20261124-led-zones1';
 import {computeContentPlan} from '../content-model.js';
 import {DEFAULT_SCREEN_INPUT, SCREEN_CATEGORY_KEYS, bdmPreview} from './screen-model.js';
-import {electricalDiagram} from './electrical-diagram.js';
-import {createScreenPlan} from '../screen-plan.js?v=20261124-ux2';
+import {electricalDiagram} from './electrical-diagram.js?v=20261124-led-zones1';
+import {createScreenPlan} from '../screen-plan.js?v=20261124-led-zones1';
 
 const $=q=>document.querySelector(q);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -23,7 +25,7 @@ function errorText(e){
 }
 const decode=v=>JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(v.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0))));
 const encode=v=>btoa(Array.from(new TextEncoder().encode(JSON.stringify(v)),b=>String.fromCharCode(b)).join('')).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-let result=computeEngineering();
+let result=computeEngineering({led:DEFAULT_LED_CONFIG});
 const baselineInput=structuredClone(result.input);
 let input=structuredClone(baselineInput);
 const query=new URL(location.href).searchParams;
@@ -38,8 +40,8 @@ try{
 // Keep editable inputs even when that calculation has no normalised result input.
 result=computeEngineering(input);if(result.input)input=structuredClone(result.input);
 const sharedPlan=createScreenPlan($('#shared-screen-plan'),{onOpenEngineering:()=>chooseTab('calculation')});
-function updateSharedPlan(){sharedPlan.update({result:result.valid?result.content:{valid:false},input:input.flow,screenTypes:input.types});}
-function sendState(){if(embedded)window.parent.postMessage({type:'faza-engineering-state',valid:result.valid,types:input.types,input:result.valid?result.input:null},location.origin);}
+function updateSharedPlan(){sharedPlan.update({result:result.valid?result.content:{valid:false},input:input.flow,screenTypes:result.valid?result.screen.input.types:input.types,ledReport:result.valid?result.led:null});}
+function sendState(){if(embedded)window.parent.postMessage({type:'faza-engineering-state',valid:result.valid,types:result.valid?result.screen.input.types:input.types,ledReport:result.valid?result.led:null,input:result.valid?result.input:input},location.origin);}
 window.addEventListener('message',event=>{
  if(!embedded||event.origin!==location.origin||event.source!==window.parent||event.data?.type!=='faza-park-scenario')return;
  const candidate=computeContentPlan(event.data.input);
@@ -49,55 +51,61 @@ window.addEventListener('message',event=>{
  render();
 });
 $('#parent-visitors').addEventListener('click',()=>window.parent.postMessage({type:'faza-open-visitors'},location.origin));
+const ledPanel=createLedPanel($('#led-panel'),{onChange(config){if(config)input.led=config;else delete input.led;result=computeEngineering(input);buildControls();render();}});
 
 function setStatus(s){$('#action-status').textContent=s;}
 function fieldValue(n){return n===null?'':Number(n.toFixed(6));}
 function buildControls(){
- $('#sizes').innerHTML=SCREEN_CATEGORY_KEYS.map(k=>{const t=input.types[k];return `<tr><th><i class="type-dot" style="background:${colors[k]}"></i>${esc(labels[k])}<span class="sub" id="size-desc-${k}"></span></th><td id="count-${k}"></td>${['widthM','heightM'].map(f=>`<td><input aria-label="${esc(labels[k])}: ${f==='widthM'?'ширина':'высота'} в метрах" type="number" step="any" min="0.01" max="100" data-type="${k}" data-property="${f}" value="${fieldValue(t[f])}"></td>`).join('')}<td id="area-${k}"></td><td><input aria-label="${esc(labels[k])}: дальняя позиция" type="number" step="any" min="0.1" max="200" data-type="${k}" data-property="farDistanceM" value="${fieldValue(t.farDistanceM)}"></td><td><input aria-label="${esc(labels[k])}: минимальная значимая деталь в процентах высоты" type="number" step="any" min="0.1" max="100" data-type="${k}" data-property="elementPercent" value="${fieldValue(t.elementPercent)}"></td><td id="bdm-${k}"></td></tr>`;}).join('');
- $('#power-table').innerHTML=[...SCREEN_CATEGORY_KEYS.map(k=>`<tr><th>${esc(labels[k])}: прибор отображения</th><td id="pc-${k}"></td><td><input aria-label="${esc(labels[k])}: бюджет мощности одного прибора, Вт" data-type="${k}" data-property="assumedDeviceBudgetW" type="number" min="0" max="100000" step="10" value="${fieldValue(input.types[k].assumedDeviceBudgetW)}"></td><td id="pw-${k}"></td><td><span class="pill warn">Допущение</span></td></tr>`),...result.auxiliaryGroups.map(g=>`<tr><th>${esc(g.label)}</th><td id="pc-${g.key}"></td><td><input aria-label="${esc(g.label)}: бюджет мощности, Вт" data-aux="${g.key}" type="number" min="0" max="100000" step="5" value="${fieldValue(input.auxiliaryBudgets[g.key])}"></td><td id="pw-${g.key}"></td><td><span class="pill warn">Допущение</span></td></tr>`)].join('');
+ $('#sizes').innerHTML=SCREEN_CATEGORY_KEYS.map(k=>{const t=input.types[k];return `<tr><th><i class="type-dot" style="background:${colors[k]}"></i>${esc(labels[k])}<span class="sub" id="size-desc-${k}"></span></th><td id="count-${k}"></td>${['widthM','heightM'].map(f=>`<td><input aria-label="${esc(labels[k])}: ${f==='widthM'?'целевая ширина':'целевая высота'} в метрах" type="number" step="any" min="0.01" max="100" data-type="${k}" data-property="${f}" value="${fieldValue(t[f])}"></td>`).join('')}<td id="area-${k}"></td><td><input aria-label="${esc(labels[k])}: дальняя позиция" type="number" step="any" min="0.1" max="200" data-type="${k}" data-property="farDistanceM" value="${fieldValue(t.farDistanceM)}"></td><td><input aria-label="${esc(labels[k])}: минимальная значимая деталь в процентах высоты" type="number" step="any" min="0.1" max="100" data-type="${k}" data-property="elementPercent" value="${fieldValue(t.elementPercent)}"></td><td id="bdm-${k}"></td></tr>`;}).join('');
+ $('#power-table').innerHTML=[...SCREEN_CATEGORY_KEYS.map(k=>`<tr><th>${esc(labels[k])}: экранное полотно</th><td id="pc-${k}"></td><td><input aria-label="${esc(labels[k])}: бюджет мощности одного прибора, Вт" data-type="${k}" data-property="assumedDeviceBudgetW" type="number" min="0" max="100000" step="10" value="${fieldValue(input.types[k].assumedDeviceBudgetW)}"></td><td id="pw-${k}"></td><td><span class="pill warn" data-power-source="${k}">Допущение</span></td></tr>`),...Object.keys(AUXILIARY_DEFAULTS).map(key=>({key,label:AUXILIARY_LABELS[key]})).map(g=>`<tr><th>${esc(g.label)}</th><td id="pc-${g.key}"></td><td><input aria-label="${esc(g.label)}: бюджет мощности, Вт" data-aux="${g.key}" type="number" min="0" max="100000" step="5" value="${fieldValue(input.auxiliaryBudgets[g.key])}"></td><td id="pw-${g.key}"></td><td><span class="pill warn">Допущение</span></td></tr>`)].join('');
  document.querySelectorAll('[data-flow]').forEach(n=>n.value=input.flow[n.dataset.flow]);$('#reserve').value=input.reservePercent;
 }
 function render(){
  result=computeEngineering(input);
+ ledPanel.update(result,input);
  $('#error').hidden=result.valid;
  ['#metrics','#sizes','#power-table','#csv','#download-sld','#share'].forEach(q=>{const n=$(q);if('disabled'in n)n.disabled=!result.valid;});
  if(!result.valid){$('#error').innerHTML='<strong>Проверьте исходные данные</strong><ul>'+result.errors.map(e=>`<li>${esc(errorText(e))}</li>`).join('')+'</ul>';$('#metrics').hidden=true;document.querySelectorAll('[id^=area-],[id^=bdm-],[id^=pw-],[id^=pc-],[id^=count-],[id^=size-desc-],#range-chart,#content-metrics,#reserve-note,#flow-note,#readability-note,#power-unknown').forEach(n=>n.textContent='Расчёт приостановлен: проверьте параметры.');$('#sld').innerHTML='<p style="padding:25px;color:#663b2e">Схема скрыта: исправьте параметры расчёта.</p>';updateSharedPlan();sendHeight();sendState();return;}
  $('#metrics').hidden=false;
  const s=result.screen,c=result.content.counts;
- const kpis=[[nf(s.totals.surfaceCount,0),'экранные поверхности',`${nf(c.totalInstallations,0)} инсталляции + навигация`],[nf(s.totals.totalActiveAreaM2,1)+' м²','активное изображение','Размеры — проектное предложение'],[nf(s.power.budget.totalW===null?null:s.power.budget.totalW/1000,2)+' кВт','бюджет мощности AV',`${nf(s.power.maximum.unknownCount,0)} приборов без паспортного максимума`]];
+ const kpis=[[nf(s.totals.surfaceCount,0),'экранные поверхности',`${nf(c.totalInstallations,0)} инсталляции + навигация`],[nf(s.totals.totalActiveAreaM2,1)+' м²','активное изображение','Размеры — проектное предложение'],[nf(s.power.budget.totalW===null?null:s.power.budget.totalW/1000,2)+' кВт','бюджет мощности AV',`${nf(s.power.maximum.unknownCount,0)} позиций без значения максимума`]];
  $('#metrics').innerHTML=kpis.map(([n,l,d])=>`<article class="metric"><strong>${n}</strong><span>${l}</span><small>${esc(d)}</small></article>`).join('');
  $('#flow-note').innerHTML=`<strong>${nf(c.interactiveStations,0)} параллельные станции</strong><br>${nf(c.interactiveInstallations,0)} интерактивные точки · ${nf(c.interactiveStations/Math.max(1,c.interactiveInstallations),1)} станции на точку.<br>Присутствие по времени визита: ${nf(result.content.flows.totalOccupancy,0)} чел. Это не нормативная вместимость.`;
  s.categories.forEach(r=>{
   $(`#count-${r.key}`).textContent=nf(r.count,0);$(`#area-${r.key}`).textContent=nf(r.totalAreaM2,2);
-  $(`#size-desc-${r.key}`).textContent=r.widthM===null||r.heightM===null?'Размер не определён':`${nf(r.widthM,3)} × ${nf(r.heightM,3)} м · ${nf(r.diagonalIn,1)}″`;
+  $(`#size-desc-${r.key}`).textContent=r.widthM===null||r.heightM===null?'Размер не определён':`${result.led?'Сборка: ':''}${nf(r.widthM,3)} × ${nf(r.heightM,3)} м${result.led?'':' · '+nf(r.diagonalIn,1)+'″'}`;
   $(`#bdm-${r.key}`).innerHTML=`<span class="pill ${r.bdm.pass===true?'ok':r.bdm.pass===false?'fail':'warn'}">${r.bdm.pass===true?'Осевой запас':r.bdm.pass===false?'Малая деталь':'Нет данных'}</span><span class="sub">Предел ${nf(r.bdm.maxDistanceM,2)} м</span>`;
-  $(`#pc-${r.key}`).textContent=nf(r.count,0);$(`#pw-${r.key}`).textContent=nf(r.assumedDeviceBudgetW===null?null:r.assumedDeviceBudgetW*r.count/1000,2);
+  $(`#pc-${r.key}`).textContent=nf(r.count,0);$(`#pw-${r.key}`).textContent=nf(r.count===0?0:r.assumedDeviceBudgetW===null?null:r.assumedDeviceBudgetW*r.count/1000,2);
+  const powerField=document.querySelector(`[data-type="${r.key}"][data-property="assumedDeviceBudgetW"]`);powerField.readOnly=!!result.led;powerField.setAttribute('aria-readonly',String(!!result.led));if(result.led)powerField.value=r.assumedDeviceBudgetW===null?'':Number(r.assumedDeviceBudgetW.toFixed(2));
+  document.querySelector(`[data-power-source="${r.key}"]`).textContent=result.led?'По LED-профилю':'Допущение';
  });
- result.auxiliaryGroups.forEach(g=>{$(`#pc-${g.key}`).textContent=nf(g.count,0);$(`#pw-${g.key}`).textContent=nf(g.budgetInputW===null?null:g.budgetInputW*g.count/1000,2);});
+ result.auxiliaryGroups.forEach(g=>{$(`#pc-${g.key}`).textContent=nf(g.count,0);$(`#pw-${g.key}`).textContent=nf(g.count===0?0:g.budgetInputW===null?null:g.budgetInputW*g.count/1000,2);});
  const failures=s.categories.filter(r=>r.count&&r.bdm.pass===false);
  $('#readability-note').className='callout'+(failures.length?' amber':'');
  $('#readability-note').innerHTML=failures.length?`<strong>Нужна корректировка:</strong> ${failures.map(r=>esc(labels[r.key])).join(', ')} — заданная дальняя позиция превышает осевой предел для выбранной детали. Увеличьте изображение или значимый элемент либо сократите дистанцию.`:'Предварительная осевая проверка связывает дальнюю позицию с минимальной значимой деталью. Положительный результат не проверяет боковые места, заслонение зрителями и световую среду.';
  if(s.totals.unknownAreaSurfaceCount)$('#readability-note').innerHTML+=`<p>Площадь ${nf(s.totals.unknownAreaSurfaceCount,0)} поверхностей неизвестна. Полный итог не определён; известная часть ${nf(s.totals.knownAreaSumM2,2)} м².</p>`;
  const values=[['Компактный',s.range.lower.totalActiveAreaM2],['Текущий',s.totals.totalActiveAreaM2],['Крупный',s.range.upper.totalActiveAreaM2]],max=Math.max(1,...values.map(x=>x[1]??0));
- $('#range-chart').innerHTML=values.map(([name,a],i)=>`<div class="range-row ${i===1?'':'dim'}"><span>${name}</span><div class="bar-track"><div class="bar-fill" style="width:${(a??0)/max*100}%"></div></div><strong>${nf(a)} м²</strong></div>`).join('')+'<p class="muted">Компактный: hero 3 м / интерактив 55″ / медиа 65″ / общие 86″ / навигация 55″. Крупный: 5 м / 86″ / 86″ / 120″ / 75″. Число поверхностей берётся из текущего сценария.</p>';
+ $('#range-chart').innerHTML=values.map(([name,a],i)=>`<div class="range-row ${i===1?'':'dim'}"><span>${name}</span><div class="bar-track"><div class="bar-fill" style="width:${(a??0)/max*100}%"></div></div><strong>${nf(a)} м²</strong></div>`).join('')+'<p class="muted">Цели компактного варианта: главный экран 3 м, интерактив 55″, медиа 65″, общие 86″, навигация 55″. Крупного: 5 м / 86″ / 86″ / 120″ / 75″. В LED-режиме каждый размер приведён к целой сетке кабинетов выбранного профиля.</p>';
  $('#content-metrics').innerHTML=`<div class="content-facts"><div><strong>${nf(c.digitalPackages,0)}</strong><span>цифровых пакетов</span></div><div><strong>${nf(result.content.content.scopedObjectPackages,0)}</strong><span>редакционных</span></div><div><strong>${nf(result.content.runtime.uniqueChannelMinutes,0)}</strong><span>канал-минут мастеров</span></div></div><p>${nf(result.content.runtime.uniqueLinearMinutes,0)} мин уникальных линейных программ. Выходное разрешение, карта каналов и технические версии фиксируются для каждой поверхности.</p>`;
  $('#reserve-note').innerHTML=`С резервом ${nf(result.reservePercent,0)}%: <strong>${nf(result.reservedBudgetW===null?null:result.reservedBudgetW/1000,2)} кВт</strong> для учтённого AV-состава. Это планировочный ориентир, не разрешённая мощность и не номинал вводного автомата.`;
  $('#sld').innerHTML=electricalDiagram(result);
- $('#power-unknown').innerHTML=`В ведомости ${nf(s.power.budget.equipmentCount,0)} предполагаемых приборов. <strong>Паспортные максимумы и рабочие режимы всех ${nf(s.power.maximum.unknownCount,0)} ещё не заполнены.</strong>`;
+ $('#power-unknown').innerHTML=`В ведомости ${nf(s.power.budget.equipmentCount,0)} записей оборудования${result.led?' с учётом LED-кабинетов':''}. <strong>Максимумы ${nf(s.power.maximum.unknownCount,0)} позиций ещё не заданы.</strong> Данные LED относятся к выбранной серии; конкретная поставка и рабочие режимы требуют проверки.`;
+ $('#power-basis').textContent=result.led?'LED-полотна суммируются по целым кабинетам. В таблице указан бюджет одного собранного полотна; вспомогательные устройства редактируются отдельно. Пределы серии не заменяют проверку конкретной поставки и полного состава парка.':'Ручные бюджеты перечисленного состава. Для модульных экранов выберите LED-профиль выше.';
  updateSharedPlan();sendHeight();sendState();
 }
 function download(content,name,type){const u=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1500);}
 document.addEventListener('input',e=>{
  const n=e.target;if(n.dataset.flow){input.flow[n.dataset.flow]=n.value===''?NaN:n.valueAsNumber;render();}
- if(n.dataset.type){input.types[n.dataset.type][n.dataset.property]=n.value===''?null:n.valueAsNumber;render();}
+ if(n.dataset.type&&!n.readOnly){input.types[n.dataset.type][n.dataset.property]=n.value===''?null:n.valueAsNumber;render();}
  if(n.dataset.aux){input.auxiliaryBudgets[n.dataset.aux]=n.value===''?null:n.valueAsNumber;render();}
  if(n.id==='reserve'){input.reservePercent=n.value===''?NaN:n.valueAsNumber;render();}
 });
 $('#reset').addEventListener('click',()=>{const flow=structuredClone(input.flow);input=structuredClone(baselineInput);if(embedded)input.flow=flow;result=computeEngineering(input);buildControls();render();setStatus(embedded?'Восстановлены базовые размеры и бюджеты. Сценарий посетителей сохранён.':'Восстановлен базовый сценарий. Ответы анкеты сохранены.');});
 $('#csv').addEventListener('click',()=>{
- if(!result.valid)return;const rows=[['Парк впечатлений — инженерный сценарий','24.11.2026'],['Статус','Предложение. Все размеры и бюджеты — допущения'],['Экскурсионный поток',input.flow.guidedFlow],['Самостоятельный поток',input.flow.independentFlow],[],['Поверхность','Кол-во','W м','H м','Всего м²','Дальняя позиция м','Минимальная деталь %','BDM предел м']];
+ if(!result.valid)return;const rows=[['Парк впечатлений — инженерный сценарий','24.11.2026'],['Статус','Рабочий сценарий. LED по выбранному профилю; монтаж и поставка требуют проверки'],['Экскурсионный поток',input.flow.guidedFlow],['Самостоятельный поток',input.flow.independentFlow],[],['Поверхность','Кол-во','W м','H м','Всего м²','Дальняя позиция м','Минимальная деталь %','BDM предел м']];
  result.screen.categories.forEach(r=>rows.push([labels[r.key],r.count,r.widthM,r.heightM,r.totalAreaM2,r.farDistanceM,r.elementPercent,r.bdm.maxDistanceM]));
- rows.push([],['ID оборудования','Категория','Бюджет Вт — допущение','Паспортный максимум Вт','Рабочая мощность Вт']);result.screen.equipment.forEach(e=>rows.push([e.id,e.category,e.budgetInputW,e.maximumInputW??'Неизвестно',e.operatingInputW??'Неизвестно']));
+ if(result.led){rows.push([],['LED-профиль',result.led.profile.label],['Тип','Полотен','Колонок','Рядов','Кабинетов всего','Пиксели W','Пиксели H','Масса кабинетов кг','Максимум LED Вт']);result.led.rows.forEach(r=>rows.push([labels[r.key],r.count,r.columns,r.rows,r.totalCabinets,r.pixelWidth,r.pixelHeight,r.totalMassKg,r.totalMaximumW]));}
+ rows.push([],['ID оборудования','ID полотна','Категория','Планировочный бюджет Вт','Опубликованный максимум / предел серии Вт','Основание максимума','Источник','Рабочая мощность Вт']);result.screen.equipment.forEach(e=>rows.push([e.id,e.surfaceId??'',e.category,e.budgetInputW,e.maximumInputW??'Неизвестно',e.maximumInputW===null||e.maximumInputW===undefined?'Не задано':e.maximumEvidence==='published_series_upper_bound_not_delivery_passport'?'Предел серии; паспорт поставки не проверен':e.maximumEvidence??'Требует проверки',e.sourceUrl??'',e.operatingInputW??'Неизвестно']));
  rows.push([],['Сумма бюджета учтённых устройств Вт',result.screen.power.budget.totalW],['Полный максимум парка','Неизвестно'],['Исключены',result.screen.power.missingSubsystems.join(', ')]);
  download('\ufeff'+rows.map(row=>row.map(v=>'"'+String(v??'Неизвестно').replace(/"/g,'""')+'"').join(';')).join('\r\n'),'park-engineering-scenario.csv','text/csv;charset=utf-8');setStatus('Скачана ведомость поверхностей и уникального оборудования.');
 });
