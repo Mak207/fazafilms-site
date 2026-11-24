@@ -57,10 +57,10 @@ export function createParkPlan(container, { onSelectDistrict } = {}) {
   root.append(summary);
 
   const districtView = el('div', 'pp-district-view');
-  const branchLabel = el('p', 'pp-branch-label', 'Этот поток распределяется между восемью округами');
+  const branchLabel = el('p', 'pp-branch-label', 'Этот поток распределяется между восемью территориями');
   const districtGrid = el('div', 'pp-district-grid');
   districtGrid.setAttribute('role', 'group');
-  districtGrid.setAttribute('aria-label', 'Выберите округ на условной схеме');
+  districtGrid.setAttribute('aria-label', 'Выберите территорию на условной схеме');
   const districts = [];
   for (let i = 0; i < 8; i++) {
     const button = el('button', 'pp-district');
@@ -150,8 +150,8 @@ export function createParkPlan(container, { onSelectDistrict } = {}) {
   floorView.append(floorGrid, markerLegend);
   root.append(floorView);
 
-  const note = el('p', 'pp-plan-note', 'Распределение по округам — сценарий; контуры этажей — по 3D-модели.');
-  const densityNote = el('p', 'pp-density-note', 'Схемы показывают общую площадь модели: экспонаты и проходы не вычтены. Сравнение доступной площади с выбранным ориентиром приведено в расчётных замечаниях. Полоски показывают долю посетителей, а не допустимую вместимость.');
+  const note = el('p', 'pp-plan-note', 'Распределение по территориям — сценарий; контуры этажей — по 3D-модели.');
+  const densityNote = el('p', 'pp-density-note', 'Схемы показывают общую площадь модели: экспонаты, оборудование и проходы не вычтены. Полоски показывают долю посетителей. Допустимая вместимость требует отдельного расчёта по утверждённой планировке.');
   root.append(note, densityNote);
   container.append(root);
 
