@@ -1,18 +1,20 @@
+import { createZoneMap } from './zone-map.js?v=park-zones-20261124';
+import { createExhibitionZones } from './zones-controller.js?v=park-zones-20261124';
 import * as THREE from 'three';
 import { GLTFLoader } from '/golden-ring/interactives/vendor/three-0.180/GLTFLoader.js';
 import { MeshoptDecoder } from '/golden-ring/tour/vendor/meshopt_decoder.mjs';
 import { OrbitControls } from './vendor/OrbitControls.js';
-import { createTramSystem, MONORAIL_ROUTE_CONFIG, MONORAIL_BOARDING_GATE } from './tram-system.js?v=park-compact-20261124';
+import { createTramSystem, MONORAIL_ROUTE_CONFIG, MONORAIL_BOARDING_GATE } from './tram-system.js?v=park-zones-20261124';
 import { KTX2Loader } from './vendor/ktx2/loaders/KTX2Loader.js';
 import { RoomEnvironment } from './vendor/RoomEnvironment.js';
-import { createExhibitSystem } from './exhibits.js?v=park-compact-20261124';
-import { createExhibitEditor } from './exhibit-editor.js?v=park-compact-20261124';
-import { startParkCrowd } from './crowd/park-crowd.js?v=park-compact-20261124';
-import { createDynamicObstacleAdapter } from './crowd/dynamic-obstacles.js?v=park-compact-20261124';
-import { attachIcebreakerDetails } from './icebreaker-details.js?v=park-compact-20261124';
-import { createIcebreakerAccess, ICEBREAKER_OPENING } from './icebreaker-access.js?v=park-compact-20261124';
-import { applyWorkingOpenings } from './cad-openings.js?v=park-compact-20261124';
-import { initViewerUI } from './ui-module.js?v=park-compact-20261124';
+import { createExhibitSystem } from './exhibits.js?v=park-zones-20261124';
+import { createExhibitEditor } from './exhibit-editor.js?v=park-zones-20261124';
+import { startParkCrowd } from './crowd/park-crowd.js?v=park-zones-20261124';
+import { createDynamicObstacleAdapter } from './crowd/dynamic-obstacles.js?v=park-zones-20261124';
+import { attachIcebreakerDetails } from './icebreaker-details.js?v=park-zones-20261124';
+import { createIcebreakerAccess, ICEBREAKER_OPENING } from './icebreaker-access.js?v=park-zones-20261124';
+import { applyWorkingOpenings } from './cad-openings.js?v=park-zones-20261124';
+import { initViewerUI } from './ui-module.js?v=park-zones-20261124';
 import { MeshBVH, acceleratedRaycast, CENTER } from './vendor/three-mesh-bvh/index.module.js';
 
 const $ = id => document.getElementById(id);
@@ -45,6 +47,9 @@ let monorail=null,followVehicle=-1,onboardVehicle=-1,lastOnboardVehicle=0,hallOp
 const passenger={yaw:-Math.PI/2,pitch:-.16,eye:new THREE.Vector3(-.52,2.05,.55),normalFov:43,normalNear:.05};
 const passengerPointers=new Map();let pinchDistance=0;
 Object.defineProperty(diagnostics,'onboard',{get:()=>({active:onboardVehicle>=0,vehicle:onboardVehicle>=0?onboardVehicle:null,yaw:passenger.yaw,pitch:passenger.pitch,eyeLocal:passenger.eye.toArray(),fov:camera.fov})});
+let exhibitionZones=null,zoneMap=null;
+Object.defineProperty(diagnostics,'zones',{get:()=>exhibitionZones?.getState()||{ready:false}});
+Object.defineProperty(diagnostics,'zoneMap',{get:()=>zoneMap?.getState()||{ready:false}});
 let exhibits=null,icebreakerAccess=null,exhibitProgress={state:'waiting',loadedObjects:0,placedInstances:0,objects:[]};
 Object.defineProperty(diagnostics,'exhibits',{get:()=>exhibits?.getState()||exhibitProgress});
 let exhibitEditor=null,editingInstanceId=null,editCutawayTimer=null,dynamicObstacles=null,visitorPlacementReady=false,placementNotice=null;
@@ -211,6 +216,7 @@ try {
     if(dynamicObstacles?.sync())needsRender=true;
     if(icebreakerAccess?.update())needsRender=true;
     if(crowd?.update(delta))needsRender=true;
+    if(exhibitionZones?.update(delta))needsRender=true;
     if(onboardVehicle<0)controls.update();
     if(needsRender){renderer.render(scene,camera);needsRender=false;diagnostics.renderedFrames=(diagnostics.renderedFrames||0)+1;diagnostics.renderTriangles=renderer.info.render.triangles;}
   }
@@ -495,7 +501,7 @@ function syncExhibitControls(state){
 }
 async function startExhibits(loader,monorailReady){
   try{
-    exhibits=await createExhibitSystem({scene,loader,sourceMeshes,manifestUrl:exhibitManifestPath+'?v=park-compact-20261124',
+    exhibits=await createExhibitSystem({scene,loader,sourceMeshes,manifestUrl:exhibitManifestPath+'?v=park-zones-20261124',
       anisotropy:Math.min(8,renderer.capabilities.getMaxAnisotropy()),onChange:()=>{needsRender=true;},onProgress:syncExhibitControls});
     const icebreaker=exhibits.getInstance('O12-1');
     if(icebreaker){
@@ -503,6 +509,24 @@ async function startExhibits(loader,monorailReady){
       diagnostics.icebreaker={lettering:lettering?.text||'АТОМФЛОТ',labelledSides:lettering?.sides||2,dimensions:icebreaker.originalDimensions||icebreaker.dimensions};
       icebreakerAccess=createIcebreakerAccess({scene,exhibits});
     }
+    exhibitionZones=await createExhibitionZones({exhibits,loader,camera,requestRender:()=>{needsRender=true;},
+      onOverview:()=>{zoneMap?.setVisible(true);setView('exhibits');},onFocus:(id,position,target,label)=>{
+        zoneMap?.setVisible(false);viewerUI.closePanels();
+        exhibitEditor?.clearSelection();editingInstanceId=null;clearExhibitInspection();stopFollowing();
+        setHallOpen(true);exhibits.setVisible(true);currentView=null;
+        if(position&&target){moveCamera(position,target);inspectedExhibitId=id;applyInspectionCutaway(position);}
+        else focusExhibit(id);
+        $('view-name').textContent=label;diagnostics.selectedExhibit=id;diagnostics.view='section';
+      }});
+    zoneMap=await createZoneMap({scene,requestRender:()=>{needsRender=true;},onFocus:(position,target,label)=>{
+      exhibitEditor?.clearSelection();editingInstanceId=null;clearExhibitInspection();stopFollowing();
+      setHallOpen(true);exhibits.setVisible(true);currentView=null;
+      exhibitionZones.hidePanel();moveCamera(position,target);
+      $('view-name').textContent=label;diagnostics.view='zone-map';
+    }});
+    diagnostics.focusZone=(id)=>zoneMap.focus(id);
+    diagnostics.focusSection=(id,options)=>exhibitionZones.focus(id,options);
+    diagnostics.interact=(action)=>exhibitionZones.act(action);
     await monorailReady;
     await prepareInspectionRaycasts();
     inspectionReady=true;
@@ -528,6 +552,10 @@ async function startExhibits(loader,monorailReady){
       $('scene-notice').textContent=state.rejectedInstances?'Часть экспонатов ещё требует уточнения позиции. Показаны подтверждённые размещения.':'Часть экспонатов не загрузилась. Обновите страницу для повторной загрузки.';$('scene-notice').hidden=false;
     }
     if(currentView==='overview')setView('overview',true);
+    const requestedSection=new URLSearchParams(location.search).get('section');
+    if(requestedSection)exhibitionZones.focus(requestedSection);
+    const requestedZone=new URLSearchParams(location.search).get('zone');
+    if(requestedZone)zoneMap.focus(requestedZone);
   }catch(error){
     inspectionError=error?.message||String(error);
     exhibitProgress={state:'error',loadedObjects:0,placedInstances:0,objects:[],errors:[inspectionError]};
@@ -752,7 +780,7 @@ async function startVisitors(loader){
       step(dt=1/24){
         captureMode=true;transition=null;
         const delta=Math.min(.1,Math.max(0,dt));
-        dynamicObstacles?.sync();crowd.setPaused(false);crowd.update(delta);crowd.setPaused(true);
+        exhibitionZones?.update(delta);dynamicObstacles?.sync();crowd.setPaused(false);crowd.update(delta);crowd.setPaused(true);
         if(monorail){const playing=monorail.getState().playing;monorail.setPlaying(true);monorail.update(delta);monorail.setPlaying(playing);}
         if(onboardVehicle>=0)updatePassengerCamera();else controls.update();
         renderer.render(scene,camera);needsRender=false;return crowd.simulation.time;
@@ -769,3 +797,4 @@ async function startVisitors(loader){
     visitorPlacementReady=true;exhibitEditor?.setEnabled(true);
   }
 }
+

@@ -1,0 +1,31 @@
+{
+  "version": "park-zones-20261124",
+  "provenance": "Hitem3D v3.0 Master / PBR; original source receipts retained",
+  "objects": [
+    {
+      "id": "X01_MIR",
+      "url": "preview/X01_MIR.glb",
+      "highUrl": "web/X01_MIR.glb"
+    },
+    {
+      "id": "X02_SAILSHIP",
+      "url": "preview/X02_SAILSHIP.glb",
+      "highUrl": "web/X02_SAILSHIP.glb"
+    },
+    {
+      "id": "X03_NAVIGATION",
+      "url": "preview/X03_NAVIGATION.glb",
+      "highUrl": "web/X03_NAVIGATION.glb"
+    },
+    {
+      "id": "X04_COCKPIT",
+      "url": "preview/X04_COCKPIT.glb",
+      "highUrl": "web/X04_COCKPIT.glb"
+    },
+    {
+      "id": "X05_ARCHAEOLOGY",
+      "url": "preview/X05_ARCHAEOLOGY.glb",
+      "highUrl": "web/X05_ARCHAEOLOGY.glb"
+    }
+  ]
+}

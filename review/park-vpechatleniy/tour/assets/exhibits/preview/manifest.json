@@ -1,5 +1,5 @@
 {
-  "version": "park-compact-20261124",
+  "version": "park-zones-20261124",
   "layoutStatus": "provisional",
   "qualityNote": "Рабочая расстановка по ролику и концепции; координаты и выставочный масштаб требуют проектного уточнения.",
   "objects": [
@@ -149,8 +149,8 @@
       "instances": [
         {
           "id": "O06-1",
-          "x": 11.5,
-          "z": 45,
+          "x": 11,
+          "z": 55.5,
           "floorY": 7.2,
           "offsetY": 0,
           "rotationY": 0,
@@ -476,10 +476,10 @@
     },
     {
       "id": "O16",
-      "name": "Аркадный павильон с фронтоном",
+      "name": "Херсонес · музейная аркада",
       "scaleTo": {
         "axis": "max",
-        "meters": 12
+        "meters": 24
       },
       "rotation": [
         0,
@@ -490,18 +490,19 @@
       "instances": [
         {
           "id": "O16-1",
-          "x": -14,
-          "z": 61,
-          "floorY": 13.2,
+          "x": 12.875,
+          "z": 34.5,
+          "floorY": 7.2,
           "offsetY": 0,
           "rotationY": 0,
           "floating": false,
           "zone": "G10"
         }
-      ]
+      ],
+      "floorDatumOffset": 0.31
     }
   ],
   "qualityMode": "fast",
   "textureQualityNote": "Быстрый просмотр: текстуры 2K; та же геометрия и расстановка. Версия 4K доступна в переключателе качества.",
-  "layoutRevision": "park-compact-20261124"
+  "layoutRevision": "park-zones-20261124"
 }

@@ -8,17 +8,17 @@
   <title>Парк впечатлений — 3D-парк · ФАЗА</title>
   <script src="../adaptive-zoom.js?v=20261124-pinch-zones-1"></script>
   <link rel="icon" href="/favicon.svg">
-  <link rel="stylesheet" href="crowd/crowd.css?v=park-compact-20261124">
-  <link rel="stylesheet" href="viewer.css?v=park-compact-20261124">
+  <link rel="stylesheet" href="crowd/crowd.css?v=park-zones-20261124">
+  <link rel="stylesheet" href="viewer.css?v=park-zones-20261124">
   <link rel="stylesheet" href="../adaptive-zoom.css?v=20261124-pinch-zones-1">
   <script type="importmap">{"imports":{"three":"/golden-ring/interactives/vendor/three-0.180/three.module.min.js"}}</script>
-  <script type="module" src="viewer.js?v=park-compact-20261124"></script>
+  <script type="module" src="viewer.js?v=park-zones-20261124"></script>
 </head>
 <body data-az-page="tour">
 <main id="viewer" data-state="loading">
   <header class="viewer-header">
     <div class="viewer-title" data-az-zone="content"><strong>Парк впечатлений</strong><span id="model-info">3D-модель проекта</span></div>
-    <div class="header-actions" data-az-zone="controls"><button id="help-toggle" aria-controls="help" aria-expanded="false" type="button" title="Как управлять парком">Управление</button><button id="fullscreen" type="button">На весь экран</button></div>
+    <div class="header-actions" data-az-zone="controls"><label class="section-selector"><span class="sr-only">Разделы парка</span><select id="section-select" disabled aria-label="Разделы парка"><option value="" disabled selected>Разделы парка</option><option value="rgo">РГО · Аллея открытий</option><option value="lider">Ледокол «Лидер»</option><option value="chersonesus">Херсонес</option><option value="grain">Зерновые силосы</option><option value="flight">МС-21 · кабина 1</option><option value="flight2">МС-21 · кабина 2</option><option value="all">Весь парк</option></select></label><button id="help-toggle" aria-controls="help" aria-expanded="false" type="button" title="Как управлять парком">Управление</button><button id="fullscreen" type="button">На весь экран</button></div>
   </header>
   <section id="stage" aria-label="Трёхмерная модель Парка впечатлений">
     <canvas id="canvas" tabindex="0" aria-label="3D-модель. Левая кнопка — вращение, правая — сдвиг, колесо — приближение. Двойной щелчок — приблизить выбранное место."></canvas>
@@ -95,11 +95,14 @@
       <p><b>Монорельс:</b> в виде из вагона потяните мышью или пальцем, чтобы повернуть голову. Стрелки меняют взгляд, Esc возвращает маршрут. Пауза людей и пауза вагонов независимы.</p>
       <p><b>Вид:</b> ракурсы, качество и срез здания собраны в одной панели. При осмотре объекта мешающие поверхности временно скрываются; «Экспозиция» возвращает общий вид.</p>
     </aside>
+    <aside id="zone-map-panel" data-az-zone="controls" class="context-panel zone-map-panel" hidden aria-label="Зоны парка"><div class="panel-heading"><strong>Карта зон</strong><button class="panel-close" type="button" data-close-panel="zone-map-panel" aria-label="Закрыть карту зон">×</button></div><label class="zone-boundary-switch"><input id="zone-boundaries" type="checkbox" checked> Границы и названия в 3D</label><p id="zone-map-current" class="panel-note">Выберите зону, чтобы рассмотреть её целиком.</p><div id="zone-map-buttons" class="zone-map-buttons"></div></aside>
+    <aside id="zone-actions" data-az-zone="controls" class="zone-actions" hidden aria-label="Управление разделом"><div class="zone-actions-heading"><p id="zone-description"></p><button id="zone-close" type="button" aria-label="Скрыть управление разделом">×</button></div><label id="rgo-hall-control" class="rgo-hall-control" hidden><span>Залы РГО</span><select id="rgo-hall-select" aria-label="Залы РГО"></select></label><div class="zone-navigation"><button id="zone-inside" type="button">Внутри раздела</button><button id="zone-overview" type="button">Зона целиком</button></div><div id="zone-action-buttons" class="zone-action-buttons"></div></aside>
     <p data-az-zone="content" id="scene-notice" class="scene-notice" hidden role="status"></p>
   </section>
 
   <footer class="viewer-toolbar" data-az-zone="controls" data-az-scroll aria-label="Панель управления 3D">
     <nav class="workspace-tabs" aria-label="Разделы управления">
+      <button id="zones-toggle" class="workspace-tab" data-panel="zone-map-panel" type="button" aria-controls="zone-map-panel" aria-expanded="false" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3Zm6-3v15m6-12v15"/></svg><span>Зоны</span></button>
       <button id="editor-toggle" class="workspace-tab" data-panel="exhibit-editor" type="button" aria-controls="exhibit-editor" aria-expanded="false" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 9 5v10l-9 5-9-5V7Zm-9 5 9 5 9-5M12 12v10"/></svg><span>Объекты</span></button>
       <button id="monorail-toggle" class="workspace-tab" data-panel="monorail-panel" type="button" aria-controls="monorail-panel" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3h16v14H4ZM4 11h16M12 3v8M7 17v3m10-3v3M3 22h18"/></svg><span>Монорельс</span></button>
       <button id="crowd-toggle" class="workspace-tab" data-panel="crowd-panel" type="button" aria-controls="crowd-panel" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M3 21v-5a6 6 0 0 1 12 0v5M16 4a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5v3"/></svg><span>Посетители</span><small id="crowd-compact-count" class="tab-count">100</small></button>
@@ -109,3 +112,4 @@
 </main>
 </body>
 </html>
+
