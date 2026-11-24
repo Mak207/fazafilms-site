@@ -1,6 +1,7 @@
 // Crowd derivatives: Microsoft Rocketbox / Avatar Studio, MIT.
 // Engine-independent adapter: inject the park's existing THREE, GLTFLoader instance,
 // and SkeletonUtils.clone. Never imports or creates a second Three.js engine.
+import {createPhoneResources,createSocialPose} from './social-pose.js?v=social-20261124';
 const canonical = name => name.replace(/^mixamorig:?/i, '');
 const OUTFITS = ['original', 'formal', 'shirt', 'tee', 'shirt'];
 const HEIGHTS = [0.97, 1.03, 1.00, 1.07, 0.94];
@@ -25,6 +26,7 @@ export function createAvatarFactory({ THREE, loader, cloneSkeleton, manifest,
   const catalog=new Map(manifest.bases.map(row=>[row.id,row]));
   const pending=new Map(), templates=new Map(), textures=new Map(), materials=new Map(), handles=new Set();
   const ownedMaterials=new Set(), ownedTextures=new Set(), ownedGeometries=new Set(), textureColors=new Map();
+  const phoneResources=createPhoneResources(THREE);
   let disposed=false, loadRequests=0;
   const assertLive=()=>{if(disposed)throw new Error('Avatar factory has been disposed');};
   function rootTrack(clip,hips) {
@@ -232,6 +234,7 @@ export function createAvatarFactory({ THREE, loader, cloneSkeleton, manifest,
     const mixer=new THREE.AnimationMixer(rig),actions=new Map();
     for(const [name,clip]of template.clips){const a=mixer.clipAction(clip);a.setLoop(THREE.LoopOnce,1);a.clampWhenFinished=true;a.paused=true;a.setEffectiveWeight(0).play();actions.set(name,a);}
     let current='idle',time=0,speed=1,loop=true,elapsed=0,transition=null,dead=false;
+    const socialPose=createSocialPose({THREE,root,rig,info:description.info,phoneResources});
     const expression={},blinkOffset=(hash(baseId+':'+variantIndex+':'+seed)%1000)/173;
     function switchMotion(name,{phase=0,timeScale=1,fade=.18,loop:repeat=true}={}) {
       const key=name.toLowerCase();if(!actions.has(key))throw new Error(`Unsupported crowd clip: ${name}`);
@@ -239,6 +242,7 @@ export function createAvatarFactory({ THREE, loader, cloneSkeleton, manifest,
       speed=timeScale;loop=repeat;
     }
     function applyPose() {
+      socialPose.reset();
       for(const a of actions.values())a.setEffectiveWeight(0);
       const duration=template.clips.get(current).duration;
       actions.get(current).time=loop?THREE.MathUtils.euclideanModulo(time,duration):clamp(time,0,duration);
@@ -259,23 +263,25 @@ export function createAvatarFactory({ THREE, loader, cloneSkeleton, manifest,
     const handle={root,rig,baseId,variant,
       info:{...description.info},
       play(name,options){if(dead)return;switchMotion(name,options);},
-      pose(name,timeSeconds,{loop:repeat=true}={}){if(dead)return;switchMotion(name,{fade:0,loop:repeat});transition=null;time=timeSeconds;applyPose();applyFace(true);},
-      update(dt,{gaitPhase,activity,animate=true,face=true}={}){
+      get socialState(){return socialPose.state;},
+      phone:socialPose.phone,
+      pose(name,timeSeconds,{loop:repeat=true}={}){if(dead)return;switchMotion(name,{fade:0,loop:repeat});transition=null;time=timeSeconds;applyPose();applyFace(true);socialPose.update(null);},
+      update(dt,{gaitPhase,activity,animate=true,face=true,social=null,socialStopped=true,socialHeadYaw=0,socialHeadPitch=0}={}){
         if(dead)return;dt=Math.max(0,Number.isFinite(dt)?dt:0);elapsed+=dt;
         if(activity)switchMotion(activity,{fade:.18,loop:true});
         time=current==='walk'&&Number.isFinite(gaitPhase)?gaitPhase*template.info.walkDurationSeconds:time+dt*speed;
         if(transition){transition.age+=dt;transition.time+=dt;}
-        if(animate){applyPose();applyFace(face);}
+        if(animate){applyPose();applyFace(face);socialPose.update(social,{time:elapsed,stopped:socialStopped,headYaw:socialHeadYaw,headPitch:socialHeadPitch});}
       },
       setExpression(values={}){for(const k of Object.keys(expression))delete expression[k];for(const [k,v]of Object.entries(values))if(manifest.faceMorphSubset.includes(k))expression[k]=v;},
       setShadows(value){rig.traverse(o=>{if(o.isMesh)o.castShadow=Boolean(value);});},
-      dispose(){if(dead)return;dead=true;root.removeFromParent();mixer.stopAllAction();mixer.uncacheRoot(rig);for(const skeleton of skeletons)skeleton.dispose();handles.delete(handle);},
+      dispose(){if(dead)return;dead=true;socialPose.dispose();root.removeFromParent();mixer.stopAllAction();mixer.uncacheRoot(rig);for(const skeleton of skeletons)skeleton.dispose();handles.delete(handle);},
     };
     applyPose();applyFace(true);root.updateMatrixWorld(true);handles.add(handle);return handle;
   }
   const api={load,preload,create,describe,variantFor,
     get stats(){return {baseFaces:catalog.size,loadedBases:templates.size,loadRequests,visitors:handles.size,pooledTextures:textures.size,pooledMaterials:materials.size};},
-    dispose(){if(disposed)return;for(const h of [...handles])h.dispose();for(const g of ownedGeometries)g.dispose();for(const m of ownedMaterials)m.dispose();for(const t of ownedTextures)t.dispose();
+    dispose(){if(disposed)return;for(const h of [...handles])h.dispose();phoneResources.dispose();for(const g of ownedGeometries)g.dispose();for(const m of ownedMaterials)m.dispose();for(const t of ownedTextures)t.dispose();
       const images=new Set([...ownedTextures].map(t=>t.image));for(const image of images)image?.close?.();
       templates.clear();pending.clear();textures.clear();textureColors.clear();materials.clear();disposed=true;},
   };
