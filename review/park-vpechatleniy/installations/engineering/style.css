@@ -2,3 +2,22 @@
 @media(max-width:1000px){.hero{gap:30px;grid-template-columns:1.5fr 1fr}.metrics{grid-template-columns:repeat(2,1fr)}.metric:nth-child(2){border-right:0}.metric:nth-child(-n+2){border-bottom:1px solid var(--line)}.section-head{align-items:flex-start;flex-direction:column}.flow-inputs{grid-template-columns:1fr 1fr}.flow-note{grid-column:1/-1}.plan-layout{grid-template-columns:1.6fr 1fr}.plan-shell{padding:12px}.plan-shell svg{height:620px}.evidence-grid{grid-template-columns:1fr}.selection{padding:19px}}
 @media(max-width:650px){main{padding:0 18px 40px}.topbar{padding:18px;gap:20px}.topbar>span{display:none}.hero{display:block;padding:35px 0 28px}h1{letter-spacing:-1.5px;font-size:39px}.lead{font-size:14px}.hero-side{border:0;padding:22px 0 0;font-size:12px}.hero-side .status-tag{margin-bottom:10px}.hero-side p{margin-bottom:8px}.metric{padding:17px}.metric strong{font-size:27px}.metric>span{font-size:11px}.metric small{font-size:10px}.tabs{gap:5px;margin-bottom:26px;padding-bottom:20px}.tabs button{font-size:12px;padding:10px 12px}.flow-inputs{padding:18px;gap:14px}.flow-inputs label{font-size:11px}.two-col{grid-template-columns:1fr}.card{padding:22px}.plan-layout{grid-template-columns:1fr}.plan-shell svg{height:590px}.selection{position:static}.question-grid{grid-template-columns:1fr}.evidence-grid{grid-template-columns:1fr}.detail-body{padding:18px}summary{padding:18px;font-size:14px}.reserve{align-items:flex-start;flex-direction:column;gap:12px}.reserve label{width:100%}.range-row{grid-template-columns:75px 1fr 65px;gap:7px;font-size:11px}.actions button{font-size:12px}.plan-toolbar{gap:15px}footer{flex-direction:column;gap:10px}.embedded h1{font-size:33px}}
 @media print{body{background:white;color:black}.topbar,.tabs,.actions,footer,button,.flow-inputs,#engineering-form{display:none!important}.panel[hidden]{display:block!important}.hero{padding-top:0}main{padding:0;max-width:none}.metrics,.card,details{break-inside:avoid;background:white;color:black}.callout{background:#eee;color:black}.muted,.card p,.source-entry a,.source-entry p{color:#333}.sld-shell svg{min-width:0}.plan-shell svg{height:650px}h2{break-after:avoid}.panel{break-before:page}.hero-side{color:#333}.metric strong{color:black}.table-wrap{overflow:visible}table{font-size:9px}.size-table{min-width:0}.size-table input{width:50px!important;min-width:0}details:not([open])>.detail-body{display:block}summary{background:#eee}.two-col{display:block}.card{margin-bottom:12px}.hero-side a{color:black}}
+
+/* One shared scenario, with advanced details on demand. */
+.metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
+.parent-flow-note{display:none}
+.embedded .parent-flow-note{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;background:#1b2c21;border:1px solid #476150;border-radius:8px;margin:0 0 16px;font-size:14px}
+.parent-flow-note p{margin:0}
+.embedded .flow-inputs{display:none}
+.embedded .hero{display:none}
+.embedded .tabs{margin-top:12px}
+.embedded [data-tab=placement]{display:none}
+.embedded .metrics{margin-top:0}
+.embedded main{max-width:none;padding:4px 0}
+.tabs button{font-size:15px;min-height:44px}
+.metric small{font-size:13px}
+.metric span{font-size:15px}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #ffe19c;outline-offset:3px}
+body .faza-screen-plan{margin-top:16px}
+.embedded #shared-screen-plan{display:none}
+@media(max-width:600px){.metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.metric{padding:14px 10px}.metric strong{font-size:25px}.metric span{font-size:13px}.metric small{font-size:12px}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px}.embedded .tabs{grid-template-columns:1fr}.embedded .parent-flow-note{display:block}.parent-flow-note button{margin-top:8px}.section-head{display:block}.section-head .actions{margin-top:14px}}

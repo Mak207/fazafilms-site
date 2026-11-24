@@ -6,6 +6,9 @@ export const QUESTIONNAIRE_SCHEMA_VERSION = 1;
 export const QUESTIONNAIRE_SCHEMA_ID = 'faza.park.installation-questionnaire';
 const DEFAULT_STORAGE_KEY = 'faza:park:installation-questionnaire:v1';
 const MAX_SHARE_URL_LENGTH = 60000;
+// Accepted project basis fills missing/unknown legacy answers automatically.
+// Explicit different values are preserved and shown as undoable conflicts.
+const PROJECT_BASIS = Object.freeze({ geographicStructure: 'federal_districts', guidedMinutes: 240 });
 const SCOPE_ITEMS = [
   ['content', 'Контент: сценарии, видео, звук и графика'],
   ['software', 'Программное обеспечение интерактивов'],
@@ -23,7 +26,7 @@ const FIELDS = [
   num('operatingHours', 'Часов работы Парка в день', 0, 24, 0.5, 'Для дневного задания. Продолжительность работы Парка отличается от длительности одного визита.', 'часов'),
   num('dayTarget', 'План посетителей за день', 0, 1000000, 1, 'Суммарное число входов за день. Почасовой поток и пики нужно задавать отдельно.', 'человек/день'),
   txt('peakNotes', 'Как распределён поток и когда ожидаются пики', 'Дни недели, сезонность, часы максимальной нагрузки и возможный одновременный приход нескольких групп.', true),
-  num('guidedMinutes', 'Продолжительность полной экскурсии', 1, 1440, 1, 'Четыре часа соответствуют 240 минутам. Это не часы работы парка.', 'минут'),
+  num('guidedMinutes', 'Полная экскурсия · принято 240 минут', 1, 1440, 1, 'Принятая основа проекта — четыре часа экскурсии. Время работы и самостоятельного визита задаются отдельно.', 'минут'),
   num('stopsPerVisit', 'Остановок в полной экскурсии', 0, 500, 1, 'Для выборочного маршрута перечислите точки в дополнительных параметрах. Текущий калькулятор проверяет полный обход всех точек.', 'остановок'),
   txt('selectedRoutePoints', 'Точки выборочного маршрута', 'Укажите территории, точки и порядок посещения. Этот список требует отдельной проверки маршрута; он не исключает точки из текущей модели автоматически.', true),
   num('heroMinutes', 'Показ у одной главной инсталляции', 0, 240, 0.5, 'Время одного показа / остановки. Если группа находится здесь дольше, укажите это в замечаниях.', 'минут'),
@@ -37,14 +40,14 @@ const FIELDS = [
   num('interactivePointsPerDistrict', 'Интерактивных точек', 0, 100, 1),
   num('mediaPointsPerDistrict', 'Точек с линейным показом', 0, 100, 1, 'Например, фильм без активного управления.'),
   num('objectPointsPerDistrict', 'Предметных / музейных точек', 0, 100, 1),
-  { id: 'geographicStructure', label: 'На какие восемь частей делится Парк?', type: 'select', choices: [['federal_districts', 'Восемь федеральных округов'], ['geographic_territories', 'Восемь географических территорий по региональному документу']], hint: 'Это разные основания деления. Нужен единый вариант для программы и маршрута.' },
+  { id: 'geographicStructure', label: 'Структура Парка · принято', type: 'select', choices: [['federal_districts', 'Восемь федеральных округов'], ['geographic_territories', 'Географические территории — ответ прежней версии']], hint: 'Текущая программа строится по восьми федеральным округам. Отличающийся сохранённый ответ отмечается отдельно и не заменяется автоматически.' },
   txt('approvedScopeDocument', 'Подтверждённое задание на проект', 'Ссылка или название документа, версия, дата и кто его утвердил. Укажите, какой состав инсталляций и контента подтверждён.', true),
-  txt('areaScheduleLink', 'Подтверждённая экспликация помещений', 'Ссылка или название документа с площадями и границами зон. Уточните, какие общие пространства и экспозиции включены.'),
+  txt('areaScheduleLink', 'Внешние данные здания: границы и ограничения помещений', 'Площадь 18 884 м² по 3D из DWG уже принята. Здесь можно указать планы функциональных границ, служебных зон и ограничений размещения.'),
   num('heroSurfacesPerInstallation', 'Поверхностей у главной инсталляции', 0, 1000, 1),
   num('mediaSurfacesPerInstallation', 'Поверхностей у линейной точки', 0, 1000, 1),
   num('surfacesPerInteractiveStation', 'Поверхностей на одну интерактивную станцию', 0, 1000, 1, 'Станция может иметь несколько поверхностей.'),
   { id: 'heroChannelMode', label: 'Что показывают поверхности главной инсталляции?', type: 'select', choices: [['unique', 'На каждой — отдельный контент'], ['mirror', 'Все повторяют один контент']], hint: 'Повтор одного ролика на трёх поверхностях не создаёт три разных программы.' },
-  txt('AVspecification', 'Техническое задание на поверхности и AV-систему', 'Тип и размер поверхностей, разрешение в пикселях, число независимых каналов, проекция или LED; ссылка или название документа поставщика. По этим данным уточняются форматы контента и выдачи.', true),
+  txt('AVspecification', 'Проектное AV-решение и ограничения', 'Типы экранов, размеры, каналы, способы ввода и состав воспроизведения разрабатываем мы. Здесь фиксируем предлагаемый вариант и ограничения; паспорта добавляются после выбора моделей.', true),
   num('stationCopiesPerProgram', 'Станций с одной и той же программой', 1, 1000, 1, 'Тираж оборудования не равен числу разных программ.', 'копий'),
   { id: 'interactiveApplicationMode', label: 'Как используются шаблоны интерактивного ПО?', type: 'select', choices: [['shared-by-type', 'Общий шаблон ПО для каждого типа точки'], ['unique-per-point', 'Отдельное приложение для каждой точки']], hint: 'Шаблоны ПО и контентные пакеты считаются отдельно: например, 3 шаблона могут обслуживать 24 региональных пакета. Количество рабочих станций рассчитывается по потоку.' },
   { id: 'commonZonesIncluded', label: 'Есть дополнительные общие зоны?', type: 'boolean', hint: 'РГО, галерея, площадь, входная зона и другие пространства вне восьми округов.' },
@@ -78,10 +81,10 @@ const FIELDS = [
 const FIELD_BY_ID = Object.fromEntries(FIELDS.map(field => [field.id, field]));
 const QUESTIONS = [
   { id: 'Q01', title: 'Потоки и размер группы', fields: ['guidedFlow', 'independentFlow', 'groupSize'], required: ['guidedFlow', 'independentFlow', 'groupSize'], advanced: ['operatingHours', 'dayTarget', 'peakNotes'] },
-  { id: 'Q02', title: 'Остановки и время экскурсии', fields: ['guidedMinutes', 'stopsPerVisit', 'heroMinutes'], required: ['guidedMinutes', 'stopsPerVisit', 'heroMinutes'], advanced: ['transitionPerDistrictMinutes', 'independentMinutes', 'selectedRoutePoints'] },
-  { id: 'Q03', title: 'Участники и пропускная способность станции', fields: ['guidedParticipation', 'independentParticipation', 'usersPerStation', 'experienceMinutes', 'turnoverSeconds', 'targetUtilization'], required: ['guidedParticipation', 'independentParticipation', 'usersPerStation', 'experienceMinutes', 'turnoverSeconds', 'targetUtilization'] },
-  { id: 'Q04', title: 'География и типовой состав одной части Парка', fields: ['geographicStructure', 'heroPointsPerDistrict', 'interactivePointsPerDistrict', 'mediaPointsPerDistrict', 'objectPointsPerDistrict'], required: ['geographicStructure', 'heroPointsPerDistrict', 'interactivePointsPerDistrict', 'mediaPointsPerDistrict', 'objectPointsPerDistrict'], advanced: ['districtExceptions', 'objectContentInScope', 'approvedScopeDocument', 'areaScheduleLink'] },
-  { id: 'Q05', title: 'Поверхности в каждой установке', fields: ['heroSurfacesPerInstallation', 'mediaSurfacesPerInstallation', 'surfacesPerInteractiveStation', 'heroChannelMode'], required: ['heroSurfacesPerInstallation', 'mediaSurfacesPerInstallation', 'surfacesPerInteractiveStation', 'heroChannelMode'], advanced: ['AVspecification'] },
+  { id: 'Q02', title: 'Предлагаемый маршрут внутри четырёх часов', fields: ['guidedMinutes', 'stopsPerVisit', 'heroMinutes'], required: ['guidedMinutes', 'stopsPerVisit', 'heroMinutes'], advanced: ['transitionPerDistrictMinutes', 'independentMinutes', 'selectedRoutePoints'] },
+  { id: 'Q03', title: 'Наше предложение: работа интерактивной станции', fields: ['guidedParticipation', 'independentParticipation', 'usersPerStation', 'experienceMinutes', 'turnoverSeconds', 'targetUtilization'], required: ['guidedParticipation', 'independentParticipation', 'usersPerStation', 'experienceMinutes', 'turnoverSeconds', 'targetUtilization'] },
+  { id: 'Q04', title: 'Предлагаемый состав одного федерального округа', fields: ['geographicStructure', 'heroPointsPerDistrict', 'interactivePointsPerDistrict', 'mediaPointsPerDistrict', 'objectPointsPerDistrict'], required: ['geographicStructure', 'heroPointsPerDistrict', 'interactivePointsPerDistrict', 'mediaPointsPerDistrict', 'objectPointsPerDistrict'], advanced: ['districtExceptions', 'objectContentInScope', 'approvedScopeDocument', 'areaScheduleLink'] },
+  { id: 'Q05', title: 'Наше предложение: поверхности и AV-решение', fields: ['heroSurfacesPerInstallation', 'mediaSurfacesPerInstallation', 'surfacesPerInteractiveStation', 'heroChannelMode'], required: ['heroSurfacesPerInstallation', 'mediaSurfacesPerInstallation', 'surfacesPerInteractiveStation', 'heroChannelMode'], advanced: ['AVspecification'] },
   { id: 'Q06', title: 'Тираж одной программы', fields: ['interactiveApplicationMode'], required: ['interactiveApplicationMode'], advanced: ['stationCopiesPerProgram', 'programReuseNotes'] },
   { id: 'Q07', title: 'Общие зоны и включение РГО', fields: ['commonZonesIncluded', 'commonZonesDescription', 'rgoScope'], required: ['commonZonesIncluded', 'rgoScope'], advanced: ['commonInstallations', 'commonPackages', 'commonSurfaces', 'commonMinutesPerPackage', 'commonRouteMinutes'] },
   { id: 'Q08', title: 'Языки и версии контента', fields: ['languages', 'deliveryVersions'], required: ['languages', 'deliveryVersions'], advanced: ['mediaMinutes', 'interactiveStopMinutes', 'objectStopMinutes', 'accessibilityVersions'] },
@@ -90,11 +93,11 @@ const QUESTIONS = [
   { id: 'Q11', title: 'Границы объёма ФАЗЫ', fields: ['fazaScope'], required: ['fazaScope'], advanced: ['scopeNotes', 'notes'] }
 ];
 const GROUPS = [
-  { id: 'visitors', title: 'Посетители и маршрут', questions: ['Q01', 'Q02', 'Q03'] },
-  { id: 'installations', title: 'Инсталляции и оборудование', questions: ['Q04', 'Q05', 'Q06'] },
-  { id: 'content', title: 'Программы и контент', questions: ['Q07', 'Q08'] },
-  { id: 'owners', title: 'Согласование и материалы', questions: ['Q09', 'Q10'] },
-  { id: 'faza', title: 'Объём работ ФАЗЫ', questions: ['Q11'] }
+  { id: 'owners', title: 'Решения по проекту · согласование и материалы', questions: ['Q09', 'Q10'] },
+  { id: 'faza', title: 'Решения по проекту · объём работ ФАЗЫ', questions: ['Q11'] },
+  { id: 'content', title: 'Решения по проекту · общие программы и языки', questions: ['Q07', 'Q08'] },
+  { id: 'visitors', title: 'Наше предложение · поток и маршрут', questions: ['Q01', 'Q02', 'Q03'] },
+  { id: 'installations', title: 'Наше предложение · инсталляции и оборудование', questions: ['Q04', 'Q05', 'Q06'] }
 ];
 const QUESTION_BY_ID = Object.fromEntries(QUESTIONS.map(question => [question.id, question]));
 export const INSTALLATION_QUESTIONNAIRE_SCHEMA = Object.freeze({
@@ -117,7 +120,9 @@ function localTime(value) {
   return new Intl.DateTimeFormat('ru-RU', { timeZone: 'Asia/Vladivostok', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(value));
 }
 function emptyAnswers() {
-  return Object.fromEntries(FIELDS.map(field => [field.id, field.type === 'scope' ? Object.fromEntries(SCOPE_ITEMS.map(([key]) => [key, null])) : null]));
+  return Object.fromEntries(FIELDS.map(field => [field.id, field.type === 'scope'
+    ? Object.fromEntries(SCOPE_ITEMS.map(([key]) => [key, null]))
+    : hasOwn(PROJECT_BASIS, field.id) ? PROJECT_BASIS[field.id] : null]));
 }
 function cleanField(field, value) {
   if (field.type === 'scope') return Object.fromEntries(SCOPE_ITEMS.map(([key]) => [key, typeof value?.[key] === 'boolean' ? value[key] : null]));
@@ -141,7 +146,13 @@ export function normalizeQuestionnaire(values = {}, { sourceQuestionIds = null }
   const raw = values && typeof values === 'object' ? values : {};
   const source = raw.answers && typeof raw.answers === 'object' ? raw.answers : raw;
   const answers = emptyAnswers();
-  for (const field of FIELDS) if (hasOwn(source, field.id)) answers[field.id] = cleanField(field, source[field.id]);
+  for (const field of FIELDS) {
+    if (!hasOwn(source, field.id)) continue;
+    const value = source[field.id];
+    // An unanswered old question does not reopen an accepted project decision.
+    if (hasOwn(PROJECT_BASIS, field.id) && (value === null || value === undefined || value === '')) continue;
+    answers[field.id] = cleanField(field, value);
+  }
   return {
     schema: QUESTIONNAIRE_SCHEMA_ID,
     schemaVersion: QUESTIONNAIRE_SCHEMA_VERSION,
@@ -164,10 +175,11 @@ function questionStatus(question, answers) {
 }
 export function getQuestionnaireProgress(value) {
   const answers = normalizeQuestionnaire(value).answers;
-  const questions = QUESTIONS.map(question => questionStatus(question, answers));
+  const questions = GROUPS.flatMap(group => group.questions).map(id => questionStatus(QUESTION_BY_ID[id], answers));
   return { answered: questions.filter(question => question.complete).length, total: questions.length, questions };
 }
-/** Only explicitly answered inputs shared with content-model.js are returned.
+/** Known inputs shared with content-model.js are returned. Unknown basis fields
+ * use the accepted four-hour excursion; explicit legacy values are preserved.
  * Scope decisions (RGO, geography, suppliers, FAZA responsibilities) remain in
  * the envelope and never silently change measured area or installation totals.
  */
@@ -258,7 +270,13 @@ function displayValue(field, value) {
 export function buildQuestionnaireText(value) {
   const state = normalizeQuestionnaire(value);
   const progress = getQuestionnaireProgress(state);
-  const lines = ['ПАРК ВПЕЧАТЛЕНИЙ', 'Анкета для расчёта инсталляций и контента ФАЗЫ', '', `Редакция ответов: ${state.revision}`, `Обновлено: ${localTime(state.updatedAt)} (Владивосток)`, `Уточнено ключевых решений: ${progress.answered} из ${progress.total}`, 'Пустые ответы означают «не уточнено», а не ноль.', 'Этот файл сам по себе не подтверждает отправку ответов в проект.', ''];
+  const lines = ['ПАРК ВПЕЧАТЛЕНИЙ', 'Решения по проекту и предлагаемая комплектация', '', 'Принятая основа: 18 884 м² по 3D из DWG; восемь федеральных округов; полная экскурсия — 240 минут.', 'AV-решения и интерактивы разрабатывает проектная команда; параметры ниже могут сохранять предложения или ответы прежней версии.', `Редакция ответов: ${state.revision}`, `Обновлено: ${localTime(state.updatedAt)} (Владивосток)`, `Заполнено блоков: ${progress.answered} из ${progress.total}`, 'Пустые ответы означают «не уточнено», а не ноль.', 'Этот файл сам по себе не подтверждает отправку ответов в проект.', ''];
+  const basisDifferences = Object.entries(PROJECT_BASIS).filter(([key, accepted]) => state.answers[key] !== accepted);
+  if (basisDifferences.length) {
+    lines.push('ОТВЕТЫ ПРЕЖНЕЙ ВЕРСИИ, ОТЛИЧАЮЩИЕСЯ ОТ ПРИНЯТОЙ ОСНОВЫ:');
+    for (const [key, accepted] of basisDifferences) lines.push(`  ${FIELD_BY_ID[key].label}: сохранено ${displayValue(FIELD_BY_ID[key], state.answers[key])}; принято ${displayValue(FIELD_BY_ID[key], accepted)}.`);
+    lines.push('Сохранённые значения не заменены автоматически.', '');
+  }
   for (const group of GROUPS) {
     lines.push(group.title.toUpperCase(), '');
     for (const questionId of group.questions) {
@@ -341,16 +359,24 @@ export function createInstallationQuestionnaire(container, {
   const root = element('section', 'installation-questionnaire');
   root.id = instanceId;
   const heading = element('div', 'iq-heading');
-  const title = element('h3', 'iq-title', 'Что нужно уточнить для расчёта');
+  const title = element('h3', 'iq-title', 'Решения по проекту');
   title.id = `${instanceId}-title`;
   root.setAttribute('aria-labelledby', title.id);
-  heading.append(title, element('p', 'iq-intro', '11 ключевых решений. Отвечайте по мере готовности: неизвестные значения можно оставить пустыми. Дополнительные параметры находятся внутри раскрывающихся разделов.'));
+  heading.append(title, element('p', 'iq-intro', 'Начните с ответственных, материалов и объёма ФАЗЫ. AV-решения и интерактивы разрабатываем мы; их параметры собраны ниже как предложение. Заполняйте только то, что уже известно.'));
   root.append(heading);
+  root.append(element('p', 'iq-storage-note', 'Принято: 18 884 м² по 3D из DWG · восемь федеральных округов · экскурсия 4 часа.'));
+  const basisConflictBox = element('div', 'iq-status');
+  basisConflictBox.dataset.kind = 'error';
+  basisConflictBox.hidden = true;
+  const basisConflictText = element('p');
+  const acceptBasisButton = action('Принять текущую основу в этих ответах', 'iq-button-secondary');
+  basisConflictBox.append(basisConflictText, acceptBasisButton);
+  root.append(basisConflictBox);
   const progressRow = element('div', 'iq-progress-row');
   const progressLabel = element('span', 'iq-progress-label');
   const progress = element('progress', 'iq-progress');
   progress.max = QUESTIONS.length;
-  progress.setAttribute('aria-label', 'Уточнённые ключевые решения');
+  progress.setAttribute('aria-label', 'Заполненные блоки ответов');
   const nextButton = action('Следующий вопрос', 'iq-button-secondary');
   progressRow.append(progressLabel, progress, nextButton);
   root.append(progressRow);
@@ -359,6 +385,7 @@ export function createInstallationQuestionnaire(container, {
   status.setAttribute('role', 'status');
   status.setAttribute('aria-live', 'polite');
   root.append(localNote);
+  root.append(element('p', 'iq-hint', 'Внешние данные здания — подключения, несущие основания, крепления и обязательные проходы — собраны отдельно в инженерном разделе. Они уточняют размещение и монтаж; общая площадь уже принята.'));
 
   const form = element('form', 'iq-form');
   form.noValidate = true;
@@ -389,6 +416,16 @@ export function createInstallationQuestionnaire(container, {
     refreshProgress();
     clearTimeout(saveTimer);
     saveTimer = setTimeout(persist, 250);
+  }
+  function basisConflicts() {
+    return Object.entries(PROJECT_BASIS).filter(([key, accepted]) => state.answers[key] !== accepted);
+  }
+  function refreshBasis() {
+    const conflicts = basisConflicts();
+    basisConflictBox.hidden = conflicts.length === 0;
+    basisConflictText.textContent = conflicts.length
+      ? 'Сохранены ответы другой редакции: ' + conflicts.map(([key]) => `${FIELD_BY_ID[key].label} — ${displayValue(FIELD_BY_ID[key], state.answers[key])}`).join('; ') + '. Текущая основа указана выше. Старые значения доступны для выгрузки; перед применением к текущему расчёту примите основу отдельной кнопкой. Замену можно отменить.'
+      : '';
   }
   function setError(key, text, input, errorNode) {
     if (text) errors.set(key, text); else errors.delete(key);
@@ -421,6 +458,11 @@ export function createInstallationQuestionnaire(container, {
     }
     input.id = inputId;
     input.name = key;
+    if (hasOwn(PROJECT_BASIS, field.id)) {
+      if (field.type === 'select') input.disabled = true;
+      else input.readOnly = true;
+      input.setAttribute('aria-readonly', 'true');
+    }
     const hint = element('p', 'iq-hint', field.type === 'scope' ? '' : field.hint || (field.unit ? `Единица: ${field.unit}` : ''));
     hint.id = `${inputId}-hint`;
     if (!hint.textContent) hint.hidden = true;
@@ -462,7 +504,7 @@ export function createInstallationQuestionnaire(container, {
   }
   for (const [groupIndex, group] of GROUPS.entries()) {
     const details = element('details', 'iq-group');
-    details.open = groupIndex === 0;
+    details.open = group.id === 'owners';
     const summary = element('summary', 'iq-group-summary');
     const count = element('span', 'iq-group-count');
     summary.append(element('span', 'iq-group-name', group.title), count);
@@ -494,7 +536,7 @@ export function createInstallationQuestionnaire(container, {
   }
   root.append(form);
   const actions = element('div', 'iq-actions');
-  const applyButton = action('Применить заполненное к расчёту', 'iq-button-primary');
+  const applyButton = action('Применить заполненные параметры', 'iq-button-primary');
   applyButton.hidden = typeof onApply !== 'function';
   const exportJsonButton = action('Скачать ответы JSON');
   const shareButton = action('Скопировать ссылку с ответами');
@@ -536,7 +578,7 @@ export function createInstallationQuestionnaire(container, {
   function refreshProgress() {
     const result = getQuestionnaireProgress(state);
     progress.value = result.answered;
-    progressLabel.textContent = `Уточнено ${result.answered} из ${result.total} ключевых решений`;
+    progressLabel.textContent = `Заполнено ${result.answered} из ${result.total} блоков`;
     for (const question of result.questions) {
       const view = questionViews.get(question.id);
       view.state.textContent = question.complete ? 'Уточнено' : question.partial ? 'Частично' : 'Не уточнено';
@@ -546,8 +588,9 @@ export function createInstallationQuestionnaire(container, {
       const answered = result.questions.filter(question => group.questions.includes(question.id) && question.complete).length;
       groupViews.get(group.id).count.textContent = `${answered}/${group.questions.length}`;
     }
-    nextButton.disabled = result.answered === result.total;
-    applyButton.disabled = errors.size > 0;
+    refreshBasis();
+    nextButton.disabled = result.answered === result.total && basisConflicts().length === 0;
+    applyButton.disabled = errors.size > 0 || basisConflicts().length > 0;
   }
   function replaceAnswers(record) {
     previousState = clone(state);
@@ -557,6 +600,10 @@ export function createInstallationQuestionnaire(container, {
     undoButton.hidden = false;
     hydrate(); persist();
   }
+  acceptBasisButton.addEventListener('click', () => {
+    replaceAnswers({ ...state, answers: { ...state.answers, ...PROJECT_BASIS } });
+    notify('Применены восемь федеральных округов и экскурсия 240 минут. Остальные ответы сохранены; замену можно отменить.');
+  });
   function exportValue(format = 'json') {
     if (format === 'json') return JSON.stringify(state, null, 2);
     if (format === 'text' || format === 'txt') return buildQuestionnaireText(state);
@@ -576,6 +623,11 @@ export function createInstallationQuestionnaire(container, {
     notify('Файл ответов подготовлен. Это выгрузка; она не отправляет ответы в проект.');
   }
   nextButton.addEventListener('click', () => {
+    if (basisConflicts().length) {
+      basisConflictBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      acceptBasisButton.focus({ preventScroll: true });
+      return;
+    }
     const result = getQuestionnaireProgress(state);
     const next = result.questions.find(question => !question.complete);
     if (!next) return;
@@ -590,10 +642,11 @@ export function createInstallationQuestionnaire(container, {
   });
   applyButton.addEventListener('click', async () => {
     if (errors.size) { notify('Исправьте подсвеченные значения перед применением.', true); return; }
+    if (basisConflicts().length) { notify('Сохранены ответы прежней версии. Для текущего расчёта сначала примите основу отдельной кнопкой; старую редакцию можно выгрузить.', true); return; }
     applyButton.disabled = true;
     try { persist(); await onApply?.(clone(state)); notify('Заполненные ответы переданы в расчёт. Неизвестные ответы остаются неуточнёнными.'); }
     catch (error) { notify(`Не удалось применить ответы: ${trim(error?.message) || 'попробуйте ещё раз'}`, true); }
-    finally { if (!destroyed) applyButton.disabled = errors.size > 0; }
+    finally { if (!destroyed) applyButton.disabled = errors.size > 0 || basisConflicts().length > 0; }
   });
   exportJsonButton.addEventListener('click', () => download('json'));
   shareButton.addEventListener('click', async () => {
