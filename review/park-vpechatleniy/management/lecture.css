@@ -1,0 +1,39 @@
+/* Complete text-on-screen lecture before the management audit. */
+.mg-lecture{min-width:0;margin:0 0 34px;padding:0 0 28px;border-bottom:1px solid var(--mg-border)}
+.mg-lecture-heading{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px 24px;margin:0 0 16px}
+.mg-lecture-heading .eyebrow{color:var(--mg-orange);font-size:14px;margin:0 0 7px}
+.mg-lecture-heading h2{margin:0;font-size:clamp(26px,3.2vw,40px);font-weight:550;letter-spacing:-.04em;line-height:1.15}
+.mg-lecture-format{font-size:14px;color:var(--mg-orange);font-weight:550}
+.mg-lecture-player{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;border:1px solid var(--mg-border);border-radius:10px;background:#030505}
+.mg-lecture-status{font-size:14px;line-height:1.6;color:var(--muted);margin:12px 0 0}
+.mg-lecture-edition{font-size:14px;line-height:1.6;color:var(--muted);margin:12px 0 0}
+.mg-lecture-transcript{border-top:1px solid var(--mg-border);margin-top:14px;padding-top:4px}
+.mg-lecture-transcript>summary,.mg-lecture-meeting>summary{justify-content:flex-start;gap:8px;width:fit-content;min-height:44px;padding:8px 0;font-size:14px;color:var(--mg-orange)}
+.mg-lecture-transcript>summary::after,.mg-lecture-meeting>summary::after{content:"＋";font-size:18px}
+.mg-lecture-transcript[open]>summary::after,.mg-lecture-meeting[open]>summary::after{content:"−"}
+.mg-lecture-transcript-body{max-width:930px;padding:10px 0 0}
+.mg-lecture-transcript-body section+section{margin-top:28px}
+.mg-lecture-transcript-body h3{font-size:20px;font-weight:550;line-height:1.4;letter-spacing:-.015em;margin:0 0 12px}
+.mg-lecture-transcript-body p{font-size:16px;line-height:1.8;margin:0 0 14px;color:var(--text)}
+.mg-lecture-transcript-body button{min-height:44px}
+.mg-lecture-sources{padding-top:20px;border-top:1px solid var(--mg-border)}
+.mg-lecture-sources h4{font-size:15px;font-weight:550;line-height:1.5;margin:18px 0 10px}
+.mg-lecture-reference-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px;padding-left:18px;margin:0 0 16px;font-size:14px;line-height:1.5}
+.mg-lecture-reference-list a{color:var(--mg-orange);text-underline-offset:3px;overflow-wrap:anywhere}
+.mg-lecture-transcript-body .mg-lecture-source-note,.mg-lecture-transcript-body .mg-lecture-timecodes{font-size:14px;line-height:1.6;color:var(--muted)}
+.mg-lecture-meeting ol{padding-left:22px;margin:14px 0 0}
+.mg-lecture-meeting li+li{margin-top:18px}
+.mg-lecture-meeting li p{margin-bottom:6px}
+.mg-lecture-timecodes{font-variant-numeric:tabular-nums}
+.mg-lecture-chapters{margin-top:14px}
+.mg-lecture-chapters>summary{justify-content:flex-start;gap:8px;width:fit-content;min-height:44px;padding:8px 0;font-size:14px;color:var(--mg-orange)}
+.mg-lecture-chapters>summary::after{content:"＋";font-size:18px}
+.mg-lecture-chapters[open]>summary::after{content:"−"}
+.mg-lecture-chapters ol{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.mg-lecture-chapters li{min-width:0}
+.mg-lecture-chapters button{display:flex;align-items:flex-start;gap:10px;width:100%;height:100%;min-height:44px;text-align:left;font-size:14px;line-height:1.45;padding:11px 12px;background:var(--mg-panel);border:1px solid var(--mg-border);border-radius:7px}
+.mg-lecture-chapters button:hover,.mg-lecture-chapters button[aria-current=true]{border-color:var(--mg-orange);color:var(--mg-orange)}
+.mg-lecture-chapter-time{flex-shrink:0;font-variant-numeric:tabular-nums;color:var(--mg-orange)}
+.mg-lecture-chapter-title{min-width:0;overflow-wrap:anywhere}
+@media(max-width:740px){.mg-lecture{margin-bottom:25px;padding-bottom:22px}.mg-lecture-heading h2{font-size:28px}.mg-lecture-chapters ol{grid-template-columns:repeat(2,minmax(0,1fr))}.mg-lecture-reference-list{grid-template-columns:1fr}}
+@media(max-width:480px){.mg-lecture-heading{align-items:flex-start;flex-direction:column;gap:9px}.mg-lecture-heading h2{font-size:26px}.mg-lecture-chapters ol{grid-template-columns:1fr}}

@@ -1,0 +1,237 @@
+{
+  "title": "Источники и вопросы встречи",
+  "note": "Пересказ автоматической расшифровки; рекомендации предлагаются к обсуждению.",
+  "references": [
+    {
+      "id": "AUDIT",
+      "title": "Аудит структуры управления Парком впечатлений, редакция 1, 24.11.2026",
+      "label": "Аудит управления парком · 24.11.2026",
+      "url": "https://fazafilms.ru/review/park-vpechatleniy/management/audit-2026-11-24.pdf"
+    },
+    {
+      "id": "NASA_TA",
+      "title": "NASA Office of the Chief Engineer — Technical Authority",
+      "label": "NASA — технические полномочия",
+      "url": "https://www.nasa.gov/technical-authority/"
+    },
+    {
+      "id": "BAIN",
+      "title": "Bain — RAPID Decision Making",
+      "label": "Bain — RAPID: принятие решений",
+      "url": "https://www.bain.com/insights/rapid-decision-making/"
+    },
+    {
+      "id": "NASA_INTERFACES",
+      "title": "NASA Systems Engineering Handbook — 6.3 Interface Management",
+      "label": "NASA — управление стыками",
+      "url": "https://www.nasa.gov/reference/6-0-crosscutting-technical-management/"
+    },
+    {
+      "id": "LCI",
+      "title": "Lean Construction Institute — Last Planner System for Design",
+      "label": "LCI — Last Planner в проектировании",
+      "url": "https://leanconstruction.org/lean-topics/last-planner-system-for-design/"
+    },
+    {
+      "id": "NASA_CHANGE",
+      "title": "NASA Systems Engineering Handbook — 6.2 Requirements Management",
+      "label": "NASA — оценка изменений",
+      "url": "https://www.nasa.gov/reference/6-2-requirements-management/"
+    },
+    {
+      "id": "NASA_VALIDATION",
+      "title": "NASA Systems Engineering Handbook — 2.4 Verification and Validation",
+      "label": "NASA — верификация и валидация",
+      "url": "https://www.nasa.gov/reference/2-4-distinctions-between-product-verification-and-product-validation/"
+    },
+    {
+      "id": "SMITHSONIAN",
+      "title": "Smithsonian Exhibits — A Guide to Exhibit Development",
+      "label": "Smithsonian — разработка экспозиций",
+      "url": "https://exhibits.si.edu/wp-content/uploads/2018/04/Guide-to-Exhibit-Development.pdf"
+    },
+    {
+      "id": "TOYOTA",
+      "title": "Toyota Motor Corporation — Toyota Production System",
+      "label": "Toyota — выявление отклонений",
+      "url": "https://global.toyota/en/company/vision-and-philosophy/production-system/"
+    },
+    {
+      "id": "EDMONDSON_HBS",
+      "title": "Harvard Business School — Amy Edmondson on Psychological Safety, 2022",
+      "label": "HBS — открытое обсуждение проблем",
+      "url": "https://www.hbs.edu/recruiting/guides-and-stories/leading-in-tough-times"
+    },
+    {
+      "id": "EDMONDSON_STUDY",
+      "title": "Amy Edmondson — Psychological Safety and Learning Behavior in Work Teams, 1999",
+      "label": "Эдмондсон — исследование команд, 1999",
+      "url": "https://web.mit.edu/curhan/www/docs/Articles/15341_Readings/Organizational_Learning_and_Change/Edmondson_1999_Psychological_safety.pdf"
+    },
+    {
+      "id": "MAYER",
+      "title": "Richard E. Mayer — Principles for Reducing Extraneous Processing in Multimedia Learning",
+      "label": "Майер — принципы учебного видео",
+      "url": "https://doi.org/10.1017/CBO9780511816819.013"
+    }
+  ],
+  "questions": [
+    {
+      "id": "Q1",
+      "question": "Что именно сдаётся заказчику и насколько готовым должен быть комплект для следующих исполнителей?",
+      "evidence": [
+        {
+          "recording": 1,
+          "start": "00:00:00",
+          "end": "00:00:19"
+        },
+        {
+          "recording": 1,
+          "start": "00:00:56",
+          "end": "00:02:04"
+        },
+        {
+          "recording": 1,
+          "start": "00:08:54",
+          "end": "00:09:42"
+        }
+      ]
+    },
+    {
+      "id": "Q2",
+      "question": "Как распределить работу между округами и при этом сохранить единые стандарты всего парка?",
+      "evidence": [
+        {
+          "recording": 4,
+          "start": "00:07:51",
+          "end": "00:08:29"
+        },
+        {
+          "recording": 4,
+          "start": "00:09:53",
+          "end": "00:10:35"
+        },
+        {
+          "recording": 1,
+          "start": "02:27:23",
+          "end": "02:28:56"
+        }
+      ]
+    },
+    {
+      "id": "Q3",
+      "question": "Где проходит граница между ответственностью продюсера за целое и профессиональными решениями специалистов?",
+      "evidence": [
+        {
+          "recording": 1,
+          "start": "02:32:16",
+          "end": "02:33:01"
+        },
+        {
+          "recording": 1,
+          "start": "02:46:05",
+          "end": "02:46:59"
+        },
+        {
+          "recording": 3,
+          "start": "00:11:18",
+          "end": "00:11:58"
+        },
+        {
+          "recording": 3,
+          "start": "00:12:51",
+          "end": "00:13:12"
+        }
+      ]
+    },
+    {
+      "id": "Q4",
+      "question": "Кто принимает окончательное решение при пересечении управляющего совета и заместителя по управлению проектом?",
+      "evidence": [
+        {
+          "recording": 4,
+          "start": "01:40:22",
+          "end": "01:40:36"
+        },
+        {
+          "recording": 4,
+          "start": "01:41:56",
+          "end": "01:42:25"
+        },
+        {
+          "recording": 4,
+          "start": "01:42:31",
+          "end": "01:42:55"
+        }
+      ]
+    },
+    {
+      "id": "Q5",
+      "question": "Как работает общая управленческая схема, если исполнители находятся в независимых компаниях?",
+      "evidence": [
+        {
+          "recording": 1,
+          "start": "00:52:53",
+          "end": "00:53:09"
+        },
+        {
+          "recording": 3,
+          "start": "00:17:29",
+          "end": "00:17:49"
+        },
+        {
+          "recording": 3,
+          "start": "00:17:58",
+          "end": "00:18:15"
+        }
+      ]
+    },
+    {
+      "id": "Q6",
+      "question": "Что можно делать параллельно и какие входные решения должны быть готовы раньше?",
+      "evidence": [
+        {
+          "recording": 1,
+          "start": "00:17:42",
+          "end": "00:19:07"
+        },
+        {
+          "recording": 1,
+          "start": "00:29:32",
+          "end": "00:30:02"
+        },
+        {
+          "recording": 1,
+          "start": "02:08:27",
+          "end": "02:08:48"
+        }
+      ]
+    },
+    {
+      "id": "Q7",
+      "question": "Как связаны консультации по цифровой архитектуре, будущая интеграция и ответственность за работающую систему?",
+      "evidence": [
+        {
+          "recording": 1,
+          "start": "02:09:02",
+          "end": "02:10:50"
+        },
+        {
+          "recording": 4,
+          "start": "00:40:52",
+          "end": "00:41:43"
+        },
+        {
+          "recording": 4,
+          "start": "00:41:47",
+          "end": "00:42:33"
+        },
+        {
+          "recording": 4,
+          "start": "00:43:36",
+          "end": "00:44:30"
+        }
+      ]
+    }
+  ]
+}
