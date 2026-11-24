@@ -543,7 +543,7 @@ async function startExhibits(loader,monorailReady){
       }
       needsRender=true;
     }});
-    exhibitEditor=createExhibitEditor({system:exhibits,scene,camera,controls,domElement:canvas,
+    exhibitEditor=createExhibitEditor({system:exhibits,scene,camera,controls,domElement:canvas,deferRestore:true,
       onFocus:id=>focusExhibit(id),onEditStart:beginExhibitEdit,onEditEnd:endExhibitEdit,onChange:exhibitEditorChanged});
     exhibitEditor.setEnabled(false);
     syncExhibitControls(exhibits.getState());
@@ -747,6 +747,20 @@ async function startVisitors(loader){
     crowd=await startParkCrowd({THREE,scene,model,loader,camera,controls,
       exhibitObstacles:()=>dynamicObstacles?.snapshot().proxies||[],
       fixedObstacles:()=>monorail?.getCollisionObstacles()||[],
+      onWorldReady(sim){
+        if(dynamicObstacles){
+          const binding=dynamicObstacles.bindSimulation(sim);
+          if(!binding.ok)throw new Error(binding.error||'Не удалось проверить исходную расстановку.');
+        }
+        const restored=exhibitEditor?.restoreSavedLayout();
+        diagnostics.layoutRestore=restored||{ok:true,restored:false};
+        if(restored&&!restored.ok){
+          $('scene-notice').textContent=restored.error;$('scene-notice').hidden=false;
+        }
+        // The validated editor remains usable even if avatar loading later fails.
+        visitorPlacementReady=true;exhibitEditor?.setEnabled(true);
+        needsRender=true;
+      },
       registerMaterial(material){
         if(!crowdMaterials.includes(material))crowdMaterials.push(material);
         material.clippingPlanes=sectionOn?[clipPlane]:[];material.clipShadows=true;material.needsUpdate=true;

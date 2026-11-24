@@ -8,3 +8,81 @@ body[data-folder=installations] .intro{margin:26px 0 24px}body[data-folder=insta
 @media(max-width:600px){#park-installations h3{font-size:23px}.ic-heading{margin-top:16px}.ic-heading h2{font-size:32px}.ic-intro{font-size:16px}.ic-eyebrow{font-size:12px}.ic-downloads{margin-top:17px}.ic-scenario-label{display:block;padding-top:9px}.ic-scenario-label p{margin-top:12px!important}.ic-tabs{gap:7px;padding:17px 0}.ic-tabs button{flex:1 1 130px;font-size:14px!important;padding:10px 12px!important}.ic-tabs button:last-child{flex-basis:100%}.ic-kpis{grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:20px}.ic-kpi{padding:17px 14px}.ic-kpi strong{font-size:40px}.ic-kpi>span{font-size:14px}.ic-kpi small{font-size:12px}.ic-current-label{font-size:12px;line-height:1.5}.ic-summary h3{font-size:29px!important}.ic-scope-row{grid-template-columns:36px minmax(110px,1fr) 53px 53px}.ic-scope-row>span:nth-child(2){font-size:14px}.ic-scope-count{font-size:26px}.ic-scope-metric{font-size:19px}.ic-block{padding:17px 13px;margin:20px 0}.ic-section-title{gap:12px;margin-bottom:17px}.ic-section-title h3{font-size:21px!important}.ic-table-scroll{margin:15px -3px}#park-installations th,#park-installations td{padding:11px 10px}.ic-document-heading{margin-top:34px}.ic-document-section>summary{font-size:18px;padding:20px 0}.ic-prose{font-size:16px;padding-inline:0;line-height:1.65}.ic-prose table{font-size:14px!important}.ic-prose .ic-lead{font-size:17px}.ic-next{display:block;padding:18px}.ic-next button{margin-top:16px;width:100%}.ic-toolbar{display:block}.ic-actions{margin-top:12px}.ic-actions button{flex:1 1 125px}.ic-presets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.ic-presets button{font-size:13px!important;padding:8px!important}.ic-controls{padding:17px 15px}.ic-controls .ic-fields{display:block!important}.ic-control-pair.has-range{grid-template-columns:minmax(0,1fr) 100px}.ic-field>p{font-size:13px}.ic-facts{gap:12px}.ic-facts strong{font-size:27px}.ic-facts span{font-size:12px}.ic-bar-line>div:first-child{display:block}.ic-bar-line strong{display:block;margin-top:3px}.ic-floor-control label{font-size:14px}.ic-results .ic-plan-block .pp-district-grid{grid-template-columns:minmax(0,1fr)}.ic-route-total strong{font-size:35px}.ic-route-total small{font-size:17px}.ic-legend>span,.ic-legend strong{font-size:13px}.ic-question-intro{padding:17px}.ic-question-intro>button{width:100%}.ic-point-types{gap:8px}.ic-point-types>div{padding:10px}.ic-source-list article{padding:17px 0}body[data-folder=installations] .intro{margin:23px 0 20px}body[data-folder=installations] .intro h1{font-size:39px}.folder-tabs a[href="#installations"]{font-size:13px}}
 @media(prefers-reduced-motion:reduce){#park-installations *{scroll-behavior:auto!important;transition:none!important}}
 @media print{body{background:white!important;color:black!important}.header-inner,.folder-tabs,footer,.ic-tabs,.ic-toolbar,.ic-controls,.ic-downloads,.ic-question-intro,.ic-next,#ic-expand{display:none!important}main{width:100%!important}#park-installations{color:black!important}#park-installations *{background:white!important;color:black!important;box-shadow:none!important}.ic-heading h2{font-size:28pt}.ic-kpis{border-color:#bbb}.ic-kpi{padding:10pt}.ic-document-section{break-inside:auto}.ic-document-section summary{break-after:avoid}.ic-prose{max-width:none}.ic-table-scroll{overflow:visible}.ic-prose table{font-size:9pt!important}#park-installations tr{break-inside:avoid}}
+
+/* Installation review: task-based hierarchy, shared semantics, no nested scroll. */
+body[data-folder=installations] .intro{display:none}
+#park-installations .ic-heading{margin:22px 0 16px;display:block}
+#park-installations .ic-heading h2{font-size:clamp(30px,3.4vw,44px);line-height:1.15;margin:6px 0 12px}
+#park-installations .ic-intro{font-size:18px;max-width:850px;margin:0;color:#cbd5d1;line-height:1.55}
+#park-installations .ic-eyebrow{font-size:13px;letter-spacing:.08em;color:#afbeb7}
+#park-installations .ic-basis{display:flex;flex-wrap:wrap;gap:9px 24px;border-bottom:1px solid #3a4942;padding:0 0 20px;font-size:14px;color:#b8c8c0}
+#park-installations .ic-basis strong{font-size:16px;color:#f2f7f3;font-weight:600;margin-right:5px}
+#park-installations .ic-tabs{display:grid;grid-template-columns:1fr 1.2fr 1.15fr 1fr 1.1fr;gap:8px;margin:20px 0 18px;padding:0;border:0;position:static;background:none}
+#park-installations .ic-tabs button{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:6px;min-height:74px;padding:12px 14px!important;background:#17221e!important;border:1px solid #526159!important;border-radius:9px;text-align:left;color:#e7efea!important;min-width:0}
+#park-installations .ic-tabs button span{font-size:15px;font-weight:600;line-height:1.3}
+#park-installations .ic-tabs button small{font-size:13px;font-weight:400;color:#b8c8c0;line-height:1.35}
+#park-installations .ic-tabs button[aria-pressed=true]{background:#d9f0c4!important;color:#172516!important;border-color:#d9f0c4!important;box-shadow:inset 0 -3px #7ca65f}
+#park-installations .ic-tabs button[aria-pressed=true] small{color:#35472d}
+#park-installations button:focus-visible,#park-installations a:focus-visible,#park-installations summary:focus-visible{outline:3px solid #ffe19c!important;outline-offset:3px}
+#park-installations .ic-current-label{font-size:14px;line-height:1.5;color:#bdcbc4;margin:0 0 15px;padding:0}
+#park-installations .ic-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 13px}
+#park-installations .ic-kpi{background:#18241e;border:1px solid #46594b;border-radius:10px;padding:19px 22px;min-width:0}
+#park-installations .ic-kpi strong{font-size:clamp(32px,3.5vw,45px);font-weight:600;line-height:1.05;color:#f1f8e9}
+#park-installations .ic-kpi>span{font-size:16px;margin-top:7px;color:#e2eddf;line-height:1.4}
+#park-installations .ic-kpi small{font-size:13px;margin-top:7px;color:#b5c7b5;line-height:1.4}
+#park-installations .ic-overview-actions{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 22px}
+#park-installations .ic-overview-actions p{font-size:14px;line-height:1.5;color:#b8c9bf;margin:0;max-width:720px}
+#park-installations .ic-overview-actions button{flex:none;min-height:42px;font-size:14px}
+#park-installations .ic-controls{position:static!important;max-height:none!important;overflow:visible!important;padding:20px;background:#17221c}
+#park-installations .ic-controls>h3{font-size:20px!important;line-height:1.3;margin:0 0 10px!important}
+#park-installations .ic-controls>.ic-note{font-size:14px;margin:0 0 12px!important}
+#park-installations .ic-controls>details>summary{font-size:15px;padding:16px 0;line-height:1.4}
+#park-installations .ic-workspace{grid-template-columns:310px minmax(0,1fr);gap:20px;align-items:start}
+#park-installations .ic-field label{font-size:14px;line-height:1.4}
+#park-installations .ic-field>p{font-size:13px;line-height:1.5}
+#park-installations .ic-note{font-size:14px;line-height:1.55;color:#b4c5bb}
+#park-installations .ic-change-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px;border:1px solid #709a5d;background:#1c3020;border-radius:10px;margin-bottom:18px}
+#park-installations .ic-change-summary>div{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+#park-installations .ic-change-summary strong{font-size:34px;font-weight:600;line-height:1.2;color:#ecf9d8}
+#park-installations .ic-change-summary span{font-size:14px;color:#d3e1cf}
+#park-installations .ic-change-summary p{grid-column:1/-1;font-size:14px;color:#c4d6bf;margin:0;line-height:1.6;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#park-installations .ic-change-summary button{font-size:14px;min-height:38px}
+#park-installations .ic-disclosure{padding:0!important;overflow:visible;background:#17211b;border:1px solid #3d5141}
+#park-installations .ic-disclosure>summary{padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:18px;cursor:pointer;font-size:17px;font-weight:550;color:#ecf3e7;list-style:none}
+#park-installations .ic-disclosure>summary::-webkit-details-marker{display:none}
+#park-installations .ic-disclosure>summary::after{content:'+';font-size:22px;color:#c3d9aa}
+#park-installations .ic-disclosure[open]>summary::after{content:'−'}
+#park-installations .ic-detail-body{padding:0 20px 20px}
+#park-installations .ic-document-section>summary{font-size:18px;line-height:1.45;padding:20px 3px}
+#park-installations .ic-document-heading h3{font-size:28px;line-height:1.25;margin:0 0 10px}
+#park-installations .ic-document-heading{gap:22px;margin:24px 0 22px}
+#park-installations .ic-composition{margin-top:24px}
+#park-installations .ic-scope-diagram{max-width:900px;margin:20px 0}
+#park-installations .ic-downloads{display:flex;flex-wrap:wrap;gap:12px;font-size:15px}
+#park-installations .ic-question-intro{margin-top:0;padding:20px}
+#park-installations .ic-question-intro p{font-size:16px;line-height:1.55;margin:0 0 15px}
+#park-installations .park-plan{--pp-lime:#ffb454;--pp-teal:#72bcff}
+#park-installations .park-plan .pp-marker-legend{display:flex;gap:12px 22px;flex-wrap:wrap;background:#10212a;border:1px solid #6d8291;border-radius:8px;padding:13px 15px;margin:16px 0;font-size:15px;line-height:1.5;color:#f0f5fa}
+#park-installations .park-plan .pp-marker-unit{flex-basis:100%;font-size:14px;color:#c0d0de}
+#park-installations .park-plan .pp-legend-guided::before,#park-installations .park-plan .pp-legend-independent::before{width:13px;height:13px;border:1px solid #101a22}
+#park-installations .park-plan .pp-floor-contour{fill:#17242c;stroke:#8397a3}
+#park-installations .park-plan .pp-person-guided,#park-installations .park-plan .pp-person-independent{stroke:#0c1218;stroke-width:.25;cursor:help}
+#park-installations .park-plan .pp-floor-grid{margin-top:0}
+#park-installations .park-plan .pp-floor{background:#101b22;border-color:#526673}
+#park-installations .park-plan .pp-floor-area,#park-installations .park-plan .pp-floor-status{font-size:14px;line-height:1.45}
+#park-installations .park-plan .pp-floor-title{font-size:18px!important}
+#park-installations [hidden]{display:none!important}
+@media(max-width:1100px){#park-installations .ic-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}#park-installations .ic-tabs button{min-height:68px}#park-installations .ic-workspace{grid-template-columns:280px minmax(0,1fr)}}
+@media(max-width:820px){#park-installations .ic-workspace{grid-template-columns:1fr}#park-installations .ic-controls .ic-fields{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}#park-installations .ic-controls .ic-fields>.ic-check{grid-column:1/-1}#park-installations .ic-control-pair.has-range{grid-template-columns:minmax(0,1fr) 90px}#park-installations .ic-basis{gap:8px 18px}}
+@media(max-width:600px){#park-installations .ic-heading{margin-top:16px}#park-installations .ic-intro{font-size:16px}#park-installations .ic-tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}#park-installations .ic-tabs button{padding:10px!important;min-height:68px}#park-installations .ic-tabs button:last-child{grid-column:1/-1}#park-installations .ic-tabs button span{font-size:14px}#park-installations .ic-tabs button small{font-size:12px}#park-installations .ic-kpis{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}#park-installations .ic-kpi{padding:13px 10px}#park-installations .ic-kpi strong{font-size:29px}#park-installations .ic-kpi>span{font-size:13px;overflow-wrap:anywhere}#park-installations .ic-kpi small{font-size:12px}#park-installations .ic-overview-actions{align-items:flex-start;flex-direction:column;gap:12px}#park-installations .ic-overview-actions button{width:100%}#park-installations .ic-basis{font-size:13px}#park-installations .ic-basis strong{font-size:14px}#park-installations .ic-change-summary{padding:15px;gap:12px}#park-installations .ic-change-summary strong{font-size:29px}#park-installations .ic-change-summary span{font-size:13px}#park-installations .ic-detail-body{padding:0 13px 16px}#park-installations .ic-disclosure>summary{padding:16px 13px;font-size:16px}#park-installations .ic-controls .ic-fields{display:block!important}#park-installations .ic-document-heading{display:block}#park-installations .ic-document-heading>button{margin-top:14px}#park-installations .park-plan .pp-marker-legend{font-size:14px;gap:9px}#park-installations .park-plan .pp-floor-grid{grid-template-columns:1fr}#park-installations .ic-document-section>summary{font-size:16px}}
+
+#park-installations .ic-tabs{align-items:stretch}#park-installations .ic-tabs button{height:100%}
+
+#park-installations .ic-scenario-issues{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:9px 13px;margin:0 0 16px;border:1px solid #8e7750;border-radius:7px;background:#30271b;color:#ffe2ad;font-size:14px;line-height:1.5}#park-installations .ic-scenario-issues button{min-height:34px;padding:6px 10px;font-size:13px;background:transparent;border-color:#967b4d;color:#ffe5b6}
+
+/* The interactive plan is the first content, as requested. */
+#park-installations .ic-heading{margin:16px 0 10px}#park-installations .ic-heading .ic-eyebrow,#park-installations .ic-intro{display:none}#park-installations .ic-heading h2{font-size:28px;margin:0;line-height:1.2}#park-installations .ic-basis{padding:0 0 12px;gap:8px 20px;font-size:13px}#park-installations .ic-basis strong{font-size:14px}#park-installations .ic-tabs{margin:12px 0 16px}#park-installations .ic-tabs button{min-height:44px;padding:10px 13px!important}#park-installations .ic-tabs button small{display:none}#park-installations .ic-tabs button span{font-size:14px}#park-installations .ic-after-plan{margin:26px 0 0}#park-installations .ic-after-plan h3{font-size:23px;margin-bottom:15px}#park-installations #ic-overview>.ic-current-label{margin-top:20px}#park-installations .fsp-heading .fsp-eyebrow,#park-installations .fsp-heading .fsp-open{display:none}#park-installations .fsp-heading{margin-bottom:12px}#park-installations .fsp-title{font-size:22px!important}#park-installations .fsp-intro{font-size:14px;max-width:none;margin-bottom:0}#park-installations .faza-screen-plan{padding-top:18px}#park-installations .fsp-status{padding:10px 13px}#park-installations .fsp-status strong{font-size:15px}#park-installations .fsp-status{font-size:13px}#park-installations .fsp-legend{margin:12px 0}#park-installations .fsp-toolbar{margin-top:12px;margin-bottom:10px}
+@media(max-width:600px){#park-installations .ic-heading h2{font-size:24px}#park-installations .ic-tabs{display:flex;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px;gap:6px}#park-installations .ic-tabs button{flex:0 0 auto;min-width:130px;min-height:42px;padding:9px 11px!important}#park-installations .ic-tabs button:last-child{flex-basis:auto}#park-installations .ic-tabs button span{font-size:13px}#park-installations .ic-basis{font-size:12px;gap:7px 12px}#park-installations .ic-basis strong{font-size:13px}#park-installations .faza-screen-plan{padding:13px}#park-installations .fsp-title{font-size:20px!important}#park-installations .fsp-toolbar{gap:10px}#park-installations .ic-after-plan h3{font-size:20px}}
+@media(max-width:600px){html[data-az-controls="100"] body[data-folder="installations"] .folder-tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;padding-bottom:6px}html[data-az-controls="100"] body[data-folder="installations"] .folder-tabs a{flex:0 0 auto;padding:10px 13px;min-width:max-content;font-size:13px}}
+
+#park-installations .ic-led-overview{display:flex;align-items:center;justify-content:space-between;gap:18px;border:1px solid #557389;background:#15242e;border-radius:9px;padding:15px 18px;margin:13px 0 18px}#park-installations .ic-led-overview p{font-size:15px;line-height:1.5;color:#d3e6f1;margin:0}#park-installations .ic-led-overview strong{color:#bde4ff}#park-installations .ic-led-overview button{flex:none;font-size:14px} @media(max-width:600px){#park-installations .ic-led-overview{display:block;padding:14px}#park-installations .ic-led-overview button{margin-top:13px;width:100%}}

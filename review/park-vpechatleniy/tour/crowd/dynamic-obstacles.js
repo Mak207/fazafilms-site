@@ -210,7 +210,7 @@ export function createDynamicObstacleAdapter({ exhibits, onChange = () => {} }) 
       const visible = next ? next.visible : root.visible && root.userData.editorVisible !== false;
       if (!visible || !root.parent) continue;
       const matrix=candidateMatrix(root,next);
-      const metadata={kind:'exhibit',objectId:root.userData.exhibitId,instanceId:id,floating:Boolean(root.userData.floating)};
+      const metadata={kind:'exhibit',objectId:root.userData.exhibitId,instanceId:id,name:root.userData.exhibitName||id,floating:Boolean(root.userData.floating)};
       if(Array.isArray(root.userData.collisionParts)){
         const seen=new Set();
         for(const [index,part] of root.userData.collisionParts.entries()){
@@ -224,7 +224,7 @@ export function createDynamicObstacleAdapter({ exhibits, onChange = () => {} }) 
             const local=new THREE.Matrix4().compose(new THREE.Vector3(...position),new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),yaw),new THREE.Vector3(1,1,1));
             partMatrix=matrix.clone().multiply(local);
           }
-          proxies.push(boxToObstacle(dataBox(part),partMatrix,{...metadata,id:id+'::'+partId}));
+          proxies.push(boxToObstacle(dataBox(part),partMatrix,{...metadata,id:id+'::'+partId,socialTarget:part.socialTarget!==false}));
         }
       }else proxies.push(boxToObstacle(localBounds(root),matrix,{...metadata,id}));
     }

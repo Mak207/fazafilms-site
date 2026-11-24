@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { getPlacementBounds } from './exhibits.js?v=park-compact-20261124';
+import { getPlacementBounds } from './exhibits.js?v=park-zones-20261124';
 
-const STORAGE_KEY = 'park-exhibit-layout-v1';
+const STORAGE_KEY = 'park-exhibit-layout-v2-source-zones-20261124';
 const MAX_UNDO = 50;
 const degrees = radians => radians * 180 / Math.PI;
 const radians = value => value * Math.PI / 180;
@@ -32,6 +32,7 @@ const ICONS = {
 export function createExhibitEditor({
   system, scene, camera, controls, domElement,
   onFocus = () => {}, onEditStart = () => {}, onEditEnd = () => {}, onChange = () => {},
+  deferRestore = false,
 }) {
   if (!system?.updateInstance || !scene?.isScene || !camera || !controls || !domElement) {
     throw new TypeError('Редактору нужны экспонаты, сцена, камера и управление.');
@@ -57,6 +58,7 @@ export function createExhibitEditor({
   let enabled = true, disposed = false, selectedId = null, mode = 'move', floorMode = 'auto';
   let drag = null, pendingMove = null, moveFrame = 0, busy = false;
   let saveState = 'empty', saveError = null, restored = false, lastAction = null, lastError = null;
+  let rejectedSavedRaw = null, rejectedSavedBackupKey = null, recoveryExport = null;
 
   function invoke(callback, ...args) {
     try {
@@ -91,6 +93,7 @@ export function createExhibitEditor({
       modifiedInstances: instances.filter(row => row.modified).length,
       undoDepth: undo.length, redoDepth: redo.length,
       storageKey: STORAGE_KEY, saveState, saveError, restored, lastAction, lastError, instances,
+      rejectedSavedPreserved: rejectedSavedRaw !== null, rejectedSavedBackupKey,
     };
   }
 
@@ -156,6 +159,15 @@ export function createExhibitEditor({
 
   function persist() {
     try {
+      // A later valid edit must not destroy the saved layout rejected at startup.
+      // Back it up first; if storage is full, keep the original key untouched.
+      if (rejectedSavedRaw !== null && !rejectedSavedBackupKey) {
+        const prefix = STORAGE_KEY + '-rejected-' + Date.now();
+        let key = prefix, suffix = 0;
+        while (localStorage.getItem(key) !== null) key = prefix + '-' + ++suffix;
+        localStorage.setItem(key, rejectedSavedRaw);
+        rejectedSavedBackupKey = key;
+      }
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...system.getLayout(), savedAt: new Date().toISOString() }));
       saveState = 'saved'; saveError = null;
       $('editor-save-status').textContent = 'Сохранено в этом браузере · одинаково для 2K и 4K';
@@ -459,27 +471,67 @@ export function createExhibitEditor({
     }
   }, { capture: true, signal });
 
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const layout = JSON.parse(saved);
-      invoke(onEditStart, null);
-      const result = system.applyLayout(layout, { notify: false });
-      if (result.ok) {
-        saveState = 'restored'; restored = true;
-        $('editor-save-status').textContent = 'Восстановлена ваша расстановка · сохранение в этом браузере';
-        setMessage('Загружена ранее сохранённая расстановка.');
-      } else { saveState = 'invalid'; saveError = result.error; setMessage('Сохранённая расстановка не применена: ' + result.error, true); }
-      invoke(onEditEnd, null);
-    }
-  } catch (error) {
-    saveState = 'unavailable'; saveError = error.message || String(error);
-    $('editor-save-status').textContent = 'Автосохранение недоступно. Используйте экспорт JSON.';
+  function retainRejectedSave(raw) {
+    rejectedSavedRaw = raw;
+    if (recoveryExport) return;
+    recoveryExport = document.createElement('button');
+    recoveryExport.type = 'button'; recoveryExport.id = 'editor-export-rejected';
+    recoveryExport.textContent = 'Скачать прежнюю расстановку';
+    recoveryExport.addEventListener('click', () => {
+      const address = URL.createObjectURL(new Blob([rejectedSavedRaw], { type: 'application/json' }));
+      const link = document.createElement('a');
+      link.href = address; link.download = 'park-layout-preserved.json';
+      document.body.append(link); link.click(); link.remove();
+      setTimeout(() => URL.revokeObjectURL(address), 1000);
+    }, { signal });
+    $('editor-export').parentElement.append(recoveryExport);
   }
+
+  // Called after the live placement guard is bound, while the crowd is empty.
+  // Failed imports are atomic in the exhibit system and never overwrite storage.
+  function restoreSavedLayout() {
+    if (disposed || busy || drag) return { ok: false, error: 'Редактор пока не готов к восстановлению.' };
+    let saved, editing = false;
+    try {
+      saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) {
+        const previous=localStorage.getItem('park-exhibit-layout-v1');
+        if(previous){retainRejectedSave(previous);saveState='source-zones-updated';$('editor-save-status').textContent='Показана расстановка по исходным зонам. Прежнюю можно скачать.';}
+        return { ok: true, restored: false, previousLayoutPreserved:Boolean(previous) };
+      }
+      const layout = JSON.parse(saved);
+      invoke(onEditStart, null); editing = true;
+      const result = system.applyLayout(layout, { notify: false });
+      if (!result.ok) {
+        const details = [...new Set((result.conflicts || []).flatMap(row => [row.obstacleId, row.transitionId]).filter(Boolean))].slice(0, 4).join(', ');
+        const reason = (result.error || 'Расстановка не прошла проверку проходов.') + (details ? ' (' + details + ')' : '');
+        const error = 'Сохранённая расстановка не применена: ' + reason + ' Показана исходная расстановка; сохранение оставлено без изменений.';
+        retainRejectedSave(saved); saveState = 'invalid'; saveError = error; restored = false;
+        $('editor-save-status').textContent = 'Прежнее сохранение не изменено. Его можно скачать отдельной кнопкой.';
+        setMessage(error, true);
+        return { ...result, ok: false, restored: false, error, originalPreserved: true };
+      }
+      saveState = 'restored'; saveError = null; restored = true; lastError = null;
+      $('editor-save-status').textContent = 'Восстановлена ваша расстановка · сохранение в этом браузере';
+      setMessage('Загружена ранее сохранённая расстановка.');
+      return { ok: true, restored: true };
+    } catch (error) {
+      const message = 'Сохранённая расстановка не применена: ' + (error.message || String(error));
+      if (saved !== undefined && saved !== null) retainRejectedSave(saved);
+      saveState = saved ? 'invalid' : 'unavailable'; saveError = message; restored = false;
+      $('editor-save-status').textContent = saved ? 'Прежнее сохранение не изменено. Его можно скачать отдельной кнопкой.' : 'Автосохранение недоступно. Используйте экспорт JSON.';
+      setMessage(message, true);
+      return { ok: false, restored: false, error: message, originalPreserved: Boolean(saved) };
+    } finally {
+      if (editing) invoke(onEditEnd, null);
+      renderSelection(); notify();
+    }
+  }
+  if (!deferRestore) restoreSavedLayout();
   renderSelection(); notify();
 
   return {
-    getState, selectInstance, clearSelection,
+    getState, selectInstance, clearSelection, restoreSavedLayout,
     setEnabled(value) {
       enabled = Boolean(value); toggle.disabled = !enabled;
       if (!enabled) setOpen(false);
@@ -491,6 +543,7 @@ export function createExhibitEditor({
       disposed = true; enabled = false;
       events.abort(); if (moveFrame) cancelAnimationFrame(moveFrame);
       highlight.removeFromParent(); highlight.geometry.dispose(); highlight.material.dispose();
+      recoveryExport?.remove();
       $('editor-instances').replaceChildren(); panel.hidden = true;
       toggle.disabled = true; toggle.setAttribute('aria-expanded', 'false');
     },
