@@ -131,7 +131,7 @@ export async function createExhibitionZones({exhibits,loader,camera,requestRende
     requestRender();
   }
   canvas.addEventListener('pointerdown',onDown);canvas.addEventListener('pointerup',onUp);
-  return {focus,act,zones,assemblies,assets,hidePanel(){bar.hidden=true;},
+  return {focus,act,zones,assemblies,assets,hidePanel(){bar.hidden=true;selected=null;pointerStart=null;select.value='all';},
     update(dt){let changed=false;for(const module of modules)if(module.update?.(dt,camera))changed=true;return changed;},
     getState:()=>({ready:true,selected,modelsLoaded:assets.size,assetErrors:errors,assemblies:assemblies.map(({id,evidence})=>({id,matchedSamples:evidence.matchedSamples,requiredSamples:evidence.requiredSamples})),zones:[...zones.entries()].map(([id,zone])=>({...zone.module.getState(),id,name:zone.name,instanceId:zone.id}))}),
     dispose(){canvas.removeEventListener('pointerdown',onDown);canvas.removeEventListener('pointerup',onUp);modules.forEach(m=>m.dispose?.());},

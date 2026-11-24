@@ -119,6 +119,9 @@ try {
   controls.minPolarAngle=.001;controls.maxPolarAngle=Math.PI*.499;
   controls.addEventListener('change',()=>{needsRender=true});
   controls.addEventListener('start',()=>{
+    if(rgoZones?.getState().activeView){
+      stopFollowing();currentView=null;transition=null;needsRender=true;return;
+    }
     if(inspectedExhibitId!==null){
       clearTimeout(inspectionTimer);inspectionTimer=null;
       stopFollowing();currentView=null;transition=null;
@@ -493,6 +496,7 @@ $('tram-camera').onchange=()=>{
   if(value==='route'){setView('route');return;}
   if(value==='free'){setFreeView();return;}
   if(value.startsWith('inside-')){if(!setPassengerView(Number(value.slice(-1))))$('tram-camera').value=onboardVehicle>=0?'inside-'+onboardVehicle:'free';return;}
+  leaveRgoView();
   clearExhibitInspection();stopFollowing();
   exhibitEditor?.clearSelection();editingInstanceId=null;
   followVehicle=value==='follow-1'?1:0;currentView=null;transition=null;diagnostics.followVehicle=followVehicle;
