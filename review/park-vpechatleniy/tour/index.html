@@ -7,9 +7,9 @@
   <meta name="theme-color" content="#111715">
   <title>Парк впечатлений — экспонаты и 3D-экскурсия · ФАЗА</title>
   <link rel="icon" href="/favicon.svg">
-  <link rel="stylesheet" href="viewer.css?v=hitem-20261124">
+  <link rel="stylesheet" href="viewer.css?v=hitem-fast-20261124">
   <script type="importmap">{"imports":{"three":"/golden-ring/interactives/vendor/three-0.180/three.module.min.js"}}</script>
-  <script type="module" src="viewer.js?v=hitem-20261124"></script>
+  <script type="module" src="viewer.js?v=hitem-fast-20261124"></script>
 </head>
 <body>
 <main id="viewer" data-state="loading">
@@ -26,6 +26,7 @@
     <aside id="help" class="help-card" hidden aria-label="Как управлять моделью">
       <div class="help-title"><strong>Рассмотрите пространство</strong><button id="close-help" aria-label="Закрыть подсказку" type="button">×</button></div>
       <p><b>Экспонаты</b> — выберите модель в списке, чтобы рассмотреть её. Мешающие обзору поверхности временно скрываются; кнопка «Экспозиция» возвращает общую расстановку.</p>
+      <p><b>Качество текстур</b> — быстрый просмотр 2K загружается по умолчанию. Выбор 4K открывает более детальные текстуры; смена качества перезагружает сцену.</p>
       <p><b>Левая кнопка</b> — повернуть модель.</p><p><b>Правая кнопка</b> — сдвинуть вид.</p><p><b>Колесо или два пальца</b> — приблизить и отдалить.</p><p><b>Двойной щелчок</b> — перейти к выбранному месту.</p><p><b>Вид из вагона</b> — смотреть на выставку с места пассажира. Потяните мышью или пальцем, чтобы повернуть голову; колесо или щипок меняют приближение. В списке ракурсов можно пересесть в другой вагон.</p><p><b>Стрелки</b> при выбранном 3D-виде поворачивают взгляд из вагона; двойной щелчок возвращает взгляд на выставку. <b>Esc</b> возвращает весь маршрут.</p><p><b>За вагоном 1 / 2</b> — внешняя камера. Вращение мышью возвращает свободный обзор.</p><p><b>Открытый зал</b> — показать пространство без оболочки здания. Кнопка возвращает её обратно.</p><p><b>Пауза и скорость</b> управляют обоими вагонами; на паузе можно продолжать осмотр из вагона.</p>
     </aside>
     <div id="section-controls" class="section-controls" hidden>
@@ -38,6 +39,7 @@
     <div class="exhibit-controls" aria-label="Экспонаты парка">
       <button id="exhibit-visible" type="button" aria-pressed="true" disabled>Экспонаты</button>
       <label for="exhibit-select" class="exhibit-choice"><span class="sr-only">Рассмотреть экспонат</span><select id="exhibit-select" disabled><option value="all">Все экспонаты</option></select></label>
+      <label for="exhibit-quality" class="quality-choice"><span class="sr-only">Качество текстур экспонатов</span><select id="exhibit-quality" disabled><option value="fast">Быстрый просмотр (2K)</option><option value="high">Высокое качество (4K)</option></select></label>
       <span id="exhibit-status" class="exhibit-status" role="status" aria-live="polite">Загружаем экспонаты…</span>
     </div>
     <div class="monorail-controls" aria-label="Управление монорельсом">
