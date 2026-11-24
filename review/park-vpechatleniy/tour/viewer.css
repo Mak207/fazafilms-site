@@ -7,6 +7,8 @@
 @media(max-width:520px){.viewer-header{min-height:60px;gap:8px}.viewer-title strong{font-size:.9375rem}.viewer-title span{font-size:.75rem}.header-actions #help-toggle{font-size:0;width:36px;padding:0}.header-actions #help-toggle:after{content:"?";font-size:1rem;font-weight:700}.header-actions #fullscreen{font-size:.8125rem;min-height:36px;padding:6px 9px}.viewer-toolbar{padding:8px;display:grid;gap:7px}.view-controls{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;width:100%}.view-controls button{font-size:.875rem;min-height:38px;padding:7px 9px}.utility-controls{justify-content:center}.utility-controls button{min-height:36px;font-size:.8125rem;padding:6px 13px}.view-caption strong{font-size:1rem}.section-controls{bottom:12px}.help-card{top:12px;right:12px;width:calc(100% - 24px)}}
 @media(prefers-reduced-motion:reduce){#progress{transition:none}}
 
+canvas.onboard{cursor:grab}canvas.onboard:active{cursor:grabbing}#onboard-hint{font-size:.75rem;line-height:1.4;max-width:300px;margin-top:5px;color:#e0e7df}#tram-onboard{min-width:137px}
+
 .model-note{flex-basis:100%;width:100%;margin:1px 0 0;font-size:.75rem;line-height:1.4;color:var(--muted)}
 
 .monorail-controls{flex-basis:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 0 9px;border-bottom:1px solid var(--line)}
@@ -15,3 +17,4 @@
 .view-controls{min-width:0;max-width:100%;overflow-x:auto;scrollbar-width:thin}.utility-controls{flex-shrink:0}
 @media(max-width:1050px){.viewer-toolbar{justify-content:center}.utility-controls{padding-left:0;border:0}}
 @media(max-width:520px){.viewer-toolbar{display:flex;gap:7px}.monorail-controls{display:grid;grid-template-columns:66px minmax(0,1fr) 64px;gap:7px;padding-bottom:8px;min-width:0;width:100%}.camera-control{min-width:0}.monorail-controls select{width:100%;min-width:0;padding-left:8px;font-size:.8125rem}.speed-control{display:block;position:relative;min-width:0;font-size:.8125rem}.speed-control>span{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.speed-control select{min-width:0}#tram-play{min-width:66px;padding:7px 8px}.view-controls{display:flex;justify-content:flex-start;gap:6px;overflow-x:auto;width:100%}.view-controls button{flex:0 0 auto}.utility-controls{width:100%;justify-content:center;gap:6px}.utility-controls button{font-size:.8125rem;padding:6px 9px}.model-note{font-size:.75rem}.help-card{max-height:calc(100% - 24px);overflow-y:auto}}
+@media(max-width:520px){#tram-onboard{grid-column:2/4;min-width:0}.camera-control{grid-column:1/3}#onboard-hint{max-width:245px}}

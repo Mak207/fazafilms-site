@@ -12,7 +12,10 @@ const diagnostics = window.__parkViewer = { state:'loading', errors:[], source:'
 Object.defineProperty(diagnostics,'camera',{get:()=>({position:camera.position.toArray(),target:controls?.target.toArray()})});
 let renderer, controls, model, bounds, size, center;
 let sourceMaterials=[],sourceMeshes=[],envelopeMeshes=[];
-let monorail=null,followVehicle=-1,hallOpen=true,lastFrameTime=null;
+let monorail=null,followVehicle=-1,onboardVehicle=-1,lastOnboardVehicle=0,hallOpen=true,lastFrameTime=null;
+const passenger={yaw:-Math.PI/2,pitch:-.16,eye:new THREE.Vector3(-.52,2.05,.55),normalFov:43,normalNear:.05};
+const passengerPointers=new Map();let pinchDistance=0;
+Object.defineProperty(diagnostics,'onboard',{get:()=>({active:onboardVehicle>=0,vehicle:onboardVehicle>=0?onboardVehicle:null,yaw:passenger.yaw,pitch:passenger.pitch,eyeLocal:passenger.eye.toArray(),fov:camera.fov})});
 const monorailRoute={centerX:5,centerZ:-15.75,width:46,length:99.5,cornerRadius:22.5,height:19.2,floorHeight:13.2};
 Object.defineProperty(diagnostics,'monorail',{get:()=>monorail?.getState()||{status:diagnostics.monorailStatus||'waiting',loaded:false,vehicleCount:0}});
 let needsRender = true, active = true, transition = null, currentView = 'overview', sectionOn = false;
@@ -117,7 +120,9 @@ try {
     if(!active||document.hidden)return;
     if(monorail){
       if(monorail.update(delta))needsRender=true;
-      if(followVehicle>=0){
+      if(onboardVehicle>=0){
+        updatePassengerCamera();
+      }else if(followVehicle>=0){
         const pose=monorail.getFollowPose(followVehicle),blend=1-Math.exp(-delta*7);
         if(camera.position.distanceToSquared(pose.position)>1e-8||controls.target.distanceToSquared(pose.target)>1e-8){
           camera.position.lerp(pose.position,blend);controls.target.lerp(pose.target,blend);needsRender=true;
@@ -129,7 +134,7 @@ try {
       camera.position.lerpVectors(transition.from,transition.to,e);controls.target.lerpVectors(transition.fromTarget,transition.toTarget,e);needsRender=true;
       if(t===1)transition=null;
     }
-    controls.update();
+    if(onboardVehicle<0)controls.update();
     if(needsRender){renderer.render(scene,camera);needsRender=false;diagnostics.renderedFrames=(diagnostics.renderedFrames||0)+1;diagnostics.renderTriangles=renderer.info.render.triangles;}
   }
   requestAnimationFrame(frame);
@@ -198,7 +203,15 @@ $('section-toggle').onclick=()=>{sectionOn=!sectionOn;$('section-toggle').setAtt
 $('section-height').addEventListener('input',updateSection);
 function showHelp(show){$('help').hidden=!show;$('help-toggle').setAttribute('aria-expanded',String(show));}
 $('help-toggle').onclick=()=>showHelp($('help').hidden);$('close-help').onclick=()=>showHelp(false);
-document.addEventListener('keydown',event=>{if(event.key==='Escape')showHelp(false);if(event.key==='Home'&&document.activeElement===canvas){event.preventDefault();setView('overview');}});
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){showHelp(false);if(onboardVehicle>=0)setView('route');}
+  if(document.activeElement!==canvas)return;
+  if(event.key==='Home'){event.preventDefault();setView('overview');}
+  if(onboardVehicle>=0&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)){
+    event.preventDefault();passenger.yaw+=event.key==='ArrowLeft'?-.075:event.key==='ArrowRight'?.075:0;
+    passenger.pitch=THREE.MathUtils.clamp(passenger.pitch+(event.key==='ArrowUp'?.05:event.key==='ArrowDown'?-.05:0),-.85,.55);needsRender=true;
+  }
+});
 $('fullscreen').onclick=async()=>{
   try{if(document.fullscreenElement)await document.exitFullscreen();else await root.requestFullscreen();}
   catch{const notice=$('scene-notice');notice.textContent='Для просмотра во весь экран откройте 3D-тур отдельно.';notice.hidden=false;}
@@ -212,6 +225,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)needsRende
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 canvas.addEventListener('dblclick',event=>{
   if(!model||!controls)return;
+  if(onboardVehicle>=0){passenger.yaw=-Math.PI/2;passenger.pitch=-.16;camera.fov=68;camera.updateProjectionMatrix();needsRender=true;return;}
   const rect=canvas.getBoundingClientRect();pointer.set((event.clientX-rect.left)/rect.width*2-1,1-(event.clientY-rect.top)/rect.height*2);raycaster.setFromCamera(pointer,camera);
   const targets=[...sourceMeshes.filter(mesh=>mesh.visible),...(monorail?.vehicles||[])];
   const hits=raycaster.intersectObjects(targets,true);const hit=hits.find(item=>item.object.isMesh&&(item.object.userData.monorail||!sectionOn||item.point.y<=Number($('section-height').value)));if(!hit)return;
@@ -231,7 +245,63 @@ function fitBox(box,direction){
   }
   return {position:target.clone().addScaledVector(d,distance*1.13),target};
 }
-function stopFollowing(){followVehicle=-1;diagnostics.followVehicle=null;}
+function stopFollowing(){
+  followVehicle=-1;diagnostics.followVehicle=null;
+  if(onboardVehicle>=0){
+    onboardVehicle=-1;passengerPointers.clear();pinchDistance=0;
+    controls.enabled=true;camera.fov=passenger.normalFov;camera.near=passenger.normalNear;camera.updateProjectionMatrix();
+    $('tram-onboard').setAttribute('aria-pressed','false');$('onboard-hint').hidden=true;canvas.classList.remove('onboard');
+    canvas.setAttribute('aria-label','3D-модель. Левая кнопка — вращение, правая — сдвиг, колесо — масштаб. Двойной щелчок — приблизить выбранное место.');
+  }
+}
+
+function updatePassengerCamera(){
+  if(!monorail||onboardVehicle<0)return;
+  const vehicle=monorail.vehicles[onboardVehicle];vehicle.updateWorldMatrix(true,false);
+  const quaternion=vehicle.getWorldQuaternion(new THREE.Quaternion());
+  const direction=new THREE.Vector3(Math.sin(passenger.yaw)*Math.cos(passenger.pitch),Math.sin(passenger.pitch),Math.cos(passenger.yaw)*Math.cos(passenger.pitch)).applyQuaternion(quaternion);
+  const position=vehicle.localToWorld(passenger.eye.clone()),target=position.clone().addScaledVector(direction,20);
+  if(camera.position.distanceToSquared(position)>1e-10||controls.target.distanceToSquared(target)>1e-10)needsRender=true;
+  camera.position.copy(position);controls.target.copy(target);
+  camera.up.set(0,1,0);camera.lookAt(controls.target);
+}
+
+function setPassengerView(index=0){
+  if(!monorail||!monorail.vehicles[index])return;
+  if(onboardVehicle<0){passenger.normalFov=camera.fov;passenger.normalNear=camera.near;}
+  followVehicle=-1;diagnostics.followVehicle=null;onboardVehicle=index;lastOnboardVehicle=index;
+  currentView=null;transition=null;controls.enabled=false;
+  passenger.yaw=-Math.PI/2;passenger.pitch=-.16;camera.fov=68;camera.near=.025;camera.updateProjectionMatrix();
+  setHallOpen(true);$('tram-camera').value='inside-'+index;
+  $('tram-onboard').setAttribute('aria-pressed','true');$('onboard-hint').hidden=false;canvas.classList.add('onboard');
+  canvas.setAttribute('aria-label','Вид из вагона. Потяните мышью или пальцем либо нажмите стрелки, чтобы оглядеться. Колесо или щипок — приближение. Escape — весь маршрут.');
+  $('view-name').textContent='Из вагона '+(index+1)+' · выставка';diagnostics.view='onboard';
+  document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));
+  updatePassengerCamera();canvas.focus({preventScroll:true});
+}
+
+// Passenger look keeps the eye fixed in the moving wagon; OrbitControls only handles external views.
+canvas.addEventListener('pointerdown',event=>{
+  if(onboardVehicle<0||event.pointerType==='mouse'&&![0,2].includes(event.button))return;
+  event.preventDefault();canvas.focus({preventScroll:true});canvas.setPointerCapture(event.pointerId);
+  passengerPointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
+  const points=[...passengerPointers.values()];pinchDistance=points.length===2?Math.hypot(points[0].x-points[1].x,points[0].y-points[1].y):0;
+});
+canvas.addEventListener('pointermove',event=>{
+  if(onboardVehicle<0||!passengerPointers.has(event.pointerId))return;
+  const previous=passengerPointers.get(event.pointerId);passengerPointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
+  if(passengerPointers.size===1){
+    passenger.yaw-=(event.clientX-previous.x)*.004;
+    passenger.pitch=THREE.MathUtils.clamp(passenger.pitch+(event.clientY-previous.y)*.003,-.85,.55);
+  }else if(passengerPointers.size===2){
+    const points=[...passengerPointers.values()],distance=Math.hypot(points[0].x-points[1].x,points[0].y-points[1].y);
+    if(pinchDistance>0&&distance>0){camera.fov=THREE.MathUtils.clamp(camera.fov*pinchDistance/distance,45,85);camera.updateProjectionMatrix();}
+    pinchDistance=distance;
+  }
+  event.preventDefault();needsRender=true;
+});
+for(const type of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(type,event=>{passengerPointers.delete(event.pointerId);pinchDistance=0;});
+canvas.addEventListener('wheel',event=>{if(onboardVehicle<0)return;event.preventDefault();camera.fov=THREE.MathUtils.clamp(camera.fov+event.deltaY*.025,45,85);camera.updateProjectionMatrix();needsRender=true;},{passive:false});
 function setFreeView(){
   stopFollowing();currentView=null;transition=null;$('tram-camera').value='free';
   $('view-name').textContent='Свободный обзор';diagnostics.view='free';
@@ -265,7 +335,7 @@ async function startMonorail(loader){
     // Respect a visitor's motion preference; an explicit press on «Пуск» always starts both wagons.
     if(reduceMotion)monorail.setPlaying(false);
     monorail.group.traverse(node=>{node.userData.monorail=true;for(const material of Array.isArray(node.material)?node.material:[node.material])if(material?.map)material.map.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());});
-    root.querySelectorAll('#tram-play,#tram-camera,#tram-speed').forEach(control=>control.disabled=false);
+    root.querySelectorAll('#tram-play,#tram-onboard,#tram-camera,#tram-speed').forEach(control=>control.disabled=false);
     syncMonorailControls(monorail.getState());
     if(currentView==='overview'||currentView==='route')setView('route',true);
     needsRender=true;
@@ -277,11 +347,14 @@ async function startMonorail(loader){
 }
 $('tram-play').onclick=()=>{if(monorail){monorail.setPlaying(!monorail.getState().playing);needsRender=true;}};
 $('tram-speed').onchange=()=>{if(monorail)monorail.setSpeed(Number($('tram-speed').value));};
+$('tram-onboard').onclick=()=>{if(onboardVehicle>=0)setView('route');else setPassengerView(followVehicle>=0?followVehicle:lastOnboardVehicle);};
 $('tram-camera').onchange=()=>{
   if(!monorail)return;
   const value=$('tram-camera').value;
   if(value==='route'){setView('route');return;}
   if(value==='free'){setFreeView();return;}
+  if(value.startsWith('inside-')){setPassengerView(Number(value.slice(-1)));return;}
+  stopFollowing();
   followVehicle=value==='follow-1'?1:0;currentView=null;transition=null;diagnostics.followVehicle=followVehicle;
   setHallOpen(true);
   const pose=monorail.getFollowPose(followVehicle);

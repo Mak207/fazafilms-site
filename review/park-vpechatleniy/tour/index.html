@@ -7,9 +7,9 @@
   <meta name="theme-color" content="#111715">
   <title>Парк впечатлений — монорельс и 3D-экскурсия · ФАЗА</title>
   <link rel="icon" href="/favicon.svg">
-  <link rel="stylesheet" href="viewer.css?v=monorail-20261124">
+  <link rel="stylesheet" href="viewer.css?v=onboard-20261124">
   <script type="importmap">{"imports":{"three":"/golden-ring/interactives/vendor/three-0.180/three.module.min.js"}}</script>
-  <script type="module" src="viewer.js?v=monorail-20261124"></script>
+  <script type="module" src="viewer.js?v=onboard-20261124"></script>
 </head>
 <body>
 <main id="viewer" data-state="loading">
@@ -22,10 +22,10 @@
     <div id="loading" class="loading" role="status" aria-live="polite">
       <div class="loading-card"><span class="eyebrow">Парк впечатлений</span><h1 id="loading-title">Загружаем 3D-модель</h1><div class="progress-track"><div id="progress"></div></div><p id="loading-detail">Подготавливаем пространство для просмотра…</p><button id="retry" type="button" hidden>Повторить загрузку</button></div>
     </div>
-    <div id="view-caption" class="view-caption" aria-live="polite"><span class="eyebrow">Ракурс</span><strong id="view-name">Общий вид</strong></div>
+    <div id="view-caption" class="view-caption" aria-live="polite"><span class="eyebrow">Ракурс</span><strong id="view-name">Общий вид</strong><span id="onboard-hint" hidden>Потяните вид мышью или пальцем, чтобы оглядеться</span></div>
     <aside id="help" class="help-card" hidden aria-label="Как управлять моделью">
       <div class="help-title"><strong>Рассмотрите пространство</strong><button id="close-help" aria-label="Закрыть подсказку" type="button">×</button></div>
-      <p><b>Левая кнопка</b> — повернуть модель.</p><p><b>Правая кнопка</b> — сдвинуть вид.</p><p><b>Колесо или два пальца</b> — приблизить и отдалить.</p><p><b>Двойной щелчок</b> — перейти к выбранному месту.</p><p><b>За вагоном 1 / 2</b> — отправиться по кольцу. Вращение мышью возвращает свободный обзор.</p><p><b>Открытый зал</b> — показать пространство без оболочки здания. Кнопка возвращает её обратно.</p><p><b>Пауза и скорость</b> управляют обоими вагонами.</p>
+      <p><b>Левая кнопка</b> — повернуть модель.</p><p><b>Правая кнопка</b> — сдвинуть вид.</p><p><b>Колесо или два пальца</b> — приблизить и отдалить.</p><p><b>Двойной щелчок</b> — перейти к выбранному месту.</p><p><b>Вид из вагона</b> — смотреть на выставку с места пассажира. Потяните мышью или пальцем, чтобы повернуть голову; колесо или щипок меняют приближение. В списке ракурсов можно пересесть в другой вагон.</p><p><b>Стрелки</b> при выбранном 3D-виде поворачивают взгляд из вагона; двойной щелчок возвращает взгляд на выставку. <b>Esc</b> возвращает весь маршрут.</p><p><b>За вагоном 1 / 2</b> — внешняя камера. Вращение мышью возвращает свободный обзор.</p><p><b>Открытый зал</b> — показать пространство без оболочки здания. Кнопка возвращает её обратно.</p><p><b>Пауза и скорость</b> управляют обоими вагонами; на паузе можно продолжать осмотр из вагона.</p>
     </aside>
     <div id="section-controls" class="section-controls" hidden>
       <label for="section-height">Высота среза <output id="section-value" for="section-height"></output></label>
@@ -36,7 +36,8 @@
   <footer class="viewer-toolbar" aria-label="Панель управления 3D">
     <div class="monorail-controls" aria-label="Управление монорельсом">
       <button id="tram-play" type="button" aria-pressed="false" disabled>Пуск</button>
-      <label class="camera-control"><span class="sr-only">Ракурс монорельса</span><select id="tram-camera" disabled><option value="route">Весь маршрут</option><option value="follow-0">За вагоном 1</option><option value="follow-1">За вагоном 2</option><option value="free">Свободный вид</option></select></label>
+      <button id="tram-onboard" type="button" aria-pressed="false" disabled>Вид из вагона</button>
+      <label class="camera-control"><span class="sr-only">Ракурс монорельса</span><select id="tram-camera" disabled><option value="route">Весь маршрут</option><option value="inside-0">Внутри вагона 1</option><option value="inside-1">Внутри вагона 2</option><option value="follow-0">За вагоном 1</option><option value="follow-1">За вагоном 2</option><option value="free">Свободный вид</option></select></label>
       <label class="speed-control" for="tram-speed"><span>Скорость</span><select id="tram-speed" disabled><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
     </div>
     <nav class="view-controls" aria-label="Ракурсы модели">
