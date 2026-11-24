@@ -1,5 +1,5 @@
 {
-  "updatedAtUtc": "2026-11-24T07:02:19.546659+00:00",
+  "updatedAtUtc": "2026-11-24T07:50:28.243012+00:00",
   "provider": "Hitem3D",
   "uniqueModels": 16,
   "placedInstancesPlanned": 24,
@@ -55,6 +55,26 @@
             "height": 4096
           }
         ]
+      },
+      "preview": {
+        "file": "preview/O01.glb",
+        "sha256": "b2e393616123da6d846cd9c7036a34b5db59f1a1b87f29bb4079639f0dcca000",
+        "bytes": 2747428,
+        "triangles": 297854,
+        "textures": [
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          }
+        ],
+        "geometryMatchesHighQuality": true,
+        "uvAndMaterialMappingPreserved": true
       }
     },
     {
@@ -95,6 +115,26 @@
             "height": 4096
           }
         ]
+      },
+      "preview": {
+        "file": "preview/O02.glb",
+        "sha256": "3f2464f1d8734c6f8bdebcee6f246a999516f74bb5e9100558dd87cf1fe7140d",
+        "bytes": 2927508,
+        "triangles": 298484,
+        "textures": [
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          }
+        ],
+        "geometryMatchesHighQuality": true,
+        "uvAndMaterialMappingPreserved": true
       }
     },
     {
@@ -135,6 +175,26 @@
             "height": 4096
           }
         ]
+      },
+      "preview": {
+        "file": "preview/O03.glb",
+        "sha256": "7ad028e2a43855fccb7954b934c66146aa760b33f8d0d014c1e0c29ea9c25f56",
+        "bytes": 2650796,
+        "triangles": 299986,
+        "textures": [
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          }
+        ],
+        "geometryMatchesHighQuality": true,
+        "uvAndMaterialMappingPreserved": true
       }
     },
     {
@@ -175,6 +235,26 @@
             "height": 4096
           }
         ]
+      },
+      "preview": {
+        "file": "preview/O04.glb",
+        "sha256": "bcc33c1d59938a0481e86a2d9b3a3723c5f4bbffe46ad6616b979a28ce2c0c6e",
+        "bytes": 2667048,
+        "triangles": 299982,
+        "textures": [
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          }
+        ],
+        "geometryMatchesHighQuality": true,
+        "uvAndMaterialMappingPreserved": true
       }
     },
     {
@@ -215,6 +295,26 @@
             "height": 4096
           }
         ]
+      },
+      "preview": {
+        "file": "preview/O05.glb",
+        "sha256": "b9293b7f2a8fec432a391c0396b71fd010f60be43e95980491d29bd38c2ed75d",
+        "bytes": 2437208,
+        "triangles": 299312,
+        "textures": [
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          }
+        ],
+        "geometryMatchesHighQuality": true,
+        "uvAndMaterialMappingPreserved": true
       }
     },
     {
@@ -255,6 +355,26 @@
             "height": 4096
           }
         ]
+      },
+      "preview": {
+        "file": "preview/O06.glb",
+        "sha256": "823df6d9b2cc30b80f763ccb6f860a3f350cad8057a62bda77da32fd1c326498",
+        "bytes": 2719848,
+        "triangles": 297938,
+        "textures": [
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          }
+        ],
+        "geometryMatchesHighQuality": true,
+        "uvAndMaterialMappingPreserved": true
       }
     },
     {
@@ -295,6 +415,26 @@
             "height": 4096
           }
         ]
+      },
+      "preview": {
+        "file": "preview/O07.glb",
+        "sha256": "e721376786c08cb06656960d51e787762f470ccacf10f89321f0cba9dbb6ffa4",
+        "bytes": 2254212,
+        "triangles": 299998,
+        "textures": [
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          }
+        ],
+        "geometryMatchesHighQuality": true,
+        "uvAndMaterialMappingPreserved": true
       }
     },
     {
@@ -335,6 +475,26 @@
             "height": 4096
           }
         ]
+      },
+      "preview": {
+        "file": "preview/O08.glb",
+        "sha256": "cb5ee751b743bc3de666d74f809903d4bb3b9aa86d857dea70113bdeccf67eaa",
+        "bytes": 2377524,
+        "triangles": 299992,
+        "textures": [
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          }
+        ],
+        "geometryMatchesHighQuality": true,
+        "uvAndMaterialMappingPreserved": true
       }
     },
     {
@@ -375,6 +535,26 @@
             "height": 4096
           }
         ]
+      },
+      "preview": {
+        "file": "preview/O09.glb",
+        "sha256": "d10dbc862e67c68a8ae5314fdb1473d6e16c5471c2b0868715e90531760a21b2",
+        "bytes": 2281132,
+        "triangles": 298610,
+        "textures": [
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          }
+        ],
+        "geometryMatchesHighQuality": true,
+        "uvAndMaterialMappingPreserved": true
       }
     },
     {
@@ -415,6 +595,26 @@
             "height": 4096
           }
         ]
+      },
+      "preview": {
+        "file": "preview/O10.glb",
+        "sha256": "cff51ecafa71a3fc9166ad60c60fcb4a51a4b0899f0c644a7c5c561318f96807",
+        "bytes": 4328868,
+        "triangles": 294942,
+        "textures": [
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          }
+        ],
+        "geometryMatchesHighQuality": true,
+        "uvAndMaterialMappingPreserved": true
       }
     },
     {
@@ -455,6 +655,26 @@
             "height": 4096
           }
         ]
+      },
+      "preview": {
+        "file": "preview/O11.glb",
+        "sha256": "667ef7a4e017ba30eb380d6f95c518a58a649f4db43991bdd539e80c1198391f",
+        "bytes": 2530788,
+        "triangles": 298802,
+        "textures": [
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          }
+        ],
+        "geometryMatchesHighQuality": true,
+        "uvAndMaterialMappingPreserved": true
       }
     },
     {
@@ -495,6 +715,26 @@
             "height": 4096
           }
         ]
+      },
+      "preview": {
+        "file": "preview/O12.glb",
+        "sha256": "4336f71a8c796d985c735c749c2fe42a26d3c18a31d65469aea7cb371fb618e5",
+        "bytes": 3945248,
+        "triangles": 295970,
+        "textures": [
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          }
+        ],
+        "geometryMatchesHighQuality": true,
+        "uvAndMaterialMappingPreserved": true
       }
     },
     {
@@ -535,6 +775,26 @@
             "height": 4096
           }
         ]
+      },
+      "preview": {
+        "file": "preview/O13.glb",
+        "sha256": "77816e671be76b359653de8e323105cfd5d9db66a44c5f7f349d83d1a3974d4d",
+        "bytes": 3079516,
+        "triangles": 297466,
+        "textures": [
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          }
+        ],
+        "geometryMatchesHighQuality": true,
+        "uvAndMaterialMappingPreserved": true
       }
     },
     {
@@ -575,6 +835,26 @@
             "height": 4096
           }
         ]
+      },
+      "preview": {
+        "file": "preview/O14.glb",
+        "sha256": "b92b63a6e3cde46a777942c9ab2f92836ca071193fcd28b0ecb19f1eba9636a6",
+        "bytes": 2628284,
+        "triangles": 299308,
+        "textures": [
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          }
+        ],
+        "geometryMatchesHighQuality": true,
+        "uvAndMaterialMappingPreserved": true
       }
     },
     {
@@ -615,6 +895,26 @@
             "height": 4096
           }
         ]
+      },
+      "preview": {
+        "file": "preview/O15.glb",
+        "sha256": "24df8bf89cf6f446ee3f66c7e13ddb8d26b6d0efdfecccf2c4a27c133e004205",
+        "bytes": 4524476,
+        "triangles": 295522,
+        "textures": [
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          }
+        ],
+        "geometryMatchesHighQuality": true,
+        "uvAndMaterialMappingPreserved": true
       }
     },
     {
@@ -655,7 +955,47 @@
             "height": 4096
           }
         ]
+      },
+      "preview": {
+        "file": "preview/O16.glb",
+        "sha256": "3ef69ebc8e10cf494449f1206e791995c7ccee16d63a7e3d514472300ebff03e",
+        "bytes": 2266836,
+        "triangles": 297610,
+        "textures": [
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "mimeType": "image/jpeg",
+            "width": 2048,
+            "height": 2048
+          }
+        ],
+        "geometryMatchesHighQuality": true,
+        "uvAndMaterialMappingPreserved": true
       }
     }
-  ]
+  ],
+  "defaultQualityMode": "fast",
+  "qualityModes": {
+    "fast": {
+      "manifest": "preview/manifest.json",
+      "textureSize": 2048,
+      "textureFormat": "JPEG",
+      "glbBytes": 46366720
+    },
+    "high": {
+      "manifest": "manifest.json",
+      "textureSize": 4096,
+      "textureFormat": "KTX2/Basis Universal",
+      "glbBytes": 325847928
+    }
+  },
+  "previewConversion": {
+    "geometry": "Exact meshopt bytes, accessor/node/scene data and UV/PBR mapping match the existing high-quality copies.",
+    "textures": "Two original JPEG textures resized to 2048x2048 with LANCZOS; JPEG quality 92 and no chroma subsampling.",
+    "purpose": "Reduce first-load transfer while retaining high-quality 4K and original production 8K versions."
+  }
 }

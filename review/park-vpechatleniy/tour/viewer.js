@@ -12,7 +12,23 @@ const $ = id => document.getElementById(id);
 const root = $('viewer'), stage = $('stage'), canvas = $('canvas');
 const loading = $('loading'), progress = $('progress'), detail = $('loading-detail');
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const exhibitQuality=new URLSearchParams(location.search).get('quality')==='high'?'high':'fast';
+const exhibitManifestPath=exhibitQuality==='high'?'assets/exhibits/manifest.json':'assets/exhibits/preview/manifest.json';
 const diagnostics = window.__parkViewer = { state:'loading', errors:[], source:'выставка_3D вид.dwg' };
+function qualityUrl(value){
+  const url=new URL(location.href);
+  url.searchParams.set('quality',value==='high'?'high':'fast');
+  return url.href;
+}
+Object.defineProperty(diagnostics,'quality',{enumerable:true,get:()=>({
+  mode:exhibitQuality,manifestUrl:exhibitManifestPath,
+  urls:{fast:qualityUrl('fast'),high:qualityUrl('high')}
+})});
+$('exhibit-quality').value=exhibitQuality;$('exhibit-quality').disabled=false;
+$('exhibit-quality').onchange=()=>{
+  const value=$('exhibit-quality').value;
+  if(value!==exhibitQuality)location.assign(qualityUrl(value));
+};
 Object.defineProperty(diagnostics,'camera',{get:()=>({position:camera.position.toArray(),target:controls?.target.toArray()})});
 let renderer, controls, model, bounds, size, center;
 let sourceMaterials=[],sourceMeshes=[],envelopeMeshes=[];
@@ -433,7 +449,7 @@ function syncExhibitControls(state){
 }
 async function startExhibits(loader,monorailReady){
   try{
-    exhibits=await createExhibitSystem({scene,loader,sourceMeshes,manifestUrl:'assets/exhibits/manifest.json?v=hitem-20261124',
+    exhibits=await createExhibitSystem({scene,loader,sourceMeshes,manifestUrl:exhibitManifestPath+'?v=hitem-fast-20261124',
       anisotropy:Math.min(8,renderer.capabilities.getMaxAnisotropy()),onChange:()=>{needsRender=true;},onProgress:syncExhibitControls});
     await monorailReady;
     await prepareInspectionRaycasts();
