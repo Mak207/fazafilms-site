@@ -15,7 +15,8 @@ export function createMappedRgoGallery({assets,layout,program}){
   function collider(id,size,position,yaw=0,bottom=0){parts.push({id,min:[-size[0]/2,bottom,-size[2]/2],max:[size[0]/2,bottom+size[1],size[2]/2],position:[position[0],position[1]||0,position[2]],rotationY:yaw,socialTarget:!/^wall-|^slat-|^column-finish-/.test(id)});}
   function box(name,size,position,material,parent=group,yaw=0){const m=new THREE.Mesh(new THREE.BoxGeometry(...size),material);m.name=name;m.position.fromArray(position);m.rotation.y=yaw;parent.add(m);return m;}
   function panel(title,subtitle,width,height,x,y,z,yaw,options={}){
-    const plane=new THREE.Mesh(new THREE.PlaneGeometry(width,height),new THREE.MeshBasicMaterial({map:textTexture(title,subtitle,{width:1200,height:640,...options}),side:THREE.DoubleSide,toneMapped:false}));
+    const plane=new THREE.Mesh(new THREE.PlaneGeometry(width,height),new THREE.MeshBasicMaterial({map:textTexture(title,subtitle,{width:1200,height:640,...options}),side:THREE.FrontSide,toneMapped:false}));
+    const back=new THREE.Mesh(plane.geometry,plane.material);back.rotation.y=Math.PI;back.position.z=-.006;back.userData=plane.userData;plane.add(back);
     plane.position.set(x,y,z);plane.rotation.y=yaw;group.add(plane);return plane;
   }
   const points=layout.routePolygon;

@@ -116,7 +116,7 @@ try {
   controls.mouseButtons={LEFT:THREE.MOUSE.ROTATE,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:THREE.MOUSE.PAN};
   controls.touches={ONE:THREE.TOUCH.ROTATE,TWO:THREE.TOUCH.DOLLY_PAN};
   controls.screenSpacePanning=true;controls.zoomToCursor=true;
-  controls.minPolarAngle=.001;controls.maxPolarAngle=Math.PI*.499;
+  controls.minPolarAngle=.001;controls.maxPolarAngle=Math.PI-.001;
   controls.addEventListener('change',()=>{needsRender=true});
   controls.addEventListener('start',()=>{
     if(rgoZones?.getState().activeView){

@@ -1,5 +1,6 @@
 .workspace-tabs{grid-template-columns:repeat(6,minmax(0,1fr));width:min(960px,100%)}
-.rgo-content{display:grid;gap:10px;min-width:0}.rgo-content p,.rgo-content h3,.rgo-content h4{margin:0}
+.rgo-content{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;min-width:0}.rgo-content p,.rgo-content h3,.rgo-content h4{margin:0}
+.rgo-content>*{min-width:0;max-width:100%}.rgo-content button{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere}.rgo-zone-button span{min-width:0}.rgo-inspector>*{min-width:0;max-width:100%}
 .rgo-intro,.rgo-limit{font-size:.75rem;line-height:1.45;color:#c6d4c9}
 .rgo-total{font-size:.8125rem;font-weight:650;color:#e5f2d7}
 .rgo-legend{display:grid;grid-template-columns:1fr 1fr;gap:6px 8px;padding:7px 0;border-block:1px solid #5a715d;font-size:.6875rem;line-height:1.3}.rgo-legend-item{display:flex;gap:6px;align-items:center;color:#e7f0e2}.rgo-glyph{width:20px;height:20px;display:grid;place-items:center;font-size:.6875rem;font-style:normal;font-weight:800;color:#12231e;flex:none}.rgo-glyph-media{background:#ffbd66;border-radius:2px}.rgo-glyph-interactive{background:#68b7ff;border-radius:50%}.rgo-glyph-navigation{background:#ff91b6;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)}.rgo-glyph-special{color:#c4a0ff;font-size:1.4rem}

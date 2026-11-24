@@ -90,6 +90,9 @@ export async function createExhibitionZones({exhibits,loader,camera,requestRende
   let selected=null,pointerStart=null;
   function updatePanel(){
     const zone=zones.get(selected);bar.hidden=!zone;buttons.replaceChildren();if(!zone)return;
+    const actionControls=document.getElementById('zone-action-controls');
+    actionControls.dataset.collapsible=String(zone.actions.length>2);
+    actionControls.open=!matchMedia('(max-width: 600px)').matches||zone.actions.length<=2;
     info.textContent=selected==='rgo'?'РГО · '+rgoProgram.halls.find(h=>h.id===rgo.activeHall).title:zone.description;
     hallControl.hidden=selected!=='rgo';hallSelect.value=rgo.activeHall;
     for(const action of zone.actions){const button=document.createElement('button');button.type='button';button.textContent=actionLabels[action]||action;
