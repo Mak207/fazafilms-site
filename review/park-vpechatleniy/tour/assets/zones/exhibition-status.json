@@ -1,0 +1,1236 @@
+{
+  "schemaVersion": 1,
+  "id": "park-exhibition-status-20261124",
+  "language": "ru",
+  "title": "Парк впечатлений: сделано в 3D и что осталось по первичке",
+  "updatedAtUtc": "2026-11-24T13:03:14.759722+00:00",
+  "scope": "Состав текущей рабочей 3D-версии и согласованной расстановки. Публикация сайта учитывается отдельно; этот файл не является сообщением об успешном развёртывании.",
+  "summary": "Собрана рабочая галерея РГО по маршруту девяти залов, человеческая рубка «Лидера» с LED-фоном и подъёмником, интерьер Херсонеса, две кабины МС-21 и прозрачные силосы с отдельными 3D-зёрнами. Полные предметные и мультимедийные программы первички ещё не завершены.",
+  "statusDefinitions": {
+    "evidence": {
+      "confirmed": "Требование или привязка прямо названы в первичном источнике; это не означает готовность реализации.",
+      "inferred": "Связь сделана по содержанию или соседнему комплексу; точная идентичность конкретной модели первичкой не доказана.",
+      "unassigned": "В просмотренной первичке нет назначения федерального округа для объекта."
+    },
+    "implementation": {
+      "implemented_3d": "Элемент создан в рабочей 3D-сцене.",
+      "partial_3d": "Создана часть элемента или рабочая интерпретация, полная первичная программа не выполнена.",
+      "not_implemented": "Элемента или требуемого сценария в текущей версии нет."
+    }
+  },
+  "sources": [
+    {
+      "id": "rgo018",
+      "title": "018_Аллея_РГО_рабочая_презентация (1).pptx",
+      "textArchive": "01_Вложения_переписки/018_Аллея_РГО_рабочая_презентация (1).md",
+      "role": "Базовая девятизальная предметная программа и план на слайде 2.",
+      "publicIndex": "rgo-primary-program.json"
+    },
+    {
+      "id": "pantheon017",
+      "title": "017_Аллея РГО_Зал Пантеон-2.pdf",
+      "textArchive": "01_Вложения_переписки/017_Аллея РГО_Зал Пантеон-2.md",
+      "role": "Дополнительный первичный эскиз Пантеона."
+    },
+    {
+      "id": "rgo033",
+      "title": "033_Комментарии_к_экспозиционному_плану_Аллеи_РГО.docx",
+      "textArchive": "01_Вложения_переписки/033_Комментарии_к_экспозиционному_плану_Аллеи_РГО.md",
+      "role": "Отдельная редакция содержания; не объединяется автоматически с 018/017."
+    },
+    {
+      "id": "board013",
+      "title": "013_А0 _Аллея",
+      "textArchive": "01_Вложения_переписки/013_А0 _Аллея.md",
+      "role": "Общая площадь РГО, указанная на первичном плакате."
+    },
+    {
+      "id": "presentation005",
+      "title": "005_26.10. презентация_ для_Орешкина",
+      "textArchive": "01_Вложения_переписки/005_26.10. презентация_ для_Орешкина.md",
+      "role": "Основная программа крупных экспонатов и мультимедиа."
+    },
+    {
+      "id": "technology061",
+      "title": "061_Текст_для_презентации_про_технологии_и_мультимедиа_3",
+      "textArchive": "01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+      "role": "Явные федеральные округа и описания крупных экспонатов."
+    },
+    {
+      "id": "regions056",
+      "title": "056_Структура_экспозиции_по_регионам",
+      "textArchive": "01_Вложения_переписки/056_Структура_экспозиции_по_регионам.md",
+      "role": "Географическая содержательная программа; её сектора не тождественны административным округам."
+    },
+    {
+      "id": "figmaFlight",
+      "title": "Сохранённый Figma, страница 001_2032_278",
+      "textArchive": "Исходники/03_Figma/Экспорт_2026-11-24/01_Копия_без_полной_загрузки_изображений/pages/001_2032_278.md",
+      "role": "Первичные описания кабины МС-21, подвижной платформы, графики и звука."
+    },
+    {
+      "id": "figmaConcept",
+      "title": "Сохранённый Figma, страница 003_2011_8",
+      "textArchive": "Исходники/03_Figma/Экспорт_2026-11-24/01_Копия_без_полной_загрузки_изображений/pages/003_2011_8.md",
+      "role": "Настоящее зерно, элеватор, кинетика ледокола, AR/VR Херсонеса и мультимедиа крупных объектов."
+    },
+    {
+      "id": "generalZoneMap",
+      "title": "Общая первичная схема восьми округов из сохранённого Figma",
+      "nodeIds": {
+        "main": "3395:2278",
+        "upper": "3395:644"
+      },
+      "publicIndex": "source-zones.json",
+      "role": "Границы зон основного этажа и антресоли. Отдельная графическая версия относительно детального плана РГО018."
+    },
+    {
+      "id": "userReferences",
+      "title": "Визуальные референсы пользователя: РГО, Херсонес, ледокол",
+      "role": "Образ отделки и наполнения. На референсе РГО показан «МИР»; изображение не меняет название «Консул» в программе 018."
+    },
+    {
+      "id": "currentScene",
+      "title": "Текущая рабочая 3D-сцена",
+      "files": [
+        "rgo-gallery.js",
+        "exhibition-interactives.js",
+        "icebreaker-wheelhouse.js",
+        "icebreaker-access.js",
+        "exhibition-zones.js",
+        "chersonesus-fit.js",
+        "assets/zones/rgo-layout.json",
+        "assets/zones/lider-layout.json"
+      ],
+      "role": "Фактический состав реализации. Размеры ниже относятся к рабочей 3D-компоновке."
+    }
+  ],
+  "rgo": {
+    "title": "РГО: рабочая галерея и полная программа",
+    "implementationStatus": "partial_3d",
+    "evidenceStatus": "confirmed",
+    "built": {
+      "hallStops": 9,
+      "displayCases": 8,
+      "mainScreenSurfaces": 10,
+      "suspendedGenericSailships": 2,
+      "mirSubmersibles": 1,
+      "entranceGlobe": {
+        "present": true,
+        "rotation": true,
+        "axisTiltDegrees": 23.5,
+        "reliefAndGeographicContentComplete": false
+      },
+      "menu": "Раздел РГО и выбор девяти залов; переходы к обзорам и информационным панелям.",
+      "finishes": [
+        "Деревянные ламели, деревянная отделка и облицовка вокруг существующих колонн.",
+        "Песочно-бежевый пол; выбранный цвет материала #b5a68d.",
+        "Тёплая янтарная линейная подсветка и тёплый свет у остановок.",
+        "Тёмно-синие и петрольные медийные поверхности."
+      ],
+      "referenceNote": "Отделка интерпретирует пользовательский референс; точные марки материалов, RAL и цветовая температура по фотографии не установлены.",
+      "contentsNote": "Навигационные приборы повторяются в витринах; два парусника являются уменьшенными обобщёнными моделями. Экранные поверхности содержат рабочие информационные материалы, а не полный комплект музейных фильмов и иммерсивных сцен."
+    },
+    "primaryProgramme": {
+      "halls": 9,
+      "keyExhibitsClaim": "45+",
+      "hallAreaSumM2": 1120,
+      "overallAreaOnBoardsM2": 1400,
+      "areaNote": "1120 м² — сумма девяти залов018. 1400 м² — общая площадь на первичных плакатах013/005. Состав разницы280 м² источниками не раскрыт; эти числа не взаимозаменяемы.",
+      "area1750Status": "unverified",
+      "evidence": [
+        {
+          "sourceId": "rgo018",
+          "lines": [
+            20,
+            32
+          ]
+        },
+        {
+          "sourceId": "board013",
+          "lines": [
+            75,
+            75
+          ]
+        },
+        {
+          "sourceId": "presentation005",
+          "lines": [
+            224,
+            224
+          ]
+        }
+      ]
+    },
+    "halls": [
+      {
+        "id": "00",
+        "title": "Пролог (Пантеон)",
+        "programmeAreaM2": 100,
+        "implementationStatus": "partial_3d",
+        "fullPrimaryHallReconstructed": false,
+        "built": [
+          "Название зала, точка маршрута, обзор и тематическая информационная панель.",
+          "Витрины: 2; используется общий сгенерированный набор навигационных приборов.",
+          "Геометрический вращающийся глобус с наклоном оси 23,5°; рельеф и картографическое наполнение ещё не выполнены."
+        ],
+        "primaryExhibitsToComplete": [
+          "Скульптурная композиция «Глобус и инструментарий путешественника»",
+          "Портреты и бюсты исследователей в голографической подаче",
+          "Навигационная стела с картой маршрута",
+          "Экран приветствия с гербом РГО",
+          "Интерактивная лента времени восьми эпох"
+        ],
+        "primaryMediaToComplete": [
+          "Голографические проекции портретов",
+          "Экран приветствия"
+        ],
+        "note": "Перечень первички не считается выполненным наличием названия зала или информационного экрана; частичные элементы перечислены отдельно.",
+        "evidence": [
+          {
+            "sourceId": "rgo018",
+            "lines": [
+              74,
+              127
+            ]
+          }
+        ]
+      },
+      {
+        "id": "01",
+        "title": "Допетровская эпоха",
+        "programmeAreaM2": 100,
+        "implementationStatus": "partial_3d",
+        "fullPrimaryHallReconstructed": false,
+        "built": [
+          "Название зала, точка маршрута, обзор и тематическая информационная панель.",
+          "Витрины: 1; используется общий сгенерированный набор навигационных приборов."
+        ],
+        "primaryExhibitsToComplete": [
+          "Рельефная физическая карта с объёмами и проекцией маршрутов",
+          "Макеты речных судов новгородцев",
+          "Карта речных бассейнов",
+          "Инсталляция «переход через Урал»",
+          "Панели о землепроходцах XIV века"
+        ],
+        "primaryMediaToComplete": [
+          "Видеомэппинг маршрутов на рельефную карту",
+          "Анимация освоения территорий по векам"
+        ],
+        "note": "Перечень первички не считается выполненным наличием названия зала или информационного экрана; частичные элементы перечислены отдельно.",
+        "evidence": [
+          {
+            "sourceId": "rgo018",
+            "lines": [
+              129,
+              182
+            ]
+          }
+        ]
+      },
+      {
+        "id": "02",
+        "title": "Поморский коч / карбас",
+        "programmeAreaM2": 160,
+        "implementationStatus": "partial_3d",
+        "fullPrimaryHallReconstructed": false,
+        "built": [
+          "Название зала, точка маршрута, обзор и тематическая информационная панель."
+        ],
+        "primaryExhibitsToComplete": [
+          "Поморский коч / карбас в натуральную величину",
+          "Диорама похода Ермака",
+          "Карта открытия Берингова пролива",
+          "Инсталляция «Охотское море»",
+          "Материалы освоения Приамурья",
+          "Навигационные приборы и снаряжение XVII века"
+        ],
+        "primaryMediaToComplete": [
+          "Проекция маршрутов на своды галереи",
+          "Экраны вдоль верхних ярусов"
+        ],
+        "note": "Перечень первички не считается выполненным наличием названия зала или информационного экрана; частичные элементы перечислены отдельно.",
+        "evidence": [
+          {
+            "sourceId": "rgo018",
+            "lines": [
+              184,
+              240
+            ]
+          }
+        ]
+      },
+      {
+        "id": "03",
+        "title": "Шлюп «Надежда» в разрезе",
+        "programmeAreaM2": 120,
+        "implementationStatus": "partial_3d",
+        "fullPrimaryHallReconstructed": false,
+        "built": [
+          "Название зала, точка маршрута, обзор и тематическая информационная панель.",
+          "Витрины: 1; используется общий сгенерированный набор навигационных приборов.",
+          "Один уменьшенный обобщённый парусник на подвесе. Это не трёхпалубная «Надежда» в натуральную величину."
+        ],
+        "primaryExhibitsToComplete": [
+          "Трёхпалубная инсталляция «Надежда» в натуральную величину",
+          "Макеты пакетботов «Св. Пётр» и «Св. Павел»",
+          "Макет с двумя полушариями",
+          "Носовые фигуры и навигационные приборы",
+          "Диорама шлюпов «Восток» и «Мирный» у Антарктиды",
+          "Судовой быт и провиант"
+        ],
+        "primaryMediaToComplete": [
+          "Диорама Антарктиды с подсветкой льдов",
+          "Силуэты китов под водой"
+        ],
+        "note": "Перечень первички не считается выполненным наличием названия зала или информационного экрана; частичные элементы перечислены отдельно.",
+        "evidence": [
+          {
+            "sourceId": "rgo018",
+            "lines": [
+              242,
+              298
+            ]
+          }
+        ]
+      },
+      {
+        "id": "04",
+        "title": "Эпоха системных экспедиций РГО",
+        "programmeAreaM2": 100,
+        "implementationStatus": "partial_3d",
+        "fullPrimaryHallReconstructed": false,
+        "built": [
+          "Название зала, точка маршрута, обзор и тематическая информационная панель.",
+          "Витрины: 2; используется общий сгенерированный набор навигационных приборов.",
+          "Один уменьшенный обобщённый парусник на подвесе. Он не обозначает модель «Таймыр»."
+        ],
+        "primaryExhibitsToComplete": [
+          "Модель ледокольного парохода «Таймыр»",
+          "Инсталляция с бюстами исследователей и картами",
+          "Экспозиционные материалы Семёнова-Тян-Шанского и Пржевальского",
+          "Материалы Амурской экспедиции Невельского",
+          "Материалы Миклухо-Маклая",
+          "Геологическая коллекция Обручева",
+          "Материалы открытия Северной Земли"
+        ],
+        "primaryMediaToComplete": [
+          "Настенная карта-фреска с подсветкой маршрутов",
+          "Голопортрет исследователя"
+        ],
+        "note": "Перечень первички не считается выполненным наличием названия зала или информационного экрана; частичные элементы перечислены отдельно.",
+        "evidence": [
+          {
+            "sourceId": "rgo018",
+            "lines": [
+              300,
+              358
+            ]
+          }
+        ]
+      },
+      {
+        "id": "05",
+        "title": "Полярная наука СССР и России",
+        "programmeAreaM2": 180,
+        "implementationStatus": "partial_3d",
+        "fullPrimaryHallReconstructed": false,
+        "built": [
+          "Название зала, точка маршрута, обзор и тематическая информационная панель.",
+          "Витрины: 1; используется общий сгенерированный набор навигационных приборов."
+        ],
+        "primaryExhibitsToComplete": [
+          "Самолёт АНТ-25 на подвесе",
+          "Барельеф Антарктиды со станциями",
+          "Диорама «Освоение Арктики»",
+          "Ледяные керны и схема бурения",
+          "Макет современной арктической станции",
+          "Материалы об озере Восток и древних породах",
+          "Атлас Антарктики"
+        ],
+        "primaryMediaToComplete": [
+          "Диорама с эффектом полярного холода и сияния",
+          "Проекция схемы бурения ледника"
+        ],
+        "note": "Перечень первички не считается выполненным наличием названия зала или информационного экрана; частичные элементы перечислены отдельно.",
+        "evidence": [
+          {
+            "sourceId": "rgo018",
+            "lines": [
+              360,
+              417
+            ]
+          }
+        ]
+      },
+      {
+        "id": "06",
+        "title": "Глубоководные исследования",
+        "programmeAreaM2": 100,
+        "implementationStatus": "partial_3d",
+        "fullPrimaryHallReconstructed": false,
+        "built": [
+          "Название зала, точка маршрута, обзор и тематическая информационная панель.",
+          "Одна сгенерированная модель аппарата «МИР» на подиуме; это отдельный аппарат, а не «Консул»."
+        ],
+        "primaryExhibitsToComplete": [
+          "Полноразмерный глубоководный обитаемый аппарат «Консул»",
+          "Диорама глубоководных исследований России",
+          "Модели научно-исследовательских судов",
+          "Материалы исследования океанского дна",
+          "Образцы флоры и фауны больших глубин"
+        ],
+        "primaryMediaToComplete": [
+          "Подводная диорама с эффектом толщи воды и биолюминесценции",
+          "Видеостена морского дна"
+        ],
+        "note": "Перечень первички не считается выполненным наличием названия зала или информационного экрана; частичные элементы перечислены отдельно.",
+        "evidence": [
+          {
+            "sourceId": "rgo018",
+            "lines": [
+              419,
+              473
+            ]
+          }
+        ]
+      },
+      {
+        "id": "07",
+        "title": "Освоение космоса",
+        "programmeAreaM2": 160,
+        "implementationStatus": "partial_3d",
+        "fullPrimaryHallReconstructed": false,
+        "built": [
+          "Название зала, точка маршрута, обзор и тематическая информационная панель.",
+          "Витрины: 1; используется общий сгенерированный набор навигационных приборов."
+        ],
+        "primaryExhibitsToComplete": [
+          "Полноразмерный корабль «Орёл» с частью стеклянной обшивки",
+          "Полноразмерный луноход",
+          "Спутники на подвесах",
+          "Макет Российской орбитальной станции РОС",
+          "Материалы лунной программы и проекта «Сфера»",
+          "Проект «Ангара»"
+        ],
+        "primaryMediaToComplete": [
+          "Звёздный купол и проекция на потолке",
+          "Видео о запусках и станции"
+        ],
+        "note": "Перечень первички не считается выполненным наличием названия зала или информационного экрана; частичные элементы перечислены отдельно.",
+        "evidence": [
+          {
+            "sourceId": "rgo018",
+            "lines": [
+              475,
+              531
+            ]
+          }
+        ]
+      },
+      {
+        "id": "08",
+        "title": "Мечта. Будущее",
+        "programmeAreaM2": 100,
+        "implementationStatus": "partial_3d",
+        "fullPrimaryHallReconstructed": false,
+        "built": [
+          "Название зала, точка маршрута, обзор и тематическая информационная панель.",
+          "Дополнительная финальная экранная поверхность с вопросом о следующей экспедиции. Сбор пожеланий посетителей не реализован."
+        ],
+        "primaryExhibitsToComplete": [
+          "Финальная инсталляция «горизонт открытий»",
+          "Проекционная стена высказываний исследователей",
+          "Цифровая стена пожеланий посетителей",
+          "Панорамный видовой экран",
+          "Зона тихого созерцания"
+        ],
+        "primaryMediaToComplete": [
+          "Иммерсивная проекция горизонта и звёздного неба",
+          "Плавная смена эпох"
+        ],
+        "note": "Перечень первички не считается выполненным наличием названия зала или информационного экрана; частичные элементы перечислены отдельно.",
+        "evidence": [
+          {
+            "sourceId": "rgo018",
+            "lines": [
+              533,
+              586
+            ]
+          }
+        ]
+      }
+    ],
+    "criticalIdentityConflict": {
+      "built": "МИР",
+      "requiredIn018": "Консул",
+      "sameObject": false,
+      "resolution": "Сохранять название «МИР». Для выполнения базовой программы018 нужен отдельный «Консул» либо явное утверждение иной редакции.",
+      "evidence": [
+        {
+          "sourceId": "rgo018",
+          "lines": [
+            435,
+            452
+          ]
+        },
+        {
+          "sourceId": "userReferences"
+        }
+      ]
+    },
+    "sourceVersions": {
+      "base": "018 — последовательность девяти залов и предметная программа;017 — отдельная детализация Пантеона.",
+      "alternative": "033 — другая содержательная редакция: визуальное интро, карта/дневник и современные проекты РГО. Её предложения не объявлены одновременно выполненной программой018.",
+      "evidence": [
+        {
+          "sourceId": "rgo033",
+          "lines": [
+            15,
+            183
+          ]
+        },
+        {
+          "sourceId": "pantheon017",
+          "lines": [
+            20,
+            108
+          ]
+        }
+      ]
+    },
+    "planConflict": {
+      "detailedPlan": "018, слайд2",
+      "generalPlan": "Общая первичная схема восьми округов из Figma",
+      "differentVersions": true,
+      "comparisonAllowanceM": 0.75,
+      "overlapOutsideAllowanceM2": {
+        "far-east": 10.48,
+        "siberia": 19.58
+      },
+      "explanation": "Детальный контур РГО018 выходит в ДФО на10,48 м² и в СФО на19,58 м² сверх рабочего допуска сопоставления0,75 м. Это зафиксированное расхождение двух графических версий. Границы общей схемы не переименованы и не сдвинуты для его сокрытия.",
+      "comparisonIsRegulatoryStandard": false,
+      "evidence": [
+        {
+          "sourceId": "rgo018",
+          "lines": [
+            40,
+            68
+          ]
+        },
+        {
+          "sourceId": "generalZoneMap"
+        }
+      ],
+      "publicGeometryEvidence": "source-zones.json#/workingDetailedRgo"
+    },
+    "additionalImportantGaps": [
+      "Модель ледокольного парохода «Таймыр».",
+      "Рельефные карты с проекциями маршрутов, исторические диорамы и предметные коллекции по каждому залу.",
+      "Голографические портреты, светодиодная люстра-сетка и входной паровой эффект Пантеона.",
+      "Полноценная финальная инсталляция, цифровая стена пожеланий и законченный музейный медиаконтент."
+    ]
+  },
+  "lider": {
+    "title": "Ледокол «Лидер»",
+    "regionId": "northwest",
+    "evidenceStatus": "confirmed",
+    "implementationStatus": "partial_3d",
+    "built": {
+      "shipLengthM": 16,
+      "shipBaseY": 7.2,
+      "wheelhouse": {
+        "planMetres": [
+          3,
+          3.2
+        ],
+        "clearHeightM": 2.35,
+        "doorOpeningMetres": [
+          1.2,
+          2.2
+        ],
+        "deckWorldY": 9.6,
+        "roofWorldY": 12.07,
+        "realOpeningInRuntimeGeometry": true,
+        "features": [
+          "Прозрачный каркас рубки, пульт и управляемые экранные проекции.",
+          "Рабочий вход через проём; открыта локальная геометрия рубки в копии модели."
+        ]
+      },
+      "led": {
+        "sizeMetres": [
+          8,
+          4.2
+        ],
+        "content": "Полярные льды и северное сияние."
+      },
+      "access": {
+        "upperBridgeY": 13.2,
+        "lowerBridgeY": 9.6,
+        "liftStopsY": [
+          9.6,
+          13.2
+        ],
+        "liftTravelM": 3.6,
+        "liftShaftBaseY": 7.2,
+        "stopAtMainFloor7_2": false,
+        "note": "Подъёмник связывает антресоль13,2 и рубку9,6. Нижняя точка шахты7,2 не является действующей остановкой."
+      },
+      "iceIsland": true,
+      "sourceGlbModified": false
+    },
+    "interaction": {
+      "wheelhouseControls": [
+        "Лево на борт",
+        "Ход / пауза",
+        "Право на борт",
+        "Сброс курса"
+      ],
+      "liftAnimationAndControls": true,
+      "automaticCrowdRouteThroughNewBridgesAndLift": false,
+      "note": "Геометрический доступ, движение кабины подъёмника и ручной просмотр созданы. Новый автоматический маршрут групп посетителей через эти переходы и подъёмник в граф симуляции толпы не добавлен."
+    },
+    "remaining": [
+      "Прозрачные жилые, технические и реакторные отсеки по всей модели.",
+      "Кормовой вертолёт и его интерактивный симулятор.",
+      "Кинетическая система качки/волн и связанная экспозиционная механика.",
+      "Полный подъём с основного этажа7,2, если сохраняется этот сценарий первички.",
+      "Автоматическое движение групп посетителей по новому маршруту через подъёмник и рубку."
+    ],
+    "evidence": [
+      {
+        "sourceId": "technology061",
+        "lines": [
+          51,
+          51
+        ]
+      },
+      {
+        "sourceId": "presentation005",
+        "lines": [
+          1114,
+          1123
+        ]
+      },
+      {
+        "sourceId": "figmaConcept",
+        "nodeId": "4462:291"
+      },
+      {
+        "sourceId": "currentScene"
+      }
+    ],
+    "publicLayout": "lider-layout.json"
+  },
+  "chersonesus": {
+    "title": "Херсонес",
+    "regionId": "south",
+    "evidenceStatus": "confirmed",
+    "implementationStatus": "partial_3d",
+    "built": {
+      "outerPlanMetres": [
+        8.9,
+        14
+      ],
+      "outerHeightM": 5.53,
+      "floorY": 13.2,
+      "interiorWorkingPlanMetres": [
+        6.22,
+        9.2
+      ],
+      "museumCases": 5,
+      "archaeologyHitemCaseGroups": 2,
+      "vrBays": 2,
+      "vrBayPlanMetres": [
+        2.5,
+        2.5
+      ],
+      "screens": 3,
+      "mainPanoramaScreenMetres": [
+        5.2,
+        2.2
+      ],
+      "features": [
+        "Проходимая аркада человеческого масштаба и отдельный интерьер.",
+        "Археологические витрины, декорации, панорамный экран и два информационных экрана.",
+        "Две выделенные VR-площадки с изображениями оборудования и переключением состояния."
+      ]
+    },
+    "vrStatus": "В текущем модуле нажатие включает индикацию площадки и меняет панораму. Подключение VR-шлема, трекинг и самостоятельный VR-сеанс не реализованы.",
+    "remaining": [
+      "Отдельная VR-реконструкция древнего города и подключение шлема/контроллеров.",
+      "AR-сценарий, законченная звуковая среда и полный музейный контент.",
+      "Историческая атрибуция каждой сгенерированной археологической модели."
+    ],
+    "dimensionsStatus": "Рабочие размеры модели и расстановки; не заявление о нормативной сертификации.",
+    "evidence": [
+      {
+        "sourceId": "technology061",
+        "lines": [
+          55,
+          55
+        ]
+      },
+      {
+        "sourceId": "regions056",
+        "lines": [
+          100,
+          100
+        ]
+      },
+      {
+        "sourceId": "figmaConcept",
+        "nodeId": "4462:295"
+      },
+      {
+        "sourceId": "currentScene"
+      }
+    ]
+  },
+  "flight": {
+    "title": "МС-21 и интерактивные кабины",
+    "regionId": "siberia",
+    "evidenceStatus": "confirmed",
+    "implementationStatus": "partial_3d",
+    "built": {
+      "aircraftSizeM": 18,
+      "separateCockpits": 2,
+      "seatsPerCockpit": 2,
+      "cockpitBodyHeightM": 2.2,
+      "cockpitAssemblyHeightM": 2.26,
+      "platformPlanMetres": [
+        4.65,
+        6.05
+      ],
+      "projectionPanelsPerCockpit": 2,
+      "controls": [
+        "Пуск / пауза",
+        "Крен влево",
+        "Крен вправо",
+        "Сброс"
+      ],
+      "source": "Hitem3D X04_COCKPIT с уже имеющимися креслами и приборами; повторные процедурные кресла и пульт не добавляются."
+    },
+    "placement": {
+      "sameGroupWestOfAircraft": true,
+      "gapBetweenCockpitsM": 1.896,
+      "gapsToConservativeAirframeSilhouetteM": [
+        7.03,
+        7.48
+      ],
+      "note": "Существующие лестницы и лифты сохранены между самолётом и группой интерактивов."
+    },
+    "remaining": [
+      "Подвижная физическая платформа и аппаратные органы управления.",
+      "Полный звуковой сценарий и авиационная динамика полёта.",
+      "Подтверждение точной приборной комплектации именно МС-21; текущий интерьер является выставочной интерпретацией."
+    ],
+    "evidence": [
+      {
+        "sourceId": "technology061",
+        "lines": [
+          47,
+          47
+        ]
+      },
+      {
+        "sourceId": "figmaFlight",
+        "nodeId": "3806:356"
+      },
+      {
+        "sourceId": "figmaFlight",
+        "nodeId": "4116:2263"
+      },
+      {
+        "sourceId": "currentScene"
+      }
+    ]
+  },
+  "grain": {
+    "title": "Прозрачные силосы и зерно",
+    "regionId": "volga",
+    "evidenceStatus": "confirmed",
+    "implementationStatus": "partial_3d",
+    "built": {
+      "transparentSilos": 3,
+      "grainLabels": [
+        "Пшеница",
+        "Ячмень",
+        "Овёс"
+      ],
+      "falling3dKernels": 432,
+      "surface3dKernels": 2700,
+      "grainTexturedPile": true,
+      "visibleHopperAndReturnPipe": true,
+      "startPauseControl": true,
+      "physicsDescription": "Зацикленная иллюстрация падения отдельных3D-зёрен с ускорением, вращением и изменением насыпи. Не расчёт взаимодействия всего зернового материала."
+    },
+    "realGrainPhysicalMechanismBuilt": false,
+    "primaryIntent": "В первичке описан работающий элеватор с настоящим зерном. В этой версии сделана его3D-иллюстрация.",
+    "remaining": [
+      "Физическая подача, пересыпание и возврат настоящего зерна.",
+      "Механический элеватор, оборудование и датчики для реальной установки.",
+      "Полная агросцена: поле, прозрачный информационный периметр, медийная стена и игровой цикл агромониторинга."
+    ],
+    "evidence": [
+      {
+        "sourceId": "technology061",
+        "lines": [
+          49,
+          49
+        ]
+      },
+      {
+        "sourceId": "figmaConcept",
+        "nodeId": "4462:290"
+      },
+      {
+        "sourceId": "figmaConcept",
+        "nodeId": "5553:862"
+      },
+      {
+        "sourceId": "currentScene"
+      }
+    ]
+  },
+  "placementProvenance": [
+    {
+      "objectId": "O01",
+      "title": "Круглый модуль лунной базы",
+      "evidenceStatus": "unassigned",
+      "primaryProgrammeRegionId": null,
+      "workingPlacementRegionId": "ural",
+      "note": "Lunar-base programme is named, but no federal district is supplied; do not silently attach it to DFO solely by space theme.",
+      "evidence": [
+        {
+          "sourceTitle": "061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "lines": [
+            53
+          ]
+        }
+      ]
+    },
+    {
+      "objectId": "O02",
+      "title": "Геодезический купол лунной базы",
+      "evidenceStatus": "unassigned",
+      "primaryProgrammeRegionId": null,
+      "workingPlacementRegionId": "ural",
+      "note": "Part of the lunar-base assembly; primary district remains unspecified.",
+      "evidence": [
+        {
+          "sourceTitle": "061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "lines": [
+            53
+          ]
+        }
+      ]
+    },
+    {
+      "objectId": "O03",
+      "title": "Сфера Луны на опоре",
+      "evidenceStatus": "unassigned",
+      "primaryProgrammeRegionId": null,
+      "workingPlacementRegionId": "ural",
+      "note": "Part of the lunar-base assembly; primary district remains unspecified.",
+      "evidence": [
+        {
+          "sourceTitle": "061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "lines": [
+            53
+          ]
+        }
+      ]
+    },
+    {
+      "objectId": "O04",
+      "title": "Космонавт в скафандре",
+      "evidenceStatus": "unassigned",
+      "primaryProgrammeRegionId": null,
+      "workingPlacementRegionId": "ural",
+      "note": "Part of the lunar-base assembly; primary district remains unspecified.",
+      "evidence": [
+        {
+          "sourceTitle": "061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "lines": [
+            53
+          ]
+        }
+      ]
+    },
+    {
+      "objectId": "O05",
+      "title": "Самолёт МС-21",
+      "evidenceStatus": "confirmed",
+      "primaryProgrammeRegionId": "siberia",
+      "workingPlacementRegionId": "siberia",
+      "note": "MC-21 is explicitly labelled SFO; Irkutsk/Baikal is a corroborating programme link.",
+      "evidence": [
+        {
+          "sourceTitle": "061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "lines": [
+            47
+          ]
+        },
+        {
+          "sourceTitle": "056_Структура_экспозиции_по_регионам.md",
+          "lines": [
+            34
+          ]
+        }
+      ]
+    },
+    {
+      "objectId": "O06",
+      "title": "Макет плотины / ГЭС",
+      "evidenceStatus": "inferred",
+      "primaryProgrammeRegionId": "siberia",
+      "workingPlacementRegionId": "siberia",
+      "note": "The programme names Sayano-Shushenskaya HPP and Eastern Siberia; video mesh identity remains a generic dam, so district transfer is inferred for this model.",
+      "evidence": [
+        {
+          "sourceTitle": "003_1210_Проекты_для_Национального_центра_Россия_и.md",
+          "lines": [
+            79,
+            80
+          ]
+        },
+        {
+          "sourceTitle": "056_Структура_экспозиции_по_регионам.md",
+          "lines": [
+            33
+          ]
+        }
+      ]
+    },
+    {
+      "objectId": "O07",
+      "title": "Кит — синий обтекаемый вариант",
+      "evidenceStatus": "unassigned",
+      "primaryProgrammeRegionId": null,
+      "workingPlacementRegionId": "central-square",
+      "note": "Whale meshes have no confirmed geographic label in the consulted primary programme. Biological species are also unconfirmed in videoManifest.",
+      "evidence": []
+    },
+    {
+      "objectId": "O08",
+      "title": "Кит — крупный серый вариант",
+      "evidenceStatus": "unassigned",
+      "primaryProgrammeRegionId": null,
+      "workingPlacementRegionId": "central-square",
+      "note": "Whale meshes have no confirmed geographic label in the consulted primary programme. Biological species are also unconfirmed in videoManifest.",
+      "evidence": []
+    },
+    {
+      "objectId": "O09",
+      "title": "Ракета «Ангара-А5»",
+      "evidenceStatus": "confirmed",
+      "primaryProgrammeRegionId": "far-east",
+      "workingPlacementRegionId": "far-east",
+      "note": "Angara is explicitly labelled DFO; Vostochny corroborates this assignment.",
+      "evidence": [
+        {
+          "sourceTitle": "061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "lines": [
+            45
+          ]
+        },
+        {
+          "sourceTitle": "056_Структура_экспозиции_по_регионам.md",
+          "lines": [
+            32
+          ]
+        }
+      ]
+    },
+    {
+      "objectId": "O10",
+      "title": "Башня обслуживания ракеты",
+      "evidenceStatus": "inferred",
+      "primaryProgrammeRegionId": "far-east",
+      "workingPlacementRegionId": "far-east",
+      "note": "Service tower belongs to the same verified Angara scene group G05; district follows the rocket assembly.",
+      "evidence": [
+        {
+          "sourceTitle": "061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "lines": [
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "objectId": "O11",
+      "title": "Реакторный стенд с трубопроводами",
+      "evidenceStatus": "inferred",
+      "primaryProgrammeRegionId": "siberia",
+      "workingPlacementRegionId": "siberia",
+      "note": "Proryv is explicitly SFO and the programme names Seversk. The original generic reactor mesh did not independently establish that identity; retain this distinction.",
+      "evidence": [
+        {
+          "sourceTitle": "061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "lines": [
+            57
+          ]
+        },
+        {
+          "sourceTitle": "003_1210_Проекты_для_Национального_центра_Россия_и.md",
+          "lines": [
+            847,
+            864
+          ]
+        }
+      ]
+    },
+    {
+      "objectId": "O12",
+      "title": "Атомный ледокол «Лидер»",
+      "evidenceStatus": "confirmed",
+      "primaryProgrammeRegionId": "northwest",
+      "workingPlacementRegionId": "northwest",
+      "note": "Lider is explicitly SZFO; Arctic/Russian North corroborates the programme.",
+      "evidence": [
+        {
+          "sourceTitle": "061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "lines": [
+            51
+          ]
+        },
+        {
+          "sourceTitle": "056_Структура_экспозиции_по_регионам.md",
+          "lines": [
+            111
+          ]
+        }
+      ]
+    },
+    {
+      "objectId": "O13",
+      "title": "Красный комбайн с жаткой",
+      "evidenceStatus": "confirmed",
+      "primaryProgrammeRegionId": "volga",
+      "workingPlacementRegionId": "volga",
+      "note": "Autonomous agriculture, its combines and working grain elevator are explicitly PFO. Keep this exhibit-programme label even though Rostselmash appears geographically in South Russia in056.",
+      "evidence": [
+        {
+          "sourceTitle": "061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "lines": [
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "objectId": "O14",
+      "title": "Зелёный агродрон / мультикоптер",
+      "evidenceStatus": "confirmed",
+      "primaryProgrammeRegionId": "volga",
+      "workingPlacementRegionId": "volga",
+      "note": "Agricultural drones are part of the explicitly PFO autonomous-agriculture programme; four physical copies remain a video-derived proposed quantity.",
+      "evidence": [
+        {
+          "sourceTitle": "061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "lines": [
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "objectId": "O15",
+      "title": "Арочный металлический ферменный мост",
+      "evidenceStatus": "inferred",
+      "primaryProgrammeRegionId": "south",
+      "workingPlacementRegionId": "south",
+      "note": "The named Crimean Bridge programme belongs to South Russia, but the video-derived truss mesh does not by itself verify the real bridge identity.",
+      "evidence": [
+        {
+          "sourceTitle": "005_26.10. презентация_ для_Орешкина.md",
+          "lines": [
+            72,
+            74
+          ]
+        },
+        {
+          "sourceTitle": "056_Структура_экспозиции_по_регионам.md",
+          "lines": [
+            100
+          ]
+        }
+      ]
+    },
+    {
+      "objectId": "O16",
+      "title": "Херсонес · музейная аркада",
+      "evidenceStatus": "confirmed",
+      "primaryProgrammeRegionId": "south",
+      "workingPlacementRegionId": "south",
+      "note": "Current user/project identifies this museum arcade as Chersonesus; the named programme explicitly states YUFO. Original video-manifest prototype was unverified, which remains a model-fidelity limit.",
+      "evidence": [
+        {
+          "sourceTitle": "061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "lines": [
+            55
+          ]
+        },
+        {
+          "sourceTitle": "056_Структура_экспозиции_по_регионам.md",
+          "lines": [
+            100
+          ]
+        }
+      ]
+    }
+  ],
+  "placementNotes": [
+    "Привязки МС-21 к СФО, «Ангары» к ДФО, «Лидера» к СЗФО, агросцены к ПФО и Херсонеса к ЮФО прямо названы в061.",
+    "Идентичность имеющихся моделей ГЭС, реакторного стенда и моста конкретным прототипам не доказана; соответствующие связи помечены inferred.",
+    "Лунная группа временно размещена в УФО, киты — над общей центральной площадью. Первичная принадлежность этих моделей округам не установлена и остаётся unassigned."
+  ],
+  "priorityMissingObjects": [
+    {
+      "id": "missing-koch",
+      "title": "Полноразмерный поморский коч / карбас",
+      "evidenceStatus": "confirmed",
+      "implementationStatus": "not_implemented",
+      "reason": "Уменьшенные обобщённые парусники не закрывают этот экспонат и его пространственную экспозицию.",
+      "evidence": [
+        {
+          "sourceId": "rgo018",
+          "lines": [
+            202,
+            226
+          ]
+        }
+      ]
+    },
+    {
+      "id": "missing-nadezhda",
+      "title": "Трёхпалубная «Надежда» в разрезе",
+      "evidenceStatus": "confirmed",
+      "implementationStatus": "not_implemented",
+      "reason": "Нужна самостоятельная полноразмерная корабельная инсталляция с судовым бытом и связанной диорамой.",
+      "evidence": [
+        {
+          "sourceId": "rgo018",
+          "lines": [
+            260,
+            284
+          ]
+        }
+      ]
+    },
+    {
+      "id": "missing-ant25",
+      "title": "Подвесной самолёт АНТ-25 и полярная экспозиция",
+      "evidenceStatus": "confirmed",
+      "implementationStatus": "not_implemented",
+      "reason": "МС-21 относится к другой теме и не заменяет АНТ-25.",
+      "evidence": [
+        {
+          "sourceId": "rgo018",
+          "lines": [
+            378,
+            403
+          ]
+        }
+      ]
+    },
+    {
+      "id": "missing-consul",
+      "title": "Полноразмерный глубоководный аппарат «Консул»",
+      "evidenceStatus": "confirmed",
+      "implementationStatus": "not_implemented",
+      "reason": "Построенный «МИР» сохранён под своим именем; это не выполнение требования о «Консуле».",
+      "evidence": [
+        {
+          "sourceId": "rgo018",
+          "lines": [
+            435,
+            458
+          ]
+        }
+      ]
+    },
+    {
+      "id": "missing-oryol",
+      "title": "Корабль «Орёл», луноход и орбитальная станция РОС для зала РГО",
+      "evidenceStatus": "confirmed",
+      "implementationStatus": "not_implemented",
+      "reason": "Наличие внешней лунной группы и ракеты «Ангара» в других зонах не закрывает полный космический зал РГО.",
+      "evidence": [
+        {
+          "sourceId": "rgo018",
+          "lines": [
+            493,
+            517
+          ]
+        }
+      ]
+    },
+    {
+      "id": "missing-lider-programme",
+      "title": "Внутренние отсеки и кормовой вертолётный симулятор «Лидера»",
+      "evidenceStatus": "confirmed",
+      "implementationStatus": "not_implemented",
+      "reason": "Прозрачные жилые, технические и реакторные отсеки, кинетическая система и отдельный вертолётный интерактив ещё не построены; новая человеческая рубка выполнена отдельно.",
+      "evidence": [
+        {
+          "sourceId": "presentation005",
+          "lines": [
+            1114,
+            1123
+          ]
+        },
+        {
+          "sourceId": "figmaConcept",
+          "nodeId": "4462:291"
+        }
+      ]
+    },
+    {
+      "id": "missing-kizhi",
+      "title": "Вращающийся ансамбль «Кижи»",
+      "evidenceStatus": "confirmed",
+      "implementationStatus": "not_implemented",
+      "reason": "Отдельной модели ансамбля и сценария вращения в текущем составе нет.",
+      "evidence": [
+        {
+          "sourceId": "technology061",
+          "lines": [
+            61,
+            61
+          ]
+        }
+      ]
+    },
+    {
+      "id": "missing-rassvet",
+      "title": "Внутреннее шоу дронов «Рассвет»",
+      "evidenceStatus": "confirmed",
+      "implementationStatus": "not_implemented",
+      "reason": "Четыре агродрона в ПФО не заменяют отдельное постановочное шоу «Рассвет».",
+      "evidence": [
+        {
+          "sourceId": "technology061",
+          "lines": [
+            59,
+            59
+          ]
+        }
+      ]
+    }
+  ],
+  "otherUnfinishedProgramme": [
+    "«Таймыр», исторические речные суда, пакетботы, исследовательские суда, спутники и рельефные карты полной программы РГО.",
+    "Непрерывное медийное объяснение замкнутого топливного цикла у реакторного стенда.",
+    "Прозрачный медийный экран/контент комплекса «Ангара» и законченный сценарий запуска."
+  ],
+  "auditBasis": {
+    "method": "Сопоставление уже прочитанной первички с текущими файлами сцены и согласованным итогом расстановки.",
+    "newTestsRunForThisStatusFile": false,
+    "newRegulatoryClaimsAdded": false,
+    "publicationPerformedByThisAudit": false,
+    "note": "Готовность геометрии, готовность музейного содержания и наличие физического оборудования учитываются раздельно."
+  }
+}

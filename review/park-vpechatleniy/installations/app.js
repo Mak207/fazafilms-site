@@ -1,12 +1,13 @@
+import {createRgoOverview} from './rgo-overview.js?v=rgo-20261124';
 import {AREA, CONTENT_DEFAULTS, computeContentPlan} from './content-model.js?v=20261124-led-zones1';
 import {createParkPlan} from './visitor-plan.js?v=20261124-led-zones1';
 import {createScreenPlan} from './screen-plan.js?v=20261124-led-zones1';
 import {DEFAULT_SCREEN_INPUT,countsFromContentModel} from './engineering/screen-model.js';
 import {computeLedPlan,DEFAULT_LED_CONFIG} from './engineering/led-model.js?v=20261124-led-zones1';
-import {createInstallationQuestionnaire, getQuestionnaireCalculationInputs} from './questionnaire.js?v=20261124-led-zones1';
+import {createInstallationQuestionnaire, getQuestionnaireCalculationInputs} from './questionnaire.js?v=rgo-20261124';
 
 const mount = document.getElementById('park-installations');
-const VERSION = '24.11.2026 · редакция 3';
+const VERSION = '24.11.2026 · редакция 4 · РГО';
 const NF = (n,d=1) => n === null || n === undefined || !Number.isFinite(Number(n)) ? '—' : new Intl.NumberFormat('ru-RU',{maximumFractionDigits:d}).format(n);
 const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const colors = {hero:'#ffbd66',interactive:'#68b7ff',media:'#c4a0ff',objects:'#b7c3cb',common:'#55d4b0',navigation:'#ff91b6'};
@@ -74,6 +75,7 @@ const labels = Object.fromEntries(GROUPS.flatMap(g=>g.fields).map(f=>[f[0],f[1]]
 let input = {...CONTENT_DEFAULTS};
 let result;
 let dossier;
+let pendingDocumentSection = null;
 let engineeringTypes;
 let engineeringInputSnapshot={types:structuredClone(DEFAULT_SCREEN_INPUT.types),led:structuredClone(DEFAULT_LED_CONFIG)};
 let engineeringValid=true;
@@ -170,6 +172,8 @@ if(mount){
  };
  mount.querySelectorAll('[data-view],[data-go]').forEach(b=>b.addEventListener('click',()=>changeView(b.dataset.view||b.dataset.go)));
  const screenPlan=createScreenPlan($('#ic-screen-plan'),{onOpenEngineering:()=>changeView('engineering')});
+ const rgoOverview=createRgoOverview({mount,onOpenDocuments(){pendingDocumentSection='document-rgo-program-3d';changeView('documents');openPendingDocument();}});
+ function openPendingDocument(){if(!pendingDocumentSection)return;const section=$('#'+pendingDocumentSection);if(!section)return;section.open=true;pendingDocumentSection=null;if(view==='documents')section.scrollIntoView({behavior:'smooth',block:'start'});}
  const plan=createParkPlan($('#ic-plan'),{onSelectDistrict(index){selectedDistrict=index;updatePlan();}});
  const questionnaire=createInstallationQuestionnaire($('#ic-questionnaire-root'),{initialValues:{},sourceQuestionIds:['Q01','Q02','Q03','Q04','Q05','Q06','Q07','Q08','Q09','Q10','Q11'],onApply(state){
   const answered=getQuestionnaireCalculationInputs(state);
@@ -230,7 +234,7 @@ if(mount){
   $('#ic-register').innerHTML=tableHtml();
   const delta=c.physicalSurfaces-baseCounts.physicalSurfaces;
   $('#ic-change-summary').innerHTML=`<div><strong>${NF(c.physicalSurfaces,0)}</strong><span>экранных поверхностей</span></div><div><strong>${NF(c.interactiveStations,0)}</strong><span>интерактивных станций</span></div><p>${delta===0?'Как в исходном предложении':(delta>0?'+':'')+NF(delta,0)+' поверхностей к исходному предложению'}. <button type="button" data-result-plan>Показать на плане</button></p>`;
-  $('#ic-change-summary [data-result-plan]').addEventListener('click',()=>changeView('overview'));
+  $('#ic-change-summary [data-result-plan]').addEventListener('click',()=>{rgoOverview.setProgram('park');changeView('overview');});
   $('#ic-flow-facts').innerHTML=[[NF(f.totalOccupancy),'людей одновременно'],[f.groupLaunchIntervalMinutes===null?'—':NF(f.groupLaunchIntervalMinutes)+' мин','между запусками групп'],[NF(cap.demandPerPointPerHour),'участий в час у точки']].map(([v,l])=>`<div><strong>${v}</strong><span>${l}</span></div>`).join('');
   set('#ic-stations-badge',`${NF(cap.requiredStationsPerPoint,0)} станции на точку`);
   const max=Math.max(cap.demandPerPointPerHour,cap.sustainablePerPointPerHour,1);
@@ -261,7 +265,7 @@ if(mount){
  function download(content,name,type){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
  function rich(s){return esc(s).replace(/\[(S\d+)\]/g,(_,id)=>`<a class="ic-citation" href="#source-${id}" data-source="${id}">[${id}]</a>`);}
  function block(b){if(b.type==='table')return `<div class="ic-table-scroll" tabindex="0"><table><thead><tr>${b.headers.map(h=>`<th>${rich(h)}</th>`).join('')}</tr></thead><tbody>${b.rows.map(row=>`<tr>${row.map((v,i)=>`<${i?'td':'th'}>${rich(v)}</${i?'td':'th'}>`).join('')}</tr>`).join('')}</tbody></table></div>`;if(b.type==='list')return `<ul>${b.items.map(t=>`<li>${rich(t)}</li>`).join('')}</ul>`;if(b.type==='heading')return `<h4>${rich(b.text)}</h4>`;return `<p>${rich(b.text)}</p>`;}
- async function loadDossier(){try{const response=await fetch('./installations/dossier.json?v=20261124-led-zones1');if(!response.ok)throw Error();dossier=await response.json();if(dossier.regions?.length===8)regions=dossier.regions.map(r=>r.name);$('#ic-dossier').innerHTML=dossier.sections.map(s=>`<details class="ic-document-section" id="document-${esc(s.id)}"><summary>${esc(s.title)}<span aria-hidden="true">+</span></summary><div class="ic-prose">${s.lead?`<p class="ic-lead">${rich(s.lead)}</p>`:''}${s.blocks.map(block).join('')}</div></details>`).join('')+`<details class="ic-document-section" id="ic-sources"><summary>Реестр источников<span aria-hidden="true">+</span></summary><div class="ic-prose ic-source-list">${dossier.sources.map(s=>`<article id="source-${esc(s.id)}"><h4>[${esc(s.id)}] ${esc(s.title)}</h4><p>${esc(s.locator||'')}${s.note?' · '+esc(s.note):''}</p>${s.url&&/^https:\/\//.test(s.url)?`<a href="${esc(s.url)}" target="_blank" rel="noopener">Открыть источник</a>`:''}</article>`).join('')}</div></details>`;$('#ic-dossier').setAttribute('aria-busy','false');updatePlan();}catch{$('#ic-dossier').innerHTML='<p class="ic-warning">Не удалось загрузить текст. Сохранённые PDF и Word доступны ниже в архиве предыдущей редакции.</p>';$('#ic-dossier').setAttribute('aria-busy','false');}}
+ async function loadDossier(){try{const response=await fetch('./installations/dossier.json?v=rgo-20261124');if(!response.ok)throw Error();dossier=await response.json();if(dossier.regions?.length===8)regions=dossier.regions.map(r=>r.name);$('#ic-dossier').innerHTML=dossier.sections.map(s=>`<details class="ic-document-section" id="document-${esc(s.id)}"><summary>${esc(s.title)}<span aria-hidden="true">+</span></summary><div class="ic-prose">${s.lead?`<p class="ic-lead">${rich(s.lead)}</p>`:''}${s.blocks.map(block).join('')}</div></details>`).join('')+`<details class="ic-document-section" id="ic-sources"><summary>Реестр источников<span aria-hidden="true">+</span></summary><div class="ic-prose ic-source-list">${dossier.sources.map(s=>`<article id="source-${esc(s.id)}"><h4>[${esc(s.id)}] ${esc(s.title)}</h4><p>${esc(s.locator||'')}${s.note?' · '+esc(s.note):''}</p>${s.url&&/^https:\/\//.test(s.url)?`<a href="${esc(s.url)}" target="_blank" rel="noopener">Открыть источник</a>`:''}</article>`).join('')}</div></details>`;$('#ic-dossier').setAttribute('aria-busy','false');updatePlan();openPendingDocument();}catch{$('#ic-dossier').innerHTML='<p class="ic-warning">Не удалось загрузить текст. Сохранённые PDF и Word доступны ниже в архиве предыдущей редакции.</p>';$('#ic-dossier').setAttribute('aria-busy','false');}}
  $('#ic-dossier').addEventListener('click',e=>{const link=e.target.closest('[data-source]');if(!link)return;e.preventDefault();$('#ic-sources').open=true;document.getElementById('source-'+link.dataset.source)?.scrollIntoView({behavior:'smooth',block:'center'});});
  $('#ic-expand').addEventListener('click',()=>{const items=[...$('#ic-dossier').querySelectorAll('details')];const open=items.some(d=>!d.open);items.forEach(d=>d.open=open);set('#ic-expand',open?'Свернуть разделы':'Раскрыть разделы');});
  syncControls();render();loadDossier();

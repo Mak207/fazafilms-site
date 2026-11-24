@@ -1,0 +1,26 @@
+#park-installations .ic-map-programs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+#park-installations .ic-map-programs button{min-height:44px;font-size:14px;border-radius:8px;background:#17242b;border-color:#607585;color:#dce9f0}
+#park-installations .ic-map-programs button[aria-pressed=true]{background:#d0e8ff;color:#102334;border-color:#b4d8fb;font-weight:600}
+#park-installations .ic-map-programs>span{font-size:13px;color:#b4c5bb;margin-left:8px}
+#park-installations[data-section="overview"][data-plan-program="rgo"] #ic-screen-plan,
+#park-installations[data-section="overview"][data-plan-program="rgo"] .ic-after-plan,
+#park-installations[data-section="overview"][data-plan-program="rgo"] .ic-composition,
+#park-installations[data-section="overview"][data-plan-program="rgo"] #ic-scenario-note,
+#park-installations[data-section="overview"][data-plan-program="rgo"] #ic-scenario-issues,
+#park-installations[data-section="overview"][data-plan-program="rgo"] #ic-live,
+#park-installations[data-section="overview"][data-plan-program="rgo"] #ic-errors{display:none!important}
+#park-installations .ic-rgo-overview{border:1px solid #516b7c;border-radius:12px;background:#101d25;overflow:hidden}
+#park-installations .ic-rgo-map-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 20px}
+#park-installations .ic-rgo-map-heading h3{font-size:22px;margin:0 0 7px;color:#e7f2fb}
+#park-installations .ic-rgo-map-heading p{font-size:14px;line-height:1.5;color:#b8cbd8;margin:0;max-width:720px}
+#park-installations .ic-rgo-open{flex:none;display:inline-block;border:1px solid #829bb0;border-radius:7px;padding:11px 14px;font-size:14px;color:#d4ebff;text-decoration:none}
+#park-installations #ic-rgo-frame{display:block;width:100%;height:780px;max-height:90vh;min-height:600px;border:0;background:#10141c}
+#park-installations .ic-rgo-summary{padding:22px 20px}
+#park-installations .ic-rgo-led{display:flex;flex-wrap:wrap;gap:8px 24px;font-size:15px;line-height:1.6;color:#d5e6f4}
+#park-installations .ic-rgo-led span{color:#b9ccd9}
+#park-installations .ic-rgo-summary .ic-note{margin:12px 0 18px}
+#park-installations .ic-rgo-summary .ic-kpi{background:#172630;border-color:#4d6576}
+#park-installations .ic-rgo-actions{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:18px;font-size:14px}
+#park-installations .ic-rgo-actions a{color:#c1e2ff}
+@media(max-width:800px){#park-installations .ic-rgo-map-heading{display:block;padding:16px}#park-installations .ic-rgo-open{margin-top:12px}#park-installations #ic-rgo-frame{height:740px;max-height:none;min-height:0}#park-installations .ic-rgo-summary{padding:18px 14px}#park-installations .ic-map-programs>span{flex-basis:100%;margin:2px 0 0}}
+@media(max-width:450px){#park-installations .ic-map-programs button{font-size:13px;padding:9px 11px}#park-installations .ic-rgo-map-heading h3{font-size:20px}#park-installations .ic-rgo-summary .ic-kpis{grid-template-columns:1fr}#park-installations .ic-rgo-summary .ic-kpi{display:grid;grid-template-columns:60px 1fr;gap:3px 12px;padding:12px}#park-installations .ic-rgo-summary .ic-kpi strong{grid-row:1/3;align-self:center}#park-installations .ic-rgo-summary .ic-kpi span,#park-installations .ic-rgo-summary .ic-kpi small{margin:0}#park-installations .ic-rgo-actions button{width:100%}}

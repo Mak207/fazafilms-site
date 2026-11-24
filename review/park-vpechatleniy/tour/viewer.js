@@ -16,6 +16,7 @@ import { attachIcebreakerDetails } from './icebreaker-details.js?v=park-zones-20
 import { createIcebreakerAccess, ICEBREAKER_OPENING } from './icebreaker-access.js?v=park-zones-20261124';
 import { applyWorkingOpenings } from './cad-openings.js?v=park-zones-20261124';
 import { initViewerUI } from './ui-module.js?v=park-zones-20261124';
+import { createRgoZones } from './rgo-zones.js?v=park-zones-20261124';
 import { MeshBVH, acceleratedRaycast, CENTER } from './vendor/three-mesh-bvh/index.module.js';
 
 const $ = id => document.getElementById(id);
@@ -41,6 +42,8 @@ $('exhibit-quality').onchange=()=>{
 };
 Object.defineProperty(diagnostics,'camera',{get:()=>({position:camera.position.toArray(),target:controls?.target.toArray(),fov:camera.fov,aspect:camera.aspect,near:camera.near,far:camera.far})});
 let renderer, controls, model, bounds, size, center, crowd;
+let rgoZones=null,rgoSectionBackup=null;
+Object.defineProperty(diagnostics,'rgo',{enumerable:true,get:()=>rgoZones?.getState()||{ready:false}});
 let captureMode=false;
 let sourceMaterials=[],sourceMeshes=[],envelopeMeshes=[],roofMeshes=[];
 const crowdMaterials=[];
@@ -188,7 +191,7 @@ try {
       needsRender=true;
       const monorailReady=startMonorail(loader);
       const exhibitsReady=startExhibits(loader,monorailReady);
-      Promise.allSettled([monorailReady,exhibitsReady]).then(()=>startVisitors(loader));
+      Promise.allSettled([monorailReady,exhibitsReady]).then(async()=>{await startRgoLayer();return startVisitors(loader);});
     }catch(error){fail(error);}
   },event=>{
     if(event.lengthComputable&&event.total){const percent=Math.min(99,Math.round(event.loaded/event.total*100));progress.style.width=percent+'%';detail.textContent=percent===99?'Подготавливаем геометрию…':'Загружено '+percent+'%';}
@@ -258,6 +261,7 @@ function moveCamera(position,target,instant=false){
 }
 function setView(view,instant=false){
   if(!model)return;
+  leaveRgoView();
   exhibitEditor?.clearSelection();editingInstanceId=null;
   clearExhibitInspection();stopFollowing();
   camera.fov=43;camera.updateProjectionMatrix();
@@ -302,7 +306,7 @@ function updateSection(){
 }
 root.querySelectorAll('[data-view],#section-toggle,#reset,#envelope-toggle').forEach(button=>button.disabled=true);
 document.querySelectorAll('[data-view]').forEach(button=>button.onclick=()=>setView(button.dataset.view));
-$('reset').onclick=()=>{sectionOn=true;$('section-height').value=String(DEFAULT_BUILDING_CUT);$('section-toggle').setAttribute('aria-pressed','true');$('section-controls').hidden=false;setHallOpen(true);updateSection();setView(exhibits?.roots.length?'exhibits':monorail?'route':'overview');};
+$('reset').onclick=()=>{leaveRgoView();sectionOn=true;$('section-height').value=String(DEFAULT_BUILDING_CUT);$('section-toggle').setAttribute('aria-pressed','true');$('section-controls').hidden=false;setHallOpen(true);updateSection();setView(exhibits?.roots.length?'exhibits':monorail?'route':'overview');};
 $('section-toggle').onclick=()=>{sectionOn=!sectionOn;$('section-toggle').setAttribute('aria-pressed',String(sectionOn));$('section-controls').hidden=!sectionOn;updateSection();};
 $('section-height').addEventListener('input',updateSection);
 function showHelp(show){$('help').hidden=!show;$('help-toggle').setAttribute('aria-expanded',String(show));}
@@ -376,6 +380,7 @@ function updatePassengerCamera(){
 function setPassengerView(index=0){
   if(!monorail||!monorail.vehicles[index])return false;
   if(onboardVehicle!==index&&!monorail.getBoardingOptions().some(option=>option.canBoard&&option.vehicleIndex===index))return false;
+  leaveRgoView();
   crowd?.releaseCamera();
   exhibitEditor?.clearSelection();editingInstanceId=null;
   clearExhibitInspection();
@@ -414,6 +419,7 @@ canvas.addEventListener('pointermove',event=>{
 for(const type of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(type,event=>{passengerPointers.delete(event.pointerId);pinchDistance=0;});
 canvas.addEventListener('wheel',event=>{if(onboardVehicle<0)return;event.preventDefault();camera.fov=THREE.MathUtils.clamp(camera.fov+event.deltaY*.025,45,85);camera.updateProjectionMatrix();needsRender=true;},{passive:false});
 function setFreeView(){
+  leaveRgoView();
   clearExhibitInspection();stopFollowing();currentView=null;transition=null;$('tram-camera').value='free';
   $('view-name').textContent='Свободный обзор';diagnostics.view='free';
   document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));
@@ -471,6 +477,7 @@ $('tram-play').onclick=()=>{if(monorail){monorail.setPlaying(!monorail.getState(
 $('tram-speed').onchange=()=>{if(monorail)monorail.setSpeed(Number($('tram-speed').value));};
 $('tram-onboard').onclick=()=>{if(!monorail)return;if(onboardVehicle>=0){monorail.requestDisembark(onboardVehicle);stationControls?.update();}else{const option=monorail.getBoardingOptions().find(row=>row.canBoard);if(option)setPassengerView(option.vehicleIndex);}};
 function focusTramStation(pose){
+  leaveRgoView();
   exhibitEditor?.clearSelection();editingInstanceId=null;clearExhibitInspection();stopFollowing();
   exhibitionZones?.hidePanel();zoneMap?.setVisible(false);
   currentView=null;transition=null;setHallOpen(true);$('tram-camera').value='free';
@@ -527,6 +534,7 @@ async function startExhibits(loader,monorailReady){
     }
     exhibitionZones=await createExhibitionZones({exhibits,loader,camera,getIcebreakerAccess:()=>icebreakerAccess,onStationFocus:id=>{const focused=stationControls?.focusStation(id);if(focused)viewerUI.openPanel('monorail-panel');return focused;},requestRender:()=>{needsRender=true;},
       onOverview:()=>{zoneMap?.setVisible(true);setView('exhibits');},onFocus:(id,position,target,label,fov=62)=>{
+        leaveRgoView();
         zoneMap?.setVisible(false);viewerUI.closePanels();
         exhibitEditor?.clearSelection();editingInstanceId=null;clearExhibitInspection();stopFollowing();
         setHallOpen(true);exhibits.setVisible(true);currentView=null;
@@ -535,6 +543,7 @@ async function startExhibits(loader,monorailReady){
         $('view-name').textContent=label;diagnostics.selectedExhibit=id;diagnostics.view='section';
       }});
     zoneMap=await createZoneMap({scene,requestRender:()=>{needsRender=true;},onFocus:(position,target,label)=>{
+      leaveRgoView();
       exhibitEditor?.clearSelection();editingInstanceId=null;clearExhibitInspection();stopFollowing();
       setHallOpen(true);exhibits.setVisible(true);currentView=null;
       exhibitionZones.hidePanel();moveCamera(position,target);
@@ -710,6 +719,7 @@ function applyInspectionCutaway(origin){
 }
 function focusExhibit(id,instant=false){
   if(!exhibits||!inspectionReady)return;
+  leaveRgoView();
   if(id==='all'){setView('exhibits');return;}
   const box=exhibits.getBounds(id);if(!box||box.isEmpty())return;
   stopFollowing();$('tram-camera').value='free';currentView=null;setHallOpen(true);exhibits.setVisible(true);
@@ -721,6 +731,7 @@ function focusExhibit(id,instant=false){
 }
 
 function beginExhibitEdit(id){
+  if(id)leaveRgoView();
   if(!exhibitEditor&&id===null){clearExhibitInspection();return;}
   stopFollowing();transition=null;currentView=null;
   clearExhibitInspection();editingInstanceId=id||null;
@@ -739,7 +750,7 @@ function endExhibitEdit(id){
   needsRender=true;
 }
 function exhibitEditorChanged(){
-  icebreakerAccess?.update();
+  icebreakerAccess?.update();rgoZones?.refresh();
   needsRender=true;
   if(!editingInstanceId||editCutawayTimer)return;
   editCutawayTimer=setTimeout(()=>{
@@ -758,6 +769,50 @@ $('exhibit-visible').onclick=()=>{
   if(result?.ok===false){$('scene-notice').textContent=result.error;$('scene-notice').hidden=false;}
 };
 
+function leaveRgoView(){
+  if(!rgoZones?.getState().activeView&&!rgoSectionBackup)return;
+  rgoZones?.deactivate();
+  if(rgoSectionBackup){
+    sectionOn=rgoSectionBackup.enabled;$('section-height').value=String(rgoSectionBackup.height);
+    $('section-toggle').setAttribute('aria-pressed',String(sectionOn));$('section-controls').hidden=!sectionOn;
+    rgoSectionBackup=null;updateSection();
+  }
+  const url=new URL(location.href);if(url.searchParams.has('rgo')){url.searchParams.delete('rgo');history.replaceState(null,'',url);}
+}
+function navigateRgo({box,direction,label},instant=false){
+  if(!model||!controls)return;
+  zoneMap?.setVisible(false);exhibitionZones?.hidePanel();
+  exhibitEditor?.clearSelection();editingInstanceId=null;clearExhibitInspection();stopFollowing();currentView=null;transition=null;
+  if(!rgoSectionBackup)rgoSectionBackup={enabled:sectionOn,height:Number($('section-height').value)};
+  sectionOn=true;$('section-height').value='10.8';$('section-toggle').setAttribute('aria-pressed','true');$('section-controls').hidden=false;
+  setHallOpen(true);updateSection();$('tram-camera').value='free';
+  const fitted=fitBox(box,direction);moveCamera(fitted.position,fitted.target,instant);
+  document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));
+  $('view-name').textContent=label;diagnostics.view='rgo';
+  if(matchMedia('(max-width: 600px)').matches)viewerUI.closePanels({focusCanvas:true});
+  needsRender=true;
+}
+async function startRgoLayer(){
+  try{
+    rgoZones=await createRgoZones({THREE,scene,canvas,camera,panel:$('rgo-panel'),existingLayoutRevised:true,
+      onNavigate:request=>navigateRgo(request),onOverview:()=>setView('overview'),requestRender:()=>{needsRender=true;},
+      getExhibitRoot:id=>exhibits?.getInstanceRoot(id)||null,
+      getExistingObstacles:()=>[...(dynamicObstacles?.snapshot().proxies||[]),...(monorail?.getCollisionObstacles()||[])]
+    });
+    $('rgo-toggle').disabled=false;
+    $('rgo-toggle').addEventListener('click',()=>{if(!$('rgo-panel').hidden&&!rgoZones.getState().activeView)rgoZones.showOverview();});
+    const choice=new URLSearchParams(location.search).get('rgo');
+    if(choice==='all'||/^0[0-8]$/.test(choice||'')){
+      if(choice==='all')rgoZones.showOverview({writeUrl:false});else rgoZones.selectHall('RGO-'+choice,{writeUrl:false});
+      if(!matchMedia('(max-width: 600px)').matches)viewerUI.openPanel('rgo-panel');
+    }else rgoZones.setVisible(false);
+  }catch(error){
+    diagnostics.errors.push('RGO: '+(error?.message||String(error)));
+    $('rgo-toggle').disabled=false;const message=document.createElement('p');message.className='rgo-load-error';
+    message.textContent='Не удалось загрузить проектный слой РГО. Обновите страницу, чтобы повторить.';$('rgo-panel').querySelector('.rgo-content').replaceChildren(message);
+  }
+}
+
 async function startVisitors(loader){
   try{
     crowd=await startParkCrowd({THREE,scene,model,loader,camera,controls,
@@ -768,7 +823,7 @@ async function startVisitors(loader){
           const binding=dynamicObstacles.bindSimulation(sim);
           if(!binding.ok)throw new Error(binding.error||'Не удалось проверить исходную расстановку.');
         }
-        const restored=exhibitEditor?.restoreSavedLayout();
+        const restored=exhibitEditor?.restoreSavedLayout();rgoZones?.refresh();
         diagnostics.layoutRestore=restored||{ok:true,restored:false};
         if(restored&&!restored.ok){
           $('scene-notice').textContent=restored.error;$('scene-notice').hidden=false;
@@ -788,6 +843,7 @@ async function startVisitors(loader){
         $('section-controls').hidden=true;updateSection();
       },
       setCamera(position,target,label,instant=false){
+        leaveRgoView();
         exhibitEditor?.clearSelection();editingInstanceId=null;
         clearExhibitInspection();stopFollowing();currentView=null;transition=null;$('tram-camera').value='free';
         setHallOpen(true);moveCamera(position,target,instant);
@@ -827,4 +883,3 @@ async function startVisitors(loader){
     visitorPlacementReady=true;exhibitEditor?.setEnabled(true);
   }
 }
-
