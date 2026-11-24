@@ -1,0 +1,62 @@
+{
+  "title": "Кто отвечает за целое",
+  "preview": false,
+  "text_only": true,
+  "has_audio": false,
+  "chapters": [
+    {
+      "title": "О чём говорили на совещании",
+      "start_seconds": 0,
+      "duration_seconds": 89.625,
+      "scene_id": "01"
+    },
+    {
+      "title": "Три проверки — разные полномочия",
+      "start_seconds": 89.625,
+      "duration_seconds": 69.542,
+      "scene_id": "02"
+    },
+    {
+      "title": "Обсуждение должно стать решением",
+      "start_seconds": 159.167,
+      "duration_seconds": 51.042,
+      "scene_id": "03"
+    },
+    {
+      "title": "Договариваемся о передаче результата",
+      "start_seconds": 210.208,
+      "duration_seconds": 52.25,
+      "scene_id": "04"
+    },
+    {
+      "title": "Работа связана через готовые входы",
+      "start_seconds": 262.458,
+      "duration_seconds": 55.875,
+      "scene_id": "05"
+    },
+    {
+      "title": "Одна правка меняет несколько работ",
+      "start_seconds": 318.333,
+      "duration_seconds": 53.583,
+      "scene_id": "06"
+    },
+    {
+      "title": "Кто сдаёт общую цифровую систему",
+      "start_seconds": 371.917,
+      "duration_seconds": 45.583,
+      "scene_id": "07"
+    },
+    {
+      "title": "Готовность глазами посетителя",
+      "start_seconds": 417.5,
+      "duration_seconds": 62.625,
+      "scene_id": "08"
+    },
+    {
+      "title": "Начнём с одного пилотного пакета",
+      "start_seconds": 480.125,
+      "duration_seconds": 72.083,
+      "scene_id": "09"
+    }
+  ]
+}
