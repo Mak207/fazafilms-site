@@ -3,6 +3,7 @@ import { ParkWorld } from './world.js';
 import { StairController, ElevatorController } from './transitions.js';
 import { setPopulation as resizePopulation, localItinerary } from './population.js';
 import { updateObstacles as replaceObstacles, inTransitionCorridor as corridorContains } from './dynamic-world.js';
+import { SocialController } from './social.js?v=social-20261124';
 
 const copy = p => ({ x: p.x, y: p.y, z: p.z });
 const verticalOverlap = (a, pa, b, pb) => pa.y < pb.y + b.height - EPS && pb.y < pa.y + a.height - EPS;
@@ -23,6 +24,7 @@ export class CrowdSimulation {
     this.elevators = new Map([...this.world.elevators].map(([id, def]) => [id, new ElevatorController(def, this)]));
     this.controllers = [...this.stairs.values(), ...this.elevators.values()];
     this.metrics = { steps: 0, neighbourChecks: 0, collisionStops: 0, routePlans: 0, maxElevatorOccupancy: 0 };
+    if (options.social) this.enableSocial(options.social === true ? {} : options.social);
   }
   emit(type, data = {}) {
     const event = { tick: this.tick, time: this.time, type, ...data };
@@ -48,9 +50,11 @@ export class CrowdSimulation {
       autoWander: !!definition.autoWander, wanderAfter: 0,
       progressPosition: copy(position), progressTime: this.time, walkSince: this.time, escapeRetryAt: 0,
       dwellSeconds: definition.dwellSeconds, idleUntil: Infinity, goal: null, pendingDestination: null,
+      social: null, socialHold: false, socialSpeedFactor: 1,
       reservation: null, queuePath: null, queueReady: false, blockedSeconds: 0, routeRevision: this.world.revision
     };
     this.agents.set(id, agent); this.order.push(agent); this.occupancy.insert(agent); this.maxRadius = Math.max(this.maxRadius, radius);
+    this.social?.populationChanged(id);
     if (definition.destination || agent.itinerary.length) {
       const target = definition.destination || agent.itinerary[0];
       if (definition.deferDestination) { agent.goal = target; agent.pendingDestination = target; agent.activity = 'route_pending'; }
@@ -70,6 +74,7 @@ export class CrowdSimulation {
       for (const crossing of this.world.crossings.values()) crossing.allowedExitIds?.delete(id);
     }
     this.order = this.order.filter(agent => !remove.has(agent.id));
+    this.social?.removeAgents(remove);
     this.goalCursor %= Math.max(1, this.order.length); return [...remove];
   }
   spawnClear(floorId, position, radius, height) {
@@ -78,7 +83,9 @@ export class CrowdSimulation {
       && this.world.pointAllowed(floorId, position, radius)
       && this.occupancy.query(position, radius + this.maxRadius + this.contactMargin).every(other => !verticalOverlap({ height }, position, other, other.position) || distanceXZ(position, other.position) >= radius + other.radius + this.contactMargin - EPS);
   }
-  setPopulation(target, options) { return resizePopulation(this, target, options); }
+  setPopulation(target, options) { const result = resizePopulation(this, target, options); this.social?.syncPopulation(); return result; }
+  enableSocial(options = {}) { if (!this.social) this.social = new SocialController(this, options); return this.social; }
+  setSocialExhibits(records) { return this.enableSocial().setExhibits(records); }
   updateObstacles(proxies, options) { return replaceObstacles(this, proxies, options); }
   inTransitionCorridor(position, radius, height) { return corridorContains(this, position, radius, height); }
   addElevator(definition) { const elevator = this.world.addElevator(definition); const controller = new ElevatorController(elevator, this); this.elevators.set(elevator.id, controller); this.controllers.push(controller); this.transitionCorridors = null; return controller; }
@@ -192,7 +199,7 @@ export class CrowdSimulation {
         }
         plans++;
       }
-      else if (agent.activity === 'idle' && agent.itinerary.length && this.time >= agent.idleUntil) {
+      else if (agent.activity === 'idle' && !agent.socialHold && agent.itinerary.length && this.time >= agent.idleUntil) {
         const next = agent.itineraryIndex + 1;
         if (next < agent.itinerary.length || agent.repeat) { agent.itineraryIndex = next % agent.itinerary.length; this.setDestination(agent.id, agent.itinerary[agent.itineraryIndex]); plans++; }
         else agent.idleUntil = Infinity;
@@ -261,7 +268,7 @@ export class CrowdSimulation {
       // doorway. Actual boarding/ascending still traverses the complete path.
       this.finishSegment(agent); return { position: copy(agent.position), movable: false, walking: false };
     }
-    let speed = Math.min(agent.maxSpeed, Math.sqrt(2 * agent.acceleration * distance));
+    let speed = Math.min(agent.maxSpeed * (path.queueKind ? 1 : agent.socialSpeedFactor || 1), Math.sqrt(2 * agent.acceleration * distance));
     let vx = dx / (distance || 1) * speed, vz = dz / (distance || 1) * speed;
     const desired = { x: vx, z: vz };
     const near = this.hash.query(agent.position, 1.7 + agent.radius);
@@ -401,6 +408,7 @@ export class CrowdSimulation {
     const dt = this.fixedStep; this.tick++; this.time = this.tick * dt; this.metrics.steps++;
     const oldPositions = new Map();
     for (const a of this.order) { a.previousPosition = copy(a.position); oldPositions.set(a.id, copy(a.position)); }
+    this.social?.tick(dt);
     this.updateCrossings(); this.serviceGoals();
     for (const controller of this.stairs.values()) controller.update(dt);
     for (const controller of this.elevators.values()) { controller.update(dt); this.metrics.maxElevatorOccupancy = Math.max(this.metrics.maxElevatorOccupancy, controller.passengers.size); }
@@ -450,7 +458,8 @@ export class CrowdSimulation {
     const a = typeof agentOrId === 'object' ? agentOrId : this.agents.get(String(agentOrId));
     return { id: a.id, position: copy(a.position), previousPosition: copy(a.previousPosition), floorId: a.floorId, yaw: a.yaw, speed: a.speed, activity: a.activity,
       gaitPhase: ((a.gaitCycles % 1) + 1) % 1, gaitCycles: a.gaitCycles, strideMeters: a.strideMeters, locomotionDistance: a.locomotionDistance,
-      animationTime: a.animationTime, transitionId: a.transit?.transitionId || a.elevatorId || null, destinationId: a.route?.target?.id || null };
+      animationTime: a.animationTime, transitionId: a.transit?.transitionId || a.elevatorId || null, destinationId: a.route?.target?.id || null,
+      social: a.social ? { ...a.social, lookAt: a.social.lookAt ? copy(a.social.lookAt) : null } : null };
   }
   snapshot() { return { time: this.time, tick: this.tick, agents: this.order.map(a => this.agentSnapshot(a)), stairs: [...this.stairs.values()].map(s => s.snapshot()), elevators: [...this.elevators.values()].map(e => e.snapshot()), crossings: [...this.world.crossings.values()].map(c => ({ id: c.id, state: c.state, readyForTram: c.state === 'closed' })), metrics: { ...this.metrics } }; }
 }

@@ -210,7 +210,8 @@ export function createDynamicObstacleAdapter({ exhibits, onChange = () => {} }) 
       const visible = next ? next.visible : root.visible && root.userData.editorVisible !== false;
       if (!visible || !root.parent) continue;
       proxies.push(boxToObstacle(localBounds(root), candidateMatrix(root, next), {
-        id, kind: 'exhibit', objectId: root.userData.exhibitId, floating: Boolean(root.userData.floating),
+        id, kind: 'exhibit', objectId: root.userData.exhibitId, name: root.userData.exhibitName || id,
+        floating: Boolean(root.userData.floating),
       }));
     }
     proxies.sort((a, b) => a.id.localeCompare(b.id));

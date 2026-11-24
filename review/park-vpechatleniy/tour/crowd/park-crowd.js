@@ -1,21 +1,22 @@
 import { clone as cloneSkeleton } from '/golden-ring/interactives/vendor/three-0.180/SkeletonUtils.js';
-import { ParkWorld, CrowdSimulation } from './engine/index.js';
-import { createAvatarFactory } from './avatars/crowd_factory.js';
-import { createCrowdRenderer } from './avatars/crowd-renderer.js';
+import { ParkWorld, CrowdSimulation } from './engine/index.js?v=social-20261124';
+import { createAvatarFactory } from './avatars/crowd_factory.js?v=social-20261124';
+import { createCrowdRenderer } from './avatars/crowd-renderer.js?v=social-20261124';
 import { createElevatorVisuals } from './elevator_visuals.js';
 import { createCapacityLink } from './capacity.js';
-import { normalizeFixedObstacles } from './dynamic-obstacles.js?v=park-compact-20261124';
+import { normalizeFixedObstacles } from './dynamic-obstacles.js?v=park-social-compact-20261124';
+import { createSocialExhibitTargets, SOCIAL_EXHIBIT_VERSION } from './social-exhibits.js?v=social-20261124';
 
 const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve));
 const getJSON = async url => { const r=await fetch(url);if(!r.ok)throw new Error(r.status+': '+url);return r.json(); };
 const formatCount = value => Math.round(value).toLocaleString('ru-RU');
 
 /** One measured world and one renderer; population and layout can change live. */
-export async function startParkCrowd({THREE,scene,model,loader,camera,controls,registerMaterial,setSection,setCamera,requestRender,exhibitObstacles,fixedObstacles}) {
+export async function startParkCrowd({THREE,scene,model,loader,camera,controls,registerMaterial,setSection,setCamera,requestRender,exhibitObstacles,fixedObstacles,onWorldReady}) {
   const $=id=>document.getElementById(id),panel=$('crowd-panel'),countInput=$('crowd-count'),quantityRange=$('crowd-quantity-range');
-  const diagnostics=window.__parkCrowd={state:'loading',count:0,requested:100,maxCount:0,errors:[],version:'2026-11-24.dynamic'};
+  const diagnostics=window.__parkCrowd={state:'loading',count:0,requested:100,maxCount:0,errors:[],version:'2026-11-24.social'};
   let paused=false,speed=1,follow=null,lastUI=-Infinity,disposed=false,routeVisible=false;
-  let factory,crowdRenderer,capacityLink,elevatorVisuals,group,handles=new Map(),api;
+  let factory,crowdRenderer,capacityLink,elevatorVisuals,socialController,socialTargets,group,handles=new Map(),api;
   let targetCount=100,capacity=null,capacityInvalid=false,populationResult=null,populationLimited=false,nextSpawnRetry=0;
   let routeLines,routeMaterial,lastRoutes=-Infinity,selectionIndex=0;
   const setStatus=text=>{$('crowd-status').textContent=text;};
@@ -64,6 +65,18 @@ export async function startParkCrowd({THREE,scene,model,loader,camera,controls,r
       const details=(checked.conflicts||[]).slice(0,3).map(conflict=>conflict.message||[conflict.obstacleId,conflict.transitionId].filter(Boolean).join(' / ')).filter(Boolean).join('; ');
       throw new Error('Расстановка не прошла проверку: '+checked.reason+(details?' — '+details:''));
     }
+    // The editor restores its saved layout through the live guard while the
+    // world is still empty. No visitor can spawn against a stale arrangement.
+    await onWorldReady?.(sim);
+    socialController=sim.enableSocial({seed:20261124});
+    socialTargets=createSocialExhibitTargets({simulation:sim,onChange:()=>{lastUI=-Infinity;requestRender();}});
+    socialTargets.sync();
+    function socialSnapshot(options){
+      const state=socialController.snapshot(options);
+      return {...state,version:'2026-11-24.social',targetVersion:SOCIAL_EXHIBIT_VERSION,
+        photographers:state.phaseCounts.photo||0,targets:socialTargets.getState()};
+    }
+    Object.defineProperty(diagnostics,'social',{enumerable:true,get:()=>socialSnapshot()});
     elevatorVisuals=await createElevatorVisuals({THREE,loader,scene,model,definitions:definition.elevators,registerMaterial});
     factory=createAvatarFactory({THREE,loader,cloneSkeleton,manifest,assetBaseUrl:new URL('./avatars/',import.meta.url).href});
     setStatus('Загружаем людей и одежду…');
@@ -75,6 +88,7 @@ export async function startParkCrowd({THREE,scene,model,loader,camera,controls,r
       maxDetailed:64,maxResidentDetailed:80,detailedDistance:24,
       activityFor:agent=>{
         if(agent.activity==='elevator_ride')return 'idle';
+        if(['gather','look','photo','pose','phone'].includes(agent.social?.phase)&&agent.speed<.08)return 'idle';
         if(agent.speed>.03)return 'walk';
         if(agent.activity==='idle'&&agent.ordinal%11===0&&Math.sin(sim.time*.45+agent.ordinal)>.7)return 'wave';
         return 'idle';
@@ -100,6 +114,7 @@ export async function startParkCrowd({THREE,scene,model,loader,camera,controls,r
       };
     }
     function reconcilePopulation(force=false) {
+      socialTargets.sync();
       if(sim.order.length===targetCount)return false;
       const now=performance.now();
       if(!force&&populationLimited&&now<nextSpawnRetry)return false;
@@ -185,6 +200,7 @@ export async function startParkCrowd({THREE,scene,model,loader,camera,controls,r
     function status(){
       const counts={main:0,upper:0,moving:0,stairs:0,elevator:0,waiting:0};
       for(const a of sim.order){if(a.floorId==='main')counts.main++;else if(a.floorId==='upper')counts.upper++;if(a.speed>.03)counts.moving++;if(a.activity==='stairs')counts.stairs++;if(a.activity.startsWith('elevator_'))counts.elevator++;if(a.activity.endsWith('_wait')||a.activity.endsWith('_queue'))counts.waiting++;}
+      const social=socialSnapshot();
       renderCountControls();
       if ($('crowd-compact-count')) $('crowd-compact-count').textContent = formatCount(sim.order.length);
       $('crowd-floors').textContent='Основной этаж '+formatCount(counts.main)+' · антресоль '+formatCount(counts.upper);
@@ -196,7 +212,9 @@ export async function startParkCrowd({THREE,scene,model,loader,camera,controls,r
           : 'В зале '+formatCount(sim.order.length)+' человек';
       setStatus(capacityInvalid?'В калькуляторе есть ошибка — действует последний корректный расчёт.'
         :paused?'Движение приостановлено':sim.order.length===0?'Добавьте людей кнопкой «+» или ползунком.'
-          :formatCount(counts.moving)+' в движении · '+formatCount(counts.stairs+counts.elevator)+' между этажами');
+          :'Пары '+formatCount(social.pair)+' · группы '+formatCount(social.group)+' · снимают '+formatCount(social.photographers));
+      $('crowd-status').title=formatCount(counts.moving)+' в движении; '+formatCount(counts.stairs+counts.elevator)
+        +' между этажами. Завершено осмотров: '+formatCount(social.completedVisits)+'; фотографий: '+formatCount(social.photos)+'.';
       Object.assign(diagnostics,{count:sim.order.length,counts,time:sim.time,paused,speed,loadedBases:factory.stats.loadedBases,
         capacity:{limit:capacity.limit,source:capacity.source,occupancy:capacity.occupancy,valid:!capacityInvalid},metrics:{...sim.metrics}});
       lastUI=performance.now();return counts;
@@ -212,7 +230,7 @@ export async function startParkCrowd({THREE,scene,model,loader,camera,controls,r
       return {ok:true,target:targetCount,count:sim.order.length,maxCount:capacity.limit};
     }
     api={
-      world,simulation:sim,handles,factory,renderer:crowdRenderer,focus,
+      world,simulation:sim,handles,factory,renderer:crowdRenderer,focus,socialTargets,socialSnapshot,
       objects:{group,elevators:elevatorVisuals.objects},
       get count(){return sim.order.length;},get target(){return targetCount;},get maxCount(){return capacity.limit;},
       setCount,refreshPopulation(){nextSpawnRetry=0;populationLimited=false;lastUI=-Infinity;requestRender();},
@@ -220,9 +238,12 @@ export async function startParkCrowd({THREE,scene,model,loader,camera,controls,r
       setSpeed(value){speed=Math.max(.25,Math.min(4,Number(value)||1));$('crowd-speed').value=String(speed);status();},
       releaseCamera(){follow=null;},
       setRoutes(value){routeVisible=Boolean(value);routeLines.visible=routeVisible;$('crowd-routes').setAttribute('aria-pressed',String(routeVisible));if(routeVisible)updateRoutes();requestRender();},
-      snapshot:()=>({...sim.snapshot(),population:{target:targetCount,count:sim.order.length,maximum:capacity.limit}}),
+      snapshot:()=>({...sim.snapshot(),population:{target:targetCount,count:sim.order.length,maximum:capacity.limit},social:socialSnapshot()}),
       update(dt){
         if(disposed)return false;
+        // The obstacle adapter commits before this frame. Refresh destinations
+        // before admitting more people or advancing any existing social route.
+        const targetsChanged=socialTargets.sync();
         const populationChanged=reconcilePopulation();
         const delta=paused?0:Math.min(.1,Math.max(0,dt))*speed;
         const result=sim.update(delta);updateFollow(dt);
@@ -234,10 +255,10 @@ export async function startParkCrowd({THREE,scene,model,loader,camera,controls,r
         if(routeVisible&&(sim.time-lastRoutes>.8||populationChanged))updateRoutes();
         if(performance.now()-lastUI>350||lastUI===-Infinity)status();
         diagnostics.visibleAvatars=crowdRenderer.stats.visible;diagnostics.renderer={...crowdRenderer.stats};
-        return !paused||Boolean(follow)||sim.order.length!==targetCount||populationChanged;
+        return !paused||Boolean(follow)||sim.order.length!==targetCount||populationChanged||targetsChanged;
       },
       dispose(){
-        disposed=true;capacityLink?.dispose();crowdRenderer?.dispose();factory?.dispose();elevatorVisuals?.dispose();
+        disposed=true;socialTargets?.dispose();socialController?.dispose();capacityLink?.dispose();crowdRenderer?.dispose();factory?.dispose();elevatorVisuals?.dispose();
         routeLines?.removeFromParent();routeLines?.geometry.dispose();routeMaterial?.dispose();
         countInput.onchange=countInput.onkeydown=null;quantityRange.oninput=null;
         for(const id of ['crowd-minus','crowd-plus','crowd-max'])$(id).onclick=null;
@@ -258,7 +279,7 @@ export async function startParkCrowd({THREE,scene,model,loader,camera,controls,r
     window.dispatchEvent(new CustomEvent('park-crowd-ready',{detail:api}));
     return api;
   }catch(error){
-    capacityLink?.dispose();crowdRenderer?.dispose();factory?.dispose();elevatorVisuals?.dispose();handles.clear();group?.removeFromParent();
+    socialTargets?.dispose();socialController?.dispose();capacityLink?.dispose();crowdRenderer?.dispose();factory?.dispose();elevatorVisuals?.dispose();handles.clear();group?.removeFromParent();
     routeLines?.removeFromParent();routeLines?.geometry.dispose();routeMaterial?.dispose();requestRender();
     diagnostics.state='error';diagnostics.errors.push(error.message);panel.dataset.state='error';
     $('crowd-population').textContent='Посетители не запущены';setStatus('Посетители не загрузились. Обновите страницу.');
