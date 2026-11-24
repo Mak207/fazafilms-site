@@ -1,4 +1,4 @@
-/* Full lecture with Alexander narration before the audit; chapters use measured audio timing. */
+/* Full lecture before the audit; optional captions and measured audio timing. */
 (function(){
   "use strict";
   const rootURL=new URL(".",document.currentScript.src);
@@ -7,6 +7,43 @@
   const transcript=document.getElementById("management-lecture-transcript");
   const status=document.getElementById("management-lecture-status");
   if(!video||!details||!transcript||!status)return;
+  function setupCaptions(){
+    const button=document.getElementById("management-lecture-caption-toggle");
+    const note=document.getElementById("management-lecture-caption-note");
+    let currentTrack=video.querySelector('track[kind="captions"]');
+    if(!button||!note||!currentTrack||!currentTrack.track||!video.textTracks)return;
+    function setLabel(text){if(button.textContent!==text)button.textContent=text;}
+    function sync(){
+      const failed=currentTrack.readyState===3;
+      const ready=currentTrack.readyState===2;
+      button.disabled=!ready&&!failed;
+      setLabel(failed?"Повторить загрузку субтитров":ready?(currentTrack.track.mode==="showing"?"Скрыть субтитры":"Показать субтитры"):"Загрузка субтитров…");
+      note.textContent=failed?"Субтитры не загрузились. Можно повторить попытку.":"";
+      note.hidden=!failed;
+    }
+    function watch(node){
+      node.addEventListener("load",()=>{if(node===currentTrack)sync();});
+      node.addEventListener("error",()=>{if(node===currentTrack)sync();});
+    }
+    button.addEventListener("click",()=>{
+      if(currentTrack.readyState===3){
+        const previous=currentTrack;
+        currentTrack=previous.cloneNode(false);
+        watch(currentTrack);
+        previous.replaceWith(currentTrack);
+        currentTrack.track.mode="hidden";
+      }else if(currentTrack.readyState===2){
+        currentTrack.track.mode=currentTrack.track.mode==="showing"?"disabled":"showing";
+      }
+      sync();
+    });
+    video.textTracks.addEventListener("change",sync);
+    video.addEventListener("loadedmetadata",sync);
+    watch(currentTrack);
+    currentTrack.track.mode="hidden";
+    sync();
+  }
+  setupCaptions();
   let chaptersRequested=false;
   let transcriptLoading=false,transcriptLoaded=false;
   let buttons=[];

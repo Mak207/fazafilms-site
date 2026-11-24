@@ -1,4 +1,11 @@
-/* Complete text-on-screen lecture before the management audit. */
+/* Complete lecture with optional captions before the management audit. */
+.mg-lecture-controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px;margin:12px 0 0;min-width:0}
+.mg-lecture-caption-toggle{min-height:44px;max-width:100%;padding:10px 16px;border:1px solid var(--mg-border);border-radius:7px;background:var(--mg-panel);color:var(--text);font:inherit;font-size:14px;line-height:1.45;text-align:center;white-space:normal;cursor:pointer}
+.mg-lecture-caption-toggle:hover:not(:disabled){border-color:var(--mg-orange);color:var(--mg-orange)}
+.mg-lecture-caption-toggle:focus-visible{outline:2px solid var(--mg-orange);outline-offset:3px}
+.mg-lecture-caption-toggle:disabled{opacity:.6;cursor:wait}
+.mg-lecture-caption-note{margin:0;max-width:100%;font-size:14px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere}
+
 .mg-lecture{min-width:0;margin:0 0 34px;padding:0 0 28px;border-bottom:1px solid var(--mg-border)}
 .mg-lecture-heading{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px 24px;margin:0 0 16px}
 .mg-lecture-heading .eyebrow{color:var(--mg-orange);font-size:14px;margin:0 0 7px}
