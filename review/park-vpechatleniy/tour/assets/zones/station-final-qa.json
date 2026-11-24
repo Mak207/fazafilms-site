@@ -1,0 +1,545 @@
+{
+  "pass": true,
+  "fixedAndPassengerChecks": [
+    {
+      "station": "nw",
+      "part": "deck",
+      "rawHitCount": 1,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "nw",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "nw",
+      "part": "post",
+      "rawHitCount": 4,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "nw",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "nw",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "nw",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "nw",
+      "part": "post",
+      "rawHitCount": 4,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "nw",
+      "part": "gate",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "nw",
+      "part": "passenger-volume",
+      "rawHitCount": 6,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "deck",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "deck",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "deck",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "elbow",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "elbow",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "gate",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "passenger-volume",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "passenger-volume",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "ne",
+      "part": "passenger-volume",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "se",
+      "part": "deck",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "se",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "se",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "se",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "se",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "se",
+      "part": "handrail",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "se",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "se",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "se",
+      "part": "post",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "se",
+      "part": "gate",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    },
+    {
+      "station": "se",
+      "part": "passenger-volume",
+      "rawHitCount": 0,
+      "residualHitCount": 0,
+      "residualMeshes": []
+    }
+  ],
+  "fixedAndPassengerResidualConflicts": [],
+  "slidingComponentStatesChecked": 1000,
+  "slidingConflicts": [],
+  "localRuntimeGate": {
+    "min": [
+      -16.22,
+      16.5,
+      -63.75
+    ],
+    "max": [
+      -16.12,
+      17.8,
+      -61.25
+    ],
+    "mesh": "Ограждение__7f7f7fff",
+    "affectedConflictingTriangleIds": [
+      1725973,
+      1725997,
+      1725998,
+      1726003,
+      1726004,
+      1726005,
+      1726006
+    ],
+    "sourceGLBModified": false
+  },
+  "minimumSampledPlanRadius": 4.5328640999211425,
+  "maxGrade": 0.07916666666666661,
+  "note": "Discrete full rigid-vehicle and bridge checks of a presentation concept. Not structural, vehicle dynamics or certification."
+}

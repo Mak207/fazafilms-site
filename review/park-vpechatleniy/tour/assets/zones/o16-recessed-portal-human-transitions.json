@@ -1,0 +1,9 @@
+{
+  "parts": 381,
+  "corridors": 714,
+  "bodyRadiusMetres": 0.51,
+  "bodyHeightMetres": 2.17,
+  "passed": true,
+  "contacts": [],
+  "method": "Unmodified production bodyHitsProxy against all actual transition corridors and lift queues; both portal meshes and matching proxies recessed by 0.45 m."
+}

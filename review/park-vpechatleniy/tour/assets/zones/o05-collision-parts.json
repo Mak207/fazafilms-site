@@ -1,0 +1,334 @@
+{
+  "objectId": "O05",
+  "sourceSha256": "95093fbc98e151dc3c013b4e41534c19148109b5b2dff21da467b294f8af8846",
+  "cellSizeM": 0.5,
+  "method": "Conservative0.5m projected occupancy of every actual source triangle AABB; occupied cells merged into exact disjoint rectangles, all extruded through full normalized model height. This excludes empty silhouette pockets while retaining the full projected footprint at every visitor height. Every source triangle is contained in the union.",
+  "sourceTriangles": 299312,
+  "occupiedCells": 379,
+  "coverAreaM2": 94.75,
+  "coverageVerified": true,
+  "collisionParts": [
+    {
+      "id": "projected-airframe-00",
+      "min": [
+        -0.5,
+        0,
+        -9.0
+      ],
+      "max": [
+        0.5,
+        4.153085708618164,
+        -7.0
+      ],
+      "socialTarget": true
+    },
+    {
+      "id": "projected-airframe-01",
+      "min": [
+        -3.5,
+        0,
+        -7.0
+      ],
+      "max": [
+        3.5,
+        4.153085708618164,
+        -6.0
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-02",
+      "min": [
+        -2.5,
+        0,
+        -6.0
+      ],
+      "max": [
+        3.0,
+        4.153085708618164,
+        -5.5
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-03",
+      "min": [
+        -2.0,
+        0,
+        -5.5
+      ],
+      "max": [
+        2.0,
+        4.153085708618164,
+        -5.0
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-04",
+      "min": [
+        -1.0,
+        0,
+        -5.0
+      ],
+      "max": [
+        1.0,
+        4.153085708618164,
+        -3.0
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-05",
+      "min": [
+        -1.5,
+        0,
+        -3.0
+      ],
+      "max": [
+        1.5,
+        4.153085708618164,
+        -0.5
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-06",
+      "min": [
+        8.5,
+        0,
+        -0.5
+      ],
+      "max": [
+        9.5,
+        4.153085708618164,
+        0.0
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-07",
+      "min": [
+        -9.0,
+        0,
+        -0.5
+      ],
+      "max": [
+        -7.5,
+        4.153085708618164,
+        0.0
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-08",
+      "min": [
+        -2.0,
+        0,
+        -0.5
+      ],
+      "max": [
+        2.0,
+        4.153085708618164,
+        0.0
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-09",
+      "min": [
+        -9.0,
+        0,
+        0.0
+      ],
+      "max": [
+        3.5,
+        4.153085708618164,
+        0.5
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-10",
+      "min": [
+        4.5,
+        0,
+        0.0
+      ],
+      "max": [
+        9.5,
+        4.153085708618164,
+        0.5
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-11",
+      "min": [
+        -9.0,
+        0,
+        0.5
+      ],
+      "max": [
+        9.0,
+        4.153085708618164,
+        1.0
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-12",
+      "min": [
+        -8.5,
+        0,
+        1.0
+      ],
+      "max": [
+        9.0,
+        4.153085708618164,
+        1.5
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-13",
+      "min": [
+        -7.0,
+        0,
+        1.5
+      ],
+      "max": [
+        7.5,
+        4.153085708618164,
+        2.0
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-14",
+      "min": [
+        -5.5,
+        0,
+        2.0
+      ],
+      "max": [
+        6.5,
+        4.153085708618164,
+        2.5
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-15",
+      "min": [
+        -4.5,
+        0,
+        2.5
+      ],
+      "max": [
+        4.5,
+        4.153085708618164,
+        3.0
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-16",
+      "min": [
+        -2.0,
+        0,
+        3.0
+      ],
+      "max": [
+        4.5,
+        4.153085708618164,
+        3.5
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-17",
+      "min": [
+        -4.5,
+        0,
+        3.0
+      ],
+      "max": [
+        -2.5,
+        4.153085708618164,
+        4.0
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-18",
+      "min": [
+        2.5,
+        0,
+        3.5
+      ],
+      "max": [
+        4.5,
+        4.153085708618164,
+        5.0
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-19",
+      "min": [
+        -1.5,
+        0,
+        3.5
+      ],
+      "max": [
+        1.5,
+        4.153085708618164,
+        6.5
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-20",
+      "min": [
+        -1.5,
+        0,
+        6.5
+      ],
+      "max": [
+        1.0,
+        4.153085708618164,
+        7.0
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-21",
+      "min": [
+        -1.0,
+        0,
+        7.0
+      ],
+      "max": [
+        1.0,
+        4.153085708618164,
+        8.5
+      ],
+      "socialTarget": false
+    },
+    {
+      "id": "projected-airframe-22",
+      "min": [
+        -0.5,
+        0,
+        8.5
+      ],
+      "max": [
+        0.5,
+        4.153085708618164,
+        9.0
+      ],
+      "socialTarget": false
+    }
+  ]
+}

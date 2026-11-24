@@ -6,7 +6,7 @@ const btn=(text,cls='rgo-button')=>{const n=el('button',cls,text);n.type='button
 const displayName=hall=>hall.displayName||hall.title;
 const finite=v=>typeof v==='number'&&Number.isFinite(v);
 
-export async function createRgoZones({THREE,scene,canvas,camera,panel,onNavigate,onOverview,requestRender,getExhibitRoot=()=>null,getExistingObstacles=()=>[],dataUrl=new URL('./rgo-data.json',import.meta.url)}){
+export async function createRgoZones({THREE,scene,canvas,camera,panel,onNavigate,onOverview,requestRender,getExhibitRoot=()=>null,getExistingObstacles=()=>[],existingLayoutRevised=false,dataUrl=new URL('./rgo-data.json',import.meta.url)}){
   const response=await fetch(dataUrl,{credentials:'same-origin'});if(!response.ok)throw new Error(`РГО: HTTP ${response.status}`);
   const data=await response.json();
   if(!Array.isArray(data.halls)||data.halls.length!==9||!Array.isArray(data.surfaces)||data.surfaces.length!==26||new Set(data.surfaces.map(s=>s.id)).size!==26)throw new Error('РГО: неполная программа.');
@@ -15,7 +15,7 @@ export async function createRgoZones({THREE,scene,canvas,camera,panel,onNavigate
   const root=new THREE.Group();root.name='RGO_project_screen_layer';root.userData.projectProposal=true;scene.add(root);
   const surfaces=new Map(),halls=new Map(),hitObjects=[],disposables=new Set(),ghosts=new Map();
   const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
-  let activeHall=null,selectedSurface=null,visible=true,activeView=false,showLabels=true,showReserves=false,destroyed=false,pointerDown=null,lastHover=null,layoutChanged=false;
+  let activeHall=null,selectedSurface=null,visible=true,activeView=false,showLabels=true,showReserves=false,destroyed=false,pointerDown=null,lastHover=null,layoutChanged=existingLayoutRevised;
   function obstacleSignature(){return JSON.stringify(getExistingObstacles().map(p=>({id:p.id,shape:p.shape,centerXZ:p.centerXZ,halfSizeXZ:p.halfSizeXZ,rotationY:p.rotationY,minY:p.minY,maxY:p.maxY,radius:p.radius,start:p.start,end:p.end})).sort((a,b)=>String(a.id).localeCompare(String(b.id))));}
   const initialObstacleSignature=obstacleSignature();
   const content=panel.querySelector('.rgo-content');content.replaceChildren();
@@ -37,7 +37,7 @@ export async function createRgoZones({THREE,scene,canvas,camera,panel,onNavigate
   const back=btn('Вернуться к парку','rgo-button rgo-back');listen(back,'click',()=>{deactivate();onOverview?.();});
   const inspector=el('section','rgo-inspector');inspector.setAttribute('aria-live','polite');
   const notice=el('p','rgo-limit','Проектный вариант. 25 новых полотен + 1 из общего фонда навигации. Это не прибавление 26 экранов к общей ведомости Парка.');
-  const simulationNote=el('p','rgo-limit','Симуляция посетителей использует прежнюю схему Парка; маршрут РГО ещё не проверен.');
+  const simulationNote=el('p','rgo-limit',existingLayoutRevised?'Физическая галерея и проходы обновлены. Положение этих 26 проектных LED-полотен нужно согласовать с новой расстановкой.':'Симуляция посетителей использует прежнюю схему Парка; маршрут РГО ещё не проверен.');
   content.append(summary,legend,overview,zoneList,inspector,controls,notice,simulationNote,back);
   const tooltip=el('div','rgo-tooltip');tooltip.hidden=true;tooltip.setAttribute('role','status');canvas.parentElement.append(tooltip);
   const infoRow=(dl,k,v)=>dl.append(el('dt','',k),el('dd','',v));
@@ -106,16 +106,16 @@ export async function createRgoZones({THREE,scene,canvas,camera,panel,onNavigate
     for(const [id,b]of zoneButtons)b.setAttribute('aria-pressed',String(id===activeHall));overview.setAttribute('aria-pressed',String(activeHall===null&&activeView));
     requestRender();
   }
-  function currentConflicts(hall){return [...new Set(hall?hall.existingConflictIds||[]:data.halls.flatMap(h=>h.existingConflictIds||[]))];}
+  function currentConflicts(hall){if(existingLayoutRevised)return [];return [...new Set(hall?hall.existingConflictIds||[]:data.halls.flatMap(h=>h.existingConflictIds||[]))];}
   function renderInspector(){
     inspector.replaceChildren();
     if(layoutChanged)inspector.append(el('p','rgo-conflict','Расстановка существующих объектов изменена. Привязка и исходные флаги соседства РГО не пересчитаны; размещение экранов требует новой проверки.'));
     const hall=activeHall?halls.get(activeHall)?.data:null;
     if(!hall){inspector.append(el('h3','','Аллея РГО · проектный слой'),el('p','','Выберите зал 00–08. Кнопки перемещают камеру к его экранам; исходные объекты остаются на местах.'));
-      inspector.append(el('p','rgo-conflict','Залы 03–04 пересекаются с текущим ледоколом O12-1; зона 05 соседствует с ним. Зоны 06–07 пересекаются или соседствуют с МС-21, O05-1. В обзоре оба экспоната полупрозрачны; их координаты сохранены. Совмещение программы и маршрута требует согласования.'));return;}
+      inspector.append(el('p','rgo-conflict',existingLayoutRevised?'Ледокол и МС-21 переставлены в свои исходные зоны. Отметки их пересечений из предыдущей расстановки больше не применяются. Здесь сохранена программа LED; положение её полотен требует согласования с построенной галереей.':'Залы 03–04 пересекаются с текущим ледоколом O12-1; зона 05 соседствует с ним. Зоны 06–07 пересекаются или соседствуют с МС-21, O05-1. В обзоре оба экспоната полупрозрачны; их координаты сохранены. Совмещение программы и маршрута требует согласования.'));return;}
     inspector.append(el('h3','',`${hall.sourceNumber} · ${displayName(hall)}`));
     const dl=el('dl','rgo-facts');infoRow(dl,'Исходное название',hall.sourceTitle||hall.title);infoRow(dl,'Площадь по программе',`${nf(hall.programAreaM2)} м² · слайд ${hall.sourceSlide}`);infoRow(dl,'LED в этом варианте',`${hall.surfaces.length} полотен`);infoRow(dl,'Цель в 3D, X / Y / Z',hall.position.map(v=>nf(v,2)).join(' / ')+' м');inspector.append(dl);
-    if(hall.conflictNote)inspector.append(el('p','rgo-conflict',hall.conflictNote));
+    if(hall.conflictNote&&!existingLayoutRevised)inspector.append(el('p','rgo-conflict',hall.conflictNote));
     inspector.append(el('p','rgo-main-exhibit',`Главный экспонат программы: ${hall.mainExhibit}. Его новая 3D-модель в этом слое не создаётся.`));
     if(!hall.surfaces.length)inspector.append(el('p','rgo-zero','В этом зале LED не добавлен. Специальные системы и их оборудование требуют отдельного решения; ноль LED не означает отсутствие медиа.'));
     const list=el('div','rgo-surface-list');for(const s of hall.surfaces){const b=btn(`${s.id} · ${s.label}`,'rgo-surface-button');b.setAttribute('aria-pressed',String(selectedSurface===s.id));listen(b,'click',()=>selectSurface(s.id));list.append(b);}inspector.append(list);
@@ -165,7 +165,7 @@ export async function createRgoZones({THREE,scene,canvas,camera,panel,onNavigate
   return {data,group:root,selectHall,selectSurface,showOverview,deactivate,setVisible,
     getCollisionObstacles(){return data.surfaces.map(s=>({id:s.id,kind:'rgo-screen-proposal',shape:'obb',centerXZ:[s.position[0],s.position[2]],halfSizeXZ:[s.widthM/2,.084/2],rotationY:s.rotationY,minY:s.position[1]+s.bottomHeightM,maxY:s.position[1]+s.bottomHeightM+s.heightM}));},
     getState(){return{ready:true,activeView,visible,activeHall,selectedSurface,surfaceCount:surfaces.size,hallCount:halls.size,ghostedMeshes:ghosts.size,programAreaM2:1120,coordinateStatus:data.placement.registration.status,conflictIds:activeHall?currentConflicts(halls.get(activeHall).data):currentConflicts(null),layoutChanged};},
-    refresh(){layoutChanged=obstacleSignature()!==initialObstacleSignature;if(activeView)ghostConflicts(activeHall?currentConflicts(halls.get(activeHall).data):currentConflicts(null));renderInspector();requestRender();},
+    refresh(){layoutChanged=existingLayoutRevised||obstacleSignature()!==initialObstacleSignature;if(activeView)ghostConflicts(activeHall?currentConflicts(halls.get(activeHall).data):currentConflicts(null));renderInspector();requestRender();},
     dispose(){if(destroyed)return;destroyed=true;abort.abort();restoreGhosts();root.removeFromParent();disposables.forEach(x=>x.dispose());tooltip.remove();content.replaceChildren();},
   };
 }

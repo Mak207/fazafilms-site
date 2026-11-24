@@ -209,10 +209,24 @@ export function createDynamicObstacleAdapter({ exhibits, onChange = () => {} }) 
       const id = root.userData.instanceId, next = changed.get(id);
       const visible = next ? next.visible : root.visible && root.userData.editorVisible !== false;
       if (!visible || !root.parent) continue;
-      proxies.push(boxToObstacle(localBounds(root), candidateMatrix(root, next), {
-        id, kind: 'exhibit', objectId: root.userData.exhibitId, name: root.userData.exhibitName || id,
-        floating: Boolean(root.userData.floating),
-      }));
+      const matrix=candidateMatrix(root,next);
+      const metadata={kind:'exhibit',objectId:root.userData.exhibitId,instanceId:id,name:root.userData.exhibitName||id,floating:Boolean(root.userData.floating)};
+      if(Array.isArray(root.userData.collisionParts)){
+        const seen=new Set();
+        for(const [index,part] of root.userData.collisionParts.entries()){
+          const partId=String(part.id ?? index);
+          if(seen.has(partId)||![...(part.min||[]),...(part.max||[])].every(Number.isFinite)||part.min?.length!==3||part.max?.length!==3||part.max.some((value,i)=>value<=part.min[i]))throw new Error('Некорректная часть препятствия: '+id+' / '+partId);
+          seen.add(partId);
+          let partMatrix=matrix;
+          if(part.position||part.rotationY){
+            const position=part.position||[0,0,0],yaw=part.rotationY||0;
+            if(position.length!==3||!position.every(Number.isFinite)||!Number.isFinite(yaw))throw new Error('Некорректная ориентация части: '+partId);
+            const local=new THREE.Matrix4().compose(new THREE.Vector3(...position),new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),yaw),new THREE.Vector3(1,1,1));
+            partMatrix=matrix.clone().multiply(local);
+          }
+          proxies.push(boxToObstacle(dataBox(part),partMatrix,{...metadata,id:id+'::'+partId,socialTarget:part.socialTarget!==false}));
+        }
+      }else proxies.push(boxToObstacle(localBounds(root),matrix,{...metadata,id}));
     }
     proxies.sort((a, b) => a.id.localeCompare(b.id));
     return { proxies, instanceCount: exhibits.roots.length, visibleCount: proxies.length };
@@ -310,3 +324,4 @@ export function createDynamicObstacleAdapter({ exhibits, onChange = () => {} }) 
     dispose() { if (disposed) return; disposed = true; detachGuard(); simulation = null; bound = false; },
   };
 }
+

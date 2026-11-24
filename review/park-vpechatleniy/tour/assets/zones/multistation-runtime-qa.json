@@ -1,0 +1,293 @@
+{
+  "pass": true,
+  "routeLength": 361.1195661481933,
+  "maxGrade": 0.07916666666666661,
+  "railRange": [
+    15.25,
+    17.7
+  ],
+  "positionJoinError": 0.0000020072306884086785,
+  "tangentJoinError": 2.0000001810238728e-7,
+  "railMismatch": 7.629394538355427e-7,
+  "stationChecks": [
+    {
+      "id": "nw-existing-terrace-loop",
+      "floorDifference": 0,
+      "straightAndLevel": [
+        {
+          "offset": -6,
+          "grade": 0,
+          "heading": 3.141592653589793
+        },
+        {
+          "offset": -3,
+          "grade": 0,
+          "heading": 3.141592653589793
+        },
+        {
+          "offset": 0,
+          "grade": 0,
+          "heading": 3.141592653589793
+        },
+        {
+          "offset": 3,
+          "grade": 0,
+          "heading": 3.141592653589793
+        },
+        {
+          "offset": 6,
+          "grade": 0,
+          "heading": -3.141592653589793
+        }
+      ]
+    },
+    {
+      "id": "ne-existing-terrace-loop",
+      "floorDifference": 0,
+      "straightAndLevel": [
+        {
+          "offset": -6,
+          "grade": 0,
+          "heading": 1.5707963267948966
+        },
+        {
+          "offset": -3,
+          "grade": 0,
+          "heading": 1.5707963267948966
+        },
+        {
+          "offset": 0,
+          "grade": 0,
+          "heading": 1.5707963267948966
+        },
+        {
+          "offset": 3,
+          "grade": 0,
+          "heading": 1.5707963267948966
+        },
+        {
+          "offset": 6,
+          "grade": 0,
+          "heading": 1.570796326794894
+        }
+      ]
+    },
+    {
+      "id": "se-existing-terrace-loop",
+      "floorDifference": 0,
+      "straightAndLevel": [
+        {
+          "offset": -6,
+          "grade": 0,
+          "heading": 0
+        },
+        {
+          "offset": -3,
+          "grade": 0,
+          "heading": 0
+        },
+        {
+          "offset": 0,
+          "grade": 0,
+          "heading": 0
+        },
+        {
+          "offset": 3,
+          "grade": 0,
+          "heading": 0
+        },
+        {
+          "offset": 6,
+          "grade": 0,
+          "heading": 0
+        }
+      ]
+    }
+  ],
+  "visitedStationVehiclePairs": [
+    "nw-existing-terrace-loop:0",
+    "ne-existing-terrace-loop:0",
+    "se-existing-terrace-loop:0",
+    "nw-existing-terrace-loop:1",
+    "ne-existing-terrace-loop:1",
+    "se-existing-terrace-loop:1"
+  ],
+  "arrivals": [
+    {
+      "time": 0.05,
+      "id": "nw-existing-terrace-loop",
+      "vehicle": 0
+    },
+    {
+      "time": 39.099999999999916,
+      "id": "ne-existing-terrace-loop",
+      "vehicle": 0
+    },
+    {
+      "time": 99.2999999999965,
+      "id": "se-existing-terrace-loop",
+      "vehicle": 0
+    },
+    {
+      "time": 127.79999999999488,
+      "id": "nw-existing-terrace-loop",
+      "vehicle": 1
+    },
+    {
+      "time": 166.9000000000037,
+      "id": "ne-existing-terrace-loop",
+      "vehicle": 1
+    },
+    {
+      "time": 227.1000000000174,
+      "id": "se-existing-terrace-loop",
+      "vehicle": 1
+    },
+    {
+      "time": 255.60000000002387,
+      "id": "nw-existing-terrace-loop",
+      "vehicle": 0
+    },
+    {
+      "time": 294.70000000003273,
+      "id": "ne-existing-terrace-loop",
+      "vehicle": 0
+    },
+    {
+      "time": 354.9000000000464,
+      "id": "se-existing-terrace-loop",
+      "vehicle": 0
+    },
+    {
+      "time": 383.4000000000529,
+      "id": "nw-existing-terrace-loop",
+      "vehicle": 1
+    },
+    {
+      "time": 422.5000000000618,
+      "id": "ne-existing-terrace-loop",
+      "vehicle": 1
+    },
+    {
+      "time": 482.7000000000755,
+      "id": "se-existing-terrace-loop",
+      "vehicle": 1
+    },
+    {
+      "time": 511.20000000008196,
+      "id": "nw-existing-terrace-loop",
+      "vehicle": 0
+    },
+    {
+      "time": 550.3000000000472,
+      "id": "ne-existing-terrace-loop",
+      "vehicle": 0
+    },
+    {
+      "time": 610.4999999999925,
+      "id": "se-existing-terrace-loop",
+      "vehicle": 0
+    },
+    {
+      "time": 638.9999999999666,
+      "id": "nw-existing-terrace-loop",
+      "vehicle": 1
+    },
+    {
+      "time": 678.099999999931,
+      "id": "ne-existing-terrace-loop",
+      "vehicle": 1
+    },
+    {
+      "time": 738.2999999998763,
+      "id": "se-existing-terrace-loop",
+      "vehicle": 1
+    },
+    {
+      "time": 766.7999999998503,
+      "id": "nw-existing-terrace-loop",
+      "vehicle": 0
+    },
+    {
+      "time": 805.8999999998148,
+      "id": "ne-existing-terrace-loop",
+      "vehicle": 0
+    },
+    {
+      "time": 866.09999999976,
+      "id": "se-existing-terrace-loop",
+      "vehicle": 0
+    },
+    {
+      "time": 894.5999999997341,
+      "id": "nw-existing-terrace-loop",
+      "vehicle": 1
+    },
+    {
+      "time": 933.6999999996985,
+      "id": "ne-existing-terrace-loop",
+      "vehicle": 1
+    },
+    {
+      "time": 993.8999999996438,
+      "id": "se-existing-terrace-loop",
+      "vehicle": 1
+    },
+    {
+      "time": 1022.3999999996179,
+      "id": "nw-existing-terrace-loop",
+      "vehicle": 0
+    },
+    {
+      "time": 1061.4999999995823,
+      "id": "ne-existing-terrace-loop",
+      "vehicle": 0
+    },
+    {
+      "time": 1121.6999999995276,
+      "id": "se-existing-terrace-loop",
+      "vehicle": 0
+    },
+    {
+      "time": 1150.1999999995016,
+      "id": "nw-existing-terrace-loop",
+      "vehicle": 1
+    },
+    {
+      "time": 1189.299999999466,
+      "id": "ne-existing-terrace-loop",
+      "vehicle": 1
+    }
+  ],
+  "gateMovementConflicts": 0,
+  "exitOutsideOpen": 0,
+  "exitGranted": {
+    "stationId": "nw-existing-terrace-loop",
+    "vehicle": 1,
+    "position": [
+      -15.494518196400001,
+      18.299999999999997,
+      -62.5
+    ],
+    "path": [
+      [
+        -13.594518196400001,
+        16.65,
+        -62.5
+      ],
+      [
+        -16.184341430664062,
+        16.65,
+        -62.5
+      ]
+    ]
+  },
+  "stationCount": 3,
+  "candidateCount": 4,
+  "blockedCandidates": [
+    "sw-existing-terrace-loop"
+  ],
+  "supportCount": 33,
+  "maximumSupportSpan": 11.943017156005851,
+  "simulationSeconds": 1200
+}

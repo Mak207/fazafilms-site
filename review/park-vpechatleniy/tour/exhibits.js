@@ -132,9 +132,11 @@ export async function createExhibitSystem({
     return hit ? { y: hit.point.y, mesh: hit.object.name } : null;
   }
 
-  function supportEvidence(size, placement) {
-    const points = [{ label: 'center', x: 0, z: 0 }];
-    if (!placement.floating) {
+  function supportEvidence(size, placement, supportPoints = null) {
+    const custom=Array.isArray(supportPoints)&&supportPoints.length>0;
+    const points = custom?supportPoints.map((point,index)=>({label:point.label||'area-'+index,x:point.x,z:point.z})):[{ label: 'center', x: 0, z: 0 }];
+    if(custom&&!points.every(point=>finite(point.x)&&finite(point.z)))throw new TypeError('Некорректные точки опоры составного раздела.');
+    if (!custom && !placement.floating) {
       const hx = size.x * 0.45, hz = size.z * 0.45;
       points.push(
         { label: 'corner-1', x: -hx, z: -hz }, { label: 'corner-2', x: hx, z: -hz },
@@ -161,9 +163,9 @@ export async function createExhibitSystem({
       floorY: matched.length ? Math.max(...matched.map(point => point.y)) : null,
       floorSamples: samples,
       matchedSamples: matched.length,
-      requiredSamples: placement.floating ? 1 : 9,
+      requiredSamples: points.length,
       heightSpread: Number.isFinite(spread) ? rounded(spread) : null,
-      supportMode: placement.floating ? 'floor-anchor-for-suspended-model' : 'centre-corners-and-edge-samples',
+      supportMode: custom?'mapped-occupied-floor-samples':placement.floating ? 'floor-anchor-for-suspended-model' : 'centre-corners-and-edge-samples',
     };
   }
 
@@ -267,7 +269,8 @@ export async function createExhibitSystem({
       if (needsSupport) {
         let evidence = null, best = null;
         for (const level of levels) {
-          const test = supportEvidence(scaledSize, { ...next, floorY: level });
+          const samples=entry.supportSamples?.map(point=>({...point,x:point.x*next.scaleFactor,z:point.z*next.scaleFactor}));
+          const test = supportEvidence(scaledSize, { ...next, floorY: level },samples);
           if (!best || test.matchedSamples > best.matchedSamples) best = test;
           if (test.valid) { evidence = test; break; }
         }
@@ -423,17 +426,22 @@ export async function createExhibitSystem({
       const referenceSize = object.scaleTo.axis === 'max' ? Math.max(originalSize.x, originalSize.y, originalSize.z) : originalSize[object.scaleTo.axis];
       if (sourceBounds.isEmpty() || !finite(referenceSize) || referenceSize <= 1e-8) throw new Error('Некорректные габариты GLB.');
       const scale = object.scaleTo.meters / referenceSize;
+      const floorDatumOffset = object.floorDatumOffset === undefined ? 0 : requireNumber(object.floorDatumOffset, 'floorDatumOffset');
+      if (floorDatumOffset < 0 || floorDatumOffset >= originalSize.y * scale) throw new TypeError('Неверная привязка внутреннего пола.');
       const size = originalSize.clone().multiplyScalar(scale);
+      size.y -= floorDatumOffset;
       const normalized = new THREE.Group();
       normalized.scale.setScalar(scale);
-      normalized.position.set(-originalCenter.x * scale, -sourceBounds.min.y * scale, -originalCenter.z * scale);
+      normalized.position.set(-originalCenter.x * scale, -sourceBounds.min.y * scale - floorDatumOffset, -originalCenter.z * scale);
+      normalized.userData.floorDatumOffset = floorDatumOffset;
       normalized.add(orientation);
       row.sourceBounds = boxData(sourceBounds); row.scale = rounded(scale);
       row.dimensions = vectorData(size); row.meshes = meshCount;
       for (let index = 0; index < object.instances.length; index++) {
         const placement = object.instances[index];
         const instanceId = placement.id || object.id + '-' + (index + 1);
-        const evidence = supportEvidence(size, placement);
+        const supportSamples=placement.supportSamples||object.supportSamples||null;
+        const evidence=supportEvidence(size,placement,supportSamples);
         if (!evidence.valid) {
           problem(row, instanceId, 'Позиция не добавлена: недостаточно подтверждённой опоры на выбранном уровне пола.', {
             x: placement.x, z: placement.z, requestedFloorY: placement.floorY, ...evidence,
@@ -457,7 +465,7 @@ export async function createExhibitSystem({
           dimensions: vectorData(size), worldBounds: boxData(getPlacementBounds(size, placement, baseY)),
           ...evidence,
         });
-        instances.set(instanceId, { root: instance, row, placement: row.placements.at(-1), size: size.clone() });
+        instances.set(instanceId, { root: instance, row, placement:row.placements.at(-1),size:size.clone(),supportSamples });
       }
       row.status = 'loaded';
       emit();
@@ -499,8 +507,73 @@ export async function createExhibitSystem({
     throw error;
   }
 
+  // Complete exhibition assemblies participate in the same editor, persistence
+  // and placement transaction as the imported models. Register before binding
+  // navigation; there is no unguarded asynchronous addition after visitors start.
+  function addAssembly({ id, name, root, placement, collisionParts, supportSamples = null, provenance = 'parametric-exhibition-assembly' }) {
+    if (disposed || placementGuard) throw new Error('Добавление разделов возможно до запуска посетителей.');
+    if (!root?.isObject3D || !/^[A-Z][A-Z0-9_-]{1,35}$/.test(id) || records.some(row => row.id === id)) throw new TypeError('Неверная или повторная сборка.');
+    const instanceId = placement.id || id + '-1';
+    if (instances.has(instanceId)) throw new TypeError('Повторный экземпляр.');
+    for (const key of ['x','z','floorY']) requireNumber(placement[key], key);
+    root.position.set(0,0,0); root.rotation.set(0,0,0); root.scale.setScalar(1); root.updateMatrixWorld(true);
+    const localBox = new THREE.Box3().setFromObject(root, true), size = localBox.getSize(new THREE.Vector3());
+    if (localBox.isEmpty() || !size.toArray().every(value => finite(value) && value > 0)) throw new Error('Сборка не содержит измеримой геометрии.');
+    // Symmetric XZ envelope keeps editor support tests conservative even for an
+    // asymmetric composition. Below-floor plinth geometry does not add height.
+    size.x = 2 * Math.max(Math.abs(localBox.min.x), Math.abs(localBox.max.x));
+    size.z = 2 * Math.max(Math.abs(localBox.min.z), Math.abs(localBox.max.z));
+    size.y = Math.max(0,localBox.max.y);
+    const evidence = supportEvidence(size, placement,supportSamples);
+    if (!evidence.valid) return { ok:false, error:'Раздел не установлен: не подтверждены все точки пола.', evidence };
+    const baseY = evidence.floorY + (placement.offsetY || 0);
+    Object.assign(root.userData, { exhibitId:id, exhibitName:name, instanceId, zone:placement.zone || id,
+      floating:Boolean(placement.floating), editorVisible:true, assembly:true, provenance });
+    if (collisionParts) root.userData.collisionParts = collisionParts.map(part => ({...part,min:[...part.min],max:[...part.max]}));
+    root.name = name + ' · ' + instanceId;
+    root.traverse(node => { if (node.isMesh) Object.assign(node.userData, {
+      exhibitId:id, exhibitName:name, instanceId, zone:root.userData.zone, floating:Boolean(placement.floating) }); });
+    registerResources(root);
+    const row = { id, name, status:'loaded', provenance, requestedInstances:1, rejectedInstances:[],
+      dimensions:vectorData(size), meshes:0, placements:[] };
+    root.traverse(node => { if(node.isMesh)row.meshes++; });
+    const p = { instanceId, zone:placement.zone || id, x:placement.x,z:placement.z,
+      requestedFloorY:placement.floorY,floorY:evidence.floorY,baseY:rounded(baseY),
+      rotationY:placement.rotationY || 0, floating:Boolean(placement.floating),offsetY:placement.offsetY || 0,
+      scaleFactor:1,visible:true,dimensions:vectorData(size),worldBounds:boxData(getPlacementBounds(size,placement,baseY)),...evidence };
+    row.placements.push(p); records.push(row);
+    root.position.set(p.x,p.baseY,p.z);root.rotation.y=p.rotationY;group.add(root);roots.push(root);
+    root.updateMatrixWorld(true); instances.set(instanceId,{root,row,placement:p,size,supportSamples});
+    initialLayout=getLayout();emit();return {ok:true,instanceId,evidence};
+  }
+
+  function refreshInstanceGeometry(id, { collisionParts, extendFootprint = false } = {}) {
+    if (placementGuard) throw new Error('Обновление геометрии выполняется до привязки навигации.');
+    const entry = instances.get(id);if(!entry)return {ok:false,error:'Экземпляр не найден.'};
+    if(collisionParts)entry.root.userData.collisionParts=collisionParts;
+    entry.root.traverse(node=>{if(node.isMesh)Object.assign(node.userData,{
+      exhibitId:entry.row.id,exhibitName:entry.row.name,instanceId:id,
+      zone:entry.root.userData.zone,floating:Boolean(entry.placement.floating)});});
+    registerResources(entry.root);
+    if(extendFootprint){
+      entry.root.updateWorldMatrix(true,true);
+      const inverse=entry.root.matrixWorld.clone().invert(),box=new THREE.Box3(),point=new THREE.Vector3();
+      entry.root.traverse(node=>{if(!node.isMesh||!node.geometry?.attributes.position)return;
+        const matrix=new THREE.Matrix4().multiplyMatrices(inverse,node.matrixWorld),vertices=node.geometry.attributes.position;
+        for(let i=0;i<vertices.count;i++)box.expandByPoint(point.fromBufferAttribute(vertices,i).applyMatrix4(matrix));});
+      entry.size.set(2*Math.max(Math.abs(box.min.x),Math.abs(box.max.x)),Math.max(0,box.max.y),2*Math.max(Math.abs(box.min.z),Math.abs(box.max.z)));
+      entry.placement.dimensions=vectorData(entry.size.clone().multiplyScalar(entry.placement.scaleFactor));
+      entry.placement.worldBounds=boxData(getPlacementBounds(entry.placement.dimensions,entry.placement,entry.placement.baseY));
+      entry.row.dimensions=vectorData(entry.size);
+    }
+    initialLayout=getLayout();emit();return {ok:true};
+  }
+
   return {
     group, roots, materials, getState, listInstances, getLayout, applyLayout, updateInstance, pickFloor,
+    addAssembly, refreshInstanceGeometry,
+    floorAt(x,z,y){return floorAt(x,z,y);},
+    checkSupport(size,placement){return supportEvidence(new THREE.Vector3(...size),placement);},
     getInstance(id) { const entry = instances.get(id); return entry ? instanceData(entry) : null; },
     getInstanceRoot(id) { return instances.get(id)?.root || null; },
     resetLayout(options) { return applyLayout(initialLayout, options); },
@@ -546,3 +619,4 @@ export async function createExhibitSystem({
     },
   };
 }
+

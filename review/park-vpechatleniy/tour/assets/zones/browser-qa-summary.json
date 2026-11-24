@@ -1,0 +1,159 @@
+{
+  "passed": true,
+  "generatedAt": "2026-11-24T13:28:59.638790+00:00",
+  "scope": "Combined staged desktop/mobile coverage with targeted verification of the final UI fixes; no transport rerun after its full desktop pass.",
+  "counts": {
+    "desktopInitial": {
+      "passed": 110,
+      "total": 120
+    },
+    "desktopResolvedByDelta": 10,
+    "mobileFull": {
+      "passed": 110,
+      "total": 110
+    },
+    "deltaDesktop": {
+      "passed": 68,
+      "total": 68
+    },
+    "deltaMobile": {
+      "passed": 45,
+      "total": 45
+    },
+    "finalUniqueChecks": {
+      "passed": 250,
+      "total": 250
+    }
+  },
+  "resolvedFailures": [
+    "desktop_RGO_LED_panel_fits",
+    "desktop_rgo_seated_eye_00",
+    "desktop_rgo_seated_eye_01",
+    "desktop_rgo_seated_eye_02",
+    "desktop_rgo_seated_eye_03",
+    "desktop_rgo_seated_eye_04",
+    "desktop_rgo_seated_eye_05",
+    "desktop_rgo_seated_eye_06",
+    "desktop_rgo_seated_eye_07",
+    "desktop_rgo_seated_eye_08"
+  ],
+  "unresolvedFailures": [],
+  "errors": {
+    "desktopFull": {
+      "js": 0,
+      "console": 0,
+      "http": 0
+    },
+    "mobileFreshProcess": {
+      "js": 0,
+      "console": 0,
+      "http": 0
+    },
+    "finalDelta": {
+      "js": 0,
+      "console": 0,
+      "http": 0
+    }
+  },
+  "resolvedHarnessIssue": {
+    "run": "qa-final-20261124-r1",
+    "viewport": "mobile",
+    "observed": "First combined-process mobile attempt stopped during asset load after HTTP-server MemoryError and WebGL context loss; no mobile checks completed.",
+    "historicalErrors": {
+      "js": 1,
+      "console": 28,
+      "http": 0
+    },
+    "resolution": "Fresh browser process passed all 110 mobile checks, followed by all 45 final mobile delta checks."
+  },
+  "coverage": {
+    "instances": 28,
+    "hitemModels": 5,
+    "assemblies": 4,
+    "rgoHalls": 9,
+    "regionalButtonsPerLevel": 8,
+    "mapLevels": 2,
+    "stationCards": 4,
+    "activeStations": 3,
+    "footerTabs": 6,
+    "transport": "Full desktop boarding/moving-exit/platform-exit flow passed; mobile quick transit passed."
+  },
+  "visualReview": {
+    "complete": true,
+    "finalMobileHeader": "All header controls fit within390px, fullscreen has44px icon.",
+    "finalMobileDetails": "Collapsed installation controls preserve overview; opening actions verified.",
+    "finalMobileLider": "Boat, Arctic LED and connecting bridge visible; cabin centre monitor and wheel readable. Existing overview retained.",
+    "candidateLiderCameras": "Read-only alternatives rejected because actual CAD column/ceiling occluded the installation; not applied.",
+    "reviewedViews": [
+      "RGO00/06/08 and desktop seated views",
+      "Lider overview/cabin",
+      "Chersonesus interior/VR",
+      "both MC21 cockpit interiors",
+      "transparent grain silos"
+    ]
+  },
+  "reports": {
+    "qa-final-20261124-r1": "D:\\Парк впечатлений\\exhibition-zones-20261124\\qa-final-20261124-r1\\qa-report.json",
+    "qa-final-mobile-r2": "D:\\Парк впечатлений\\exhibition-zones-20261124\\qa-final-mobile-r2\\qa-report.json",
+    "qa-ui-delta-r3": "D:\\Парк впечатлений\\exhibition-zones-20261124\\qa-ui-delta-r3\\qa-report.json"
+  },
+  "finalVisualCaptures": [
+    "D:\\Парк впечатлений\\exhibition-zones-20261124\\qa-ui-delta-r3\\mobile-delta-lider-overview.png",
+    "D:\\Парк впечатлений\\exhibition-zones-20261124\\qa-ui-delta-r3\\mobile-delta-lider-inside.png",
+    "D:\\Парк впечатлений\\exhibition-zones-20261124\\qa-ui-delta-r3\\mobile-delta-chersonesus-inside.png"
+  ],
+  "finalRuntimeSha256": {
+    "viewer.js": "37ea5f0b709a585ccb1de5a382cf46817831cbe58e203f1aa3e9bde79844e7a3",
+    "zones-controller.js": "83ec6077834bfd9ba4a646a3566245621b40a0f0a807d1b88448beb6893c37c9",
+    "exhibition-interactives.js": "b547c5083f722e244905d65ad9e46c927d6e04bb896d48c67398fb7983bcf047",
+    "chersonesus-fit.js": "8bd64a5109bec87e2a091fd2847dad17b38f57bf60d4ce357b015c93117e39b8",
+    "rgo-gallery.js": "3913fbd5d8cd757bc77f52b659115ff371385bbf1d8f7962f44f6276244c6451",
+    "zone-map.js": "985c204d61fd3b20e247ae189227c9dfa62a035b032d08b301835e31049e97a2",
+    "tram-system.js": "aadaabf3c355a8c8790fca12f4dee61f7250ccbcc42e58738c062a8528060040",
+    "index.html": "3bd81025b173a0e49ec2d87c21d5a4d9d709ba27a47582905d2e568f75fd5829",
+    "rgo-zones.js": "2675e31639f54908d25ebc181f4b9e6c4f6016cbb28bad650c51655fbc40f6a8",
+    "rgo-data.json": "678e602111b4020cf45759f562db7918ce29cccd2bee4ad3df47c52d3c92bfea",
+    "viewer.css": "84376980392509ed5a025bb0d4834039aa759df5ca39f6e69992e055ab6b9cc2",
+    "rgo-zones.css": "fc6575ffff02d43186e9d64f5f2c194418b14ea733c69e56ba9be68668415672"
+  },
+  "finalRuntimeMatchesDeltaSnapshot": true,
+  "qaScriptSha256": "734b73defb5043b06d7c712ca20b0d70a545c8f6559dde864319ccc9c4ba79e9",
+  "note": "Standalone mobile and UI-delta reports intentionally set release_ready=false because each is partial coverage; passed here combines successful full desktop checks, fresh full mobile and the final targeted delta.",
+  "viewports": {
+    "desktop": [
+      1440,
+      1000
+    ],
+    "mobile": [
+      390,
+      844
+    ]
+  },
+  "sourceInputsSha256": {
+    "index.html": "3bd81025b173a0e49ec2d87c21d5a4d9d709ba27a47582905d2e568f75fd5829",
+    "viewer.js": "37ea5f0b709a585ccb1de5a382cf46817831cbe58e203f1aa3e9bde79844e7a3",
+    "viewer.css": "84376980392509ed5a025bb0d4834039aa759df5ca39f6e69992e055ab6b9cc2",
+    "exhibits.js": "6cc2f21913540eeb312b58b000fe68c6b324f2dec7c9dae19aff74d137222a52",
+    "zones-controller.js": "83ec6077834bfd9ba4a646a3566245621b40a0f0a807d1b88448beb6893c37c9",
+    "zone-map.js": "985c204d61fd3b20e247ae189227c9dfa62a035b032d08b301835e31049e97a2",
+    "rgo-gallery.js": "3913fbd5d8cd757bc77f52b659115ff371385bbf1d8f7962f44f6276244c6451",
+    "rgo-zones.js": "2675e31639f54908d25ebc181f4b9e6c4f6016cbb28bad650c51655fbc40f6a8",
+    "rgo-zones.css": "fc6575ffff02d43186e9d64f5f2c194418b14ea733c69e56ba9be68668415672",
+    "exhibition-zones.js": "e257bc018f0e2a46ea85e24f9d1a80f6591afe59f20179043e5e0a7cf8661fb5",
+    "exhibition-interactives.js": "b547c5083f722e244905d65ad9e46c927d6e04bb896d48c67398fb7983bcf047",
+    "icebreaker-wheelhouse.js": "aabc241f4c249ec1a652b26b58b288fe031073332b1bc852aa849fcdcf2a5a56",
+    "icebreaker-access.js": "f5054b8686bcd08769080f3b9ad2b291719b91081ce5f22c7d603186b4a31b79",
+    "chersonesus-fit.js": "8bd64a5109bec87e2a091fd2847dad17b38f57bf60d4ce357b015c93117e39b8",
+    "perimeter-route.js": "0c5c1e9d5869539dcffe3af5fb4c158d70495ab758e355166fa211b2c2ff764f",
+    "tram-system.js": "aadaabf3c355a8c8790fca12f4dee61f7250ccbcc42e58738c062a8528060040",
+    "tram-station-controls.js": "37e06174b2d31c8a7f9470e461334f9c51efa917a35a1f917dc9b3c609a6d107",
+    "assets/exhibits/manifest.json": "69f3901bf65b00927701f557146d8a4b5bf6baeba51fa176952d9d1c8bc062c2",
+    "assets/exhibits/preview/manifest.json": "ff082f1fe4e030587933fc268b671f04b9b8122084124a695d03287985f44ab4",
+    "assets/zones/source-zones.json": "7692c5cf5ff08a70e28d9cdb3bd5c004613cfb26132600c8bc1fb8e60f0af08d",
+    "assets/zones/rgo-layout.json": "e450bcbb913fd9a7ede7d53f0dc461d0088e29068fefc96febfcb0e7e6e09537",
+    "assets/zones/lider-layout.json": "95b200e0cd9ea604589b90d43d4430d0d63b75baaa19c956bcb28a7eb8424208",
+    "assets/zones/o16-compact-collision-parts.json": "06aab296abf5cb04b55ff9ead2a9c86a3f02236c5a6845ecd20af30ac9a05be5",
+    "assets/zones/o05-collision-parts.json": "3178b8233fefb0570ad12d882aa244fab6cc07436364cbf06d984dc5a737e34c",
+    "assets/zones/arctic-aurora-panorama.webp": "a9e1b75bb540aaead7cb3a988f07985b652c5022572556f3840a5177d1bcdf0f"
+  }
+}

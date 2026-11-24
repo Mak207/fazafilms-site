@@ -1,0 +1,384 @@
+{
+  "schemaVersion": 4,
+  "title": "Парк впечатлений — монорельс для 3D-экскурсии",
+  "purpose": "Кольцевая 3D-экскурсия с проверкой четырёх существующих угловых площадок: три остановки и одна неподключённая площадка",
+  "updatedAtUtc": "2026-11-24T11:57:14.631484+00:00",
+  "status": "provisional",
+  "evidence": {
+    "figma": {
+      "fileKey": "vnoVHaMbnhqrGthhT0YT7j",
+      "frames": [
+        {
+          "nodeId": "3979:1543",
+          "frameName": "106",
+          "title": "Общий вид 1",
+          "imageNodeId": "3979:1546",
+          "url": "https://www.figma.com/design/vnoVHaMbnhqrGthhT0YT7j/?node-id=3979-1543"
+        },
+        {
+          "nodeId": "3979:1793",
+          "frameName": "118",
+          "title": "Общий вид 2",
+          "imageNodeId": "3979:1796",
+          "url": "https://www.figma.com/design/vnoVHaMbnhqrGthhT0YT7j/?node-id=3979-1793"
+        }
+      ],
+      "observed": "На растровых аксонометриях видна замкнутая надземная петля вокруг экспозиции с двумя составами.",
+      "representation": "bitmap внутри Figma; отдельная редактируемая ось пути не установлена"
+    },
+    "dwg": {
+      "sourceName": "выставка_3D вид.dwg",
+      "matchingMetricAxisConfirmed": false,
+      "note": "Точная совпадающая ось из DWG не подтверждена. Это не доказательство отсутствия пути в исходной модели."
+    },
+    "currentStation": {
+      "file": "monorail-station-evidence.json",
+      "existingCadPlatformsConfirmed": 4,
+      "activeStations": 3,
+      "passengerPurposeConfirmed": false,
+      "source": "Actual CAD floors, source user screenshots; new bridges and transport use are working scene decisions"
+    }
+  },
+  "reconstruction": {
+    "classification": "provisional_visualization_parameters",
+    "approvedTransportDesign": false,
+    "metricAlignmentDerivedFromDwg": false,
+    "routeType": "Замкнутая петля по свободному коридору CAD с тремя рабочими остановками",
+    "coordinateSystem": {
+      "units": "metres",
+      "upAxis": "+Y",
+      "routePlane": "XZ"
+    },
+    "module": "perimeter-route.js",
+    "routeLengthMeters": 361.1195661481933,
+    "closed": true,
+    "centerlineBoundsXZ": {
+      "xMin": -30,
+      "xMax": 31.7,
+      "zMin": -76.5,
+      "zMax": 70
+    },
+    "railHeightRangeMeters": [
+      15.25,
+      17.7
+    ],
+    "maximumProfileGrade": 0.07916666666666661,
+    "minimumSampledPlanRadiusMeters": 4.5328640999211425,
+    "profileNote": "Уклон до 7.92% и минимальный радиус около 4.53 м — параметры геометрической концепции. Реальная тяга, торможение, тележки, нагрузки и динамика не подтверждены.",
+    "supportCount": 33,
+    "maximumSupportSpanMeters": 11.943017156005851,
+    "vehicles": {
+      "count": 2,
+      "lengthMeters": 12,
+      "widthMeters": 2.2890363928,
+      "heightMeters": 3.1035019455,
+      "baseSpeedMetersPerSecond": 3,
+      "phaseSeparation": 0.5,
+      "minimumTestedCenterDistanceMeters": 58.019928245252274,
+      "minimumTestedSeparatingAxisGapMeters": 42.83461535547474,
+      "stationDwellSeconds": 18
+    },
+    "boarding": {
+      "activeStationCount": 3,
+      "candidateCount": 4,
+      "passengerFloorOffset": 0.8,
+      "floorOffsetStatus": "working visual calibration; passenger floor not separated in source vehicle mesh",
+      "sideGapMeters": 0.15,
+      "sequence": "Stop; extend bridge; open gate; alight; board; close gate; fully retract; move",
+      "localRuntimeOpening": {
+        "min": [
+          -16.22,
+          16.5,
+          -63.75
+        ],
+        "max": [
+          -16.12,
+          17.8,
+          -61.25
+        ],
+        "mesh": "Ограждение__7f7f7fff",
+        "affectedConflictingTriangleIds": [
+          1725973,
+          1725997,
+          1725998,
+          1726003,
+          1726004,
+          1726005,
+          1726006
+        ],
+        "sourceGLBModified": false
+      },
+      "sourceCadFileModified": false
+    }
+  },
+  "vehicleAsset": {
+    "lineage": "Два экземпляра одной исходной модели Hitem3D; для веба используется её оптимизированная копия.",
+    "newGenerationPerformedForThisIntegration": false,
+    "original": {
+      "name": "Вагон_Hitem3D_оригинал.glb",
+      "bytes": 47879836,
+      "triangles": 1969428,
+      "sha256": "7092b2ed03befb942300f8421b6c03d12cc90b049ccaa8d1f81881169a02740e"
+    },
+    "webCopy": {
+      "path": "assets/tram-monorail.glb",
+      "bytes": 10169000,
+      "triangles": 279999,
+      "baseColorTexture": {
+        "format": "JPEG",
+        "width": 4096,
+        "height": 4096
+      },
+      "extensions": [
+        "EXT_meshopt_compression",
+        "KHR_mesh_quantization"
+      ],
+      "sha256": "3df1ae34538a10e76f64f79bf76edee86cf2015fd7ca673acf80a6506dc2ccf7",
+      "metadataSource": "Финальная оптимизированная копия, проверенная основным процессом"
+    }
+  },
+  "verification": {
+    "geometry": "four-route-dense-qa.json",
+    "stations": "station-final-qa.json",
+    "runtime": "multistation-runtime-qa.json",
+    "supports": "four-supports-qa.json",
+    "passed": true
+  },
+  "archive": {
+    "status": "superseded_route_not_current_runtime_validation",
+    "note": "Историческая замкнутая петля длиной 252.371669 м, Y19.2, 22 опоры. Её 33 браузерные проверки и численный отчёт относятся только к прежней конфигурации.",
+    "previousReconstruction": {
+      "classification": "visualization_parameters",
+      "approvedTransportDesign": false,
+      "metricAlignmentDerivedFromDwg": false,
+      "routeType": "Замкнутый скруглённый прямоугольник: четыре прямые и четыре четверти окружности",
+      "coordinateSystem": {
+        "units": "metres",
+        "upAxis": "+Y",
+        "routePlane": "XZ"
+      },
+      "routeConfig": {
+        "centerX": 5,
+        "centerZ": -15.75,
+        "width": 46,
+        "length": 99.5,
+        "cornerRadius": 22.5,
+        "height": 19.2,
+        "floorHeight": 13.2
+      },
+      "routeLengthMeters": 252.37166941154067,
+      "routeLengthDisplay": "примерно 252,4 м",
+      "heightMeaning": "Верх единственной металлической рабочей поверхности; на 6 м выше принятого пола экспозиции",
+      "guideway": {
+        "type": "Одна центральная направляющая монорельса",
+        "beamWidthMeters": 0.95,
+        "beamDepthMeters": 0.72,
+        "runningSurfaceCount": 1,
+        "runningSurfaceWidthMeters": 0.3,
+        "runningSurfaceDepthMeters": 0.06,
+        "supportCount": 22,
+        "supportSpacingMeters": 11.471439518706394,
+        "underBeamLightStrips": 1,
+        "trianglesIncludingSupports": 9064,
+        "supportFloorHeight": "Для каждой опоры — Y поверхности существующего перекрытия из callback supportFloorHeight(x,z); при невалидном результате fallback floorHeight=13.2.",
+        "supportSurfaceLayers": [
+          "A-FLOR",
+          "S-SLAB"
+        ],
+        "supportQueryMethod": "Raycast по существующим перекрытиям через callback supportFloorHeight(x,z); полнота совпадений проверяется в финальной GPU QA."
+      },
+      "vehicles": {
+        "count": 2,
+        "lengthMeters": 12,
+        "orientation": {
+          "forward": "+Z",
+          "up": "+Y"
+        },
+        "separationFractionOfLoop": 0.5,
+        "baseSpeedMetersPerSecond": 3
+      },
+      "limits": [
+        "Размеры, радиусы, высота, направление и скорость приняты для визуализации с адаптацией пути к поверхностям существующей CAD-модели.",
+        "Реконструкция не является утверждённой транспортной трассой или расчётом конструкций.",
+        "Станции, вертикальные переходы, тележки и контактная механика не реконструированы."
+      ],
+      "selectedCandidate": "final_-65.5_22.5",
+      "adaptation": "Общая форма замкнутой петли взята из Figma. Петля уменьшена и смещена в центральную часть существующего зала по реальной геометрии CAD, чтобы обходить стены и зоны низкого покрытия. Это не извлечённая точная ось Figma или DWG."
+    },
+    "previousVerification": {
+      "numeric": {
+        "status": "passed",
+        "threeRevision": "180",
+        "report": "validation/monorail-numeric.json",
+        "scope": [
+          "Непрерывность позиции и касательной, включая замыкание",
+          "Постоянная скорость по длине и интервал двух вагонов в половину круга",
+          "Реальные вершины исходного GLB: масштаб 12 м, нос по касательной, нижняя точка на направляющей",
+          "Пауза, множитель скорости, ограничение dt, видимость, камера следования, освобождение ресурсов",
+          "Ошибка загрузки без подмены вагона",
+          "Высота каждой опоры через callback, постоянный верх колонн и fallback при невалидной отметке или исключении"
+        ]
+      },
+      "browser": {
+        "finalRouteStatus": "passed",
+        "date": "2026-11-24",
+        "checks": {
+          "two_real_vehicles": true,
+          "autostart": true,
+          "half_loop_spacing": true,
+          "monorail_at_height": true,
+          "open_hall_default": true,
+          "supports_match_floor_count": true,
+          "supports_on_existing_floors": true,
+          "motion_observed": true,
+          "pause_state": true,
+          "both_vehicles_hold_on_pause": true,
+          "desktop_no_overflow": true,
+          "speed_2x": true,
+          "follow_second": true,
+          "follow_camera_moves": true,
+          "drag_leaves_follow": true,
+          "top_view_preserved": true,
+          "envelope_restored": true,
+          "section_preserved": true,
+          "reset_to_monorail": true,
+          "reduced_motion_starts_paused": true,
+          "mobile_no_overflow": true,
+          "mobile_canvas_height": true,
+          "mobile_tram-play_fits": true,
+          "mobile_tram-camera_fits": true,
+          "mobile_tram-speed_fits": true,
+          "narrow_tram-play_fits": true,
+          "narrow_tram-camera_fits": true,
+          "narrow_tram-speed_fits": true,
+          "explicit_play_overrides_reduced_motion": true,
+          "existing_entry_opens_tour": true,
+          "two_vehicles_in_existing_tour": true,
+          "no_page_errors": true,
+          "no_missing_local_assets": true
+        },
+        "desktopViewport": [
+          1440,
+          1000
+        ],
+        "mobileViewports": [
+          [
+            390,
+            844
+          ],
+          [
+            320,
+            844
+          ]
+        ],
+        "pageErrors": [],
+        "missingAssets": [],
+        "supportFloorMatches": 22,
+        "supports": {
+          "count": 22,
+          "spacing": 11.471439518706394,
+          "minFloorHeight": 7.199999809265137,
+          "maxFloorHeight": 13.199999809265137
+        },
+        "visualReview": [
+          "desktop-route.png",
+          "mobile-route.png",
+          "follow-first.png"
+        ],
+        "evidenceSource": "Playwright: окончательная версия на аппаратном WebGL; снимки экрана просмотрены"
+      },
+      "remainingAtDocumentationUpdate": [],
+      "scopeNote": "Зафиксированы выполненные проверки финальной версии. Параметры остаются параметрами визуализации; инженерное утверждение транспортного проекта не выполнялось.",
+      "surfaceClearance": {
+        "classification": "visual_surface_check",
+        "candidate": "final_-65.5_22.5",
+        "evidenceSource": "Проверка основного процесса по сечениям реальных треугольников CAD-модели",
+        "coordinateSystem": "Метры 3D-сцены, Y вверх",
+        "heightRangeSceneY": [
+          18.42,
+          22.31
+        ],
+        "controlBandHalfWidthMeters": 2.1,
+        "guardMeters": 0.01,
+        "maxSegmentLengthMeters": 0.75,
+        "intersectionCount": 0,
+        "limits": "Ноль пересечений относится к проверенной контрольной полосе и выбранным сечениям поверхностей. Это визуальная проверка размещения, не инженерная сертификация транспортного проекта."
+      }
+    }
+  },
+  "documentationStatus": "frozen_after_local_qa",
+  "validation": {
+    "buildingSha256": "0fe60c53a9fc72c9ed0ad15ac8808ca721b3a7af8e96d81329cdc748c78fd792",
+    "cadTriangleCount": 2927007,
+    "routeSamples": 7223,
+    "stepMeters": 0.05,
+    "extraVehicleBoxClearanceMeters": 0.1,
+    "cadCarIntersections": 0,
+    "cadBeamIntersections": 0,
+    "supportCadOrRgoWallIntersections": 0,
+    "supportDecorativeCeilingClearancesRequired": [
+      {
+        "x": 11.772967869653368,
+        "z": -60.5,
+        "radius": 0.44,
+        "slatIndices": [
+          168,
+          170
+        ]
+      },
+      {
+        "x": 22.715985025659226,
+        "z": -60.5,
+        "radius": 0.44,
+        "slatIndices": [
+          220,
+          222
+        ]
+      },
+      {
+        "x": 31.278850103268898,
+        "z": -55.06145097789925,
+        "radius": 0.44,
+        "slatIndices": [
+          254,
+          255
+        ]
+      },
+      {
+        "x": 31.7,
+        "z": -44.164350044609535,
+        "radius": 0.44,
+        "slatIndices": [
+          255,
+          256
+        ]
+      },
+      {
+        "x": 31.7,
+        "z": -34.22133288860367,
+        "radius": 0.44,
+        "slatIndices": [
+          255,
+          256
+        ]
+      }
+    ],
+    "bridgeIntersectionsDuringMovement": 0,
+    "pairIntersections": 0,
+    "bridgeAndPassengerResidualCadConflicts": 0,
+    "movingBridgeComponentStatesTested": 1000,
+    "movingBridgeConflicts": 0,
+    "runtimeSeconds": 1200,
+    "stationVehiclePairsTested": [
+      "nw-existing-terrace-loop:0",
+      "ne-existing-terrace-loop:0",
+      "se-existing-terrace-loop:0",
+      "nw-existing-terrace-loop:1",
+      "ne-existing-terrace-loop:1",
+      "se-existing-terrace-loop:1"
+    ],
+    "bridgeOpenWhileMoving": false,
+    "scope": "Presentation geometry, discrete swept-envelope and runtime checks; not construction or vehicle certification.",
+    "exhibitCoordination": "Full primary zoning and moved Leader are being resolved. Recheck those objects and supports after final placement."
+  }
+}

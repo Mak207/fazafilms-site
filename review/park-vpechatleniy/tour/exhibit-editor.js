@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { getPlacementBounds } from './exhibits.js?v=park-compact-20261124';
+import { getPlacementBounds } from './exhibits.js?v=park-zones-20261124';
 
-const STORAGE_KEY = 'park-exhibit-layout-v1';
+const STORAGE_KEY = 'park-exhibit-layout-v2-source-zones-20261124';
 const MAX_UNDO = 50;
 const degrees = radians => radians * 180 / Math.PI;
 const radians = value => value * Math.PI / 180;
@@ -494,7 +494,11 @@ export function createExhibitEditor({
     let saved, editing = false;
     try {
       saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) return { ok: true, restored: false };
+      if (!saved) {
+        const previous=localStorage.getItem('park-exhibit-layout-v1');
+        if(previous){retainRejectedSave(previous);saveState='source-zones-updated';$('editor-save-status').textContent='Показана расстановка по исходным зонам. Прежнюю можно скачать.';}
+        return { ok: true, restored: false, previousLayoutPreserved:Boolean(previous) };
+      }
       const layout = JSON.parse(saved);
       invoke(onEditStart, null); editing = true;
       const result = system.applyLayout(layout, { notify: false });

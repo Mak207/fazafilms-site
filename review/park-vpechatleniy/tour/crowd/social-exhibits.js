@@ -24,7 +24,7 @@ export function buildSocialExhibits(simulation, {
 } = {}) {
   const world = simulation.world, records = [], allocated = new Map();
   const minimumSpacing = Math.max(1.12, radius * 2 + .10);
-  const visible = proxies.filter(proxy => proxy.kind === 'exhibit' && proxy.visible !== false).slice().sort((a, b) => a.id.localeCompare(b.id));
+  const visible = proxies.filter(proxy => proxy.kind === 'exhibit' && proxy.visible !== false && proxy.socialTarget !== false).slice().sort((a, b) => a.id.localeCompare(b.id));
   for (const proxy of visible) {
     const cx = proxy.centerXZ[0], cz = proxy.centerXZ[1], angle = proxy.rotationY || 0;
     const c = Math.cos(angle), s = Math.sin(angle);
@@ -92,7 +92,7 @@ export function buildSocialExhibits(simulation, {
     if (!slots.length) continue;
     const center = frozenPoint({ x: cx, y: (proxy.minY + proxy.maxY) / 2, z: cz });
     records.push(Object.freeze({
-      id: proxy.id, instanceId: proxy.id, objectId: proxy.objectId || proxy.id,
+      id: proxy.id, instanceId: proxy.instanceId || proxy.id, objectId: proxy.objectId || proxy.id,
       name: proxy.name || proxy.exhibitName || proxy.objectId || proxy.id,
       visible: true, center, lookAt: center, slots: Object.freeze(slots),
     }));
@@ -105,9 +105,9 @@ export function createSocialExhibitTargets({ simulation, onChange = () => {} }) 
   let sourceRevision = -1, records = Object.freeze([]), disposed = false, updates = 0;
   const state = () => ({
     version: SOCIAL_EXHIBIT_VERSION, sourceRevision, updates,
-    visibleInstances: simulation.world.staticObstacleProxies.filter(proxy => proxy.kind === 'exhibit').length,
+    visibleInstances: new Set(simulation.world.staticObstacleProxies.filter(proxy => proxy.kind === 'exhibit').map(proxy=>proxy.instanceId||proxy.id)).size,
     exhibits: records.length, slots: records.reduce((sum, record) => sum + record.slots.length, 0),
-    unavailableInstances: simulation.world.staticObstacleProxies.filter(proxy => proxy.kind === 'exhibit' && !records.some(record => record.id === proxy.id)).map(proxy => proxy.id),
+    unavailableInstances: [...new Set(simulation.world.staticObstacleProxies.filter(proxy => proxy.kind === 'exhibit' && !records.some(record => record.instanceId === (proxy.instanceId||proxy.id))).map(proxy => proxy.instanceId||proxy.id))],
     floors: Object.fromEntries([...simulation.world.floors.keys()].map(id => [id,
       records.reduce((sum, record) => sum + record.slots.filter(slot => slot.floorId === id).length, 0)])),
   });

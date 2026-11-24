@@ -1,0 +1,694 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Primary-evidence assignment of existing24instances to the preserved eight-district zone map; no fabricated coordinates.",
+  "statusDefinitions": {
+    "confirmed": "Named current exhibit or explicitly grouped object family is directly assigned to a district by primary programme061. This does not certify mesh fidelity.",
+    "inferred": "Programme/related assembly supports a district, but this mesh identity or group-to-district link is inferred.",
+    "unassigned": "Consulted primary sources do not supply a district for this object."
+  },
+  "sources": {
+    "technology": {
+      "path": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+      "sha256": "73d349865aa60b88468394ddf2f9a174483fef12e48a6f5109f25534c9e0374b",
+      "authority": "Explicit federal-district labels for named mega-exhibits"
+    },
+    "regional": {
+      "path": "D:/Парк впечатлений/01_Вложения_переписки/056_Структура_экспозиции_по_регионам.md",
+      "sha256": "e3245684f3d8e88727e177b4388e971748d06eb763519052d87c77dac5ceb664",
+      "authority": "Geographical programme; explicitly not administrative at lines19–21"
+    },
+    "concept": {
+      "path": "D:/Парк впечатлений/01_Вложения_переписки/003_1210_Проекты_для_Национального_центра_Россия_и.md",
+      "authority": "Names the dam and the reactor programme; does not by itself identify every video-derived mesh"
+    },
+    "presentation": {
+      "path": "D:/Парк впечатлений/01_Вложения_переписки/005_26.10. презентация_ для_Орешкина.md",
+      "authority": "Named mega-exhibit programme"
+    },
+    "videoManifest": {
+      "path": "/workspace/scratch/443fb15a045c/park_postprocess/object_manifest.json",
+      "authority": "Original visual identity and limits of O01–O16; 16 types and24 instances"
+    }
+  },
+  "regionCrosswalk": [
+    {
+      "regionId": "far-east",
+      "district": "ДФО",
+      "legendNumber": 2
+    },
+    {
+      "regionId": "siberia",
+      "district": "СФО",
+      "legendNumber": 3
+    },
+    {
+      "regionId": "ural",
+      "district": "УФО",
+      "legendNumber": 4
+    },
+    {
+      "regionId": "volga",
+      "district": "ПФО",
+      "legendNumber": 5
+    },
+    {
+      "regionId": "central",
+      "district": "ЦФО",
+      "legendNumber": 6
+    },
+    {
+      "regionId": "northwest",
+      "district": "СЗФО",
+      "legendNumber": 7
+    },
+    {
+      "regionId": "south",
+      "district": "ЮФО",
+      "legendNumber": 8
+    },
+    {
+      "regionId": "caucasus",
+      "district": "СКФО",
+      "legendNumber": 9
+    }
+  ],
+  "sourcePriority": [
+    "Explicit district labels in061 for named mega-exhibits",
+    "Geographical content in056 as corroborating crosswalk",
+    "Verified named programme and model group",
+    "No district from current procedural coordinates or colour alone"
+  ],
+  "conflicts": [
+    {
+      "topic": "Agriculture",
+      "preferred": {
+        "regionId": "volga",
+        "source": "061:49"
+      },
+      "alternative": "056:99 lists Rostselmash and grain in geographical South Russia. It describes economic geography, not the dedicated exhibit placement; do not override explicit PFO programme."
+    },
+    {
+      "topic": "Chersonesus",
+      "preferred": {
+        "regionId": "south",
+        "source": "061:55;056:100"
+      },
+      "rejected": "Previous SKFO code assignment has no primary support."
+    },
+    {
+      "topic": "Administrative vs geographical geography",
+      "note": "056:19–21 explicitly says geographical, not administrative division. Sector numbers in056 are not the map legend numbers2–9."
+    }
+  ],
+  "objects": [
+    {
+      "objectId": "O01",
+      "name": "Круглый модуль лунной базы",
+      "regionId": null,
+      "district": null,
+      "legendNumber": null,
+      "status": "unassigned",
+      "evidence": [
+        {
+          "sourceId": "technology",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "sourceLines": [
+            53
+          ]
+        }
+      ],
+      "reason": "Lunar-base programme is named, but no federal district is supplied; do not silently attach it to DFO solely by space theme.",
+      "instanceIds": [
+        "O01-1"
+      ]
+    },
+    {
+      "objectId": "O02",
+      "name": "Геодезический купол лунной базы",
+      "regionId": null,
+      "district": null,
+      "legendNumber": null,
+      "status": "unassigned",
+      "evidence": [
+        {
+          "sourceId": "technology",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "sourceLines": [
+            53
+          ]
+        }
+      ],
+      "reason": "Part of the lunar-base assembly; primary district remains unspecified.",
+      "instanceIds": [
+        "O02-1"
+      ]
+    },
+    {
+      "objectId": "O03",
+      "name": "Сфера Луны на опоре",
+      "regionId": null,
+      "district": null,
+      "legendNumber": null,
+      "status": "unassigned",
+      "evidence": [
+        {
+          "sourceId": "technology",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "sourceLines": [
+            53
+          ]
+        }
+      ],
+      "reason": "Part of the lunar-base assembly; primary district remains unspecified.",
+      "instanceIds": [
+        "O03-1"
+      ]
+    },
+    {
+      "objectId": "O04",
+      "name": "Космонавт в скафандре",
+      "regionId": null,
+      "district": null,
+      "legendNumber": null,
+      "status": "unassigned",
+      "evidence": [
+        {
+          "sourceId": "technology",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "sourceLines": [
+            53
+          ]
+        }
+      ],
+      "reason": "Part of the lunar-base assembly; primary district remains unspecified.",
+      "instanceIds": [
+        "O04-1"
+      ]
+    },
+    {
+      "objectId": "O05",
+      "name": "Самолёт МС-21",
+      "regionId": "siberia",
+      "district": "СФО",
+      "legendNumber": 3,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "sourceId": "technology",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "sourceLines": [
+            47
+          ]
+        },
+        {
+          "sourceId": "regional",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/056_Структура_экспозиции_по_регионам.md",
+          "sourceLines": [
+            34
+          ]
+        }
+      ],
+      "reason": "MC-21 is explicitly labelled SFO; Irkutsk/Baikal is a corroborating programme link.",
+      "instanceIds": [
+        "O05-1"
+      ]
+    },
+    {
+      "objectId": "O06",
+      "name": "Макет плотины / ГЭС",
+      "regionId": "siberia",
+      "district": "СФО",
+      "legendNumber": 3,
+      "status": "inferred",
+      "evidence": [
+        {
+          "sourceId": "concept",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/003_1210_Проекты_для_Национального_центра_Россия_и.md",
+          "sourceLines": [
+            79,
+            80
+          ]
+        },
+        {
+          "sourceId": "regional",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/056_Структура_экспозиции_по_регионам.md",
+          "sourceLines": [
+            33
+          ]
+        }
+      ],
+      "reason": "The programme names Sayano-Shushenskaya HPP and Eastern Siberia; video mesh identity remains a generic dam, so district transfer is inferred for this model.",
+      "instanceIds": [
+        "O06-1"
+      ]
+    },
+    {
+      "objectId": "O07",
+      "name": "Кит — синий обтекаемый вариант",
+      "regionId": null,
+      "district": null,
+      "legendNumber": null,
+      "status": "unassigned",
+      "evidence": [],
+      "reason": "Whale meshes have no confirmed geographic label in the consulted primary programme. Biological species are also unconfirmed in videoManifest.",
+      "instanceIds": [
+        "O07-1",
+        "O07-2"
+      ]
+    },
+    {
+      "objectId": "O08",
+      "name": "Кит — крупный серый вариант",
+      "regionId": null,
+      "district": null,
+      "legendNumber": null,
+      "status": "unassigned",
+      "evidence": [],
+      "reason": "Whale meshes have no confirmed geographic label in the consulted primary programme. Biological species are also unconfirmed in videoManifest.",
+      "instanceIds": [
+        "O08-1",
+        "O08-2",
+        "O08-3"
+      ]
+    },
+    {
+      "objectId": "O09",
+      "name": "Ракета «Ангара-А5»",
+      "regionId": "far-east",
+      "district": "ДФО",
+      "legendNumber": 2,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "sourceId": "technology",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "sourceLines": [
+            45
+          ]
+        },
+        {
+          "sourceId": "regional",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/056_Структура_экспозиции_по_регионам.md",
+          "sourceLines": [
+            32
+          ]
+        }
+      ],
+      "reason": "Angara is explicitly labelled DFO; Vostochny corroborates this assignment.",
+      "instanceIds": [
+        "O09-1"
+      ]
+    },
+    {
+      "objectId": "O10",
+      "name": "Башня обслуживания ракеты",
+      "regionId": "far-east",
+      "district": "ДФО",
+      "legendNumber": 2,
+      "status": "inferred",
+      "evidence": [
+        {
+          "sourceId": "technology",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "sourceLines": [
+            45
+          ]
+        }
+      ],
+      "reason": "Service tower belongs to the same verified Angara scene group G05; district follows the rocket assembly.",
+      "instanceIds": [
+        "O10-1"
+      ]
+    },
+    {
+      "objectId": "O11",
+      "name": "Реакторный стенд с трубопроводами",
+      "regionId": "siberia",
+      "district": "СФО",
+      "legendNumber": 3,
+      "status": "inferred",
+      "evidence": [
+        {
+          "sourceId": "technology",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "sourceLines": [
+            57
+          ]
+        },
+        {
+          "sourceId": "concept",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/003_1210_Проекты_для_Национального_центра_Россия_и.md",
+          "sourceLines": [
+            847,
+            864
+          ]
+        }
+      ],
+      "reason": "Proryv is explicitly SFO and the programme names Seversk. The original generic reactor mesh did not independently establish that identity; retain this distinction.",
+      "instanceIds": [
+        "O11-1"
+      ]
+    },
+    {
+      "objectId": "O12",
+      "name": "Атомный ледокол «Лидер»",
+      "regionId": "northwest",
+      "district": "СЗФО",
+      "legendNumber": 7,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "sourceId": "technology",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "sourceLines": [
+            51
+          ]
+        },
+        {
+          "sourceId": "regional",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/056_Структура_экспозиции_по_регионам.md",
+          "sourceLines": [
+            111
+          ]
+        }
+      ],
+      "reason": "Lider is explicitly SZFO; Arctic/Russian North corroborates the programme.",
+      "instanceIds": [
+        "O12-1"
+      ]
+    },
+    {
+      "objectId": "O13",
+      "name": "Красный комбайн с жаткой",
+      "regionId": "volga",
+      "district": "ПФО",
+      "legendNumber": 5,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "sourceId": "technology",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "sourceLines": [
+            49
+          ]
+        }
+      ],
+      "reason": "Autonomous agriculture, its combines and working grain elevator are explicitly PFO. Keep this exhibit-programme label even though Rostselmash appears geographically in South Russia in056.",
+      "instanceIds": [
+        "O13-1",
+        "O13-2",
+        "O13-3"
+      ]
+    },
+    {
+      "objectId": "O14",
+      "name": "Зелёный агродрон / мультикоптер",
+      "regionId": "volga",
+      "district": "ПФО",
+      "legendNumber": 5,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "sourceId": "technology",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "sourceLines": [
+            49
+          ]
+        }
+      ],
+      "reason": "Agricultural drones are part of the explicitly PFO autonomous-agriculture programme; four physical copies remain a video-derived proposed quantity.",
+      "instanceIds": [
+        "O14-1",
+        "O14-2",
+        "O14-3",
+        "O14-4"
+      ]
+    },
+    {
+      "objectId": "O15",
+      "name": "Арочный металлический ферменный мост",
+      "regionId": "south",
+      "district": "ЮФО",
+      "legendNumber": 8,
+      "status": "inferred",
+      "evidence": [
+        {
+          "sourceId": "presentation",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/005_26.10. презентация_ для_Орешкина.md",
+          "sourceLines": [
+            72,
+            74
+          ]
+        },
+        {
+          "sourceId": "regional",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/056_Структура_экспозиции_по_регионам.md",
+          "sourceLines": [
+            100
+          ]
+        }
+      ],
+      "reason": "The named Crimean Bridge programme belongs to South Russia, but the video-derived truss mesh does not by itself verify the real bridge identity.",
+      "instanceIds": [
+        "O15-1"
+      ]
+    },
+    {
+      "objectId": "O16",
+      "name": "Херсонес · музейная аркада",
+      "regionId": "south",
+      "district": "ЮФО",
+      "legendNumber": 8,
+      "status": "confirmed",
+      "evidence": [
+        {
+          "sourceId": "technology",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "sourceLines": [
+            55
+          ]
+        },
+        {
+          "sourceId": "regional",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/056_Структура_экспозиции_по_регионам.md",
+          "sourceLines": [
+            100
+          ]
+        }
+      ],
+      "reason": "Current user/project identifies this museum arcade as Chersonesus; the named programme explicitly states YUFO. Original video-manifest prototype was unverified, which remains a model-fidelity limit.",
+      "instanceIds": [
+        "O16-1"
+      ]
+    }
+  ],
+  "instances": [
+    {
+      "instanceId": "O01-1",
+      "objectId": "O01",
+      "regionId": null,
+      "status": "unassigned"
+    },
+    {
+      "instanceId": "O02-1",
+      "objectId": "O02",
+      "regionId": null,
+      "status": "unassigned"
+    },
+    {
+      "instanceId": "O03-1",
+      "objectId": "O03",
+      "regionId": null,
+      "status": "unassigned"
+    },
+    {
+      "instanceId": "O04-1",
+      "objectId": "O04",
+      "regionId": null,
+      "status": "unassigned"
+    },
+    {
+      "instanceId": "O05-1",
+      "objectId": "O05",
+      "regionId": "siberia",
+      "status": "confirmed"
+    },
+    {
+      "instanceId": "O06-1",
+      "objectId": "O06",
+      "regionId": "siberia",
+      "status": "inferred"
+    },
+    {
+      "instanceId": "O07-1",
+      "objectId": "O07",
+      "regionId": null,
+      "status": "unassigned"
+    },
+    {
+      "instanceId": "O07-2",
+      "objectId": "O07",
+      "regionId": null,
+      "status": "unassigned"
+    },
+    {
+      "instanceId": "O08-1",
+      "objectId": "O08",
+      "regionId": null,
+      "status": "unassigned"
+    },
+    {
+      "instanceId": "O08-2",
+      "objectId": "O08",
+      "regionId": null,
+      "status": "unassigned"
+    },
+    {
+      "instanceId": "O08-3",
+      "objectId": "O08",
+      "regionId": null,
+      "status": "unassigned"
+    },
+    {
+      "instanceId": "O09-1",
+      "objectId": "O09",
+      "regionId": "far-east",
+      "status": "confirmed"
+    },
+    {
+      "instanceId": "O10-1",
+      "objectId": "O10",
+      "regionId": "far-east",
+      "status": "inferred"
+    },
+    {
+      "instanceId": "O11-1",
+      "objectId": "O11",
+      "regionId": "siberia",
+      "status": "inferred"
+    },
+    {
+      "instanceId": "O12-1",
+      "objectId": "O12",
+      "regionId": "northwest",
+      "status": "confirmed"
+    },
+    {
+      "instanceId": "O13-1",
+      "objectId": "O13",
+      "regionId": "volga",
+      "status": "confirmed"
+    },
+    {
+      "instanceId": "O13-2",
+      "objectId": "O13",
+      "regionId": "volga",
+      "status": "confirmed"
+    },
+    {
+      "instanceId": "O13-3",
+      "objectId": "O13",
+      "regionId": "volga",
+      "status": "confirmed"
+    },
+    {
+      "instanceId": "O14-1",
+      "objectId": "O14",
+      "regionId": "volga",
+      "status": "confirmed"
+    },
+    {
+      "instanceId": "O14-2",
+      "objectId": "O14",
+      "regionId": "volga",
+      "status": "confirmed"
+    },
+    {
+      "instanceId": "O14-3",
+      "objectId": "O14",
+      "regionId": "volga",
+      "status": "confirmed"
+    },
+    {
+      "instanceId": "O14-4",
+      "objectId": "O14",
+      "regionId": "volga",
+      "status": "confirmed"
+    },
+    {
+      "instanceId": "O15-1",
+      "objectId": "O15",
+      "regionId": "south",
+      "status": "inferred"
+    },
+    {
+      "instanceId": "O16-1",
+      "objectId": "O16",
+      "regionId": "south",
+      "status": "confirmed"
+    }
+  ],
+  "counts": {
+    "objects": 16,
+    "instances": 24,
+    "confirmedInstances": 11,
+    "inferredInstances": 4,
+    "unassignedInstances": 9
+  },
+  "newAssemblies": [
+    {
+      "ids": [
+        "X04_COCKPIT",
+        "Z03",
+        "Z04"
+      ],
+      "regionId": "siberia",
+      "status": "confirmed",
+      "evidence": [
+        {
+          "sourceId": "technology",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "sourceLines": [
+            47
+          ]
+        }
+      ]
+    },
+    {
+      "ids": [
+        "Z02"
+      ],
+      "regionId": "volga",
+      "status": "confirmed",
+      "evidence": [
+        {
+          "sourceId": "technology",
+          "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+          "sourceLines": [
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "ids": [
+        "X05_ARCHAEOLOGY"
+      ],
+      "regionId": "south",
+      "status": "inferred",
+      "note": "User requested these cases inside Chersonesus; not an independently named district exhibit."
+    },
+    {
+      "ids": [
+        "X01_MIR",
+        "X02_SAILSHIP",
+        "X03_NAVIGATION",
+        "Z01"
+      ],
+      "regionId": null,
+      "programmeSection": "RGO",
+      "status": "confirmed",
+      "note": "Separate RGO programme from018/017; do not assign these gallery exhibits to a federal district."
+    }
+  ]
+}

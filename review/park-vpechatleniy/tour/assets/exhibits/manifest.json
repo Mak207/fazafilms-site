@@ -1,7 +1,7 @@
 {
-  "version": "park-compact-20261124",
-  "layoutStatus": "provisional",
-  "qualityNote": "Рабочая расстановка по ролику и концепции; координаты и выставочный масштаб требуют проектного уточнения.",
+  "version": "park-zones-20261124",
+  "layoutStatus": "source-zones-geometry-verified-working-layout",
+  "qualityNote": "Рабочая расстановка по исходной схеме зон с проверкой геометрии. Неподтверждённые первичкой привязки отмечены отдельно; контур Аллеи РГО018 требует согласования с общей схемой.",
   "objects": [
     {
       "id": "O01",
@@ -19,13 +19,25 @@
       "instances": [
         {
           "id": "O01-1",
-          "x": -6,
-          "z": -23.5,
+          "x": -6.25,
+          "z": -24,
           "floorY": 13.2,
           "offsetY": 0,
           "rotationY": 0,
           "floating": false,
-          "zone": "G01"
+          "zone": "Уральский ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "ural-upper",
+          "sourceAssignmentStatus": "unassigned",
+          "primaryEvidence": [
+            {
+              "sourceId": "technology",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+              "sourceLines": [
+                53
+              ]
+            }
+          ]
         }
       ]
     },
@@ -45,13 +57,25 @@
       "instances": [
         {
           "id": "O02-1",
-          "x": -8,
-          "z": -32,
+          "x": -16.75,
+          "z": -32.25,
           "floorY": 13.2,
           "offsetY": 0,
-          "rotationY": 0,
+          "rotationY": 1.5707963267948966,
           "floating": false,
-          "zone": "G01"
+          "zone": "Уральский ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "ural-upper",
+          "sourceAssignmentStatus": "unassigned",
+          "primaryEvidence": [
+            {
+              "sourceId": "technology",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+              "sourceLines": [
+                53
+              ]
+            }
+          ]
         }
       ]
     },
@@ -71,13 +95,25 @@
       "instances": [
         {
           "id": "O03-1",
-          "x": -6,
-          "z": -16,
+          "x": -8.5,
+          "z": -16.5,
           "floorY": 13.2,
           "offsetY": 0,
-          "rotationY": 0,
+          "rotationY": 0.7853981633974483,
           "floating": false,
-          "zone": "G01"
+          "zone": "Уральский ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "ural-upper",
+          "sourceAssignmentStatus": "unassigned",
+          "primaryEvidence": [
+            {
+              "sourceId": "technology",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+              "sourceLines": [
+                53
+              ]
+            }
+          ]
         }
       ]
     },
@@ -97,13 +133,25 @@
       "instances": [
         {
           "id": "O04-1",
-          "x": -4,
-          "z": -12,
+          "x": -12.25,
+          "z": -12.75,
           "floorY": 13.2,
           "offsetY": 0,
           "rotationY": 0,
           "floating": false,
-          "zone": "G01"
+          "zone": "Уральский ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "ural-upper",
+          "sourceAssignmentStatus": "unassigned",
+          "primaryEvidence": [
+            {
+              "sourceId": "technology",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+              "sourceLines": [
+                53
+              ]
+            }
+          ]
         }
       ]
     },
@@ -123,13 +171,32 @@
       "instances": [
         {
           "id": "O05-1",
-          "x": 15,
-          "z": -19,
+          "x": 16,
+          "z": -45,
           "floorY": 7.2,
           "offsetY": 0,
-          "rotationY": 0,
+          "rotationY": 0.9599310885968813,
           "floating": false,
-          "zone": "G02"
+          "zone": "Сибирский ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "siberia-main",
+          "sourceAssignmentStatus": "confirmed",
+          "primaryEvidence": [
+            {
+              "sourceId": "technology",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+              "sourceLines": [
+                47
+              ]
+            },
+            {
+              "sourceId": "regional",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/056_Структура_экспозиции_по_регионам.md",
+              "sourceLines": [
+                34
+              ]
+            }
+          ]
         }
       ]
     },
@@ -138,7 +205,7 @@
       "name": "Макет плотины / ГЭС",
       "scaleTo": {
         "axis": "max",
-        "meters": 14
+        "meters": 11.48
       },
       "rotation": [
         0,
@@ -149,15 +216,36 @@
       "instances": [
         {
           "id": "O06-1",
-          "x": 11.5,
-          "z": 45,
-          "floorY": 7.2,
+          "x": -2.75,
+          "z": -44.5,
+          "floorY": 13.2,
           "offsetY": 0,
-          "rotationY": 0,
+          "rotationY": 1.5707963267948966,
           "floating": false,
-          "zone": "G03"
+          "zone": "Сибирский ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "siberia-upper",
+          "sourceAssignmentStatus": "inferred",
+          "primaryEvidence": [
+            {
+              "sourceId": "concept",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/003_1210_Проекты_для_Национального_центра_Россия_и.md",
+              "sourceLines": [
+                79,
+                80
+              ]
+            },
+            {
+              "sourceId": "regional",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/056_Структура_экспозиции_по_регионам.md",
+              "sourceLines": [
+                33
+              ]
+            }
+          ]
         }
-      ]
+      ],
+      "normalizationNote": "Выставочный размер проверен в итоговой расстановке; instance.scaleFactor=1."
     },
     {
       "id": "O07",
@@ -175,23 +263,31 @@
       "instances": [
         {
           "id": "O07-1",
-          "x": 8,
-          "z": -57,
+          "x": 8.25,
+          "z": 45.75,
           "floorY": 7.2,
           "offsetY": 7,
-          "rotationY": 0,
+          "rotationY": 1.5707963267948966,
           "floating": true,
-          "zone": "G04"
+          "zone": "Центральная площадь",
+          "scaleFactor": 1,
+          "sourceZoneId": "central-square-main",
+          "sourceAssignmentStatus": "unassigned",
+          "primaryEvidence": []
         },
         {
           "id": "O07-2",
-          "x": 15,
-          "z": -39,
+          "x": 10.5,
+          "z": 55.5,
           "floorY": 7.2,
           "offsetY": 7,
-          "rotationY": 0,
+          "rotationY": 1.5707963267948966,
           "floating": true,
-          "zone": "G04"
+          "zone": "Центральная площадь",
+          "scaleFactor": 1,
+          "sourceZoneId": "central-square-main",
+          "sourceAssignmentStatus": "unassigned",
+          "primaryEvidence": []
         }
       ]
     },
@@ -211,33 +307,45 @@
       "instances": [
         {
           "id": "O08-1",
-          "x": 10,
-          "z": -30,
+          "x": 0,
+          "z": 25.5,
           "floorY": 7.2,
           "offsetY": 7,
-          "rotationY": 0,
+          "rotationY": 1.5707963267948966,
           "floating": true,
-          "zone": "G04"
+          "zone": "Центральная площадь",
+          "scaleFactor": 1,
+          "sourceZoneId": "central-square-main",
+          "sourceAssignmentStatus": "unassigned",
+          "primaryEvidence": []
         },
         {
           "id": "O08-2",
-          "x": 11,
-          "z": -17,
+          "x": 8.25,
+          "z": 32.25,
           "floorY": 7.2,
           "offsetY": 7,
           "rotationY": 0,
           "floating": true,
-          "zone": "G04"
+          "zone": "Центральная площадь",
+          "scaleFactor": 1,
+          "sourceZoneId": "central-square-main",
+          "sourceAssignmentStatus": "unassigned",
+          "primaryEvidence": []
         },
         {
           "id": "O08-3",
-          "x": 12,
-          "z": -4,
+          "x": 0,
+          "z": 35.25,
           "floorY": 7.2,
           "offsetY": 7,
-          "rotationY": 0,
+          "rotationY": 0.7853981633974483,
           "floating": true,
-          "zone": "G04"
+          "zone": "Центральная площадь",
+          "scaleFactor": 1,
+          "sourceZoneId": "central-square-main",
+          "sourceAssignmentStatus": "unassigned",
+          "primaryEvidence": []
         }
       ]
     },
@@ -257,13 +365,32 @@
       "instances": [
         {
           "id": "O09-1",
-          "x": 14,
-          "z": -48,
+          "x": -14.5,
+          "z": -75.25,
           "floorY": 7.2,
           "offsetY": 0,
           "rotationY": 0,
           "floating": false,
-          "zone": "G05"
+          "zone": "Дальневосточный ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "far-east-main",
+          "sourceAssignmentStatus": "confirmed",
+          "primaryEvidence": [
+            {
+              "sourceId": "technology",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+              "sourceLines": [
+                45
+              ]
+            },
+            {
+              "sourceId": "regional",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/056_Структура_экспозиции_по_регионам.md",
+              "sourceLines": [
+                32
+              ]
+            }
+          ]
         }
       ]
     },
@@ -272,7 +399,7 @@
       "name": "Башня обслуживания ракеты",
       "scaleTo": {
         "axis": "y",
-        "meters": 12
+        "meters": 8.16
       },
       "rotation": [
         0,
@@ -283,15 +410,28 @@
       "instances": [
         {
           "id": "O10-1",
-          "x": 21,
-          "z": -43.5,
+          "x": -13.5,
+          "z": -69,
           "floorY": 7.2,
           "offsetY": 0,
           "rotationY": 1.5707963267948966,
           "floating": false,
-          "zone": "G05"
+          "zone": "Дальневосточный ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "far-east-main",
+          "sourceAssignmentStatus": "inferred",
+          "primaryEvidence": [
+            {
+              "sourceId": "technology",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+              "sourceLines": [
+                45
+              ]
+            }
+          ]
         }
-      ]
+      ],
+      "normalizationNote": "Выставочный размер проверен в итоговой расстановке; instance.scaleFactor=1."
     },
     {
       "id": "O11",
@@ -309,13 +449,33 @@
       "instances": [
         {
           "id": "O11-1",
-          "x": -25,
-          "z": -53,
+          "x": 3,
+          "z": -32,
           "floorY": 13.2,
           "offsetY": 0,
-          "rotationY": 0,
+          "rotationY": -0.7853981633974483,
           "floating": false,
-          "zone": "G06"
+          "zone": "Сибирский ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "siberia-upper",
+          "sourceAssignmentStatus": "inferred",
+          "primaryEvidence": [
+            {
+              "sourceId": "technology",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+              "sourceLines": [
+                57
+              ]
+            },
+            {
+              "sourceId": "concept",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/003_1210_Проекты_для_Национального_центра_Россия_и.md",
+              "sourceLines": [
+                847,
+                864
+              ]
+            }
+          ]
         }
       ]
     },
@@ -324,7 +484,7 @@
       "name": "Атомный ледокол «Лидер»",
       "scaleTo": {
         "axis": "max",
-        "meters": 25.2
+        "meters": 16
       },
       "rotation": [
         0,
@@ -335,16 +495,17 @@
       "instances": [
         {
           "id": "O12-1",
-          "x": 33.05,
-          "z": -47,
+          "x": -8.5,
+          "z": 42,
           "floorY": 7.2,
           "offsetY": 0,
-          "rotationY": 3.141592653589793,
+          "rotationY": 1.3089969389957472,
           "floating": false,
-          "zone": "G07"
+          "zone": "СЗФО · Арктика",
+          "sourceZoneId": "northwest-main"
         }
       ],
-      "workingNote": "Ледокол на основном этаже; масштаб согласован с крылом рубки на13.2м для перехода с антресоли. Положение и входной узел рабочие."
+      "workingNote": "Выставочная адаптация корпуса16м; полноразмерная рубка3×3.2м, высота2.35м. Вся проекция корабля в первичной зоне7; нос к залу. Исходный GLB сохранён."
     },
     {
       "id": "O13",
@@ -362,33 +523,69 @@
       "instances": [
         {
           "id": "O13-1",
-          "x": -5,
-          "z": 4,
+          "x": -3,
+          "z": 10.25,
           "floorY": 13.2,
           "offsetY": 0,
           "rotationY": 0,
           "floating": false,
-          "zone": "G08"
+          "zone": "Приволжский ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "volga-upper",
+          "sourceAssignmentStatus": "confirmed",
+          "primaryEvidence": [
+            {
+              "sourceId": "technology",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+              "sourceLines": [
+                49
+              ]
+            }
+          ]
         },
         {
           "id": "O13-2",
-          "x": -5,
-          "z": 10,
+          "x": -2.25,
+          "z": 16.25,
           "floorY": 13.2,
           "offsetY": 0,
-          "rotationY": 0,
+          "rotationY": 1.5707963267948966,
           "floating": false,
-          "zone": "G08"
+          "zone": "Приволжский ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "volga-upper",
+          "sourceAssignmentStatus": "confirmed",
+          "primaryEvidence": [
+            {
+              "sourceId": "technology",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+              "sourceLines": [
+                49
+              ]
+            }
+          ]
         },
         {
           "id": "O13-3",
-          "x": -5,
-          "z": 16,
+          "x": 4.5,
+          "z": 17,
           "floorY": 13.2,
           "offsetY": 0,
           "rotationY": 0,
           "floating": false,
-          "zone": "G08"
+          "zone": "Приволжский ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "volga-upper",
+          "sourceAssignmentStatus": "confirmed",
+          "primaryEvidence": [
+            {
+              "sourceId": "technology",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+              "sourceLines": [
+                49
+              ]
+            }
+          ]
         }
       ]
     },
@@ -408,43 +605,91 @@
       "instances": [
         {
           "id": "O14-1",
-          "x": -10,
-          "z": -1,
+          "x": 5.25,
+          "z": 9.5,
           "floorY": 13.2,
-          "offsetY": 2,
+          "offsetY": 2.8,
           "rotationY": 0,
           "floating": true,
-          "zone": "G08"
+          "zone": "Приволжский ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "volga-upper",
+          "sourceAssignmentStatus": "confirmed",
+          "primaryEvidence": [
+            {
+              "sourceId": "technology",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+              "sourceLines": [
+                49
+              ]
+            }
+          ]
         },
         {
           "id": "O14-2",
-          "x": -10,
-          "z": 9,
+          "x": 3,
+          "z": 12.5,
           "floorY": 13.2,
-          "offsetY": 2,
+          "offsetY": 2.8,
           "rotationY": 0,
           "floating": true,
-          "zone": "G08"
+          "zone": "Приволжский ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "volga-upper",
+          "sourceAssignmentStatus": "confirmed",
+          "primaryEvidence": [
+            {
+              "sourceId": "technology",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+              "sourceLines": [
+                49
+              ]
+            }
+          ]
         },
         {
           "id": "O14-3",
-          "x": -11,
-          "z": 13,
+          "x": 6,
+          "z": 14.75,
           "floorY": 13.2,
-          "offsetY": 2,
-          "rotationY": 0,
+          "offsetY": 2.8,
+          "rotationY": 1.5707963267948966,
           "floating": true,
-          "zone": "G08"
+          "zone": "Приволжский ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "volga-upper",
+          "sourceAssignmentStatus": "confirmed",
+          "primaryEvidence": [
+            {
+              "sourceId": "technology",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+              "sourceLines": [
+                49
+              ]
+            }
+          ]
         },
         {
           "id": "O14-4",
-          "x": -11,
-          "z": 17,
+          "x": 3.75,
+          "z": 17.75,
           "floorY": 13.2,
-          "offsetY": 2,
+          "offsetY": 2.8,
           "rotationY": 0,
           "floating": true,
-          "zone": "G08"
+          "zone": "Приволжский ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "volga-upper",
+          "sourceAssignmentStatus": "confirmed",
+          "primaryEvidence": [
+            {
+              "sourceId": "technology",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/061_Текст_для_презентации_про_технологии_и_мультимедиа_3.md",
+              "sourceLines": [
+                49
+              ]
+            }
+          ]
         }
       ]
     },
@@ -464,22 +709,42 @@
       "instances": [
         {
           "id": "O15-1",
-          "x": -12,
-          "z": 45,
-          "floorY": 13.2,
+          "x": -11.25,
+          "z": 60.25,
+          "floorY": 7.2,
           "offsetY": 0,
-          "rotationY": 1.5707963267948966,
+          "rotationY": 0,
           "floating": false,
-          "zone": "G09"
+          "zone": "Южный ФО",
+          "scaleFactor": 1,
+          "sourceZoneId": "south-main",
+          "sourceAssignmentStatus": "inferred",
+          "primaryEvidence": [
+            {
+              "sourceId": "presentation",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/005_26.10. презентация_ для_Орешкина.md",
+              "sourceLines": [
+                72,
+                74
+              ]
+            },
+            {
+              "sourceId": "regional",
+              "sourcePath": "D:/Парк впечатлений/01_Вложения_переписки/056_Структура_экспозиции_по_регионам.md",
+              "sourceLines": [
+                100
+              ]
+            }
+          ]
         }
       ]
     },
     {
       "id": "O16",
-      "name": "Аркадный павильон с фронтоном",
+      "name": "Херсонес · музейная аркада",
       "scaleTo": {
         "axis": "max",
-        "meters": 12
+        "meters": 24
       },
       "rotation": [
         0,
@@ -490,16 +755,66 @@
       "instances": [
         {
           "id": "O16-1",
-          "x": -14,
-          "z": 61,
+          "x": -10,
+          "z": 55,
           "floorY": 13.2,
           "offsetY": 0,
           "rotationY": 0,
           "floating": false,
-          "zone": "G10"
+          "zone": "ЮФО · Херсонес",
+          "sourceZoneId": "south-upper"
+        }
+      ],
+      "floorDatumOffset": 0.31,
+      "workingNote": "Исходная24м нормализация перед явной адаптацией XY до8.9×14м; высота людей не уменьшена. Портал2.4×2.5м. ЮФО по061, антресоль.",
+      "supportSamples": [
+        {
+          "label": "adapted-floor-0",
+          "x": 0,
+          "z": 0
+        },
+        {
+          "label": "adapted-floor-1",
+          "x": -4.300000000000001,
+          "z": -6.850000000000001
+        },
+        {
+          "label": "adapted-floor-2",
+          "x": 4.3,
+          "z": -6.850000000000001
+        },
+        {
+          "label": "adapted-floor-3",
+          "x": 4.3,
+          "z": 6.850000000000001
+        },
+        {
+          "label": "adapted-floor-4",
+          "x": -4.300000000000001,
+          "z": 6.850000000000001
+        },
+        {
+          "label": "adapted-floor-5",
+          "x": 0,
+          "z": -6.850000000000001
+        },
+        {
+          "label": "adapted-floor-6",
+          "x": 4.3,
+          "z": 0
+        },
+        {
+          "label": "adapted-floor-7",
+          "x": 0,
+          "z": 6.850000000000001
+        },
+        {
+          "label": "adapted-floor-8",
+          "x": -4.300000000000001,
+          "z": 0
         }
       ]
     }
   ],
-  "layoutRevision": "park-compact-20261124"
+  "layoutRevision": "park-zones-20261124"
 }

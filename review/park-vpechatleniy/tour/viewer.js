@@ -1,19 +1,22 @@
+import { createZoneMap } from './zone-map.js?v=park-zones-20261124';
+import { createExhibitionZones } from './zones-controller.js?v=park-zones-20261124';
 import * as THREE from 'three';
 import { GLTFLoader } from '/golden-ring/interactives/vendor/three-0.180/GLTFLoader.js';
 import { MeshoptDecoder } from '/golden-ring/tour/vendor/meshopt_decoder.mjs';
 import { OrbitControls } from './vendor/OrbitControls.js';
-import { createTramSystem, MONORAIL_ROUTE_CONFIG, MONORAIL_BOARDING_GATE } from './tram-system.js?v=park-compact-20261124';
+import { createTramStationControls } from './tram-station-controls.js?v=park-zones-20261124';
+import { createTramSystem, MONORAIL_ROUTE_CONFIG, MONORAIL_BOARDING_GATE } from './tram-system.js?v=park-zones-20261124';
 import { KTX2Loader } from './vendor/ktx2/loaders/KTX2Loader.js';
 import { RoomEnvironment } from './vendor/RoomEnvironment.js';
-import { createExhibitSystem } from './exhibits.js?v=park-compact-20261124';
-import { createExhibitEditor } from './exhibit-editor.js?v=park-social-compact-20261124';
-import { startParkCrowd } from './crowd/park-crowd.js?v=park-social-compact-20261124';
-import { createDynamicObstacleAdapter } from './crowd/dynamic-obstacles.js?v=park-social-compact-20261124';
-import { attachIcebreakerDetails } from './icebreaker-details.js?v=park-compact-20261124';
-import { createIcebreakerAccess, ICEBREAKER_OPENING } from './icebreaker-access.js?v=park-compact-20261124';
-import { applyWorkingOpenings } from './cad-openings.js?v=park-compact-20261124';
-import { createRgoZones } from './rgo-zones.js?v=park-rgo-20261124';
-import { initViewerUI } from './ui-module.js?v=park-compact-20261124';
+import { createExhibitSystem } from './exhibits.js?v=park-zones-20261124';
+import { createExhibitEditor } from './exhibit-editor.js?v=park-zones-20261124';
+import { startParkCrowd } from './crowd/park-crowd.js?v=park-zones-20261124';
+import { createDynamicObstacleAdapter } from './crowd/dynamic-obstacles.js?v=park-zones-20261124';
+import { attachIcebreakerDetails } from './icebreaker-details.js?v=park-zones-20261124';
+import { createIcebreakerAccess, ICEBREAKER_OPENING } from './icebreaker-access.js?v=park-zones-20261124';
+import { applyWorkingOpenings } from './cad-openings.js?v=park-zones-20261124';
+import { initViewerUI } from './ui-module.js?v=park-zones-20261124';
+import { createRgoZones } from './rgo-zones.js?v=park-zones-20261124';
 import { MeshBVH, acceleratedRaycast, CENTER } from './vendor/three-mesh-bvh/index.module.js';
 
 const $ = id => document.getElementById(id);
@@ -44,10 +47,14 @@ Object.defineProperty(diagnostics,'rgo',{enumerable:true,get:()=>rgoZones?.getSt
 let captureMode=false;
 let sourceMaterials=[],sourceMeshes=[],envelopeMeshes=[],roofMeshes=[];
 const crowdMaterials=[];
+let stationControls=null;
 let monorail=null,followVehicle=-1,onboardVehicle=-1,lastOnboardVehicle=0,hallOpen=true,lastFrameTime=null;
 const passenger={yaw:-Math.PI/2,pitch:-.16,eye:new THREE.Vector3(-.52,2.05,.55),normalFov:43,normalNear:.05};
 const passengerPointers=new Map();let pinchDistance=0;
 Object.defineProperty(diagnostics,'onboard',{get:()=>({active:onboardVehicle>=0,vehicle:onboardVehicle>=0?onboardVehicle:null,yaw:passenger.yaw,pitch:passenger.pitch,eyeLocal:passenger.eye.toArray(),fov:camera.fov})});
+let exhibitionZones=null,zoneMap=null;
+Object.defineProperty(diagnostics,'zones',{get:()=>exhibitionZones?.getState()||{ready:false}});
+Object.defineProperty(diagnostics,'zoneMap',{get:()=>zoneMap?.getState()||{ready:false}});
 let exhibits=null,icebreakerAccess=null,exhibitProgress={state:'waiting',loadedObjects:0,placedInstances:0,objects:[]};
 Object.defineProperty(diagnostics,'exhibits',{get:()=>exhibits?.getState()||exhibitProgress});
 let exhibitEditor=null,editingInstanceId=null,editCutawayTimer=null,dynamicObstacles=null,visitorPlacementReady=false,placementNotice=null;
@@ -109,9 +116,12 @@ try {
   controls.mouseButtons={LEFT:THREE.MOUSE.ROTATE,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:THREE.MOUSE.PAN};
   controls.touches={ONE:THREE.TOUCH.ROTATE,TWO:THREE.TOUCH.DOLLY_PAN};
   controls.screenSpacePanning=true;controls.zoomToCursor=true;
-  controls.minPolarAngle=.001;controls.maxPolarAngle=Math.PI*.499;
+  controls.minPolarAngle=.001;controls.maxPolarAngle=Math.PI-.001;
   controls.addEventListener('change',()=>{needsRender=true});
   controls.addEventListener('start',()=>{
+    if(rgoZones?.getState().activeView){
+      stopFollowing();currentView=null;transition=null;needsRender=true;return;
+    }
     if(inspectedExhibitId!==null){
       clearTimeout(inspectionTimer);inspectionTimer=null;
       stopFollowing();currentView=null;transition=null;
@@ -212,8 +222,9 @@ try {
       if(t===1)transition=null;
     }
     if(dynamicObstacles?.sync())needsRender=true;
-    if(icebreakerAccess?.update())needsRender=true;
+    if(icebreakerAccess?.update(delta))needsRender=true;
     if(crowd?.update(delta))needsRender=true;
+    if(exhibitionZones?.update(delta))needsRender=true;
     if(onboardVehicle<0)controls.update();
     if(needsRender){renderer.render(scene,camera);needsRender=false;diagnostics.renderedFrames=(diagnostics.renderedFrames||0)+1;diagnostics.renderTriangles=renderer.info.render.triangles;}
   }
@@ -256,6 +267,7 @@ function setView(view,instant=false){
   leaveRgoView();
   exhibitEditor?.clearSelection();editingInstanceId=null;
   clearExhibitInspection();stopFollowing();
+  camera.fov=43;camera.updateProjectionMatrix();
   if(view==='exhibits'){
     const box=exhibits?.getBounds();
     if(!box||box.isEmpty())return;
@@ -349,6 +361,7 @@ function stopFollowing(){
   followVehicle=-1;diagnostics.followVehicle=null;
   exhibitEditor?.setEnabled(visitorPlacementReady);
   if(onboardVehicle>=0){
+    monorail?.cancelDisembarkRequest();
     onboardVehicle=-1;passengerPointers.clear();pinchDistance=0;
     controls.enabled=true;camera.fov=passenger.normalFov;camera.near=passenger.normalNear;camera.updateProjectionMatrix();
     $('tram-onboard').setAttribute('aria-pressed','false');$('onboard-hint').hidden=true;canvas.classList.remove('onboard');
@@ -368,7 +381,8 @@ function updatePassengerCamera(){
 }
 
 function setPassengerView(index=0){
-  if(!monorail||!monorail.vehicles[index])return;
+  if(!monorail||!monorail.vehicles[index])return false;
+  if(onboardVehicle!==index&&!monorail.getBoardingOptions().some(option=>option.canBoard&&option.vehicleIndex===index))return false;
   leaveRgoView();
   crowd?.releaseCamera();
   exhibitEditor?.clearSelection();editingInstanceId=null;
@@ -382,7 +396,7 @@ function setPassengerView(index=0){
   canvas.setAttribute('aria-label','Вид из вагона. Потяните мышью или пальцем либо нажмите стрелки, чтобы оглядеться. Колесо или щипок — приближение. Escape — весь маршрут.');
   $('view-name').textContent='Из вагона '+(index+1)+' · выставка';diagnostics.view='onboard';
   document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));
-  updatePassengerCamera();canvas.focus({preventScroll:true});
+  updatePassengerCamera();canvas.focus({preventScroll:true});stationControls?.update();return true;
 }
 
 // Passenger look keeps the eye fixed in the moving wagon; OrbitControls only handles external views.
@@ -408,6 +422,7 @@ canvas.addEventListener('pointermove',event=>{
 for(const type of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(type,event=>{passengerPointers.delete(event.pointerId);pinchDistance=0;});
 canvas.addEventListener('wheel',event=>{if(onboardVehicle<0)return;event.preventDefault();camera.fov=THREE.MathUtils.clamp(camera.fov+event.deltaY*.025,45,85);camera.updateProjectionMatrix();needsRender=true;},{passive:false});
 function setFreeView(){
+  leaveRgoView();
   clearExhibitInspection();stopFollowing();currentView=null;transition=null;$('tram-camera').value='free';
   $('view-name').textContent='Свободный обзор';diagnostics.view='free';
   document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));
@@ -423,6 +438,11 @@ function syncMonorailControls(state){
   $('tram-play').textContent=state.playing?'Пауза':'Пуск';
   $('tram-play').setAttribute('aria-label',state.playing?'Приостановить оба вагона':'Запустить оба вагона');
   $('tram-play').setAttribute('aria-pressed',String(state.playing));
+  const board=monorail?.getBoardingOptions().find(option=>option.canBoard);
+  $('tram-onboard').disabled=onboardVehicle<0&&!board;
+  $('tram-onboard').textContent=onboardVehicle>=0?'Выйти на станции':board?'Сесть в вагон '+(board.vehicleIndex+1):'Ждём посадку';
+  for(const option of $('tram-camera').options)if(option.value.startsWith('inside-')){const index=Number(option.value.slice(-1));option.disabled=onboardVehicle!==index&&board?.vehicleIndex!==index;}
+  stationControls?.update(state);
   if(state.loaded)$('model-info').textContent=state.playing?'Монорельс · два вагона в пути':'Монорельс · движение на паузе';
 }
 async function startMonorail(loader){
@@ -442,6 +462,11 @@ async function startMonorail(loader){
     if(reduceMotion)monorail.setPlaying(false);
     monorail.group.traverse(node=>{node.userData.monorail=true;for(const material of Array.isArray(node.material)?node.material:[node.material])if(material?.map)material.map.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());});
     root.querySelectorAll('#tram-play,#tram-onboard,#tram-camera,#tram-speed,#tram-station').forEach(control=>control.disabled=false);
+    stationControls=createTramStationControls({container:$('tram-stations'),getSystem:()=>monorail,getPassengerVehicle:()=>onboardVehicle,onFocus:focusTramStation,onBoard:index=>{if(setPassengerView(index))viewerUI.closePanels();},onDisembark:pose=>{stopFollowing();controls.enabled=true;moveCamera(pose.position,pose.target);$('view-name').textContent='Высадка · площадка '+pose.stationNumber;diagnostics.view='station';needsRender=true;}});
+    for(const item of stationControls.getMenuItems())$('section-select').add(new Option(item.label,item.value));
+    diagnostics.focusStation=id=>stationControls.focusStation(id);
+    diagnostics.boardMonorail=index=>setPassengerView(index);
+    diagnostics.requestMonorailExit=()=>onboardVehicle>=0&&monorail.requestDisembark(onboardVehicle);
     syncMonorailControls(monorail.getState());
     if(currentView==='route')setView('route',true);
     needsRender=true;
@@ -453,22 +478,25 @@ async function startMonorail(loader){
 }
 $('tram-play').onclick=()=>{if(monorail){monorail.setPlaying(!monorail.getState().playing);needsRender=true;}};
 $('tram-speed').onchange=()=>{if(monorail)monorail.setSpeed(Number($('tram-speed').value));};
-$('tram-onboard').onclick=()=>{if(onboardVehicle>=0)setView('route');else setPassengerView(followVehicle>=0?followVehicle:lastOnboardVehicle);};
-if($('tram-station'))$('tram-station').onclick=()=>{
-  if(!monorail)return;
+$('tram-onboard').onclick=()=>{if(!monorail)return;if(onboardVehicle>=0){monorail.requestDisembark(onboardVehicle);stationControls?.update();}else{const option=monorail.getBoardingOptions().find(row=>row.canBoard);if(option)setPassengerView(option.vehicleIndex);}};
+function focusTramStation(pose){
+  leaveRgoView();
   exhibitEditor?.clearSelection();editingInstanceId=null;clearExhibitInspection();stopFollowing();
+  exhibitionZones?.hidePanel();zoneMap?.setVisible(false);
   currentView=null;transition=null;setHallOpen(true);$('tram-camera').value='free';
   sectionOn=true;$('section-height').value=String(DEFAULT_BUILDING_CUT);$('section-toggle').setAttribute('aria-pressed','true');updateSection();
-  const pose=monorail.getStationPose();moveCamera(pose.position,pose.target);
+  moveCamera(pose.position,pose.target);
   document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));
-  $('view-name').textContent='Посадочная площадка · 16,65 м';diagnostics.view='station';needsRender=true;
-};
+  $('view-name').textContent='Площадка '+pose.station.number+' · '+pose.station.label;diagnostics.view='station';needsRender=true;
+}
+if($('tram-station'))$('tram-station').onclick=()=>{if(monorail)focusTramStation(monorail.getStationPose());};
 $('tram-camera').onchange=()=>{
   if(!monorail)return;
   const value=$('tram-camera').value;
   if(value==='route'){setView('route');return;}
   if(value==='free'){setFreeView();return;}
-  if(value.startsWith('inside-')){setPassengerView(Number(value.slice(-1)));return;}
+  if(value.startsWith('inside-')){if(!setPassengerView(Number(value.slice(-1))))$('tram-camera').value=onboardVehicle>=0?'inside-'+onboardVehicle:'free';return;}
+  leaveRgoView();
   clearExhibitInspection();stopFollowing();
   exhibitEditor?.clearSelection();editingInstanceId=null;
   followVehicle=value==='follow-1'?1:0;currentView=null;transition=null;diagnostics.followVehicle=followVehicle;
@@ -500,7 +528,7 @@ function syncExhibitControls(state){
 }
 async function startExhibits(loader,monorailReady){
   try{
-    exhibits=await createExhibitSystem({scene,loader,sourceMeshes,manifestUrl:exhibitManifestPath+'?v=park-compact-20261124',
+    exhibits=await createExhibitSystem({scene,loader,sourceMeshes,manifestUrl:exhibitManifestPath+'?v=park-zones-20261124',
       anisotropy:Math.min(8,renderer.capabilities.getMaxAnisotropy()),onChange:()=>{needsRender=true;},onProgress:syncExhibitControls});
     const icebreaker=exhibits.getInstance('O12-1');
     if(icebreaker){
@@ -508,6 +536,26 @@ async function startExhibits(loader,monorailReady){
       diagnostics.icebreaker={lettering:lettering?.text||'АТОМФЛОТ',labelledSides:lettering?.sides||2,dimensions:icebreaker.originalDimensions||icebreaker.dimensions};
       icebreakerAccess=createIcebreakerAccess({scene,exhibits});
     }
+    exhibitionZones=await createExhibitionZones({exhibits,loader,camera,getIcebreakerAccess:()=>icebreakerAccess,onStationFocus:id=>{const focused=stationControls?.focusStation(id);if(focused)viewerUI.openPanel('monorail-panel');return focused;},requestRender:()=>{needsRender=true;},
+      onOverview:()=>{zoneMap?.setVisible(true);setView('exhibits');},onFocus:(id,position,target,label,fov=62)=>{
+        leaveRgoView();
+        zoneMap?.setVisible(false);viewerUI.closePanels();
+        exhibitEditor?.clearSelection();editingInstanceId=null;clearExhibitInspection();stopFollowing();
+        setHallOpen(true);exhibits.setVisible(true);currentView=null;
+        if(position&&target){camera.fov=camera.aspect<.8?Math.min(86,Math.max(fov,82)):fov;camera.updateProjectionMatrix();moveCamera(position,target);inspectedExhibitId=id;applyInspectionCutaway(position);}
+        else focusExhibit(id);
+        $('view-name').textContent=label;diagnostics.selectedExhibit=id;diagnostics.view='section';
+      }});
+    zoneMap=await createZoneMap({scene,requestRender:()=>{needsRender=true;},onFocus:(position,target,label)=>{
+      leaveRgoView();
+      exhibitEditor?.clearSelection();editingInstanceId=null;clearExhibitInspection();stopFollowing();
+      setHallOpen(true);exhibits.setVisible(true);currentView=null;
+      exhibitionZones.hidePanel();moveCamera(position,target);
+      $('view-name').textContent=label;diagnostics.view='zone-map';
+    }});
+    diagnostics.focusZone=(id)=>zoneMap.focus(id);
+    diagnostics.focusSection=(id,options)=>exhibitionZones.focus(id,options);
+    diagnostics.interact=(action)=>exhibitionZones.act(action);
     await monorailReady;
     await prepareInspectionRaycasts();
     inspectionReady=true;
@@ -533,6 +581,10 @@ async function startExhibits(loader,monorailReady){
       $('scene-notice').textContent=state.rejectedInstances?'Часть экспонатов ещё требует уточнения позиции. Показаны подтверждённые размещения.':'Часть экспонатов не загрузилась. Обновите страницу для повторной загрузки.';$('scene-notice').hidden=false;
     }
     if(currentView==='overview')setView('overview',true);
+    const requestedSection=new URLSearchParams(location.search).get('section');
+    if(requestedSection)exhibitionZones.focus(requestedSection);
+    const requestedZone=new URLSearchParams(location.search).get('zone');
+    if(requestedZone)zoneMap.focus(requestedZone);
   }catch(error){
     inspectionError=error?.message||String(error);
     exhibitProgress={state:'error',loadedObjects:0,placedInstances:0,objects:[],errors:[inspectionError]};
@@ -733,6 +785,7 @@ function leaveRgoView(){
 }
 function navigateRgo({box,direction,label},instant=false){
   if(!model||!controls)return;
+  zoneMap?.setVisible(false);exhibitionZones?.hidePanel();
   exhibitEditor?.clearSelection();editingInstanceId=null;clearExhibitInspection();stopFollowing();currentView=null;transition=null;
   if(!rgoSectionBackup)rgoSectionBackup={enabled:sectionOn,height:Number($('section-height').value)};
   sectionOn=true;$('section-height').value='10.8';$('section-toggle').setAttribute('aria-pressed','true');$('section-controls').hidden=false;
@@ -745,7 +798,7 @@ function navigateRgo({box,direction,label},instant=false){
 }
 async function startRgoLayer(){
   try{
-    rgoZones=await createRgoZones({THREE,scene,canvas,camera,panel:$('rgo-panel'),
+    rgoZones=await createRgoZones({THREE,scene,canvas,camera,panel:$('rgo-panel'),existingLayoutRevised:true,
       onNavigate:request=>navigateRgo(request),onOverview:()=>setView('overview'),requestRender:()=>{needsRender=true;},
       getExhibitRoot:id=>exhibits?.getInstanceRoot(id)||null,
       getExistingObstacles:()=>[...(dynamicObstacles?.snapshot().proxies||[]),...(monorail?.getCollisionObstacles()||[])]
@@ -768,7 +821,7 @@ async function startVisitors(loader){
   try{
     crowd=await startParkCrowd({THREE,scene,model,loader,camera,controls,
       exhibitObstacles:()=>dynamicObstacles?.snapshot().proxies||[],
-      fixedObstacles:()=>monorail?.getCollisionObstacles()||[],
+      fixedObstacles:()=>[...(monorail?.getCollisionObstacles()||[]),...(icebreakerAccess?.getCollisionObstacles()||[])],
       onWorldReady(sim){
         if(dynamicObstacles){
           const binding=dynamicObstacles.bindSimulation(sim);
@@ -817,7 +870,7 @@ async function startVisitors(loader){
       step(dt=1/24){
         captureMode=true;transition=null;
         const delta=Math.min(.1,Math.max(0,dt));
-        dynamicObstacles?.sync();crowd.setPaused(false);crowd.update(delta);crowd.setPaused(true);
+        exhibitionZones?.update(delta);dynamicObstacles?.sync();crowd.setPaused(false);crowd.update(delta);crowd.setPaused(true);
         if(monorail){const playing=monorail.getState().playing;monorail.setPlaying(true);monorail.update(delta);monorail.setPlaying(playing);}
         if(onboardVehicle>=0)updatePassengerCamera();else controls.update();
         renderer.render(scene,camera);needsRender=false;return crowd.simulation.time;
