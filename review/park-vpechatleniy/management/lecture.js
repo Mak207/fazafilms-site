@@ -1,4 +1,4 @@
-/* Full text-on-screen lecture before the audit; narration is a separate future edition. */
+/* Full lecture with Alexander narration before the audit; chapters use measured audio timing. */
 (function(){
   "use strict";
   const rootURL=new URL(".",document.currentScript.src);
@@ -26,7 +26,7 @@
     if(chaptersRequested)return;
     chaptersRequested=true;
     try{
-      const response=await fetch(new URL("lecture/chapters-text-v2.json",rootURL),{credentials:"same-origin"});
+      const response=await fetch(new URL("lecture/chapters-alexander-v2.json",rootURL),{credentials:"same-origin"});
       if(!response.ok)throw new Error("chapters-unavailable");
       const value=await response.json();
       const chapters=Array.isArray(value.chapters)?value.chapters.filter(item=>typeof item.title==="string"&&item.title.trim()&&Number.isFinite(item.start_seconds)&&item.start_seconds>=0).sort((a,b)=>a.start_seconds-b.start_seconds).slice(0,30):[];
@@ -92,7 +92,7 @@
     body.setAttribute("aria-busy","true");
     const pending=document.createElement("p");pending.setAttribute("role","status");pending.textContent="Загружаем полный текст лекции…";body.replaceChildren(pending);
     try{
-      const response=await fetch(new URL("lecture/transcript-text-v2.json",rootURL),{credentials:"same-origin"});
+      const response=await fetch(new URL("lecture/transcript-alexander-v2.json",rootURL),{credentials:"same-origin"});
       if(!response.ok)throw new Error("transcript-unavailable");
       const value=await response.json();
       if(!Array.isArray(value.sections)||!value.sections.length)throw new Error("invalid-transcript");
