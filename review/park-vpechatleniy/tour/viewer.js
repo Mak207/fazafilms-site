@@ -3,6 +3,10 @@ import { GLTFLoader } from '/golden-ring/interactives/vendor/three-0.180/GLTFLoa
 import { MeshoptDecoder } from '/golden-ring/tour/vendor/meshopt_decoder.mjs';
 import { OrbitControls } from './vendor/OrbitControls.js';
 import { createTramSystem } from './tram-system.js?v=monorail-20261124';
+import { KTX2Loader } from './vendor/ktx2/loaders/KTX2Loader.js';
+import { RoomEnvironment } from './vendor/RoomEnvironment.js';
+import { createExhibitSystem } from './exhibits.js?v=hitem-20261124';
+import { MeshBVH, acceleratedRaycast, CENTER } from './vendor/three-mesh-bvh/index.module.js';
 
 const $ = id => document.getElementById(id);
 const root = $('viewer'), stage = $('stage'), canvas = $('canvas');
@@ -16,6 +20,24 @@ let monorail=null,followVehicle=-1,onboardVehicle=-1,lastOnboardVehicle=0,hallOp
 const passenger={yaw:-Math.PI/2,pitch:-.16,eye:new THREE.Vector3(-.52,2.05,.55),normalFov:43,normalNear:.05};
 const passengerPointers=new Map();let pinchDistance=0;
 Object.defineProperty(diagnostics,'onboard',{get:()=>({active:onboardVehicle>=0,vehicle:onboardVehicle>=0?onboardVehicle:null,yaw:passenger.yaw,pitch:passenger.pitch,eyeLocal:passenger.eye.toArray(),fov:camera.fov})});
+let exhibits=null,exhibitProgress={state:'waiting',loadedObjects:0,placedInstances:0,objects:[]};
+Object.defineProperty(diagnostics,'exhibits',{get:()=>exhibits?.getState()||exhibitProgress});
+let inspectedExhibitId=null,inspectionTimer=null,inspectionNotice=null,inspectionSamples=0;
+let inspectionReady=false,inspectionBuildTimeMs=0,inspectionGeometryCount=0,inspectionElapsedMs=0,inspectionError=null;
+const inspectionHidden=new Map(),inspectionRay=new THREE.Raycaster();
+inspectionRay.firstHitOnly=true;
+const inspectionMessage='Осмотр: мешающие поверхности скрыты. «Экспозиция» вернёт общий вид.';
+Object.defineProperty(diagnostics,'inspection',{enumerable:true,get:()=>({
+  active:inspectedExhibitId!==null,exhibitId:inspectedExhibitId,
+  ready:inspectionReady,error:inspectionError,geometryCount:inspectionGeometryCount,
+  buildTimeMs:Number(inspectionBuildTimeMs.toFixed(2)),elapsedMs:Number(inspectionElapsedMs.toFixed(2)),
+  hiddenMeshes:inspectionHidden.size,sampleCount:inspectionSamples,
+  hiddenExhibitMeshes:[...inspectionHidden.keys()].filter(mesh=>mesh.userData.exhibitId).length,
+  hiddenSelectedMeshes:[...inspectionHidden.keys()].filter(mesh=>mesh.userData.exhibitId===inspectedExhibitId).length,
+  visibleInstances:exhibits?.group.visible?exhibits.roots.filter(instance=>{
+    let visible=false;instance.traverse(node=>{if(node.isMesh&&isObjectVisible(node))visible=true;});return visible;
+  }).length:0
+})});
 const monorailRoute={centerX:5,centerZ:-15.75,width:46,length:99.5,cornerRadius:22.5,height:19.2,floorHeight:13.2};
 Object.defineProperty(diagnostics,'monorail',{get:()=>monorail?.getState()||{status:diagnostics.monorailStatus||'waiting',loaded:false,vehicleCount:0}});
 let needsRender = true, active = true, transition = null, currentView = 'overview', sectionOn = false;
@@ -42,6 +64,9 @@ try {
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;
   renderer.localClippingEnabled=true;
+  const environmentGenerator=new THREE.PMREMGenerator(renderer),environmentRoom=new RoomEnvironment();
+  scene.environment=environmentGenerator.fromScene(environmentRoom,.04).texture;
+  scene.environmentIntensity=.55;environmentRoom.dispose();environmentGenerator.dispose();
   controls=new OrbitControls(camera,canvas);
   controls.enableDamping=true;controls.dampingFactor=.08;
   controls.mouseButtons={LEFT:THREE.MOUSE.ROTATE,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:THREE.MOUSE.PAN};
@@ -49,7 +74,13 @@ try {
   controls.screenSpacePanning=true;controls.zoomToCursor=true;
   controls.minPolarAngle=.001;controls.maxPolarAngle=Math.PI*.499;
   controls.addEventListener('change',()=>{needsRender=true});
-  controls.addEventListener('start',setFreeView);
+  controls.addEventListener('start',()=>{
+    if(inspectedExhibitId!==null){
+      clearTimeout(inspectionTimer);inspectionTimer=null;
+      stopFollowing();currentView=null;transition=null;
+    }else setFreeView();
+  });
+  controls.addEventListener('end',queueInspectionCutaway);
   canvas.addEventListener('contextmenu',event=>event.preventDefault());
   canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();fail(new Error('WebGL context lost'))});
   const ambient = new THREE.HemisphereLight(0xf2f5ef,0x6a7667,1.2);scene.add(ambient);
@@ -59,11 +90,14 @@ try {
   function resize(){
     const width=stage.clientWidth,height=stage.clientHeight;if(!width||!height)return;
     renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();
-    if(model&&currentView)setView(currentView,true);
+    if(model&&inspectedExhibitId!==null)focusExhibit(inspectedExhibitId,true);
+    else if(model&&currentView)setView(currentView,true);
     needsRender=true;
   }
   new ResizeObserver(resize).observe(stage);resize();
   const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
+  const textureLoader=new KTX2Loader().setTranscoderPath('vendor/ktx2/libs/basis/').setWorkerLimit(2);
+  textureLoader.detectSupport(renderer);loader.setKTX2Loader(textureLoader);
   loader.load('assets/park.glb?v=1',gltf=>{
     try {
       model=gltf.scene;model.updateMatrixWorld(true);
@@ -106,8 +140,10 @@ try {
       root.dataset.state='ready';$('model-info').textContent='3D-предпросмотр из DWG';
       setView('overview',true);progress.style.width='100%';loading.hidden=true;
       root.querySelectorAll('[data-view],#section-toggle,#reset,#envelope-toggle').forEach(button=>button.disabled=false);
+      root.querySelector('[data-view="exhibits"]').disabled=true;
       needsRender=true;
-      startMonorail(loader);
+      const monorailReady=startMonorail(loader);
+      startExhibits(loader,monorailReady);
     }catch(error){fail(error);}
   },event=>{
     if(event.lengthComputable&&event.total){const percent=Math.min(99,Math.round(event.loaded/event.total*100));progress.style.width=percent+'%';detail.textContent=percent===99?'Подготавливаем геометрию…':'Загружено '+percent+'%';}
@@ -170,7 +206,17 @@ function moveCamera(position,target,instant=false){
 }
 function setView(view,instant=false){
   if(!model)return;
-  stopFollowing();
+  clearExhibitInspection();stopFollowing();
+  if(view==='exhibits'){
+    const box=exhibits?.getBounds();
+    if(!box||box.isEmpty())return;
+    currentView='exhibits';$('tram-camera').value='free';$('exhibit-select').value='all';
+    exhibits.setVisible(true);setHallOpen(true);
+    const d=camera.aspect<1?new THREE.Vector3(.45,1.4,2.1):new THREE.Vector3(1.7,1.25,.9);
+    const fitted=fitBox(box,d);moveCamera(fitted.position,fitted.target,instant);
+    document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.view===view)));
+    $('view-name').textContent='Экспонаты парка';diagnostics.view='exhibits';return;
+  }
   if(view==='route'){
     if(!monorail)return setView('overview',instant);
     currentView='route';$('tram-camera').value='route';
@@ -189,16 +235,18 @@ function setView(view,instant=false){
 }
 function updateSection(){
   if(!model)return;
+  clearExhibitInspection();
   const height=Number($('section-height').value);clipPlane.constant=height;
   for(const material of sourceMaterials){
     if(Boolean(material.clippingPlanes?.length)!==sectionOn){material.clippingPlanes=sectionOn?[clipPlane]:[];material.clipShadows=true;material.needsUpdate=true;}
   }
   $('section-value').textContent=height.toLocaleString('ru-RU',{maximumFractionDigits:1})+' м';
   diagnostics.section={enabled:sectionOn,height};needsRender=true;
+  exhibits?.setSection(sectionOn,clipPlane);
 }
 root.querySelectorAll('[data-view],#section-toggle,#reset,#envelope-toggle').forEach(button=>button.disabled=true);
 document.querySelectorAll('[data-view]').forEach(button=>button.onclick=()=>setView(button.dataset.view));
-$('reset').onclick=()=>{sectionOn=false;$('section-toggle').setAttribute('aria-pressed','false');$('section-controls').hidden=true;setHallOpen(true);updateSection();setView(monorail?'route':'overview');};
+$('reset').onclick=()=>{sectionOn=false;$('section-toggle').setAttribute('aria-pressed','false');$('section-controls').hidden=true;setHallOpen(true);updateSection();setView(exhibits?.roots.length?'exhibits':monorail?'route':'overview');};
 $('section-toggle').onclick=()=>{sectionOn=!sectionOn;$('section-toggle').setAttribute('aria-pressed',String(sectionOn));$('section-controls').hidden=!sectionOn;updateSection();};
 $('section-height').addEventListener('input',updateSection);
 function showHelp(show){$('help').hidden=!show;$('help-toggle').setAttribute('aria-expanded',String(show));}
@@ -227,9 +275,9 @@ canvas.addEventListener('dblclick',event=>{
   if(!model||!controls)return;
   if(onboardVehicle>=0){passenger.yaw=-Math.PI/2;passenger.pitch=-.16;camera.fov=68;camera.updateProjectionMatrix();needsRender=true;return;}
   const rect=canvas.getBoundingClientRect();pointer.set((event.clientX-rect.left)/rect.width*2-1,1-(event.clientY-rect.top)/rect.height*2);raycaster.setFromCamera(pointer,camera);
-  const targets=[...sourceMeshes.filter(mesh=>mesh.visible),...(monorail?.vehicles||[])];
+  const targets=[...sourceMeshes.filter(mesh=>mesh.visible),...(monorail?.vehicles||[]),...(exhibits?.group.visible?exhibits.roots:[])];
   const hits=raycaster.intersectObjects(targets,true);const hit=hits.find(item=>item.object.isMesh&&(item.object.userData.monorail||!sectionOn||item.point.y<=Number($('section-height').value)));if(!hit)return;
-  stopFollowing();$('tram-camera').value='free';
+  clearExhibitInspection();stopFollowing();$('tram-camera').value='free';
   const direction=camera.position.clone().sub(controls.target).normalize();const distance=Math.max(size.length()*.055,camera.position.distanceTo(hit.point)*.4);
   currentView=null;moveCamera(hit.point.clone().addScaledVector(direction,distance),hit.point);document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));$('view-name').textContent='Детальный обзор';diagnostics.view='detail';
 });
@@ -268,6 +316,7 @@ function updatePassengerCamera(){
 
 function setPassengerView(index=0){
   if(!monorail||!monorail.vehicles[index])return;
+  clearExhibitInspection();
   if(onboardVehicle<0){passenger.normalFov=camera.fov;passenger.normalNear=camera.near;}
   followVehicle=-1;diagnostics.followVehicle=null;onboardVehicle=index;lastOnboardVehicle=index;
   currentView=null;transition=null;controls.enabled=false;
@@ -303,12 +352,12 @@ canvas.addEventListener('pointermove',event=>{
 for(const type of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(type,event=>{passengerPointers.delete(event.pointerId);pinchDistance=0;});
 canvas.addEventListener('wheel',event=>{if(onboardVehicle<0)return;event.preventDefault();camera.fov=THREE.MathUtils.clamp(camera.fov+event.deltaY*.025,45,85);camera.updateProjectionMatrix();needsRender=true;},{passive:false});
 function setFreeView(){
-  stopFollowing();currentView=null;transition=null;$('tram-camera').value='free';
+  clearExhibitInspection();stopFollowing();currentView=null;transition=null;$('tram-camera').value='free';
   $('view-name').textContent='Свободный обзор';diagnostics.view='free';
   document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));
 }
 function setHallOpen(open){
-  hallOpen=Boolean(open);envelopeMeshes.forEach(mesh=>{mesh.visible=!hallOpen});
+  clearExhibitInspection();hallOpen=Boolean(open);envelopeMeshes.forEach(mesh=>{mesh.visible=!hallOpen});
   $('envelope-toggle').setAttribute('aria-pressed',String(hallOpen));
   diagnostics.hallOpen=hallOpen;needsRender=true;
 }
@@ -354,7 +403,7 @@ $('tram-camera').onchange=()=>{
   if(value==='route'){setView('route');return;}
   if(value==='free'){setFreeView();return;}
   if(value.startsWith('inside-')){setPassengerView(Number(value.slice(-1)));return;}
-  stopFollowing();
+  clearExhibitInspection();stopFollowing();
   followVehicle=value==='follow-1'?1:0;currentView=null;transition=null;diagnostics.followVehicle=followVehicle;
   setHallOpen(true);
   const pose=monorail.getFollowPose(followVehicle);
@@ -362,3 +411,166 @@ $('tram-camera').onchange=()=>{
   $('view-name').textContent='За вагоном '+(followVehicle+1);diagnostics.view='follow';
   document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));needsRender=true;
 };
+
+function syncExhibitControls(state){
+  exhibitProgress=state;
+  const count=state.placedInstances||0,total=state.requestedInstances||0;
+  const noun=count%100>=11&&count%100<=14?'экспонатов':count%10===1?'экспонат':[2,3,4].includes(count%10)?'экспоната':'экспонатов';
+  $('exhibit-status').textContent=state.state==='loading'?'Загружаем экспонаты · '+count+' / '+total:state.state==='error'?'Экспонаты не загрузились':!inspectionReady?'Подготавливаем осмотр экспонатов…':'В парке · '+count+' '+noun;
+  const select=$('exhibit-select'),selected=select.value;
+  const options=[...select.options].map(option=>option.value);
+  for(const row of state.objects||[]){
+    if(row.status!=='loaded'||!row.placements?.length||options.includes(row.id))continue;
+    const option=document.createElement('option');option.value=row.id;
+    option.textContent=row.name+(row.placements.length>1?' · '+row.placements.length+' шт.':'');select.append(option);
+  }
+  select.append(...[...select.options].filter(option=>option.value!=='all').sort((a,b)=>a.value.localeCompare(b.value)));
+  const interactive=Boolean(exhibits)&&inspectionReady&&count>0;
+  select.value=selected||'all';select.disabled=!interactive;
+  $('exhibit-visible').disabled=!interactive;$('exhibit-visible').setAttribute('aria-pressed',String(state.visible!==false));
+  root.querySelector('[data-view="exhibits"]').disabled=!interactive;
+  needsRender=true;
+}
+async function startExhibits(loader,monorailReady){
+  try{
+    exhibits=await createExhibitSystem({scene,loader,sourceMeshes,manifestUrl:'assets/exhibits/manifest.json?v=hitem-20261124',
+      anisotropy:Math.min(8,renderer.capabilities.getMaxAnisotropy()),onChange:()=>{needsRender=true;},onProgress:syncExhibitControls});
+    await monorailReady;
+    await prepareInspectionRaycasts();
+    inspectionReady=true;
+    exhibits.setSection(sectionOn,clipPlane);syncExhibitControls(exhibits.getState());
+    const state=exhibits.getState();
+    if(state.state==='partial'){
+      $('scene-notice').textContent=state.rejectedInstances?'Часть экспонатов ещё требует уточнения позиции. Показаны подтверждённые размещения.':'Часть экспонатов не загрузилась. Обновите страницу для повторной загрузки.';$('scene-notice').hidden=false;
+    }
+    if((currentView==='overview'||currentView==='route')&&exhibits.roots.length)setView('exhibits',true);
+  }catch(error){
+    inspectionError=error?.message||String(error);
+    exhibitProgress={state:'error',loadedObjects:0,placedInstances:0,objects:[],errors:[inspectionError]};
+    syncExhibitControls(exhibitProgress);diagnostics.errors.push('Экспонаты: '+(error?.message||error));console.error('Exhibits:',error);
+  }
+}
+// Build one indirect BVH per shared geometry while the scene is loading.
+// The original index order, geometry, transforms and rendered materials stay intact.
+async function prepareInspectionRaycasts(){
+  const meshes=new Set(),geometries=new Set();
+  const collect=node=>{
+    if(!node.isMesh||node.isInstancedMesh||node.isSkinnedMesh||node.isBatchedMesh)return;
+    const geometry=node.geometry,triangles=(geometry.index?.count||geometry.attributes.position?.count||0)/3;
+    if(triangles<1000)return;
+    meshes.add(node);geometries.add(geometry);
+  };
+  sourceMeshes.forEach(collect);monorail?.group.traverse(collect);exhibits?.group.traverse(collect);
+  for(const geometry of geometries){
+    if(geometry.boundsTree)continue;
+    // Yield between geometries so preparing inspection does not monopolize the UI.
+    await new Promise(resolve=>setTimeout(resolve,0));
+    const started=performance.now();
+    geometry.boundsTree=new MeshBVH(geometry,{strategy:CENTER,indirect:true});
+    inspectionBuildTimeMs+=performance.now()-started;inspectionGeometryCount++;
+  }
+  for(const mesh of meshes)mesh.raycast=acceleratedRaycast;
+}
+
+// Inspection hides only actual ray intersections in front of the selected models.
+// Original visibility is restored on every recomputation and on leaving the view.
+function isObjectVisible(object){
+  for(let node=object;node;node=node.parent)if(!node.visible)return false;
+  return true;
+}
+function restoreInspectionMeshes(){
+  for(const [mesh,visible] of inspectionHidden)mesh.visible=visible;
+  inspectionHidden.clear();
+}
+function clearInspectionNotice(){
+  if(!inspectionNotice)return;
+  const notice=$('scene-notice');
+  if(notice.textContent===inspectionMessage){
+    notice.textContent=inspectionNotice.text;notice.hidden=inspectionNotice.hidden;
+  }
+  inspectionNotice=null;
+}
+function clearExhibitInspection(){
+  clearTimeout(inspectionTimer);inspectionTimer=null;
+  restoreInspectionMeshes();clearInspectionNotice();
+  inspectedExhibitId=null;inspectionSamples=0;diagnostics.selectedExhibit=null;
+  $('exhibit-select').value='all';needsRender=true;
+}
+function queueInspectionCutaway(){
+  clearTimeout(inspectionTimer);
+  if(inspectedExhibitId===null)return;
+  // Wait briefly for OrbitControls damping after pointer release or wheel input.
+  inspectionTimer=setTimeout(()=>{
+    inspectionTimer=null;
+    if(inspectedExhibitId!==null)applyInspectionCutaway(camera.position);
+  },240);
+}
+function inspectionBoxPoints(box){
+  const middle=box.getCenter(new THREE.Vector3()),points=[middle];
+  for(const x of [box.min.x,box.max.x])for(const y of [box.min.y,box.max.y])for(const z of [box.min.z,box.max.z]){
+    points.push(new THREE.Vector3(x,y,z));
+  }
+  for(const axis of ['x','y','z'])for(const edge of [box.min[axis],box.max[axis]]){
+    const point=middle.clone();point[axis]=edge;points.push(point);
+  }
+  return points;
+}
+function applyInspectionCutaway(origin){
+  if(inspectedExhibitId===null||!inspectionReady||!exhibits?.group.visible)return;
+  const started=performance.now();
+  restoreInspectionMeshes();
+  const selected=exhibits.roots.filter(instance=>instance.userData.exhibitId===inspectedExhibitId||instance.userData.instanceId===inspectedExhibitId);
+  if(!selected.length){clearExhibitInspection();return;}
+  const selectedSet=new Set(selected),candidates=new Set();
+  const addMesh=node=>{
+    if(node.isMesh&&isObjectVisible(node))candidates.add(node);
+  };
+  scene.updateMatrixWorld(true);
+  sourceMeshes.forEach(addMesh);monorail?.group.traverse(addMesh);
+  for(const instance of exhibits.roots)if(!selectedSet.has(instance))instance.traverse(addMesh);
+  const points=selected.flatMap(instance=>inspectionBoxPoints(new THREE.Box3().setFromObject(instance)));
+  inspectionSamples=points.length;
+  const meshes=[...candidates],materialSides=new Map();
+  // From inside a wall, the exit face may be back-facing. CPU-only DoubleSide
+  // catches it without altering rendered material properties or shared textures.
+  for(const mesh of meshes)for(const material of Array.isArray(mesh.material)?mesh.material:[mesh.material]){
+    if(material&&!materialSides.has(material)){materialSides.set(material,material.side);material.side=THREE.DoubleSide;}
+  }
+  try{
+    const direction=new THREE.Vector3();
+    for(const point of points){
+      direction.subVectors(point,origin);
+      const distance=direction.length();
+      if(distance<=camera.near)continue;
+      inspectionRay.set(origin,direction.divideScalar(distance));
+      inspectionRay.near=camera.near;inspectionRay.far=Math.max(camera.near,distance-.015);
+      const hits=inspectionRay.intersectObjects(meshes.filter(mesh=>!inspectionHidden.has(mesh)),false);
+      for(const hit of hits){
+        const mesh=hit.object;
+        if(!inspectionHidden.has(mesh)){inspectionHidden.set(mesh,mesh.visible);mesh.visible=false;}
+      }
+    }
+  }finally{
+    for(const [material,side] of materialSides)material.side=side;
+  }
+  if(inspectionHidden.size){
+    const notice=$('scene-notice');
+    if(!inspectionNotice)inspectionNotice={text:notice.textContent,hidden:notice.hidden};
+    notice.textContent=inspectionMessage;notice.hidden=false;
+  }else clearInspectionNotice();
+  inspectionElapsedMs=performance.now()-started;needsRender=true;
+}
+function focusExhibit(id,instant=false){
+  if(!exhibits||!inspectionReady)return;
+  if(id==='all'){setView('exhibits');return;}
+  const box=exhibits.getBounds(id);if(!box||box.isEmpty())return;
+  stopFollowing();$('tram-camera').value='free';currentView=null;setHallOpen(true);exhibits.setVisible(true);
+  sectionOn=false;$('section-toggle').setAttribute('aria-pressed','false');$('section-controls').hidden=true;updateSection();
+  const fitted=fitBox(box,new THREE.Vector3(1.4,.85,1.5));
+  inspectedExhibitId=id;applyInspectionCutaway(fitted.position);moveCamera(fitted.position,fitted.target,instant);
+  document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));
+  const row=exhibits.getState().objects.find(object=>object.id===id);
+  $('exhibit-select').value=id;$('view-name').textContent=row?.name||'Экспонат';diagnostics.view='exhibit';diagnostics.selectedExhibit=id;
+}
+$('exhibit-select').onchange=()=>focusExhibit($('exhibit-select').value);
+$('exhibit-visible').onclick=()=>{clearExhibitInspection();if(exhibits)exhibits.setVisible(!exhibits.group.visible);};

@@ -1,0 +1,661 @@
+{
+  "updatedAtUtc": "2026-11-24T07:02:19.546659+00:00",
+  "provider": "Hitem3D",
+  "uniqueModels": 16,
+  "placedInstancesPlanned": 24,
+  "layoutStatus": "provisional",
+  "coordinateSystem": "meters; Y-up; same origin as the existing DWG viewer",
+  "floorLevelsMeters": [
+    7.2,
+    13.2
+  ],
+  "layoutEvidence": "Concept video and plans; exact exhibit coordinates and display scale were not supplied. Floor support is checked against the converted CAD floor geometry.",
+  "masterQuality": "Original generated GLBs retained separately; web assets are derived copies.",
+  "webConversion": {
+    "geometry": "Meshopt compressed, simplified to approximately 6 percent",
+    "textures": "PBR channels preserved; KTX2/Basis Universal, maximum 4096 pixels",
+    "orientation": "Source axes preserved; display transforms are declared in manifest.json"
+  },
+  "objects": [
+    {
+      "id": "O01",
+      "name": "Круглый модуль лунной базы",
+      "instances": 1,
+      "master": {
+        "sha256": "7a242bd1b09a0d4cf5d0293bb1b2a63cd7a34edadd03eceb277645de74e69d4f",
+        "bytes": 115684644,
+        "triangles": 4966762,
+        "textures": [
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          },
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          }
+        ]
+      },
+      "web": {
+        "file": "O01.glb",
+        "sha256": "57c64deb3fccc715223bfd1ff6bbef14b3e2f7f9031a68d1c8ea1f3b3da6ccf9",
+        "bytes": 18189540,
+        "triangles": 297854,
+        "textures": [
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          },
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          }
+        ]
+      }
+    },
+    {
+      "id": "O02",
+      "name": "Геодезический купол лунной базы",
+      "instances": 1,
+      "master": {
+        "sha256": "7dbffbb208155f9a734d552f3bc1a1e63d90d90d70cfa3b030c2e88ce7cb4112",
+        "bytes": 116086580,
+        "triangles": 4974824,
+        "textures": [
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          },
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          }
+        ]
+      },
+      "web": {
+        "file": "O02.glb",
+        "sha256": "a3d54704d52e4f62867697c7bc903f45a438aa7c478af940bd671c635342258b",
+        "bytes": 20154944,
+        "triangles": 298484,
+        "textures": [
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          },
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          }
+        ]
+      }
+    },
+    {
+      "id": "O03",
+      "name": "Сфера Луны на опоре",
+      "instances": 1,
+      "master": {
+        "sha256": "19e1416fb5dace829a212446a10f235bacfc04932d02288154767edae4cbd481",
+        "bytes": 115848340,
+        "triangles": 5000000,
+        "textures": [
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          },
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          }
+        ]
+      },
+      "web": {
+        "file": "O03.glb",
+        "sha256": "be37580416e17d27c6fcd590749a709648e1ec40096a7cb858b5c117768b17d5",
+        "bytes": 19198300,
+        "triangles": 299986,
+        "textures": [
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          },
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          }
+        ]
+      }
+    },
+    {
+      "id": "O04",
+      "name": "Космонавт в скафандре",
+      "instances": 1,
+      "master": {
+        "sha256": "73c2fac0b84d3725739b022a5e739e913d7bdc488b28ae5b0e1d553002cbac68",
+        "bytes": 115394676,
+        "triangles": 5000000,
+        "textures": [
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          },
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          }
+        ]
+      },
+      "web": {
+        "file": "O04.glb",
+        "sha256": "7ca07c00ab8c909bd7b2070a4aa69ee806a47e0267ba77c61356cf56d1b94ab8",
+        "bytes": 18613596,
+        "triangles": 299982,
+        "textures": [
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          },
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          }
+        ]
+      }
+    },
+    {
+      "id": "O05",
+      "name": "Самолёт МС-21",
+      "instances": 1,
+      "master": {
+        "sha256": "40da9be4b371cb77dda6e0d01d66c176f78907f1e848a8d4a5a7c041afb03108",
+        "bytes": 114971336,
+        "triangles": 4989150,
+        "textures": [
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          },
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          }
+        ]
+      },
+      "web": {
+        "file": "O05.glb",
+        "sha256": "95093fbc98e151dc3c013b4e41534c19148109b5b2dff21da467b294f8af8846",
+        "bytes": 16153580,
+        "triangles": 299312,
+        "textures": [
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          },
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          }
+        ]
+      }
+    },
+    {
+      "id": "O06",
+      "name": "Макет плотины / ГЭС",
+      "instances": 1,
+      "master": {
+        "sha256": "014d64880c57df7d929eaf2b4b221f19dcb5b5305bac6524c4afb68a99c1062f",
+        "bytes": 115696188,
+        "triangles": 4965742,
+        "textures": [
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          },
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          }
+        ]
+      },
+      "web": {
+        "file": "O06.glb",
+        "sha256": "3ff114d91aea2e58b5dd440d9e65e8e14eb5edb8a8bd926b962bee93b2d54306",
+        "bytes": 20069076,
+        "triangles": 297938,
+        "textures": [
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          },
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          }
+        ]
+      }
+    },
+    {
+      "id": "O07",
+      "name": "Кит — синий обтекаемый вариант",
+      "instances": 2,
+      "master": {
+        "sha256": "c465f5d10a71b71a6c59aa29e1c0465832c420850b16bb05af5839bba4a9bf37",
+        "bytes": 114554128,
+        "triangles": 5000000,
+        "textures": [
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          },
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          }
+        ]
+      },
+      "web": {
+        "file": "O07.glb",
+        "sha256": "011022534c34f5c9fd49a27d799884830eae606464f7c67929e914c9773cb513",
+        "bytes": 17771280,
+        "triangles": 299998,
+        "textures": [
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          },
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          }
+        ]
+      }
+    },
+    {
+      "id": "O08",
+      "name": "Кит — крупный серый вариант",
+      "instances": 3,
+      "master": {
+        "sha256": "05c65981eab8f6da594d763978e2b2881260f5d19da026b21627fe24ae819e80",
+        "bytes": 115545188,
+        "triangles": 5000000,
+        "textures": [
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          },
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          }
+        ]
+      },
+      "web": {
+        "file": "O08.glb",
+        "sha256": "8158c181587311ca33aa757cda02cbac17f278f0570feae63f627ceb759ef628",
+        "bytes": 19088956,
+        "triangles": 299992,
+        "textures": [
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          },
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          }
+        ]
+      }
+    },
+    {
+      "id": "O09",
+      "name": "Ракета «Ангара-А5»",
+      "instances": 1,
+      "master": {
+        "sha256": "09e317a4d1b6ed297ac6a2830ec154c2ff3751a8794b4104db71cb9023f22f95",
+        "bytes": 114418648,
+        "triangles": 4976924,
+        "textures": [
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          },
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          }
+        ]
+      },
+      "web": {
+        "file": "O09.glb",
+        "sha256": "3438d1c7acd2eeee135dbea49f2c8a56b9b7746a2b06ff2ed916f343ea67ad15",
+        "bytes": 16245168,
+        "triangles": 298610,
+        "textures": [
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          },
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          }
+        ]
+      }
+    },
+    {
+      "id": "O10",
+      "name": "Башня обслуживания ракеты",
+      "instances": 1,
+      "master": {
+        "sha256": "0ea9ab5e9f562cc10fc034487877071846f94cb688bf4695b7c2b5e31987f41d",
+        "bytes": 119964220,
+        "triangles": 4921806,
+        "textures": [
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          },
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          }
+        ]
+      },
+      "web": {
+        "file": "O10.glb",
+        "sha256": "78d40cc1eb0f5f0a68b0fbaea208a7638393372ecc5217f078400cd8bab877c2",
+        "bytes": 32686384,
+        "triangles": 294942,
+        "textures": [
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          },
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          }
+        ]
+      }
+    },
+    {
+      "id": "O11",
+      "name": "Реакторный стенд с трубопроводами",
+      "instances": 1,
+      "master": {
+        "sha256": "6fe06fb47a577c452696f2bee30ffd856a3a0260a1c42f745c48ab71753e58ea",
+        "bytes": 114390700,
+        "triangles": 4980560,
+        "textures": [
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          },
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          }
+        ]
+      },
+      "web": {
+        "file": "O11.glb",
+        "sha256": "cff86987f21dc6c3dc12444a1c87c10e12b37ad4bba4d3ba34a0cb8f80180b8d",
+        "bytes": 15982908,
+        "triangles": 298802,
+        "textures": [
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          },
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          }
+        ]
+      }
+    },
+    {
+      "id": "O12",
+      "name": "Атомный ледокол «Лидер»",
+      "instances": 1,
+      "master": {
+        "sha256": "56e46aa4853a435de15044b920ee92a7767e81adfb691cac7ed3678cbab1c58b",
+        "bytes": 121984460,
+        "triangles": 4962584,
+        "textures": [
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          },
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          }
+        ]
+      },
+      "web": {
+        "file": "O12.glb",
+        "sha256": "08feceb5ec67a52a6a69697ce9f5a93854dc5c968d91c36b9ebfda3e1f63fea6",
+        "bytes": 27488440,
+        "triangles": 295970,
+        "textures": [
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          },
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          }
+        ]
+      }
+    },
+    {
+      "id": "O13",
+      "name": "Красный комбайн с жаткой",
+      "instances": 3,
+      "master": {
+        "sha256": "8c38490acfaaf8c7acdf8263c6ba0c7a39f45d97f6afbf2c520c8afc13721fb9",
+        "bytes": 116782740,
+        "triangles": 4958178,
+        "textures": [
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          },
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          }
+        ]
+      },
+      "web": {
+        "file": "O13.glb",
+        "sha256": "dd789527ddf9b1009cfea427ec459d16088b20a550bac25e1cf147d19bba6352",
+        "bytes": 21203900,
+        "triangles": 297466,
+        "textures": [
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          },
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          }
+        ]
+      }
+    },
+    {
+      "id": "O14",
+      "name": "Зелёный агродрон / мультикоптер",
+      "instances": 4,
+      "master": {
+        "sha256": "c698fbf385950316fdb80d8b00e54b09b2e22c91967cc3d5b8de0fe97f7ae405",
+        "bytes": 115287356,
+        "triangles": 4989828,
+        "textures": [
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          },
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          }
+        ]
+      },
+      "web": {
+        "file": "O14.glb",
+        "sha256": "a35db493738a19567f74b86768adc775e92647b6734c20459357d2d3012c24cf",
+        "bytes": 18392272,
+        "triangles": 299308,
+        "textures": [
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          },
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          }
+        ]
+      }
+    },
+    {
+      "id": "O15",
+      "name": "Арочный металлический ферменный мост",
+      "instances": 1,
+      "master": {
+        "sha256": "a0c44a50f159ef60bde0852db1abd429d5cf54bedcec79251643e3bb6e09ce58",
+        "bytes": 123911908,
+        "triangles": 4944784,
+        "textures": [
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          },
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          }
+        ]
+      },
+      "web": {
+        "file": "O15.glb",
+        "sha256": "40a2546e6ac654cd63534cb46189839fd2bafe36396463c542348dfd02dabb59",
+        "bytes": 31480600,
+        "triangles": 295522,
+        "textures": [
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          },
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          }
+        ]
+      }
+    },
+    {
+      "id": "O16",
+      "name": "Аркадный павильон с фронтоном",
+      "instances": 1,
+      "master": {
+        "sha256": "c8c0b522847326a17654c0f7d00b99d5a0134d93d376497ec5b358090fed23c3",
+        "bytes": 114740812,
+        "triangles": 4961086,
+        "textures": [
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          },
+          {
+            "mime_type": "image/jpeg",
+            "width": 8192,
+            "height": 8192
+          }
+        ]
+      },
+      "web": {
+        "file": "O16.glb",
+        "sha256": "a6eee8e3c1c514cc64f0dc3f7e2cbd7854696e9345ecfd8097f5a4da4e42ed3f",
+        "bytes": 13128984,
+        "triangles": 297610,
+        "textures": [
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          },
+          {
+            "mimeType": "image/ktx2",
+            "width": 4096,
+            "height": 4096
+          }
+        ]
+      }
+    }
+  ]
+}

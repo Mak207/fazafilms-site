@@ -1,0 +1,503 @@
+{
+  "version": "hitem-20261124",
+  "layoutStatus": "provisional",
+  "qualityNote": "Рабочая расстановка по ролику и концепции; координаты и выставочный масштаб требуют проектного уточнения.",
+  "objects": [
+    {
+      "id": "O01",
+      "name": "Круглый модуль лунной базы",
+      "scaleTo": {
+        "axis": "max",
+        "meters": 8
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "url": "O01.glb?v=hitem-20261124",
+      "instances": [
+        {
+          "id": "O01-1",
+          "x": -6,
+          "z": -23.5,
+          "floorY": 13.2,
+          "offsetY": 0,
+          "rotationY": 0,
+          "floating": false,
+          "zone": "G01"
+        }
+      ]
+    },
+    {
+      "id": "O02",
+      "name": "Геодезический купол лунной базы",
+      "scaleTo": {
+        "axis": "max",
+        "meters": 7
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "url": "O02.glb?v=hitem-20261124",
+      "instances": [
+        {
+          "id": "O02-1",
+          "x": -8,
+          "z": -32,
+          "floorY": 13.2,
+          "offsetY": 0,
+          "rotationY": 0,
+          "floating": false,
+          "zone": "G01"
+        }
+      ]
+    },
+    {
+      "id": "O03",
+      "name": "Сфера Луны на опоре",
+      "scaleTo": {
+        "axis": "y",
+        "meters": 3.5
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "url": "O03.glb?v=hitem-20261124",
+      "instances": [
+        {
+          "id": "O03-1",
+          "x": -6,
+          "z": -16,
+          "floorY": 13.2,
+          "offsetY": 0,
+          "rotationY": 0,
+          "floating": false,
+          "zone": "G01"
+        }
+      ]
+    },
+    {
+      "id": "O04",
+      "name": "Космонавт в скафандре",
+      "scaleTo": {
+        "axis": "y",
+        "meters": 2
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "url": "O04.glb?v=hitem-20261124",
+      "instances": [
+        {
+          "id": "O04-1",
+          "x": -4,
+          "z": -12,
+          "floorY": 13.2,
+          "offsetY": 0,
+          "rotationY": 0,
+          "floating": false,
+          "zone": "G01"
+        }
+      ]
+    },
+    {
+      "id": "O05",
+      "name": "Самолёт МС-21",
+      "scaleTo": {
+        "axis": "max",
+        "meters": 18
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "url": "O05.glb?v=hitem-20261124",
+      "instances": [
+        {
+          "id": "O05-1",
+          "x": 15,
+          "z": -19,
+          "floorY": 7.2,
+          "offsetY": 0,
+          "rotationY": 0,
+          "floating": false,
+          "zone": "G02"
+        }
+      ]
+    },
+    {
+      "id": "O06",
+      "name": "Макет плотины / ГЭС",
+      "scaleTo": {
+        "axis": "max",
+        "meters": 14
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "url": "O06.glb?v=hitem-20261124",
+      "instances": [
+        {
+          "id": "O06-1",
+          "x": 11.5,
+          "z": 45,
+          "floorY": 7.2,
+          "offsetY": 0,
+          "rotationY": 0,
+          "floating": false,
+          "zone": "G03"
+        }
+      ]
+    },
+    {
+      "id": "O07",
+      "name": "Кит — синий обтекаемый вариант",
+      "scaleTo": {
+        "axis": "max",
+        "meters": 8
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "url": "O07.glb?v=hitem-20261124",
+      "instances": [
+        {
+          "id": "O07-1",
+          "x": 8,
+          "z": -57,
+          "floorY": 7.2,
+          "offsetY": 7,
+          "rotationY": 0,
+          "floating": true,
+          "zone": "G04"
+        },
+        {
+          "id": "O07-2",
+          "x": 15,
+          "z": -39,
+          "floorY": 7.2,
+          "offsetY": 7,
+          "rotationY": 0,
+          "floating": true,
+          "zone": "G04"
+        }
+      ]
+    },
+    {
+      "id": "O08",
+      "name": "Кит — крупный серый вариант",
+      "scaleTo": {
+        "axis": "max",
+        "meters": 11
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "url": "O08.glb?v=hitem-20261124",
+      "instances": [
+        {
+          "id": "O08-1",
+          "x": 10,
+          "z": -30,
+          "floorY": 7.2,
+          "offsetY": 7,
+          "rotationY": 0,
+          "floating": true,
+          "zone": "G04"
+        },
+        {
+          "id": "O08-2",
+          "x": 11,
+          "z": -17,
+          "floorY": 7.2,
+          "offsetY": 7,
+          "rotationY": 0,
+          "floating": true,
+          "zone": "G04"
+        },
+        {
+          "id": "O08-3",
+          "x": 12,
+          "z": -4,
+          "floorY": 7.2,
+          "offsetY": 7,
+          "rotationY": 0,
+          "floating": true,
+          "zone": "G04"
+        }
+      ]
+    },
+    {
+      "id": "O09",
+      "name": "Ракета «Ангара-А5»",
+      "scaleTo": {
+        "axis": "y",
+        "meters": 13
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "url": "O09.glb?v=hitem-20261124",
+      "instances": [
+        {
+          "id": "O09-1",
+          "x": 14,
+          "z": -48,
+          "floorY": 7.2,
+          "offsetY": 0,
+          "rotationY": 0,
+          "floating": false,
+          "zone": "G05"
+        }
+      ]
+    },
+    {
+      "id": "O10",
+      "name": "Башня обслуживания ракеты",
+      "scaleTo": {
+        "axis": "y",
+        "meters": 12
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "url": "O10.glb?v=hitem-20261124",
+      "instances": [
+        {
+          "id": "O10-1",
+          "x": 21,
+          "z": -43.5,
+          "floorY": 7.2,
+          "offsetY": 0,
+          "rotationY": 1.5707963267948966,
+          "floating": false,
+          "zone": "G05"
+        }
+      ]
+    },
+    {
+      "id": "O11",
+      "name": "Реакторный стенд с трубопроводами",
+      "scaleTo": {
+        "axis": "max",
+        "meters": 8
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "url": "O11.glb?v=hitem-20261124",
+      "instances": [
+        {
+          "id": "O11-1",
+          "x": -25,
+          "z": -53,
+          "floorY": 13.2,
+          "offsetY": 0,
+          "rotationY": 0,
+          "floating": false,
+          "zone": "G06"
+        }
+      ]
+    },
+    {
+      "id": "O12",
+      "name": "Атомный ледокол «Лидер»",
+      "scaleTo": {
+        "axis": "max",
+        "meters": 18
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "url": "O12.glb?v=hitem-20261124",
+      "instances": [
+        {
+          "id": "O12-1",
+          "x": -29.5,
+          "z": -37,
+          "floorY": 13.2,
+          "offsetY": 0,
+          "rotationY": 0,
+          "floating": false,
+          "zone": "G07"
+        }
+      ]
+    },
+    {
+      "id": "O13",
+      "name": "Красный комбайн с жаткой",
+      "scaleTo": {
+        "axis": "max",
+        "meters": 5
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "url": "O13.glb?v=hitem-20261124",
+      "instances": [
+        {
+          "id": "O13-1",
+          "x": -5,
+          "z": 4,
+          "floorY": 13.2,
+          "offsetY": 0,
+          "rotationY": 0,
+          "floating": false,
+          "zone": "G08"
+        },
+        {
+          "id": "O13-2",
+          "x": -5,
+          "z": 10,
+          "floorY": 13.2,
+          "offsetY": 0,
+          "rotationY": 0,
+          "floating": false,
+          "zone": "G08"
+        },
+        {
+          "id": "O13-3",
+          "x": -5,
+          "z": 16,
+          "floorY": 13.2,
+          "offsetY": 0,
+          "rotationY": 0,
+          "floating": false,
+          "zone": "G08"
+        }
+      ]
+    },
+    {
+      "id": "O14",
+      "name": "Зелёный агродрон / мультикоптер",
+      "scaleTo": {
+        "axis": "max",
+        "meters": 3
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "url": "O14.glb?v=hitem-20261124",
+      "instances": [
+        {
+          "id": "O14-1",
+          "x": -10,
+          "z": -1,
+          "floorY": 13.2,
+          "offsetY": 2,
+          "rotationY": 0,
+          "floating": true,
+          "zone": "G08"
+        },
+        {
+          "id": "O14-2",
+          "x": -10,
+          "z": 9,
+          "floorY": 13.2,
+          "offsetY": 2,
+          "rotationY": 0,
+          "floating": true,
+          "zone": "G08"
+        },
+        {
+          "id": "O14-3",
+          "x": -11,
+          "z": 13,
+          "floorY": 13.2,
+          "offsetY": 2,
+          "rotationY": 0,
+          "floating": true,
+          "zone": "G08"
+        },
+        {
+          "id": "O14-4",
+          "x": -11,
+          "z": 17,
+          "floorY": 13.2,
+          "offsetY": 2,
+          "rotationY": 0,
+          "floating": true,
+          "zone": "G08"
+        }
+      ]
+    },
+    {
+      "id": "O15",
+      "name": "Арочный металлический ферменный мост",
+      "scaleTo": {
+        "axis": "max",
+        "meters": 16
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "url": "O15.glb?v=hitem-20261124",
+      "instances": [
+        {
+          "id": "O15-1",
+          "x": -12,
+          "z": 45,
+          "floorY": 13.2,
+          "offsetY": 0,
+          "rotationY": 1.5707963267948966,
+          "floating": false,
+          "zone": "G09"
+        }
+      ]
+    },
+    {
+      "id": "O16",
+      "name": "Аркадный павильон с фронтоном",
+      "scaleTo": {
+        "axis": "max",
+        "meters": 12
+      },
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "url": "O16.glb?v=hitem-20261124",
+      "instances": [
+        {
+          "id": "O16-1",
+          "x": -14,
+          "z": 61,
+          "floorY": 13.2,
+          "offsetY": 0,
+          "rotationY": 0,
+          "floating": false,
+          "zone": "G10"
+        }
+      ]
+    }
+  ]
+}
