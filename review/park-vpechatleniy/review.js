@@ -184,14 +184,15 @@ function makeCard(clip,role){
 }
 function selectFolder(){
  const hash=location.hash.split("?")[0];
- const active=hash==="#management"?"management":hash==="#photos"?"photos":(!hash||hash==="#tour"?"tour":"film");
+ const active=hash==="#calculator"?"calculator":hash==="#management"?"management":hash==="#photos"?"photos":(!hash||hash==="#tour"?"tour":"film");
  document.body.dataset.folder=active;
  document.getElementById("tour").hidden=active!=="tour";
  document.getElementById("photos").hidden=active!=="photos";
  document.getElementById("management").hidden=active!=="management";
+ document.getElementById("calculator").hidden=active!=="calculator";
  for(const id of ["film","scenes"])document.getElementById(id).hidden=active!=="film";
- document.getElementById("notice").hidden=active==="tour"||active==="management";
- for(const [id,folder] of [["tour-tab","tour"],["movies-tab","film"],["photos-tab","photos"],["management-tab","management"]]){
+ document.getElementById("notice").hidden=active==="tour"||active==="management"||active==="calculator";
+ for(const [id,folder] of [["tour-tab","tour"],["movies-tab","film"],["photos-tab","photos"],["management-tab","management"],["calculator-tab","calculator"]]){
    const tab=document.getElementById(id);
    if(active===folder)tab.setAttribute("aria-current","page");else tab.removeAttribute("aria-current");
  }
