@@ -184,13 +184,14 @@ function makeCard(clip,role){
 }
 function selectFolder(){
  const hash=location.hash.split("?")[0];
- const active=hash==="#photos"?"photos":(!hash||hash==="#tour"?"tour":"film");
+ const active=hash==="#management"?"management":hash==="#photos"?"photos":(!hash||hash==="#tour"?"tour":"film");
  document.body.dataset.folder=active;
  document.getElementById("tour").hidden=active!=="tour";
  document.getElementById("photos").hidden=active!=="photos";
+ document.getElementById("management").hidden=active!=="management";
  for(const id of ["film","scenes"])document.getElementById(id).hidden=active!=="film";
- document.getElementById("notice").hidden=active==="tour";
- for(const [id,folder] of [["tour-tab","tour"],["movies-tab","film"],["photos-tab","photos"]]){
+ document.getElementById("notice").hidden=active==="tour"||active==="management";
+ for(const [id,folder] of [["tour-tab","tour"],["movies-tab","film"],["photos-tab","photos"],["management-tab","management"]]){
    const tab=document.getElementById(id);
    if(active===folder)tab.setAttribute("aria-current","page");else tab.removeAttribute("aria-current");
  }
@@ -202,6 +203,7 @@ function selectFolder(){
  }
  if(frame.getAttribute("src"))visibility();
  if(active!=="film")mediaList.forEach(player=>player.pause());
+ window.dispatchEvent(new CustomEvent("park-folder-change",{detail:{folder:active}}));
 }
 window.addEventListener("hashchange",selectFolder);
 selectFolder();
