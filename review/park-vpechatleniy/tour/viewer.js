@@ -2,10 +2,17 @@ import * as THREE from 'three';
 import { GLTFLoader } from '/golden-ring/interactives/vendor/three-0.180/GLTFLoader.js';
 import { MeshoptDecoder } from '/golden-ring/tour/vendor/meshopt_decoder.mjs';
 import { OrbitControls } from './vendor/OrbitControls.js';
-import { createTramSystem } from './tram-system.js?v=monorail-20261124';
+import { createTramSystem, MONORAIL_ROUTE_CONFIG, MONORAIL_BOARDING_GATE } from './tram-system.js?v=park-compact-20261124';
 import { KTX2Loader } from './vendor/ktx2/loaders/KTX2Loader.js';
 import { RoomEnvironment } from './vendor/RoomEnvironment.js';
-import { createExhibitSystem } from './exhibits.js?v=hitem-20261124';
+import { createExhibitSystem } from './exhibits.js?v=park-compact-20261124';
+import { createExhibitEditor } from './exhibit-editor.js?v=park-compact-20261124';
+import { startParkCrowd } from './crowd/park-crowd.js?v=park-compact-20261124';
+import { createDynamicObstacleAdapter } from './crowd/dynamic-obstacles.js?v=park-compact-20261124';
+import { attachIcebreakerDetails } from './icebreaker-details.js?v=park-compact-20261124';
+import { createIcebreakerAccess, ICEBREAKER_OPENING } from './icebreaker-access.js?v=park-compact-20261124';
+import { applyWorkingOpenings } from './cad-openings.js?v=park-compact-20261124';
+import { initViewerUI } from './ui-module.js?v=park-compact-20261124';
 import { MeshBVH, acceleratedRaycast, CENTER } from './vendor/three-mesh-bvh/index.module.js';
 
 const $ = id => document.getElementById(id);
@@ -29,15 +36,22 @@ $('exhibit-quality').onchange=()=>{
   const value=$('exhibit-quality').value;
   if(value!==exhibitQuality)location.assign(qualityUrl(value));
 };
-Object.defineProperty(diagnostics,'camera',{get:()=>({position:camera.position.toArray(),target:controls?.target.toArray()})});
-let renderer, controls, model, bounds, size, center;
-let sourceMaterials=[],sourceMeshes=[],envelopeMeshes=[];
+Object.defineProperty(diagnostics,'camera',{get:()=>({position:camera.position.toArray(),target:controls?.target.toArray(),fov:camera.fov,aspect:camera.aspect,near:camera.near,far:camera.far})});
+let renderer, controls, model, bounds, size, center, crowd;
+let captureMode=false;
+let sourceMaterials=[],sourceMeshes=[],envelopeMeshes=[],roofMeshes=[];
+const crowdMaterials=[];
 let monorail=null,followVehicle=-1,onboardVehicle=-1,lastOnboardVehicle=0,hallOpen=true,lastFrameTime=null;
 const passenger={yaw:-Math.PI/2,pitch:-.16,eye:new THREE.Vector3(-.52,2.05,.55),normalFov:43,normalNear:.05};
 const passengerPointers=new Map();let pinchDistance=0;
 Object.defineProperty(diagnostics,'onboard',{get:()=>({active:onboardVehicle>=0,vehicle:onboardVehicle>=0?onboardVehicle:null,yaw:passenger.yaw,pitch:passenger.pitch,eyeLocal:passenger.eye.toArray(),fov:camera.fov})});
-let exhibits=null,exhibitProgress={state:'waiting',loadedObjects:0,placedInstances:0,objects:[]};
+let exhibits=null,icebreakerAccess=null,exhibitProgress={state:'waiting',loadedObjects:0,placedInstances:0,objects:[]};
 Object.defineProperty(diagnostics,'exhibits',{get:()=>exhibits?.getState()||exhibitProgress});
+let exhibitEditor=null,editingInstanceId=null,editCutawayTimer=null,dynamicObstacles=null,visitorPlacementReady=false,placementNotice=null;
+Object.defineProperty(diagnostics,'editor',{enumerable:true,get:()=>exhibitEditor?.getState()||{ready:false,selectedInstanceId:null,dragging:false}});
+Object.defineProperty(diagnostics,'dynamicObstacles',{enumerable:true,get:()=>dynamicObstacles?.getState()||{ready:false}});
+const viewerUI=initViewerUI();
+Object.defineProperty(diagnostics,'ui',{enumerable:true,get:()=>viewerUI.getState()});
 let inspectedExhibitId=null,inspectionTimer=null,inspectionNotice=null,inspectionSamples=0;
 let inspectionReady=false,inspectionBuildTimeMs=0,inspectionGeometryCount=0,inspectionElapsedMs=0,inspectionError=null;
 const inspectionHidden=new Map(),inspectionRay=new THREE.Raycaster();
@@ -49,14 +63,18 @@ Object.defineProperty(diagnostics,'inspection',{enumerable:true,get:()=>({
   buildTimeMs:Number(inspectionBuildTimeMs.toFixed(2)),elapsedMs:Number(inspectionElapsedMs.toFixed(2)),
   hiddenMeshes:inspectionHidden.size,sampleCount:inspectionSamples,
   hiddenExhibitMeshes:[...inspectionHidden.keys()].filter(mesh=>mesh.userData.exhibitId).length,
-  hiddenSelectedMeshes:[...inspectionHidden.keys()].filter(mesh=>mesh.userData.exhibitId===inspectedExhibitId).length,
+  hiddenSelectedMeshes:[...inspectionHidden.keys()].filter(mesh=>mesh.userData.exhibitId===inspectedExhibitId||mesh.userData.instanceId===inspectedExhibitId).length,
   visibleInstances:exhibits?.group.visible?exhibits.roots.filter(instance=>{
     let visible=false;instance.traverse(node=>{if(node.isMesh&&isObjectVisible(node))visible=true;});return visible;
   }).length:0
 })});
-const monorailRoute={centerX:5,centerZ:-15.75,width:46,length:99.5,cornerRadius:22.5,height:19.2,floorHeight:13.2};
+const monorailRoute=MONORAIL_ROUTE_CONFIG;
+Object.defineProperty(diagnostics,'icebreakerAccess',{enumerable:true,get:()=>icebreakerAccess?.getState()||{connected:false}});
 Object.defineProperty(diagnostics,'monorail',{get:()=>monorail?.getState()||{status:diagnostics.monorailStatus||'waiting',loaded:false,vehicleCount:0}});
-let needsRender = true, active = true, transition = null, currentView = 'overview', sectionOn = false;
+// The upper enclosure slabs start at 16.8 m. The 13.2 m mezzanine stays
+// visible; exhibits, vehicles and the reconstructed station are never cut.
+const DEFAULT_BUILDING_CUT=16.7;
+let needsRender = true, active = true, transition = null, currentView = 'overview', sectionOn = true;
 const clipPlane = new THREE.Plane(new THREE.Vector3(0,-1,0), 0);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(43, 1, 0.05, 4000);
@@ -131,7 +149,9 @@ try {
       const edgeMaterial=new THREE.LineBasicMaterial({color:0x26382e,transparent:true,opacity:.22,depthWrite:false});
       const edgeCache=new Map();
       sourceMeshes=[];model.traverse(node=>{if(node.isMesh&&!node.isInstancedMesh)sourceMeshes.push(node)});
+      diagnostics.workingOpenings=applyWorkingOpenings(sourceMeshes,[MONORAIL_BOARDING_GATE,ICEBREAKER_OPENING]);
       envelopeMeshes=sourceMeshes.filter(node=>/^A-(ROOF|WALL|CLNG|GLAZ)/.test(node.name));
+      roofMeshes=sourceMeshes.filter(node=>/^A-ROOF__/.test(node.name));
       let edgeBudget=500000;
       for(const node of [...sourceMeshes].sort((a,b)=>a.geometry.attributes.position.count-b.geometry.attributes.position.count)){
         const vertices=node.geometry.attributes.position.count;
@@ -149,8 +169,9 @@ try {
       controls.minDistance=Math.max(.3,size.length()/700);controls.maxDistance=size.length()*4;
       $('section-height').min=String(Math.max(0,bounds.min.y));
       $('section-height').max=String(bounds.max.y);
-      $('section-height').step=String(Math.max(.05,Number((size.y/500).toFixed(2))));
-      $('section-height').value=String(bounds.min.y+size.y*.5);
+      $('section-height').step='0.05';
+      $('section-height').value=String(THREE.MathUtils.clamp(DEFAULT_BUILDING_CUT,bounds.min.y,bounds.max.y));
+      $('section-toggle').setAttribute('aria-pressed','true');$('section-controls').hidden=false;
       updateSection();
       Object.assign(diagnostics,{state:'ready',meshes,triangles:Math.round(triangles),materials:materials.size,bounds:{min:bounds.min.toArray(),max:bounds.max.toArray()},sourceUnits:'meters'});
       root.dataset.state='ready';$('model-info').textContent='3D-предпросмотр из DWG';
@@ -159,7 +180,8 @@ try {
       root.querySelector('[data-view="exhibits"]').disabled=true;
       needsRender=true;
       const monorailReady=startMonorail(loader);
-      startExhibits(loader,monorailReady);
+      const exhibitsReady=startExhibits(loader,monorailReady);
+      Promise.allSettled([monorailReady,exhibitsReady]).then(()=>startVisitors(loader));
     }catch(error){fail(error);}
   },event=>{
     if(event.lengthComputable&&event.total){const percent=Math.min(99,Math.round(event.loaded/event.total*100));progress.style.width=percent+'%';detail.textContent=percent===99?'Подготавливаем геометрию…':'Загружено '+percent+'%';}
@@ -169,7 +191,7 @@ try {
   function frame(time){
     requestAnimationFrame(frame);
     const delta=lastFrameTime===null?0:Math.min(.1,Math.max(0,(time-lastFrameTime)/1000));lastFrameTime=time;
-    if(!active||document.hidden)return;
+    if(captureMode||!active||document.hidden)return;
     if(monorail){
       if(monorail.update(delta))needsRender=true;
       if(onboardVehicle>=0){
@@ -186,6 +208,9 @@ try {
       camera.position.lerpVectors(transition.from,transition.to,e);controls.target.lerpVectors(transition.fromTarget,transition.toTarget,e);needsRender=true;
       if(t===1)transition=null;
     }
+    if(dynamicObstacles?.sync())needsRender=true;
+    if(icebreakerAccess?.update())needsRender=true;
+    if(crowd?.update(delta))needsRender=true;
     if(onboardVehicle<0)controls.update();
     if(needsRender){renderer.render(scene,camera);needsRender=false;diagnostics.renderedFrames=(diagnostics.renderedFrames||0)+1;diagnostics.renderTriangles=renderer.info.render.triangles;}
   }
@@ -200,16 +225,19 @@ function fittedView(direction){
   model.updateMatrixWorld(true);
   // Fit the actual source vertices: a sparse CAD assembly can have a much larger bounding box than its visible silhouette.
   model.traverse(node=>{
-    if(!node.isMesh)return;
+    if(!node.isMesh||!isObjectVisible(node))return;
     const positions=node.geometry.attributes.position;
     if(!positions)return;
     for(let i=0;i<positions.count;i++){
-      p.fromBufferAttribute(positions,i).applyMatrix4(node.matrixWorld).sub(center);
+      p.fromBufferAttribute(positions,i).applyMatrix4(node.matrixWorld);
+      if(sectionOn&&p.y>clipPlane.constant+1e-4)continue;
+      p.sub(center);
       const x=p.dot(right),y=p.dot(up),z=p.dot(d);
       rightLimit=Math.max(rightLimit,x/hTan+z);leftLimit=Math.max(leftLimit,-x/hTan+z);
       topLimit=Math.max(topLimit,y/vTan+z);bottomLimit=Math.max(bottomLimit,-y/vTan+z);
     }
   });
+  if(!Number.isFinite(rightLimit))return fitBox(exhibits?.getBounds()||bounds,direction);
   const target=center.clone().addScaledVector(right,(rightLimit-leftLimit)*hTan/2).addScaledVector(up,(topLimit-bottomLimit)*vTan/2);
   const distance=Math.max((rightLimit+leftLimit)/2,(topLimit+bottomLimit)/2)*1.12;
   return {position:target.clone().addScaledVector(d,distance),target};
@@ -222,6 +250,7 @@ function moveCamera(position,target,instant=false){
 }
 function setView(view,instant=false){
   if(!model)return;
+  exhibitEditor?.clearSelection();editingInstanceId=null;
   clearExhibitInspection();stopFollowing();
   if(view==='exhibits'){
     const box=exhibits?.getBounds();
@@ -240,7 +269,7 @@ function setView(view,instant=false){
     const d=camera.aspect<1?new THREE.Vector3(.45,1.55,2.1):new THREE.Vector3(1.9,1.2,.7);
     const fitted=fitBox(box,d);moveCamera(fitted.position,fitted.target,instant);
     document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.view===view)));
-    $('view-name').textContent='Кольцо монорельса';diagnostics.view='route';return;
+    $('view-name').textContent='Трасса монорельса';diagnostics.view='route';return;
   }
   $('tram-camera').value='free';
   currentView=view;
@@ -253,16 +282,18 @@ function updateSection(){
   if(!model)return;
   clearExhibitInspection();
   const height=Number($('section-height').value);clipPlane.constant=height;
-  for(const material of sourceMaterials){
+  for(const material of [...sourceMaterials,...crowdMaterials]){
     if(Boolean(material.clippingPlanes?.length)!==sectionOn){material.clippingPlanes=sectionOn?[clipPlane]:[];material.clipShadows=true;material.needsUpdate=true;}
   }
   $('section-value').textContent=height.toLocaleString('ru-RU',{maximumFractionDigits:1})+' м';
-  diagnostics.section={enabled:sectionOn,height};needsRender=true;
-  exhibits?.setSection(sectionOn,clipPlane);
+  // A building cut must never trim a suspended model, the rocket or a wagon.
+  roofMeshes.forEach(mesh=>{mesh.visible=!hallOpen&&!sectionOn;});
+  diagnostics.section={enabled:sectionOn,height,scope:'building',defaultHeight:DEFAULT_BUILDING_CUT};
+  diagnostics.roof={hidden:roofMeshes.every(mesh=>!mesh.visible),meshCount:roofMeshes.length};needsRender=true;
 }
 root.querySelectorAll('[data-view],#section-toggle,#reset,#envelope-toggle').forEach(button=>button.disabled=true);
 document.querySelectorAll('[data-view]').forEach(button=>button.onclick=()=>setView(button.dataset.view));
-$('reset').onclick=()=>{sectionOn=false;$('section-toggle').setAttribute('aria-pressed','false');$('section-controls').hidden=true;setHallOpen(true);updateSection();setView(exhibits?.roots.length?'exhibits':monorail?'route':'overview');};
+$('reset').onclick=()=>{sectionOn=true;$('section-height').value=String(DEFAULT_BUILDING_CUT);$('section-toggle').setAttribute('aria-pressed','true');$('section-controls').hidden=false;setHallOpen(true);updateSection();setView(exhibits?.roots.length?'exhibits':monorail?'route':'overview');};
 $('section-toggle').onclick=()=>{sectionOn=!sectionOn;$('section-toggle').setAttribute('aria-pressed',String(sectionOn));$('section-controls').hidden=!sectionOn;updateSection();};
 $('section-height').addEventListener('input',updateSection);
 function showHelp(show){$('help').hidden=!show;$('help-toggle').setAttribute('aria-expanded',String(show));}
@@ -292,7 +323,7 @@ canvas.addEventListener('dblclick',event=>{
   if(onboardVehicle>=0){passenger.yaw=-Math.PI/2;passenger.pitch=-.16;camera.fov=68;camera.updateProjectionMatrix();needsRender=true;return;}
   const rect=canvas.getBoundingClientRect();pointer.set((event.clientX-rect.left)/rect.width*2-1,1-(event.clientY-rect.top)/rect.height*2);raycaster.setFromCamera(pointer,camera);
   const targets=[...sourceMeshes.filter(mesh=>mesh.visible),...(monorail?.vehicles||[]),...(exhibits?.group.visible?exhibits.roots:[])];
-  const hits=raycaster.intersectObjects(targets,true);const hit=hits.find(item=>item.object.isMesh&&(item.object.userData.monorail||!sectionOn||item.point.y<=Number($('section-height').value)));if(!hit)return;
+  const hits=raycaster.intersectObjects(targets,true);const hit=hits.find(item=>item.object.isMesh&&isObjectVisible(item.object)&&(item.object.userData.monorail||item.object.userData.exhibitId||!sectionOn||item.point.y<=clipPlane.constant));if(!hit)return;
   clearExhibitInspection();stopFollowing();$('tram-camera').value='free';
   const direction=camera.position.clone().sub(controls.target).normalize();const distance=Math.max(size.length()*.055,camera.position.distanceTo(hit.point)*.4);
   currentView=null;moveCamera(hit.point.clone().addScaledVector(direction,distance),hit.point);document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));$('view-name').textContent='Детальный обзор';diagnostics.view='detail';
@@ -310,7 +341,9 @@ function fitBox(box,direction){
   return {position:target.clone().addScaledVector(d,distance*1.13),target};
 }
 function stopFollowing(){
+  crowd?.releaseCamera();
   followVehicle=-1;diagnostics.followVehicle=null;
+  exhibitEditor?.setEnabled(visitorPlacementReady);
   if(onboardVehicle>=0){
     onboardVehicle=-1;passengerPointers.clear();pinchDistance=0;
     controls.enabled=true;camera.fov=passenger.normalFov;camera.near=passenger.normalNear;camera.updateProjectionMatrix();
@@ -332,6 +365,8 @@ function updatePassengerCamera(){
 
 function setPassengerView(index=0){
   if(!monorail||!monorail.vehicles[index])return;
+  crowd?.releaseCamera();
+  exhibitEditor?.clearSelection();editingInstanceId=null;
   clearExhibitInspection();
   if(onboardVehicle<0){passenger.normalFov=camera.fov;passenger.normalNear=camera.near;}
   followVehicle=-1;diagnostics.followVehicle=null;onboardVehicle=index;lastOnboardVehicle=index;
@@ -374,8 +409,9 @@ function setFreeView(){
 }
 function setHallOpen(open){
   clearExhibitInspection();hallOpen=Boolean(open);envelopeMeshes.forEach(mesh=>{mesh.visible=!hallOpen});
+  roofMeshes.forEach(mesh=>{mesh.visible=!hallOpen&&!sectionOn;});
   $('envelope-toggle').setAttribute('aria-pressed',String(hallOpen));
-  diagnostics.hallOpen=hallOpen;needsRender=true;
+  diagnostics.hallOpen=hallOpen;diagnostics.roof={hidden:roofMeshes.every(mesh=>!mesh.visible),meshCount:roofMeshes.length};needsRender=true;
 }
 $('envelope-toggle').onclick=()=>setHallOpen(!hallOpen);
 function syncMonorailControls(state){
@@ -400,9 +436,9 @@ async function startMonorail(loader){
     // Respect a visitor's motion preference; an explicit press on «Пуск» always starts both wagons.
     if(reduceMotion)monorail.setPlaying(false);
     monorail.group.traverse(node=>{node.userData.monorail=true;for(const material of Array.isArray(node.material)?node.material:[node.material])if(material?.map)material.map.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());});
-    root.querySelectorAll('#tram-play,#tram-onboard,#tram-camera,#tram-speed').forEach(control=>control.disabled=false);
+    root.querySelectorAll('#tram-play,#tram-onboard,#tram-camera,#tram-speed,#tram-station').forEach(control=>control.disabled=false);
     syncMonorailControls(monorail.getState());
-    if(currentView==='overview'||currentView==='route')setView('route',true);
+    if(currentView==='route')setView('route',true);
     needsRender=true;
   }catch(error){
     diagnostics.monorailStatus='error';diagnostics.errors.push('Монорельс: '+(error?.message||error));
@@ -413,6 +449,15 @@ async function startMonorail(loader){
 $('tram-play').onclick=()=>{if(monorail){monorail.setPlaying(!monorail.getState().playing);needsRender=true;}};
 $('tram-speed').onchange=()=>{if(monorail)monorail.setSpeed(Number($('tram-speed').value));};
 $('tram-onboard').onclick=()=>{if(onboardVehicle>=0)setView('route');else setPassengerView(followVehicle>=0?followVehicle:lastOnboardVehicle);};
+if($('tram-station'))$('tram-station').onclick=()=>{
+  if(!monorail)return;
+  exhibitEditor?.clearSelection();editingInstanceId=null;clearExhibitInspection();stopFollowing();
+  currentView=null;transition=null;setHallOpen(true);$('tram-camera').value='free';
+  sectionOn=true;$('section-height').value=String(DEFAULT_BUILDING_CUT);$('section-toggle').setAttribute('aria-pressed','true');updateSection();
+  const pose=monorail.getStationPose();moveCamera(pose.position,pose.target);
+  document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));
+  $('view-name').textContent='Посадочная площадка · 16,65 м';diagnostics.view='station';needsRender=true;
+};
 $('tram-camera').onchange=()=>{
   if(!monorail)return;
   const value=$('tram-camera').value;
@@ -420,6 +465,7 @@ $('tram-camera').onchange=()=>{
   if(value==='free'){setFreeView();return;}
   if(value.startsWith('inside-')){setPassengerView(Number(value.slice(-1)));return;}
   clearExhibitInspection();stopFollowing();
+  exhibitEditor?.clearSelection();editingInstanceId=null;
   followVehicle=value==='follow-1'?1:0;currentView=null;transition=null;diagnostics.followVehicle=followVehicle;
   setHallOpen(true);
   const pose=monorail.getFollowPose(followVehicle);
@@ -449,17 +495,39 @@ function syncExhibitControls(state){
 }
 async function startExhibits(loader,monorailReady){
   try{
-    exhibits=await createExhibitSystem({scene,loader,sourceMeshes,manifestUrl:exhibitManifestPath+'?v=hitem-fast-20261124',
+    exhibits=await createExhibitSystem({scene,loader,sourceMeshes,manifestUrl:exhibitManifestPath+'?v=park-compact-20261124',
       anisotropy:Math.min(8,renderer.capabilities.getMaxAnisotropy()),onChange:()=>{needsRender=true;},onProgress:syncExhibitControls});
+    const icebreaker=exhibits.getInstance('O12-1');
+    if(icebreaker){
+      const lettering=attachIcebreakerDetails(exhibits.getInstanceRoot('O12-1'),icebreaker.originalDimensions||icebreaker.dimensions);
+      diagnostics.icebreaker={lettering:lettering?.text||'АТОМФЛОТ',labelledSides:lettering?.sides||2,dimensions:icebreaker.originalDimensions||icebreaker.dimensions};
+      icebreakerAccess=createIcebreakerAccess({scene,exhibits});
+    }
     await monorailReady;
     await prepareInspectionRaycasts();
     inspectionReady=true;
-    exhibits.setSection(sectionOn,clipPlane);syncExhibitControls(exhibits.getState());
+    exhibits.setSection(false,null);
+    dynamicObstacles=createDynamicObstacleAdapter({exhibits,onChange:state=>{
+      if(state.lastError){placementNotice=state.lastError;$('scene-notice').textContent=state.lastError;$('scene-notice').hidden=false;}
+      else if(placementNotice){
+        // A cutaway may temporarily cover the placement warning. Clear its
+        // saved copy too, so leaving inspection cannot resurrect an old error.
+        if(inspectionNotice?.placement)inspectionNotice={text:'',hidden:true,placement:false};
+        const notice=$('scene-notice');
+        if(notice.textContent===placementNotice){notice.textContent='';notice.hidden=true;}
+        placementNotice=null;
+      }
+      needsRender=true;
+    }});
+    exhibitEditor=createExhibitEditor({system:exhibits,scene,camera,controls,domElement:canvas,
+      onFocus:id=>focusExhibit(id),onEditStart:beginExhibitEdit,onEditEnd:endExhibitEdit,onChange:exhibitEditorChanged});
+    exhibitEditor.setEnabled(false);
+    syncExhibitControls(exhibits.getState());
     const state=exhibits.getState();
     if(state.state==='partial'){
       $('scene-notice').textContent=state.rejectedInstances?'Часть экспонатов ещё требует уточнения позиции. Показаны подтверждённые размещения.':'Часть экспонатов не загрузилась. Обновите страницу для повторной загрузки.';$('scene-notice').hidden=false;
     }
-    if((currentView==='overview'||currentView==='route')&&exhibits.roots.length)setView('exhibits',true);
+    if(currentView==='overview')setView('overview',true);
   }catch(error){
     inspectionError=error?.message||String(error);
     exhibitProgress={state:'error',loadedObjects:0,placedInstances:0,objects:[],errors:[inspectionError]};
@@ -508,6 +576,7 @@ function clearInspectionNotice(){
 }
 function clearExhibitInspection(){
   clearTimeout(inspectionTimer);inspectionTimer=null;
+  clearTimeout(editCutawayTimer);editCutawayTimer=null;
   restoreInspectionMeshes();clearInspectionNotice();
   inspectedExhibitId=null;inspectionSamples=0;diagnostics.selectedExhibit=null;
   $('exhibit-select').value='all';needsRender=true;
@@ -547,6 +616,8 @@ function applyInspectionCutaway(origin){
   const points=selected.flatMap(instance=>inspectionBoxPoints(new THREE.Box3().setFromObject(instance)));
   inspectionSamples=points.length;
   const meshes=[...candidates],materialSides=new Map();
+  const buildingMeshes=meshes.filter(mesh=>!mesh.userData.exhibitId&&!mesh.userData.monorail);
+  const independentMeshes=meshes.filter(mesh=>mesh.userData.exhibitId||mesh.userData.monorail);
   // From inside a wall, the exit face may be back-facing. CPU-only DoubleSide
   // catches it without altering rendered material properties or shared textures.
   for(const mesh of meshes)for(const material of Array.isArray(mesh.material)?mesh.material:[mesh.material]){
@@ -554,24 +625,41 @@ function applyInspectionCutaway(origin){
   }
   try{
     const direction=new THREE.Vector3();
+    const hideHits=(targets,near,far)=>{
+      if(far<=near)return;
+      inspectionRay.near=near;inspectionRay.far=far;
+      for(const hit of inspectionRay.intersectObjects(targets.filter(mesh=>!inspectionHidden.has(mesh)),false)){
+        const mesh=hit.object;
+        if(!inspectionHidden.has(mesh)){inspectionHidden.set(mesh,mesh.visible);mesh.visible=false;}
+      }
+    };
     for(const point of points){
       direction.subVectors(point,origin);
       const distance=direction.length();
       if(distance<=camera.near)continue;
       inspectionRay.set(origin,direction.divideScalar(distance));
-      inspectionRay.near=camera.near;inspectionRay.far=Math.max(camera.near,distance-.015);
-      const hits=inspectionRay.intersectObjects(meshes.filter(mesh=>!inspectionHidden.has(mesh)),false);
-      for(const hit of hits){
-        const mesh=hit.object;
-        if(!inspectionHidden.has(mesh)){inspectionHidden.set(mesh,mesh.visible);mesh.visible=false;}
+      const end=Math.max(camera.near,distance-.015);
+      hideHits(independentMeshes,camera.near,end);
+      let start=camera.near,finish=end;
+      // Raycast only the visible half-space of the building. A clipped roof
+      // cannot hide a whole mixed CAD mesh that still contains a useful floor.
+      if(sectionOn){
+        if(Math.abs(direction.y)<1e-9){if(origin.y>clipPlane.constant)continue;}
+        else{
+          const crossing=(clipPlane.constant-origin.y)/direction.y;
+          if(direction.y<0)start=Math.max(start,crossing+1e-4);
+          else finish=Math.min(finish,crossing-1e-4);
+        }
       }
+      hideHits(buildingMeshes,start,finish);
     }
   }finally{
     for(const [material,side] of materialSides)material.side=side;
   }
   if(inspectionHidden.size){
     const notice=$('scene-notice');
-    if(!inspectionNotice)inspectionNotice={text:notice.textContent,hidden:notice.hidden};
+    if(!inspectionNotice)inspectionNotice={text:notice.textContent,hidden:notice.hidden,
+      placement:Boolean(placementNotice&&notice.textContent===placementNotice)};
     notice.textContent=inspectionMessage;notice.hidden=false;
   }else clearInspectionNotice();
   inspectionElapsedMs=performance.now()-started;needsRender=true;
@@ -581,12 +669,103 @@ function focusExhibit(id,instant=false){
   if(id==='all'){setView('exhibits');return;}
   const box=exhibits.getBounds(id);if(!box||box.isEmpty())return;
   stopFollowing();$('tram-camera').value='free';currentView=null;setHallOpen(true);exhibits.setVisible(true);
-  sectionOn=false;$('section-toggle').setAttribute('aria-pressed','false');$('section-controls').hidden=true;updateSection();
   const fitted=fitBox(box,new THREE.Vector3(1.4,.85,1.5));
   inspectedExhibitId=id;applyInspectionCutaway(fitted.position);moveCamera(fitted.position,fitted.target,instant);
   document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));
-  const row=exhibits.getState().objects.find(object=>object.id===id);
-  $('exhibit-select').value=id;$('view-name').textContent=row?.name||'Экспонат';diagnostics.view='exhibit';diagnostics.selectedExhibit=id;
+  const row=exhibits.getState().objects.find(object=>object.id===id||object.placements.some(placement=>placement.instanceId===id));
+  $('exhibit-select').value=row?.id||'all';$('view-name').textContent=row?.name||'Экспонат';diagnostics.view='exhibit';diagnostics.selectedExhibit=id;
+}
+
+function beginExhibitEdit(id){
+  if(!exhibitEditor&&id===null){clearExhibitInspection();return;}
+  stopFollowing();transition=null;currentView=null;
+  clearExhibitInspection();editingInstanceId=id||null;
+  $('tram-camera').value='free';
+  document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));
+  if(id&&exhibits?.getInstanceRoot(id)?.visible){
+    inspectedExhibitId=id;diagnostics.selectedExhibit=id;applyInspectionCutaway(camera.position);
+  }
+  $('view-name').textContent='Расстановка экспонатов';diagnostics.view='editing';needsRender=true;
+}
+function endExhibitEdit(id){
+  clearExhibitInspection();editingInstanceId=null;
+  if(id&&exhibits?.getInstanceRoot(id)?.visible){
+    inspectedExhibitId=id;diagnostics.selectedExhibit=id;applyInspectionCutaway(camera.position);
+  }
+  needsRender=true;
+}
+function exhibitEditorChanged(){
+  icebreakerAccess?.update();
+  needsRender=true;
+  if(!editingInstanceId||editCutawayTimer)return;
+  editCutawayTimer=setTimeout(()=>{
+    editCutawayTimer=null;
+    const id=editingInstanceId;
+    if(id&&exhibits?.getInstanceRoot(id)?.visible){
+      inspectedExhibitId=id;applyInspectionCutaway(camera.position);
+    }
+  },80);
 }
 $('exhibit-select').onchange=()=>focusExhibit($('exhibit-select').value);
-$('exhibit-visible').onclick=()=>{clearExhibitInspection();if(exhibits)exhibits.setVisible(!exhibits.group.visible);};
+$('exhibit-visible').onclick=()=>{
+  exhibitEditor?.clearSelection();editingInstanceId=null;clearExhibitInspection();
+  if(!exhibits)return;
+  const result=exhibits.setVisible(!exhibits.group.visible);
+  if(result?.ok===false){$('scene-notice').textContent=result.error;$('scene-notice').hidden=false;}
+};
+
+async function startVisitors(loader){
+  try{
+    crowd=await startParkCrowd({THREE,scene,model,loader,camera,controls,
+      exhibitObstacles:()=>dynamicObstacles?.snapshot().proxies||[],
+      fixedObstacles:()=>monorail?.getCollisionObstacles()||[],
+      registerMaterial(material){
+        if(!crowdMaterials.includes(material))crowdMaterials.push(material);
+        material.clippingPlanes=sectionOn?[clipPlane]:[];material.clipShadows=true;material.needsUpdate=true;
+      },
+      setSection(height,enabled=true){
+        const changed=sectionOn!==enabled||Math.abs(Number($('section-height').value)-height)>.015;
+        if(!changed)return;
+        sectionOn=enabled;$('section-height').value=String(height);$('section-toggle').setAttribute('aria-pressed',String(enabled));
+        $('section-controls').hidden=true;updateSection();
+      },
+      setCamera(position,target,label,instant=false){
+        exhibitEditor?.clearSelection();editingInstanceId=null;
+        clearExhibitInspection();stopFollowing();currentView=null;transition=null;$('tram-camera').value='free';
+        setHallOpen(true);moveCamera(position,target,instant);
+        document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed','false'));
+        $('view-name').textContent=label;diagnostics.view='visitors';
+      },
+      requestRender(){needsRender=true;}
+    });
+    if(dynamicObstacles){
+      const binding=dynamicObstacles.bindSimulation(crowd.simulation);
+      if(!binding.ok)throw new Error(binding.error||'Не удалось синхронизировать расстановку и проходы.');
+    }
+    visitorPlacementReady=true;exhibitEditor?.setEnabled(true);
+    crowd.objects.elevators.root.traverse(node=>{if(node.isMesh&&!sourceMeshes.includes(node))sourceMeshes.push(node);});
+    if(reduceMotion)crowd.setPaused(true);
+    needsRender=true;
+    diagnostics.capture={
+      begin(){captureMode=true;transition=null;},
+      end(){captureMode=false;lastFrameTime=null;needsRender=true;},
+      step(dt=1/24){
+        captureMode=true;transition=null;
+        const delta=Math.min(.1,Math.max(0,dt));
+        dynamicObstacles?.sync();crowd.setPaused(false);crowd.update(delta);crowd.setPaused(true);
+        if(monorail){const playing=monorail.getState().playing;monorail.setPlaying(true);monorail.update(delta);monorail.setPlaying(playing);}
+        if(onboardVehicle>=0)updatePassengerCamera();else controls.update();
+        renderer.render(scene,camera);needsRender=false;return crowd.simulation.time;
+      },
+      focus(kind){crowd.focus(kind,{instant:true});},
+      camera(position,target){clearExhibitInspection();stopFollowing();currentView=null;moveCamera(new THREE.Vector3(...position),new THREE.Vector3(...target),true);},
+      section(height){sectionOn=true;$('section-height').value=String(height);updateSection();},
+      render(){dynamicObstacles?.sync();crowd.update(0);if(onboardVehicle>=0)updatePassengerCamera();else controls.update();renderer.render(scene,camera);},
+      get canvas(){return canvas;}
+    };
+  }catch(error){
+    diagnostics.errors.push('Посетители: '+(error?.message||error));
+    crowd?.dispose();crowd=null;dynamicObstacles?.dispose();dynamicObstacles=null;
+    visitorPlacementReady=true;exhibitEditor?.setEnabled(true);
+  }
+}

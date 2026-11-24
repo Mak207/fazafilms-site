@@ -5,59 +5,104 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="theme-color" content="#111715">
-  <title>Парк впечатлений — экспонаты и 3D-экскурсия · ФАЗА</title>
+  <title>Парк впечатлений — 3D-парк · ФАЗА</title>
   <link rel="icon" href="/favicon.svg">
-  <link rel="stylesheet" href="viewer.css?v=hitem-fast-20261124">
+  <link rel="stylesheet" href="crowd/crowd.css?v=park-compact-20261124">
+  <link rel="stylesheet" href="viewer.css?v=park-compact-20261124">
   <script type="importmap">{"imports":{"three":"/golden-ring/interactives/vendor/three-0.180/three.module.min.js"}}</script>
-  <script type="module" src="viewer.js?v=hitem-fast-20261124"></script>
+  <script type="module" src="viewer.js?v=park-compact-20261124"></script>
 </head>
 <body>
 <main id="viewer" data-state="loading">
   <header class="viewer-header">
     <div class="viewer-title"><strong>Парк впечатлений</strong><span id="model-info">3D-модель проекта</span></div>
-    <div class="header-actions"><button id="help-toggle" aria-controls="help" aria-expanded="false" type="button">Управление</button><button id="fullscreen" type="button">На весь экран</button></div>
+    <div class="header-actions"><button id="help-toggle" aria-controls="help" aria-expanded="false" type="button" title="Как управлять парком">Управление</button><button id="fullscreen" type="button">На весь экран</button></div>
   </header>
   <section id="stage" aria-label="Трёхмерная модель Парка впечатлений">
-    <canvas id="canvas" tabindex="0" aria-label="3D-модель. Левая кнопка — вращение, правая — сдвиг, колесо — масштаб. Двойной щелчок — приблизить выбранное место."></canvas>
+    <canvas id="canvas" tabindex="0" aria-label="3D-модель. Левая кнопка — вращение, правая — сдвиг, колесо — приближение. Двойной щелчок — приблизить выбранное место."></canvas>
     <div id="loading" class="loading" role="status" aria-live="polite">
       <div class="loading-card"><span class="eyebrow">Парк впечатлений</span><h1 id="loading-title">Загружаем 3D-модель</h1><div class="progress-track"><div id="progress"></div></div><p id="loading-detail">Подготавливаем пространство для просмотра…</p><button id="retry" type="button" hidden>Повторить загрузку</button></div>
     </div>
     <div id="view-caption" class="view-caption" aria-live="polite"><span class="eyebrow">Ракурс</span><strong id="view-name">Общий вид</strong><span id="onboard-hint" hidden>Потяните вид мышью или пальцем, чтобы оглядеться</span></div>
-    <aside id="help" class="help-card" hidden aria-label="Как управлять моделью">
-      <div class="help-title"><strong>Рассмотрите пространство</strong><button id="close-help" aria-label="Закрыть подсказку" type="button">×</button></div>
-      <p><b>Экспонаты</b> — выберите модель в списке, чтобы рассмотреть её. Мешающие обзору поверхности временно скрываются; кнопка «Экспозиция» возвращает общую расстановку.</p>
-      <p><b>Качество текстур</b> — быстрый просмотр 2K загружается по умолчанию. Выбор 4K открывает более детальные текстуры; смена качества перезагружает сцену.</p>
-      <p><b>Левая кнопка</b> — повернуть модель.</p><p><b>Правая кнопка</b> — сдвинуть вид.</p><p><b>Колесо или два пальца</b> — приблизить и отдалить.</p><p><b>Двойной щелчок</b> — перейти к выбранному месту.</p><p><b>Вид из вагона</b> — смотреть на выставку с места пассажира. Потяните мышью или пальцем, чтобы повернуть голову; колесо или щипок меняют приближение. В списке ракурсов можно пересесть в другой вагон.</p><p><b>Стрелки</b> при выбранном 3D-виде поворачивают взгляд из вагона; двойной щелчок возвращает взгляд на выставку. <b>Esc</b> возвращает весь маршрут.</p><p><b>За вагоном 1 / 2</b> — внешняя камера. Вращение мышью возвращает свободный обзор.</p><p><b>Открытый зал</b> — показать пространство без оболочки здания. Кнопка возвращает её обратно.</p><p><b>Пауза и скорость</b> управляют обоими вагонами; на паузе можно продолжать осмотр из вагона.</p>
+
+    <aside id="exhibit-editor" class="context-panel exhibit-editor" hidden aria-labelledby="editor-title">
+      <div class="panel-heading editor-heading"><div><strong id="editor-title">Объекты</strong><span id="editor-summary" class="sr-only">24 экземпляра</span></div><button id="editor-close" class="panel-close" type="button" aria-label="Закрыть объекты">×</button></div>
+      <details id="editor-catalog" class="editor-catalog" open><summary><span id="editor-count">24 экземпляра</span><span>Выбрать</span></summary><div id="editor-instances" class="editor-instances" aria-label="Отдельные экземпляры экспонатов"></div></details>
+      <p id="editor-empty" class="editor-hint">Нажмите на иконку, чтобы приблизить отдельный экземпляр.</p>
+      <section id="editor-selection" hidden aria-label="Выбранный экземпляр">
+        <div class="editor-selected"><div><strong id="editor-selected-name"></strong><span id="editor-selected-id"></span></div><button id="editor-visibility" type="button" aria-pressed="false">Скрыть</button></div>
+        <output id="editor-dimensions" class="editor-dimensions" aria-label="Габариты модели в метрах" title="Габариты модели: X × высота × Z"></output>
+        <div class="editor-modes" role="group" aria-label="Действие мышью"><button data-editor-mode="view" type="button" aria-pressed="false" title="Свободно осмотреть объект">Осмотр</button><button data-editor-mode="move" type="button" aria-pressed="true" title="Перетащить выбранный объект мышью">Перенос</button><button data-editor-mode="rotate" type="button" aria-pressed="false" title="Потянуть объект влево или вправо для поворота">Поворот</button><button data-editor-mode="scale" type="button" aria-pressed="false" title="Вправо — увеличить, влево — уменьшить">Размер</button></div>
+        <p id="editor-gesture-hint" class="editor-hint"></p>
+        <details id="editor-coordinates" class="panel-details editor-coordinates"><summary>Точные размеры и координаты</summary><p id="editor-instance-note" class="editor-instance-note" hidden></p><form id="editor-transform">
+          <div class="editor-fields"><label>Масштаб, ×<input id="editor-scale" type="number" step="any" min="0" value="1" required title="1 — исходный размер"></label><label>Поворот, °<input id="editor-angle" type="number" step="any" required></label><label>X, м<input id="editor-x" type="number" step="any" required></label><label>Z, м<input id="editor-z" type="number" step="any" required></label><label id="editor-height-row" hidden>Высота Y, м<input id="editor-y" type="number" step="any"></label></div>
+          <div id="editor-floor-row" class="editor-floor-row"><label for="editor-floor">Этаж</label><select id="editor-floor"><option value="auto">Авто</option><option value="main">Основной этаж</option><option value="mezzanine">Антресоль</option></select><span id="editor-floor-current" class="sr-only"></span></div>
+          <button type="submit">Применить</button>
+        </form></details>
+      </section>
+      <p id="editor-message" class="editor-message" role="status" aria-live="polite">Каждая копия редактируется независимо.</p>
+      <div class="editor-history"><button id="editor-undo" type="button" disabled title="Отменить — Ctrl+Z" aria-label="Отменить изменение">↶</button><button id="editor-redo" type="button" disabled title="Повторить — Ctrl+Shift+Z" aria-label="Повторить изменение">↷</button><span id="editor-save-indicator">Автосохранение</span></div>
+      <details id="editor-more" class="panel-details"><summary>Сохранение и общие настройки</summary>
+        <div class="editor-files"><button id="editor-export" type="button">Экспорт JSON</button><button id="editor-import" type="button">Импорт JSON</button><input id="editor-import-file" type="file" accept="application/json,.json" hidden></div>
+        <button id="editor-reset" class="panel-wide" type="button" disabled>Исходная расстановка</button>
+        <p id="editor-save-status" class="editor-save-status">Автосохранение в этом браузере · одинаково для 2K и 4K</p>
+        <div class="exhibit-controls" aria-label="Общие настройки экспонатов"><button id="exhibit-visible" type="button" aria-pressed="true" disabled>Экспонаты</button><label for="exhibit-select" class="exhibit-choice"><span>Рассмотреть группу</span><select id="exhibit-select" disabled><option value="all">Все экспонаты</option></select></label><span id="exhibit-status" class="exhibit-status" role="status" aria-live="polite">Загружаем экспонаты…</span></div>
+      </details>
     </aside>
-    <div id="section-controls" class="section-controls" hidden>
-      <label for="section-height">Высота среза <output id="section-value" for="section-height"></output></label>
-      <input id="section-height" type="range" min="0" max="100" value="65" step="0.5" aria-label="Высота горизонтального среза">
-    </div>
+
+    <aside id="monorail-panel" class="context-panel" hidden aria-labelledby="monorail-title">
+      <div class="panel-heading"><strong id="monorail-title">Монорельс</strong><button class="panel-close" data-close-panel="monorail-panel" type="button" aria-label="Закрыть монорельс">×</button></div>
+      <div class="monorail-controls" aria-label="Управление монорельсом">
+        <div class="panel-button-row"><button id="tram-play" type="button" aria-pressed="false" disabled>Пуск</button><button id="tram-onboard" type="button" aria-pressed="false" disabled>Вид из вагона</button></div>
+        <label class="camera-control"><span>Камера</span><select id="tram-camera" disabled><option value="route">Весь маршрут</option><option value="inside-0">Внутри вагона 1</option><option value="inside-1">Внутри вагона 2</option><option value="follow-0">За вагоном 1</option><option value="follow-1">За вагоном 2</option><option value="free">Свободный вид</option></select></label>
+        <label class="speed-control" for="tram-speed"><span>Скорость</span><select id="tram-speed" disabled><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+        <div class="panel-button-row"><button data-view="route" aria-pressed="false" type="button">Весь маршрут</button><button id="tram-station" type="button" disabled>Площадка</button></div>
+      </div>
+      <p class="panel-note">Внутри вагона потяните вид мышью или пальцем, чтобы оглядеться.</p>
+    </aside>
+
+    <aside id="crowd-panel" class="context-panel crowd-panel" data-state="loading" hidden aria-labelledby="crowd-title">
+      <div class="panel-heading"><strong id="crowd-title">Посетители</strong><button class="panel-close" data-close-panel="crowd-panel" type="button" aria-label="Закрыть посетителей">×</button></div>
+      <div class="crowd-heading"><span>Число посетителей</span><i class="crowd-live" aria-hidden="true"></i></div>
+      <div class="crowd-quantity" role="group" aria-label="Количество посетителей"><button id="crowd-minus" type="button" disabled aria-label="Уменьшить количество посетителей на одного">−</button><label class="sr-only" for="crowd-count">Желаемое число посетителей</label><input id="crowd-count" type="number" inputmode="numeric" min="0" max="2200" step="1" value="100" disabled aria-describedby="crowd-limit crowd-population"><button id="crowd-plus" type="button" disabled aria-label="Увеличить количество посетителей на одного">+</button></div>
+      <input id="crowd-quantity-range" class="crowd-quantity-range" type="range" min="0" max="2200" step="1" value="100" disabled aria-label="Количество посетителей в зале" aria-describedby="crowd-limit">
+      <div class="crowd-limit-row"><span id="crowd-limit">Получаем расчёт…</span><button id="crowd-max" type="button" disabled>Максимум</button></div>
+      <p id="crowd-population" role="status" aria-live="polite">Подготавливаем пространство…</p>
+      <p id="crowd-status" role="status">Подготавливаем посетителей…</p>
+      <div class="crowd-playback"><button id="crowd-pause" disabled aria-pressed="false" type="button">Пауза</button><label>Темп <select id="crowd-speed" disabled aria-label="Скорость движения посетителей"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label></div>
+      <nav class="crowd-toolbar" aria-label="Просмотр посетителей"><button data-crowd-view="people" disabled type="button">Среди людей</button><button data-crowd-view="upper" disabled type="button">Антресоль</button><button data-crowd-view="visitor" disabled type="button">Следовать</button><button data-crowd-view="stairs" disabled type="button">Лестницы</button><button data-crowd-view="elevators" disabled type="button">Лифты</button><button id="crowd-routes" disabled aria-pressed="false" type="button">Маршруты</button></nav>
+      <details class="panel-details"><summary>Распределение и расчёт</summary><p id="crowd-floors">Основной этаж и антресоль</p><p class="panel-note">«Максимум» использует текущий сценарий потока и времени визита. При перестановке объектов маршруты обновляются.</p></details>
+    </aside>
+
+    <aside id="view-panel" class="context-panel" hidden aria-labelledby="view-title">
+      <div class="panel-heading"><strong id="view-title">Вид</strong><button class="panel-close" data-close-panel="view-panel" type="button" aria-label="Закрыть ракурсы">×</button></div>
+      <nav class="view-controls" aria-label="Ракурсы модели"><button data-view="exhibits" aria-pressed="false" type="button" disabled>Экспозиция</button><button data-view="overview" aria-pressed="true" type="button">Общий вид</button><button data-view="top" aria-pressed="false" type="button">Сверху</button><button data-view="front" aria-pressed="false" type="button">Спереди</button><button data-view="back" aria-pressed="false" type="button">С другой стороны</button></nav>
+      <div class="utility-controls"><button id="envelope-toggle" aria-pressed="true" type="button">Открытый зал</button><button id="section-toggle" aria-pressed="false" type="button">Разрез</button><button id="reset" type="button">Сбросить вид</button></div>
+      <div id="section-controls" class="section-controls" hidden><label for="section-height">Высота среза здания <output id="section-value" for="section-height"></output></label><input id="section-height" type="range" min="0" max="100" value="65" step="0.05" aria-label="Высота горизонтального среза здания"></div>
+      <label for="exhibit-quality" class="quality-choice"><span>Качество текстур</span><select id="exhibit-quality" disabled><option value="fast">Быстрый просмотр (2K)</option><option value="high">Высокое качество (4K)</option></select></label>
+      <details class="panel-details"><summary>О сцене</summary><p class="model-note">Рабочая расстановка по ролику и концепции. Позиции, выставочный масштаб экспонатов и трасса монорельса требуют проектного уточнения.</p><p class="panel-note">Срез меняет только здание. Экспонаты, люди и монорельс остаются целыми.</p></details>
+    </aside>
+
+    <aside id="help" class="help-card" hidden aria-label="Как управлять моделью">
+      <div class="help-title"><strong>Управление парком</strong><button id="close-help" aria-label="Закрыть подсказку" type="button">×</button></div>
+      <p><b>Обзор:</b> левая кнопка — вращение, правая — сдвиг, колесо или два пальца — приближение. Двойной щелчок приближает выбранное место.</p>
+      <p><b>Объекты:</b> каждая иконка выбирает отдельный экземпляр. Включите «Перенос», «Поворот» или «Размер» и потяните выбранную модель мышью. Для размера вправо — увеличить, влево — уменьшить.</p>
+      <p><b>Размеры и этаж:</b> точные координаты, масштаб и выбор этажа находятся в раскрываемом блоке. Наземные модели стоят на настоящем полу; киты и дроны сохраняют высоту. На телефоне используйте числовые поля, оставляя пальцам управление обзором.</p>
+      <p><b>Сохранение:</b> изменения автоматически остаются в этом браузере для 2K и 4K. JSON переносит расстановку на другое устройство. Ctrl+Z отменяет изменение.</p>
+      <p><b>Посетители:</b> число, кнопки «−» и «+» и ползунок меняют количество людей. «Максимум» берёт расчёт из текущего сценария потока и времени визита; это не нормативная вместимость здания. При перестановке объектов проходы и маршруты обновляются.</p>
+      <p><b>Монорельс:</b> в виде из вагона потяните мышью или пальцем, чтобы повернуть голову. Стрелки меняют взгляд, Esc возвращает маршрут. Пауза людей и пауза вагонов независимы.</p>
+      <p><b>Вид:</b> ракурсы, качество и срез здания собраны в одной панели. При осмотре объекта мешающие поверхности временно скрываются; «Экспозиция» возвращает общий вид.</p>
+    </aside>
     <p id="scene-notice" class="scene-notice" hidden role="status"></p>
   </section>
+
   <footer class="viewer-toolbar" aria-label="Панель управления 3D">
-    <div class="exhibit-controls" aria-label="Экспонаты парка">
-      <button id="exhibit-visible" type="button" aria-pressed="true" disabled>Экспонаты</button>
-      <label for="exhibit-select" class="exhibit-choice"><span class="sr-only">Рассмотреть экспонат</span><select id="exhibit-select" disabled><option value="all">Все экспонаты</option></select></label>
-      <label for="exhibit-quality" class="quality-choice"><span class="sr-only">Качество текстур экспонатов</span><select id="exhibit-quality" disabled><option value="fast">Быстрый просмотр (2K)</option><option value="high">Высокое качество (4K)</option></select></label>
-      <span id="exhibit-status" class="exhibit-status" role="status" aria-live="polite">Загружаем экспонаты…</span>
-    </div>
-    <div class="monorail-controls" aria-label="Управление монорельсом">
-      <button id="tram-play" type="button" aria-pressed="false" disabled>Пуск</button>
-      <button id="tram-onboard" type="button" aria-pressed="false" disabled>Вид из вагона</button>
-      <label class="camera-control"><span class="sr-only">Ракурс монорельса</span><select id="tram-camera" disabled><option value="route">Весь маршрут</option><option value="inside-0">Внутри вагона 1</option><option value="inside-1">Внутри вагона 2</option><option value="follow-0">За вагоном 1</option><option value="follow-1">За вагоном 2</option><option value="free">Свободный вид</option></select></label>
-      <label class="speed-control" for="tram-speed"><span>Скорость</span><select id="tram-speed" disabled><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
-    </div>
-    <nav class="view-controls" aria-label="Ракурсы модели">
-      <button data-view="exhibits" aria-pressed="false" type="button" disabled>Экспозиция</button>
-      <button data-view="route" aria-pressed="false" type="button">Монорельс</button>
-      <button data-view="overview" aria-pressed="true" type="button">Общий вид</button>
-      <button data-view="top" aria-pressed="false" type="button">Сверху</button>
-      <button data-view="front" aria-pressed="false" type="button">Спереди</button>
-      <button data-view="back" aria-pressed="false" type="button">С другой стороны</button>
+    <nav class="workspace-tabs" aria-label="Разделы управления">
+      <button id="editor-toggle" class="workspace-tab" data-panel="exhibit-editor" type="button" aria-controls="exhibit-editor" aria-expanded="false" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 9 5v10l-9 5-9-5V7Zm-9 5 9 5 9-5M12 12v10"/></svg><span>Объекты</span></button>
+      <button id="monorail-toggle" class="workspace-tab" data-panel="monorail-panel" type="button" aria-controls="monorail-panel" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3h16v14H4ZM4 11h16M12 3v8M7 17v3m10-3v3M3 22h18"/></svg><span>Монорельс</span></button>
+      <button id="crowd-toggle" class="workspace-tab" data-panel="crowd-panel" type="button" aria-controls="crowd-panel" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M3 21v-5a6 6 0 0 1 12 0v5M16 4a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5v3"/></svg><span>Посетители</span><small id="crowd-compact-count" class="tab-count">100</small></button>
+      <button id="view-toggle" class="workspace-tab" data-panel="view-panel" type="button" aria-controls="view-panel" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12S6 5 12 5s10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg><span>Вид</span></button>
     </nav>
-    <div class="utility-controls"><button id="envelope-toggle" aria-pressed="true" type="button">Открытый зал</button><button id="section-toggle" aria-pressed="false" type="button">Разрез</button><button id="reset" type="button">Сбросить вид</button></div>
-    <p class="model-note">Рабочая расстановка по ролику и концепции. Позиции и выставочный масштаб экспонатов, как и трасса монорельса, требуют проектного уточнения.</p>
   </footer>
 </main>
 </body>

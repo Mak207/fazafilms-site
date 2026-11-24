@@ -1,0 +1,166 @@
+{
+  "repository": "https://github.com/memoriesrohit/avatar-studio",
+  "commit": "2fd9ec82fbe1613d40ae38aadcca3f410725f740",
+  "models": [
+    {
+      "id": "aisha",
+      "sourceFile": "aisha_formal.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/aisha_formal.glb",
+      "sourceBytes": 12651176,
+      "sourceSha256": "523b302d8278f41eec63931763cd7fee98ad566bce498761d4f2cdae041897a6",
+      "gitBlobSha": "1fde220aca28826ec08183c8bd680f84633223ca"
+    },
+    {
+      "id": "andre",
+      "sourceFile": "andre_casual.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/andre_casual.glb",
+      "sourceBytes": 12701036,
+      "sourceSha256": "65c2dd49191505efe01546ff73dd98a0eada760059628612f1aa5e07785b2953",
+      "gitBlobSha": "a57449352255ecdf995c92310ae61a4439b618f8"
+    },
+    {
+      "id": "arjun",
+      "sourceFile": "arjun_smart.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/arjun_smart.glb",
+      "sourceBytes": 10984616,
+      "sourceSha256": "1112221255e1da4da05b5200f314694c98e37988f00937048a5cea1327debd32",
+      "gitBlobSha": "ff072e481798bc84a8e4b5f95cac23c9e86e3f68"
+    },
+    {
+      "id": "carlos",
+      "sourceFile": "carlos_casual.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/carlos_casual.glb",
+      "sourceBytes": 14054220,
+      "sourceSha256": "bcead6bb0a809852d237194a561a4586de44eae186ba7f602ffda8b5c94dc99b",
+      "gitBlobSha": "5bc9eaed86a50c256b55beb8d16216635710dddc"
+    },
+    {
+      "id": "daniel",
+      "sourceFile": "daniel_formal.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/daniel_formal.glb",
+      "sourceBytes": 12089988,
+      "sourceSha256": "11cd9aba59f694ddd09e32e838b61df70c408c5a8ddf69faa038efeeeebee869",
+      "gitBlobSha": "8ef0dab613030fef266fc6a19521298e6f4f246e"
+    },
+    {
+      "id": "emma",
+      "sourceFile": "emma_casual.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/emma_casual.glb",
+      "sourceBytes": 12722000,
+      "sourceSha256": "dc825893bdb47fa25fe3017ab0c923018b57003a7d734a5206366fb95036769a",
+      "gitBlobSha": "17f922a84643c38dee8771f9613d6c883672f539"
+    },
+    {
+      "id": "ethan",
+      "sourceFile": "ethan_casual.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/ethan_casual.glb",
+      "sourceBytes": 13101540,
+      "sourceSha256": "88b282a080bc1d35d17f9b428afdd14404abda84e0f651424db4fa7e1dbb6ce5",
+      "gitBlobSha": "c91c29eb512d6b459547432de81937d42ef1132c"
+    },
+    {
+      "id": "hannah",
+      "sourceFile": "hannah_casual.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/hannah_casual.glb",
+      "sourceBytes": 12124784,
+      "sourceSha256": "e3e12496b3f50a45d67e36e0e20e5f3c8891249381f2905f0b3e0582af39fa69",
+      "gitBlobSha": "e56f8d1ea659326e5652df6b3a7dd08aef5c3ece"
+    },
+    {
+      "id": "james",
+      "sourceFile": "james_formal.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/james_formal.glb",
+      "sourceBytes": 11187732,
+      "sourceSha256": "fd83451d515bec36c37d708bda48ef794e0bc31e47dfe5d2769837e0df29c30e",
+      "gitBlobSha": "4193e51d3d783a6cb109fe70c1951b4071818751"
+    },
+    {
+      "id": "kenji",
+      "sourceFile": "kenji_formal.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/kenji_formal.glb",
+      "sourceBytes": 11636840,
+      "sourceSha256": "7246b4e2c7d1579fce6b53f223d133109a98c0243fda619a983f069460ecfe53",
+      "gitBlobSha": "bebf307ff66941eb08c0d1d64f222818fb6cb1ce"
+    },
+    {
+      "id": "leo",
+      "sourceFile": "leo_smart.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/leo_smart.glb",
+      "sourceBytes": 13533956,
+      "sourceSha256": "1b2075abd34048d3f3d63427996e08b4ce27a7628170a87cc65d8530abf8f015",
+      "gitBlobSha": "6afcf21d260eb379eeabbdbb13c2a4a10248bfc4"
+    },
+    {
+      "id": "luca",
+      "sourceFile": "luca_smart.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/luca_smart.glb",
+      "sourceBytes": 11840808,
+      "sourceSha256": "13593c3a1beb7fe4a40b7ac83f14897d28111da5c8b1caac474cad3119d6990a",
+      "gitBlobSha": "4100319677cbff48b58ae45496e77dcc8ebf51c9"
+    },
+    {
+      "id": "marcus",
+      "sourceFile": "marcus_formal.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/marcus_formal.glb",
+      "sourceBytes": 11536204,
+      "sourceSha256": "0c8f874406273ca34df4c246ffc609ebf35b4d424911316ecf0154f7f07135d5",
+      "gitBlobSha": "56b163e40516dc9a0df7d58d1436f03ed5a1f532"
+    },
+    {
+      "id": "mei",
+      "sourceFile": "mei_casual.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/mei_casual.glb",
+      "sourceBytes": 13817888,
+      "sourceSha256": "8f4a07abd526c5bbd06ecedeea939ef493d513deeb49861d26b59a6ab5ae4e36",
+      "gitBlobSha": "47230652f59a875e5c8e4113a2dcbc8a0c8b9cef"
+    },
+    {
+      "id": "mia",
+      "sourceFile": "mia_smart.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/mia_smart.glb",
+      "sourceBytes": 14081240,
+      "sourceSha256": "3abfa3aa9916171b711fcef9012ecf849e9ee93e7cfa030eb669492f8a5cf674",
+      "gitBlobSha": "3fb31dc5e5bb4535fb75ee5d888a60c524811685"
+    },
+    {
+      "id": "noah",
+      "sourceFile": "noah_smart.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/noah_smart.glb",
+      "sourceBytes": 12909748,
+      "sourceSha256": "e4e5770de6fea962cfc5929d6c13e9f403e9ff5f5868fff6868c3693128af696",
+      "gitBlobSha": "510f197dc3822b0aab597ca83ddedd4af209071f"
+    },
+    {
+      "id": "olivia",
+      "sourceFile": "olivia_smart.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/olivia_smart.glb",
+      "sourceBytes": 13332100,
+      "sourceSha256": "fbb6e8319d4a6eb04f152b6d51fc10870222490ed78ceb67d63ab2e2425097f5",
+      "gitBlobSha": "12075ff9330974ad5379478b7697f3ea336ecc5f"
+    },
+    {
+      "id": "priya",
+      "sourceFile": "priya_casual.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/priya_casual.glb",
+      "sourceBytes": 13471776,
+      "sourceSha256": "c56dc61a98d803e9cd30885f77fc05a2285494c0634642084d00b232e99fdb51",
+      "gitBlobSha": "defe171ce8c1918b007c9e3ae06b2ae39f31de4c"
+    },
+    {
+      "id": "ryan",
+      "sourceFile": "ryan_smart.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/ryan_smart.glb",
+      "sourceBytes": 13017120,
+      "sourceSha256": "f7eaa4c7f9f1131ada9d3f3cad968d1b573437a7336ef721b0872fcc07b3f986",
+      "gitBlobSha": "ab32a209e38d5b126fd7071f6b86b689743242d4"
+    },
+    {
+      "id": "sophia",
+      "sourceFile": "sophia_formal.glb",
+      "sourceUrl": "https://raw.githubusercontent.com/memoriesrohit/avatar-studio/2fd9ec82fbe1613d40ae38aadcca3f410725f740/models/sophia_formal.glb",
+      "sourceBytes": 11097332,
+      "sourceSha256": "329af2fbc680355ac09488a4eedae15650ad0a6b48e71aef304129aed2e170a3",
+      "gitBlobSha": "6301b282f68fd1f95f2e461313666647db3cd56a"
+    }
+  ]
+}

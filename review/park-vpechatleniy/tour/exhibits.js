@@ -13,7 +13,7 @@ function requireNumber(value, name) {
 }
 
 /** World AABB of a source box centred on XZ with its bottom at local Y=0. */
-export function getPlacementBounds(dimensions, placement, baseY = placement.floorY + (placement.offsetY || 0)) {
+export function getPlacementBounds(dimensions, placement, baseY = placement.y ?? placement.baseY ?? placement.floorY + (placement.offsetY || 0)) {
   const size = Array.isArray(dimensions) ? new THREE.Vector3(...dimensions) : dimensions.clone();
   const matrix = new THREE.Matrix4().makeRotationY(placement.rotationY || 0);
   matrix.setPosition(placement.x, baseY, placement.z);
@@ -41,6 +41,8 @@ export async function createExhibitSystem({
   const roots = [], materials = [];
   const geometries = new Set(), materialSet = new Set(), textures = new Set();
   const records = [], errors = [];
+  const instances = new Map();
+  let floorLevels = [], initialLayout = null, placementGuard = null;
   const floors = sourceMeshes.filter(mesh => mesh.isMesh && FLOOR_NAMES.test(mesh.name));
   const floorRay = new THREE.Raycaster();
   const downward = new THREE.Vector3(0, -1, 0);
@@ -68,6 +70,9 @@ export async function createExhibitSystem({
       placedInstances: roots.length,
       rejectedInstances: records.reduce((count, row) => count + row.rejectedInstances.length, 0),
       floorMeshes: floors.length,
+      floorLevels: floorLevels.slice(),
+      visibleInstances: [...instances.values()].filter(entry => entry.placement.visible).length,
+      editedInstances: initialLayout ? listInstances().filter(instance => instance.modified).length : 0,
       objects: records.map(row => ({
         ...row,
         dimensions: row.dimensions?.slice(),
@@ -92,7 +97,7 @@ export async function createExhibitSystem({
 
   // Source CAD normals may be reversed. Double-sided CPU raycasting is limited
   // to this synchronous query; source material values are restored immediately.
-  function floorAt(x, z, expectedY) {
+  function floorAt(x, z, expectedY, { visibleOnly = false } = {}) {
     floorRay.set(new THREE.Vector3(x, expectedY + FLOOR_TOLERANCE + 0.05, z), downward);
     floorRay.near = 0;
     floorRay.far = 2 * FLOOR_TOLERANCE + 0.1;
@@ -111,6 +116,13 @@ export async function createExhibitSystem({
     const possible = hits.filter(hit => {
       if (Math.abs(hit.point.y - expectedY) > FLOOR_TOLERANCE) return false;
       if (!hit.face) return false;
+      if (visibleOnly) {
+        for (let node = hit.object; node; node = node.parent) if (!node.visible) return false;
+        const material = Array.isArray(hit.object.material) ? hit.object.material[hit.face.materialIndex] : hit.object.material;
+        if (material?.visible === false) return false;
+        const clipped = material?.clippingPlanes?.map(plane => plane.distanceToPoint(hit.point) < -1e-5) || [];
+        if (clipped.length && (material.clipIntersection ? clipped.every(Boolean) : clipped.some(Boolean))) return false;
+      }
       normalMatrix.getNormalMatrix(hit.object.matrixWorld);
       const normal = hit.face.normal.clone().applyMatrix3(normalMatrix).normalize();
       return Math.abs(normal.y) > 0.7;
@@ -153,6 +165,200 @@ export async function createExhibitSystem({
       heightSpread: Number.isFinite(spread) ? rounded(spread) : null,
       supportMode: placement.floating ? 'floor-anchor-for-suspended-model' : 'centre-corners-and-edge-samples',
     };
+  }
+
+  function instanceData(entry) {
+    const p = entry.placement;
+    const initial = initialLayout?.instances.find(row => row.instanceId === p.instanceId);
+    return {
+      instanceId: p.instanceId, exhibitId: entry.row.id, name: entry.row.name,
+      ordinal: entry.row.placements.indexOf(p) + 1, copies: entry.row.requestedInstances,
+      zone: p.zone, floating: p.floating, x: p.x, y: p.baseY, z: p.z,
+      rotationY: p.rotationY, scaleFactor: p.scaleFactor, visible: p.visible, floorY: p.floorY,
+      originalDimensions: vectorData(entry.size),
+      dimensions: p.dimensions.slice(), worldBounds: { min: p.worldBounds.min.slice(), max: p.worldBounds.max.slice() },
+      modified: Boolean(initial && ['x', 'y', 'z', 'rotationY', 'scaleFactor', 'visible'].some(key =>
+        key === 'visible' ? initial[key] !== p.visible : Math.abs(initial[key] - (key === 'y' ? p.baseY : p[key])) > 1e-5)),
+    };
+  }
+
+  function listInstances() {
+    return records.flatMap(row => row.placements.map(p => instances.get(p.instanceId))).filter(Boolean).map(instanceData);
+  }
+
+  function getLayout() {
+    return {
+      schema: 'park-exhibit-layout', version: 1, units: 'meters', upAxis: 'Y',
+      instances: listInstances().map(p => ({
+        instanceId: p.instanceId, exhibitId: p.exhibitId, floating: p.floating,
+        x: rounded(p.x), y: rounded(p.y), z: rounded(p.z), rotationY: rounded(p.rotationY),
+        scaleFactor: p.scaleFactor, visible: p.visible, floorY: p.floorY,
+      })),
+    };
+  }
+
+  function levelsForMode(mode = 'auto') {
+    if (mode === 'main') return floorLevels.slice(0, 1);
+    if (mode === 'mezzanine') return floorLevels.slice(1, 2);
+    if (mode !== 'auto') throw new TypeError('Неизвестный уровень пола.');
+    return floorLevels.slice();
+  }
+
+  // Only the occupied levels in the official layout are eligible. Roof slabs
+  // bearing the same CAD layer name cannot become an accidental drop target.
+  function pickFloor(ray, { floorMode = 'auto', preferredY = null } = {}) {
+    if (disposed || !ray?.origin?.isVector3 || !ray?.direction?.isVector3) return null;
+    const candidates = [];
+    for (const level of levelsForMode(floorMode)) {
+      const point = ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), -level), new THREE.Vector3());
+      if (!point) continue;
+      const floor = floorAt(point.x, point.z, level, { visibleOnly: floorMode === 'auto' });
+      if (!floor) continue;
+      const actual = ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), -floor.y), new THREE.Vector3());
+      if (!actual) continue;
+      candidates.push({ x: actual.x, y: floor.y, z: actual.z, floorY: floor.y,
+        mesh: floor.mesh, distance: actual.distanceTo(ray.origin) });
+    }
+    candidates.sort((a, b) => floorMode === 'auto' && finite(preferredY)
+      ? Math.abs(a.floorY - preferredY) - Math.abs(b.floorY - preferredY) || a.distance - b.distance
+      : a.distance - b.distance);
+    return candidates[0] || null;
+  }
+
+  function prepareUpdate(entry, patch, options = {}) {
+    if (!patch || typeof patch !== 'object' || Array.isArray(patch)) throw new TypeError('Не указаны координаты экземпляра.');
+    const old = entry.placement;
+    const next = { ...old };
+    for (const key of ['x', 'z', 'rotationY']) if (patch[key] !== undefined) next[key] = requireNumber(patch[key], key);
+    if (patch.scaleFactor !== undefined) {
+      next.scaleFactor = requireNumber(patch.scaleFactor, 'scaleFactor');
+      if (next.scaleFactor <= 0) throw new TypeError('Масштаб должен быть больше нуля.');
+    }
+    const scaledSize = entry.size.clone().multiplyScalar(next.scaleFactor);
+    if (!scaledSize.toArray().every(finite)) throw new TypeError('Слишком большой размер экспоната.');
+    next.dimensions = vectorData(scaledSize);
+    if (patch.y !== undefined) requireNumber(patch.y, 'y');
+    if (patch.visible !== undefined) {
+      if (typeof patch.visible !== 'boolean') throw new TypeError('Видимость должна быть логическим значением.');
+      next.visible = patch.visible;
+    }
+    const changed = ['x', 'z', 'rotationY', 'scaleFactor'].some(key => Math.abs(next[key] - old[key]) > 1e-9);
+    if (next.floating) {
+      next.baseY = patch.y ?? old.baseY;
+      if (changed || patch.y !== undefined) Object.assign(next, {
+        floorY: null, requestedFloorY: null, offsetY: null, valid: true,
+        floorSamples: [], matchedSamples: 0, requiredSamples: 0, heightSpread: 0,
+        supportMode: 'suspended-free-position',
+      });
+    } else {
+      const requestedFloor = options.floorY ?? patch.floorY;
+      let levels = levelsForMode(options.floorMode);
+      if (requestedFloor !== undefined && requestedFloor !== null) {
+        requireNumber(requestedFloor, 'floorY');
+        if (!levels.some(y => Math.abs(y - requestedFloor) <= FLOOR_TOLERANCE)) {
+          throw new Error('Этот уровень не является доступным этажом.');
+        }
+        levels = [requestedFloor];
+      } else if (next.x === old.x && next.z === old.z && (!options.floorMode || options.floorMode === 'auto')) {
+        levels = [old.floorY];
+      } else levels.sort((a, b) => Math.abs(a - old.floorY) - Math.abs(b - old.floorY));
+      const needsSupport = changed || options.floorY !== undefined || patch.floorY !== undefined ||
+        (options.floorMode && options.floorMode !== 'auto');
+      if (needsSupport) {
+        let evidence = null, best = null;
+        for (const level of levels) {
+          const test = supportEvidence(scaledSize, { ...next, floorY: level });
+          if (!best || test.matchedSamples > best.matchedSamples) best = test;
+          if (test.valid) { evidence = test; break; }
+        }
+        if (!evidence) return { ok: false,
+          error: 'Не хватает опоры: экспонат должен целиком помещаться на полу одного этажа.', evidence: best };
+        Object.assign(next, evidence, { requestedFloorY: evidence.floorY, baseY: evidence.floorY, offsetY: 0 });
+      }
+      if (patch.y !== undefined && Math.abs(patch.y - next.baseY) > 0.02) {
+        return { ok: false, error: 'Наземный экспонат должен стоять на полу. Высоту задаёт выбранный этаж.' };
+      }
+    }
+    next.worldBounds = boxData(getPlacementBounds(scaledSize, next, next.baseY));
+    return { ok: true, entry, next };
+  }
+
+  function applyPrepared(prepared) {
+    const { entry, next } = prepared;
+    Object.assign(entry.placement, next);
+    entry.root.position.set(next.x, next.baseY, next.z);
+    entry.root.rotation.y = next.rotationY;
+    entry.root.scale.setScalar(next.scaleFactor);
+    entry.root.visible = next.visible;
+    entry.root.userData.editorVisible = next.visible;
+    entry.root.updateMatrixWorld(true);
+  }
+
+  // All editing paths cross the same synchronous collision transaction. The
+  // proposed record includes scaleFactor; root.matrixWorld remains the current
+  // pose until the guard has accepted and committed its navigation update.
+  function commitPlacements(prepared, source, groupVisible = group.visible) {
+    const transaction = placementGuard ? placementGuard({
+      source, groupVisible,
+      changes: prepared.map(({ entry, next }) => ({
+        instanceId: next.instanceId, root: entry.root,
+        before: { ...entry.placement }, next: { ...next },
+      })),
+    }) : { ok: true };
+    if (transaction?.then) return { ok: false, error: 'Проверка расстановки должна быть синхронной.' };
+    if (!transaction?.ok) return transaction || { ok: false, error: 'Позиция не разрешена.' };
+    const result = transaction.commit?.();
+    if (result?.then || (result && !result.ok)) return result?.then
+      ? { ok: false, error: 'Обновление проходов должно быть синхронным.' } : result;
+    prepared.forEach(applyPrepared);
+    group.visible = groupVisible;
+    transaction.afterApply?.();
+    return { ok: true };
+  }
+
+  function updateInstance(id, patch, options = {}) {
+    const entry = instances.get(id);
+    if (disposed || !entry) return { ok: false, error: 'Экземпляр не найден.' };
+    try {
+      const prepared = prepareUpdate(entry, patch, options);
+      if (!prepared.ok) return prepared;
+      const committed = commitPlacements([prepared], 'update-instance');
+      if (!committed.ok) return committed;
+      if (options.notify !== false) emit();
+      return { ok: true, instance: instanceData(entry), evidence: {
+        valid: entry.placement.valid, matchedSamples: entry.placement.matchedSamples,
+        requiredSamples: entry.placement.requiredSamples, floorY: entry.placement.floorY,
+      } };
+    } catch (error) { return { ok: false, error: error.message || String(error) }; }
+  }
+
+  // Validate the complete document first so a failed import cannot partially
+  // move the scene. Only known instances and explicitly editable fields apply.
+  function applyLayout(layout, { notify = true } = {}) {
+    try {
+      if (disposed || layout?.schema !== 'park-exhibit-layout' || layout.version !== 1 ||
+          layout.units !== 'meters' || layout.upAxis !== 'Y' || !Array.isArray(layout.instances)) {
+        throw new Error('Нужен файл расстановки Парка впечатлений, версия 1, метры / Y вверх.');
+      }
+      if (layout.instances.length !== instances.size) throw new Error('Файл должен содержать все ' + instances.size + ' экземпляра.');
+      const seen = new Set(), prepared = [];
+      for (const row of layout.instances) {
+        const entry = instances.get(row?.instanceId);
+        if (!entry || seen.has(row.instanceId)) throw new Error('Неизвестный или повторный экземпляр: ' + (row?.instanceId || 'без ID'));
+        seen.add(row.instanceId);
+        if (row.exhibitId !== entry.row.id || row.floating !== entry.placement.floating) throw new Error(row.instanceId + ': тип экземпляра не совпадает.');
+        for (const key of ['x', 'y', 'z', 'rotationY']) requireNumber(row[key], row.instanceId + '.' + key);
+        if (typeof row.visible !== 'boolean') throw new TypeError(row.instanceId + ': не указана видимость.');
+        const result = prepareUpdate(entry, { ...row, scaleFactor: row.scaleFactor === undefined ? 1 : row.scaleFactor },
+          { floorMode: 'auto', floorY: row.floating ? undefined : row.floorY });
+        if (!result.ok) return { ...result, instanceId: row.instanceId };
+        prepared.push(result);
+      }
+      const committed = commitPlacements(prepared, 'apply-layout');
+      if (!committed.ok) return committed;
+      if (notify) emit();
+      return { ok: true, count: prepared.length };
+    } catch (error) { return { ok: false, error: error.message || String(error) }; }
   }
 
   function registerResources(source) {
@@ -239,7 +445,7 @@ export async function createExhibitSystem({
         instance.name = row.name + ' · ' + instanceId;
         instance.position.set(placement.x, baseY, placement.z);
         instance.rotation.y = placement.rotationY || 0;
-        instance.userData = { exhibitId: object.id, exhibitName: row.name, instanceId, zone: placement.zone || '', floating: Boolean(placement.floating) };
+        instance.userData = { exhibitId: object.id, exhibitName: row.name, instanceId, zone: placement.zone || '', floating: Boolean(placement.floating), editorVisible: true };
         instance.add(normalized.clone(true));
         instance.traverse(node => { if (node.isMesh) Object.assign(node.userData, instance.userData); });
         group.add(instance); roots.push(instance); instance.updateMatrixWorld(true);
@@ -247,10 +453,11 @@ export async function createExhibitSystem({
           instanceId, zone: placement.zone || '', x: placement.x, z: placement.z,
           requestedFloorY: placement.floorY, floorY: evidence.floorY,
           baseY: rounded(baseY), rotationY: placement.rotationY || 0,
-          floating: Boolean(placement.floating), offsetY: placement.offsetY || 0,
+          floating: Boolean(placement.floating), offsetY: placement.offsetY || 0, scaleFactor: 1, visible: true,
           dimensions: vectorData(size), worldBounds: boxData(getPlacementBounds(size, placement, baseY)),
           ...evidence,
         });
+        instances.set(instanceId, { root: instance, row, placement: row.placements.at(-1), size: size.clone() });
       }
       row.status = 'loaded';
       emit();
@@ -267,6 +474,7 @@ export async function createExhibitSystem({
     if (!Array.isArray(manifest.objects)) throw new TypeError('В списке экспонатов нет objects.');
     const objectIds = new Set(), instanceIds = new Set();
     for (const object of manifest.objects) validateObject(object, objectIds, instanceIds);
+    floorLevels = [...new Set(manifest.objects.flatMap(object => object.instances.map(p => rounded(p.floorY))))].sort((a, b) => a - b);
     if (!floors.length && manifest.objects.length) throw new Error('В исходном здании не найдены меши пола A-FLOR / S-SLAB.');
     floors.forEach(mesh => mesh.updateWorldMatrix(true, false));
     for (const object of manifest.objects) records.push({
@@ -282,7 +490,7 @@ export async function createExhibitSystem({
       }
     }
     await Promise.all([worker(), worker()]);
-    complete = true; emit();
+    complete = true; initialLayout = getLayout(); emit();
   } catch (error) {
     group.removeFromParent();
     for (const geometry of geometries) geometry.dispose();
@@ -292,8 +500,23 @@ export async function createExhibitSystem({
   }
 
   return {
-    group, roots, materials, getState,
-    setVisible(value) { if (!disposed) { group.visible = Boolean(value); emit(); } },
+    group, roots, materials, getState, listInstances, getLayout, applyLayout, updateInstance, pickFloor,
+    getInstance(id) { const entry = instances.get(id); return entry ? instanceData(entry) : null; },
+    getInstanceRoot(id) { return instances.get(id)?.root || null; },
+    resetLayout(options) { return applyLayout(initialLayout, options); },
+    setPlacementGuard(guard) {
+      if (guard !== null && typeof guard !== 'function') throw new TypeError('Нужна функция проверки расстановки.');
+      placementGuard = guard;
+      return () => { if (placementGuard === guard) placementGuard = null; };
+    },
+    setVisible(value) {
+      if (disposed) return { ok: false, error: 'Экспонаты выгружены.' };
+      try {
+        const committed = commitPlacements([], 'group-visibility', Boolean(value));
+        if (committed.ok) emit();
+        return committed;
+      } catch (error) { return { ok: false, error: error.message || String(error) }; }
+    },
     getBounds(id) {
       if (disposed) return null;
       const selected = id ? roots.filter(root => root.userData.exhibitId === id || root.userData.instanceId === id) : roots;
@@ -318,6 +541,7 @@ export async function createExhibitSystem({
       for (const material of materialSet) material.dispose();
       for (const texture of textures) texture.dispose();
       roots.length = 0; materials.length = 0;
+      instances.clear(); placementGuard = null;
       geometries.clear(); materialSet.clear(); textures.clear(); emit();
     },
   };

@@ -1,7 +1,9 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "title": "Парк впечатлений — монорельс для 3D-экскурсии",
-  "purpose": "Визуальная реконструкция маршрута для интерактивного просмотра",
+  "purpose": "Рабочий челночный маршрут к подтверждённой CAD-площадке для интерактивного просмотра",
+  "updatedAtUtc": "2026-11-24T10:03:33.817Z",
+  "status": "provisional",
   "evidence": {
     "figma": {
       "fileKey": "vnoVHaMbnhqrGthhT0YT7j",
@@ -28,13 +30,19 @@
       "sourceName": "выставка_3D вид.dwg",
       "matchingMetricAxisConfirmed": false,
       "note": "Точная совпадающая ось из DWG не подтверждена. Это не доказательство отсутствия пути в исходной модели."
+    },
+    "currentStation": {
+      "file": "monorail-station-evidence.json",
+      "existingCadPlatformConfirmed": true,
+      "passengerPurposeConfirmed": false,
+      "source": "User screenshot and actual CAD floor/stairs"
     }
   },
   "reconstruction": {
-    "classification": "visualization_parameters",
+    "classification": "provisional_visualization_parameters",
     "approvedTransportDesign": false,
     "metricAlignmentDerivedFromDwg": false,
-    "routeType": "Замкнутый скруглённый прямоугольник: четыре прямые и четыре четверти окружности",
+    "routeType": "Открытый челночный маршрут: прямые, два южных поворота и плавный подвод к существующей северо-западной площадке",
     "coordinateSystem": {
       "units": "metres",
       "upAxis": "+Y",
@@ -42,16 +50,28 @@
     },
     "routeConfig": {
       "centerX": 5,
-      "centerZ": -15.75,
+      "centerZ": -20.4,
       "width": 46,
-      "length": 99.5,
+      "length": 108.8,
       "cornerRadius": 22.5,
-      "height": 19.2,
-      "floorHeight": 13.2
+      "height": 16.6,
+      "floorHeight": 13.2,
+      "routeMode": "shuttle",
+      "stationRailHeight": 15.85,
+      "vehicleSpacing": 13.5,
+      "endClearance": 6.3
     },
-    "routeLengthMeters": 252.37166941154067,
-    "routeLengthDisplay": "примерно 252,4 м",
-    "heightMeaning": "Верх единственной металлической рабочей поверхности; на 6 м выше принятого пола экспозиции",
+    "exportedConfig": "MONORAIL_ROUTE_CONFIG",
+    "routeLengthMeters": 212.8157082508685,
+    "routeLengthDisplay": "примерно 212,8157 м",
+    "closed": false,
+    "heightMeaning": "Верх металлической рабочей поверхности: Y16.6 на основной трассе, плавное снижение до Y15.85 у площадки Y16.65.",
+    "railHeightRangeMeters": [
+      15.85,
+      16.6
+    ],
+    "heightTransitionLengthMeters": 25,
+    "maxProfileGrade": 0.045,
     "guideway": {
       "type": "Одна центральная направляющая монорельса",
       "beamWidthMeters": 0.95,
@@ -59,34 +79,111 @@
       "runningSurfaceCount": 1,
       "runningSurfaceWidthMeters": 0.3,
       "runningSurfaceDepthMeters": 0.06,
-      "supportCount": 22,
-      "supportSpacingMeters": 11.471439518706394,
+      "supportCount": 19,
+      "nominalSupportSpacingMeters": 11.756428236159362,
+      "maximumActualSupportSpacingMeters": 11.956428236159365,
       "underBeamLightStrips": 1,
-      "trianglesIncludingSupports": 9064,
-      "supportFloorHeight": "Для каждой опоры — Y поверхности существующего перекрытия из callback supportFloorHeight(x,z); при невалидном результате fallback floorHeight=13.2.",
+      "supportFloorHeight": "Для каждой опоры — существующее перекрытие через supportFloorHeight(x,z); в численной проверке фактические уровни 7.2 и 13.2.",
       "supportSurfaceLayers": [
         "A-FLOR",
         "S-SLAB"
       ],
-      "supportQueryMethod": "Raycast по существующим перекрытиям через callback supportFloorHeight(x,z); полнота совпадений проверяется в финальной GPU QA."
+      "supportEvidence": "monorail-station-evidence.json",
+      "collisionAPI": "getSupportRecords(), getCollisionObstacles()",
+      "restrictedLowBeamApproach": {
+        "xRange": [
+          -15.84,
+          -14.88
+        ],
+        "zRange": [
+          -62,
+          -54
+        ],
+        "headroomRange": [
+          1.87,
+          2.08
+        ],
+        "meaning": "Prevent pedestrians under the low approach beam; use obstacle minY/maxY against floor plus person height"
+      },
+      "mainMezzanineHeadroomMeters": 2.62
     },
     "vehicles": {
       "count": 2,
       "lengthMeters": 12,
+      "widthMeters": 2.2890363928,
+      "heightMeters": 3.1035019455,
       "orientation": {
         "forward": "+Z",
         "up": "+Y"
       },
-      "separationFractionOfLoop": 0.5,
-      "baseSpeedMetersPerSecond": 3
+      "centerSpacingAlongRouteMeters": 13.5,
+      "nominalBodyGapMeters": 1.5,
+      "minimumTestedSeparatingAxisGapMeters": 1.0892558244808095,
+      "baseSpeedMetersPerSecond": 3,
+      "travel": "Оба вагона меняют направление движения одновременно; разворот модели на 180 градусов не выполняется.",
+      "dwellAtPlatformSeconds": 8,
+      "dwellAtOtherEndSeconds": 4,
+      "leadingDistanceRangeMeters": [
+        19.8,
+        206.5157082508685
+      ],
+      "boardingVehicleIndex": 0,
+      "boardingVehicleNumber": 1,
+      "boardingNote": "У площадки на одном остановочном положении стыкуется только первый 12-метровый вагон."
     },
+    "station": {
+      "source": "Существующая CAD-площадка со скриншота пользователя",
+      "status": "provisional_boarding_use",
+      "existingCadPlatformConfirmed": true,
+      "passengerPurposeConfirmed": false,
+      "platformHeightMeters": 16.65,
+      "platformBoundsXZ": {
+        "xMin": -34.8843421936,
+        "xMax": -16.1843414307,
+        "zMin": -80.2923660278,
+        "zMax": -61.1673660278
+      },
+      "platformAreaSquareMeters": 356.029,
+      "sourceNode": "A-FLOR__f4cc95ff",
+      "sourceObject": "Перекрытие ATR_ВН_ОТ_Пол_Керамо_56ecded",
+      "accessFromMezzanineMeters": 13.2,
+      "sourceStairs": [
+        "Монолитная лестница Лестница _03d5fb0",
+        "Монолитная лестница Лестница _45104e1"
+      ],
+      "sideGapMeters": 0.15,
+      "passengerFloorOffsetMeters": 0.8,
+      "passengerFloorOffsetConfidence": "Рабочая визуальная калибровка: отдельный пол салона в GLB не выделен.",
+      "boardingGate": {
+        "id": "nw-terrace-boarding-gate",
+        "widthMeters": 1.2,
+        "mesh": "Ограждение__7f7f7fff",
+        "min": [
+          -16.19,
+          16.6501,
+          -69.1
+        ],
+        "max": [
+          -16.13,
+          17.8,
+          -67.9
+        ],
+        "method": "Runtime polygon/AABB subtraction with preserved outside fragments",
+        "provisional": true,
+        "sourceCadFileModified": false
+      },
+      "evidence": "monorail-station-evidence.json",
+      "api": "getStationPose()"
+    },
+    "selectedCandidate": "existing_nw_terrace_shuttle",
+    "adaptation": "Существующая северо-западная площадка и её лестницы подтверждены геометрией CAD. Локальная калитка, посадочное назначение и челночная трасса приняты как обратимое рабочее сценовое решение. Площадка не отождествляется с показанной в ролике станцией ЦФО.",
     "limits": [
-      "Размеры, радиусы, высота, направление и скорость приняты для визуализации с адаптацией пути к поверхностям существующей CAD-модели.",
-      "Реконструкция не является утверждённой транспортной трассой или расчётом конструкций.",
-      "Станции, вертикальные переходы, тележки и контактная механика не реконструированы."
-    ],
-    "selectedCandidate": "final_-65.5_22.5",
-    "adaptation": "Общая форма замкнутой петли взята из Figma. Петля уменьшена и смещена в центральную часть существующего зала по реальной геометрии CAD, чтобы обходить стены и зоны низкого покрытия. Это не извлечённая точная ось Figma или DWG."
+      "Параметры являются рабочей визуализацией, не утверждённым транспортным проектом.",
+      "Посадочное назначение существующей площадки в исходной документации не подтверждено.",
+      "Уровень пола вагона +0.8 м к направляющей задан визуальной калибровкой, реальная дверь и транспортная контактная механика не установлены.",
+      "Низкий подход над антресолью требует исключения зоны для посетителей по фактическим minY/maxY препятствий.",
+      "Интегрированная сцена и узкая регрессия уведомлений проверены локально; результаты не означают публикацию текущей кандидатной версии."
+    ]
   },
   "vehicleAsset": {
     "lineage": "Два экземпляра одной исходной модели Hitem3D; для веба используется её оптимизированная копия.",
@@ -115,103 +212,281 @@
     }
   },
   "verification": {
+    "date": "2026-11-24",
     "numeric": {
-      "status": "passed",
-      "threeRevision": "180",
-      "report": "validation/monorail-numeric.json",
-      "scope": [
-        "Непрерывность позиции и касательной, включая замыкание",
-        "Постоянная скорость по длине и интервал двух вагонов в половину круга",
-        "Реальные вершины исходного GLB: масштаб 12 м, нос по касательной, нижняя точка на направляющей",
-        "Пауза, множитель скорости, ограничение dt, видимость, камера следования, освобождение ресурсов",
-        "Ошибка загрузки без подмены вагона",
-        "Высота каждой опоры через callback, постоянный верх колонн и fallback при невалидной отметке или исключении"
-      ]
+      "status": "passed_with_scoped_harness",
+      "moduleSha256": "02e3ba2acf34c6c94facc47800335391b30a2b986bd76d6e83ed5e4f36eebf64",
+      "report": "D:/Парк впечатлений/monorail-platforms-20261124/shuttle-runtime-qa.json",
+      "sourceSummary": "assets/monorail-station-evidence.json",
+      "behavioralVehicle": "Dimension-matched stub used only in numerical behavior harness; not a browser load of the final wagon GLB.",
+      "checkedReversals": 2,
+      "orientationFlipDetected": false,
+      "routeSamples": 852,
+      "stepMeters": 0.25,
+      "twoCarIntersections": 0,
+      "minimumSeparatingAxisGapMeters": 1.0892558244808095
+    },
+    "surfaceClearance": {
+      "classification": "visual_geometry_check",
+      "sourceBuildingSha256": "0fe60c53a9fc72c9ed0ad15ac8808ca721b3a7af8e96d81329cdc748c78fd792",
+      "cadTriangles": 2927007,
+      "method": "Actual CAD triangles versus oriented vehicle/rail/support bounds; both 12 m cars over the full working cycle, including end positions.",
+      "carIntersections": 0,
+      "beamIntersections": 0,
+      "supportIntersections": 0,
+      "exhibitIntersections": 0,
+      "exhibitScenario": "24 objects, with O12 replaced by center(33.05,7.2,-47),yawPI,length25.2 and its north bridge",
+      "supportingReport": "D:/Парк впечатлений/monorail-platforms-20261124/nw-shuttle-route-probes.json"
+    },
+    "runtimeOpenings": {
+      "status": "passed_actual_cad_no_browser",
+      "report": "D:/Парк впечатлений/monorail-platforms-20261124/cad-openings-actual-qa.json",
+      "moduleSha256": "7b8476fcf5c4f0d383738a8b8c4c0be6eb6f9ca5fe274cee6800df50638fcd97",
+      "openings": [
+        "nw-terrace-boarding-gate",
+        "icebreaker-mezzanine-access"
+      ],
+      "passageRayCountPerOpening": 15,
+      "neighborRayCounts": [
+        18,
+        12
+      ],
+      "remainingInteriorTriangles": [
+        0,
+        0
+      ],
+      "preservedFullyOutsideTriangles": 19010,
+      "originalGuardrailTriangles": 19026,
+      "runtimeGuardrailTriangles": 19070,
+      "originalBuildingFileUnchanged": true,
+      "note": "Нижний бортик у ледокола сохранён до Y13.2; проход выше настила свободен."
     },
     "browser": {
-      "finalRouteStatus": "passed",
-      "date": "2026-11-24",
-      "checks": {
-        "two_real_vehicles": true,
-        "autostart": true,
-        "half_loop_spacing": true,
-        "monorail_at_height": true,
-        "open_hall_default": true,
-        "supports_match_floor_count": true,
-        "supports_on_existing_floors": true,
-        "motion_observed": true,
-        "pause_state": true,
-        "both_vehicles_hold_on_pause": true,
-        "desktop_no_overflow": true,
-        "speed_2x": true,
-        "follow_second": true,
-        "follow_camera_moves": true,
-        "drag_leaves_follow": true,
-        "top_view_preserved": true,
-        "envelope_restored": true,
-        "section_preserved": true,
-        "reset_to_monorail": true,
-        "reduced_motion_starts_paused": true,
-        "mobile_no_overflow": true,
-        "mobile_canvas_height": true,
-        "mobile_tram-play_fits": true,
-        "mobile_tram-camera_fits": true,
-        "mobile_tram-speed_fits": true,
-        "narrow_tram-play_fits": true,
-        "narrow_tram-camera_fits": true,
-        "narrow_tram-speed_fits": true,
-        "explicit_play_overrides_reduced_motion": true,
-        "existing_entry_opens_tour": true,
-        "two_vehicles_in_existing_tour": true,
-        "no_page_errors": true,
-        "no_missing_local_assets": true
+      "status": "passed",
+      "browser": "Microsoft Edge",
+      "surfaces": [
+        "desktop",
+        "mobile"
+      ],
+      "scope": "Integrated current shuttle/station/openings/crowd, icebreaker access and exhibit editor candidate.",
+      "report": "E:/Парк впечатлений/Производство_Hitem3D/qa-editor-compact-20261124-0956/qa-report.json",
+      "reportSha256": "d797e31ba33c156a032437e233d019d67e9bbe34579ae44a476c9e8b37f58ff5",
+      "startedAtUtc": "2026-11-24T09:55:35.222769+00:00",
+      "finishedAtUtc": "2026-11-24T09:58:12.356301+00:00",
+      "checksPassed": 183,
+      "checksTotal": 183,
+      "failures": [],
+      "pageErrors": 0,
+      "httpErrors": 0,
+      "requestFailures": 0,
+      "tramSystemSha256": "02e3ba2acf34c6c94facc47800335391b30a2b986bd76d6e83ed5e4f36eebf64",
+      "relevantChecks": {
+        "desktop_two_trams": true,
+        "desktop_only_monorail-panel_open": true,
+        "desktop_monorail-panel_fits_width": true,
+        "both_trams_move": true,
+        "onboard_restores_cutaway": true,
+        "onboard_camera_moves_with_tram": true,
+        "onboard_exit_restores_exposition": true,
+        "monorail_unclipped_by_building_section": true,
+        "desktop-reload_two_trams": true,
+        "station_button_focuses_verified_existing_terrace": true,
+        "mobile_two_trams": true,
+        "mobile_only_monorail-panel_open": true,
+        "mobile_monorail-panel_fits_width": true
       },
-      "desktopViewport": [
-        1440,
-        1000
-      ],
-      "mobileViewports": [
-        [
-          390,
-          844
-        ],
-        [
-          320,
-          844
-        ]
-      ],
-      "pageErrors": [],
-      "missingAssets": [],
-      "supportFloorMatches": 22,
-      "supports": {
-        "count": 22,
-        "spacing": 11.471439518706394,
-        "minFloorHeight": 7.199999809265137,
-        "maxFloorHeight": 13.199999809265137
+      "stationScreenshot": "E:/Парк впечатлений/Производство_Hitem3D/qa-editor-compact-20261124-0956/48-boarding-station.png",
+      "motionNote": "Настоящие два GLB-вагона проверены в браузере; проверка движения учитывает станционные остановки.",
+      "historicalLoopChecksAreCurrentEvidence": false,
+      "supplementaryMobileCard": {
+        "checksPassed": 22,
+        "checksTotal": 22,
+        "countedInPrimary183Checks": false,
+        "source": "Separate narrow check reported by integration lead"
       },
-      "visualReview": [
-        "desktop-route.png",
-        "mobile-route.png",
-        "follow-first.png"
-      ],
-      "evidenceSource": "Playwright: окончательная версия на аппаратном WebGL; снимки экрана просмотрены"
+      "noticeRegression": {
+        "status": "passed",
+        "checksPassed": 40,
+        "checksTotal": 40,
+        "report": "E:/Парк впечатлений/Производство_Hitem3D/qa-editor-notice-20261124-1003/qa-report.json",
+        "reportSha256": "2a10e99419d97400a88d2ed04dca5f008975a13d0a1afedbf2fd517b66bee6f9",
+        "startedAtUtc": "2026-11-24T10:01:50.501419+00:00",
+        "finishedAtUtc": "2026-11-24T10:02:24.905018+00:00",
+        "pageErrors": 0,
+        "httpErrors": 0,
+        "requestFailures": 0,
+        "browser": "Microsoft Edge",
+        "browserCleanup": "closed",
+        "affectsMonorailGeometry": false,
+        "tramModuleChanged": false,
+        "countedInPrimary183Checks": false,
+        "scope": "Narrow notice/UI-message regression for final source batch"
+      }
     },
     "remainingAtDocumentationUpdate": [],
-    "scopeNote": "Зафиксированы выполненные проверки финальной версии. Параметры остаются параметрами визуализации; инженерное утверждение транспортного проекта не выполнялось.",
-    "surfaceClearance": {
-      "classification": "visual_surface_check",
-      "candidate": "final_-65.5_22.5",
-      "evidenceSource": "Проверка основного процесса по сечениям реальных треугольников CAD-модели",
-      "coordinateSystem": "Метры 3D-сцены, Y вверх",
-      "heightRangeSceneY": [
-        18.42,
-        22.31
+    "scopeNote": "Геометрические и численные проверки относятся к указанным данным и контрольным объёмам; они не являются инженерным утверждением транспортной системы."
+  },
+  "archive": {
+    "status": "superseded_route_not_current_runtime_validation",
+    "note": "Историческая замкнутая петля длиной 252.371669 м, Y19.2, 22 опоры. Её 33 браузерные проверки и численный отчёт относятся только к прежней конфигурации.",
+    "previousReconstruction": {
+      "classification": "visualization_parameters",
+      "approvedTransportDesign": false,
+      "metricAlignmentDerivedFromDwg": false,
+      "routeType": "Замкнутый скруглённый прямоугольник: четыре прямые и четыре четверти окружности",
+      "coordinateSystem": {
+        "units": "metres",
+        "upAxis": "+Y",
+        "routePlane": "XZ"
+      },
+      "routeConfig": {
+        "centerX": 5,
+        "centerZ": -15.75,
+        "width": 46,
+        "length": 99.5,
+        "cornerRadius": 22.5,
+        "height": 19.2,
+        "floorHeight": 13.2
+      },
+      "routeLengthMeters": 252.37166941154067,
+      "routeLengthDisplay": "примерно 252,4 м",
+      "heightMeaning": "Верх единственной металлической рабочей поверхности; на 6 м выше принятого пола экспозиции",
+      "guideway": {
+        "type": "Одна центральная направляющая монорельса",
+        "beamWidthMeters": 0.95,
+        "beamDepthMeters": 0.72,
+        "runningSurfaceCount": 1,
+        "runningSurfaceWidthMeters": 0.3,
+        "runningSurfaceDepthMeters": 0.06,
+        "supportCount": 22,
+        "supportSpacingMeters": 11.471439518706394,
+        "underBeamLightStrips": 1,
+        "trianglesIncludingSupports": 9064,
+        "supportFloorHeight": "Для каждой опоры — Y поверхности существующего перекрытия из callback supportFloorHeight(x,z); при невалидном результате fallback floorHeight=13.2.",
+        "supportSurfaceLayers": [
+          "A-FLOR",
+          "S-SLAB"
+        ],
+        "supportQueryMethod": "Raycast по существующим перекрытиям через callback supportFloorHeight(x,z); полнота совпадений проверяется в финальной GPU QA."
+      },
+      "vehicles": {
+        "count": 2,
+        "lengthMeters": 12,
+        "orientation": {
+          "forward": "+Z",
+          "up": "+Y"
+        },
+        "separationFractionOfLoop": 0.5,
+        "baseSpeedMetersPerSecond": 3
+      },
+      "limits": [
+        "Размеры, радиусы, высота, направление и скорость приняты для визуализации с адаптацией пути к поверхностям существующей CAD-модели.",
+        "Реконструкция не является утверждённой транспортной трассой или расчётом конструкций.",
+        "Станции, вертикальные переходы, тележки и контактная механика не реконструированы."
       ],
-      "controlBandHalfWidthMeters": 2.1,
-      "guardMeters": 0.01,
-      "maxSegmentLengthMeters": 0.75,
-      "intersectionCount": 0,
-      "limits": "Ноль пересечений относится к проверенной контрольной полосе и выбранным сечениям поверхностей. Это визуальная проверка размещения, не инженерная сертификация транспортного проекта."
+      "selectedCandidate": "final_-65.5_22.5",
+      "adaptation": "Общая форма замкнутой петли взята из Figma. Петля уменьшена и смещена в центральную часть существующего зала по реальной геометрии CAD, чтобы обходить стены и зоны низкого покрытия. Это не извлечённая точная ось Figma или DWG."
+    },
+    "previousVerification": {
+      "numeric": {
+        "status": "passed",
+        "threeRevision": "180",
+        "report": "validation/monorail-numeric.json",
+        "scope": [
+          "Непрерывность позиции и касательной, включая замыкание",
+          "Постоянная скорость по длине и интервал двух вагонов в половину круга",
+          "Реальные вершины исходного GLB: масштаб 12 м, нос по касательной, нижняя точка на направляющей",
+          "Пауза, множитель скорости, ограничение dt, видимость, камера следования, освобождение ресурсов",
+          "Ошибка загрузки без подмены вагона",
+          "Высота каждой опоры через callback, постоянный верх колонн и fallback при невалидной отметке или исключении"
+        ]
+      },
+      "browser": {
+        "finalRouteStatus": "passed",
+        "date": "2026-11-24",
+        "checks": {
+          "two_real_vehicles": true,
+          "autostart": true,
+          "half_loop_spacing": true,
+          "monorail_at_height": true,
+          "open_hall_default": true,
+          "supports_match_floor_count": true,
+          "supports_on_existing_floors": true,
+          "motion_observed": true,
+          "pause_state": true,
+          "both_vehicles_hold_on_pause": true,
+          "desktop_no_overflow": true,
+          "speed_2x": true,
+          "follow_second": true,
+          "follow_camera_moves": true,
+          "drag_leaves_follow": true,
+          "top_view_preserved": true,
+          "envelope_restored": true,
+          "section_preserved": true,
+          "reset_to_monorail": true,
+          "reduced_motion_starts_paused": true,
+          "mobile_no_overflow": true,
+          "mobile_canvas_height": true,
+          "mobile_tram-play_fits": true,
+          "mobile_tram-camera_fits": true,
+          "mobile_tram-speed_fits": true,
+          "narrow_tram-play_fits": true,
+          "narrow_tram-camera_fits": true,
+          "narrow_tram-speed_fits": true,
+          "explicit_play_overrides_reduced_motion": true,
+          "existing_entry_opens_tour": true,
+          "two_vehicles_in_existing_tour": true,
+          "no_page_errors": true,
+          "no_missing_local_assets": true
+        },
+        "desktopViewport": [
+          1440,
+          1000
+        ],
+        "mobileViewports": [
+          [
+            390,
+            844
+          ],
+          [
+            320,
+            844
+          ]
+        ],
+        "pageErrors": [],
+        "missingAssets": [],
+        "supportFloorMatches": 22,
+        "supports": {
+          "count": 22,
+          "spacing": 11.471439518706394,
+          "minFloorHeight": 7.199999809265137,
+          "maxFloorHeight": 13.199999809265137
+        },
+        "visualReview": [
+          "desktop-route.png",
+          "mobile-route.png",
+          "follow-first.png"
+        ],
+        "evidenceSource": "Playwright: окончательная версия на аппаратном WebGL; снимки экрана просмотрены"
+      },
+      "remainingAtDocumentationUpdate": [],
+      "scopeNote": "Зафиксированы выполненные проверки финальной версии. Параметры остаются параметрами визуализации; инженерное утверждение транспортного проекта не выполнялось.",
+      "surfaceClearance": {
+        "classification": "visual_surface_check",
+        "candidate": "final_-65.5_22.5",
+        "evidenceSource": "Проверка основного процесса по сечениям реальных треугольников CAD-модели",
+        "coordinateSystem": "Метры 3D-сцены, Y вверх",
+        "heightRangeSceneY": [
+          18.42,
+          22.31
+        ],
+        "controlBandHalfWidthMeters": 2.1,
+        "guardMeters": 0.01,
+        "maxSegmentLengthMeters": 0.75,
+        "intersectionCount": 0,
+        "limits": "Ноль пересечений относится к проверенной контрольной полосе и выбранным сечениям поверхностей. Это визуальная проверка размещения, не инженерная сертификация транспортного проекта."
+      }
     }
-  }
+  },
+  "documentationStatus": "frozen_after_local_qa"
 }

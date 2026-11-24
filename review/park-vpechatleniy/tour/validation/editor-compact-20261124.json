@@ -1,0 +1,428 @@
+{
+  "version": "park-editor-compact-20261124",
+  "createdAtUtc": "2026-11-24T10:03:56.393385+00:00",
+  "status": "verified-local-candidate",
+  "published": false,
+  "baseCommit": "8c4b96984e5fecbe5544141ac8e01d756c650750",
+  "branch": "codex/park-object-editor-stations-20261124",
+  "scene": {
+    "models": 16,
+    "instances": 24,
+    "initialVisitors": 100,
+    "monorailCars": 2,
+    "monorailSupports": 19,
+    "defaultBuildingCutY": 16.7
+  },
+  "icebreaker": {
+    "lengthM": 25.2,
+    "widthM": 6.395751694,
+    "heightM": 8.839919429,
+    "position": [
+      33.05,
+      7.2,
+      -47
+    ],
+    "yawRadians": 3.141592653589793,
+    "bridgeDeckY": 13.2,
+    "lettering": "АТОМФЛОТ",
+    "labelledSides": 2,
+    "placementStatus": "working reconstruction"
+  },
+  "boardingPlatform": {
+    "surfaceY": 16.65,
+    "existingAccessStairs": 2,
+    "routeMode": "shuttle",
+    "boardingCar": 0,
+    "purposeStatus": "working scene interpretation"
+  },
+  "ux": {
+    "dockSections": 4,
+    "desktopStageFraction": 0.893,
+    "mobileStageFraction": 0.873,
+    "mobileSelectedCardHeightPx": 251.05
+  },
+  "verification": [
+    {
+      "name": "integration-smoke",
+      "passed": 18,
+      "checks": 18,
+      "report": "qa-compact-smoke-20261124-0952/qa-report.json",
+      "sha256": "ab70460688e1b1ff7ed26aba497e0d9e2eb43c43266e146850271249aa512197",
+      "javascriptErrors": 0,
+      "httpErrors": 0,
+      "requestErrors": 0
+    },
+    {
+      "name": "editor-desktop-mobile",
+      "passed": 183,
+      "checks": 183,
+      "report": "qa-editor-compact-20261124-0956/qa-report.json",
+      "sha256": "d797e31ba33c156a032437e233d019d67e9bbe34579ae44a476c9e8b37f58ff5",
+      "javascriptErrors": 0,
+      "httpErrors": 0,
+      "requestErrors": 0
+    },
+    {
+      "name": "compact-mobile-card",
+      "passed": 22,
+      "checks": 22,
+      "report": "qa-compact-card-20261124-0959/qa-report.json",
+      "sha256": "46564b832fe76054930b345f323416b42df0550955207030b5d29981ab7066f8",
+      "javascriptErrors": 0,
+      "httpErrors": 0,
+      "requestErrors": 0
+    },
+    {
+      "name": "resolved-notice-regression",
+      "passed": 40,
+      "checks": 40,
+      "report": "qa-editor-notice-20261124-1003/qa-report.json",
+      "sha256": "2a10e99419d97400a88d2ed04dca5f008975a13d0a1afedbf2fd517b66bee6f9",
+      "javascriptErrors": 0,
+      "httpErrors": 0,
+      "requestErrors": 0
+    }
+  ],
+  "verifiedFinalSources": {
+    "viewer.js": "fb2f0013c6d71fb7e96154581a37db8e878a7c2f8ff2abe301a8a3533aef2a30",
+    "index.html": "54eb8cb004e80d7d22b75df0ecdcfbd33424f8f57a5240452762b04320bd596b",
+    "viewer.css": "9ff05c00235ad691b40b10f20241cbb9b564c200ff3b7352acfc5b6c89c9db00",
+    "tram-system.js": "02e3ba2acf34c6c94facc47800335391b30a2b986bd76d6e83ed5e4f36eebf64",
+    "cad-openings.js": "7b8476fcf5c4f0d383738a8b8c4c0be6eb6f9ca5fe274cee6800df50638fcd97"
+  },
+  "publication": {
+    "performed": false,
+    "reason": "Prior GitHub create_blob was rejected by the user; renewed explicit authorization is required."
+  },
+  "files": [
+    {
+      "path": "review/park-vpechatleniy/calculator/crowd-scenario.js",
+      "bytes": 3078,
+      "sha256": "25b46eab1e2486d20d48fd8c42fc6f650d2739cd02829d4669355be78bbc281e"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/README-monorels.md",
+      "bytes": 18656,
+      "sha256": "334937d14df4fbe9b30883f5f63b09fa8605540a9834767cb6d5efa692687a53"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/assets/exhibits/README.md",
+      "bytes": 9645,
+      "sha256": "33005fc9c5ea8ec763e73ace4cc7ed2eb14503d3d2aa8ac8e8ea97f9bb5d6e70"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/assets/exhibits/manifest.json",
+      "bytes": 10562,
+      "sha256": "8d307a0f537cc8b125882847e80c5979016d2ceab34fd722d452459c73f97ce9"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/assets/exhibits/preview/manifest.json",
+      "bytes": 10885,
+      "sha256": "71759c62ac6eea11eb7c9af08421028cbae1711200d783a364e2731f19ad852f"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/assets/exhibits/provenance.json",
+      "bytes": 28385,
+      "sha256": "6a8100b35dddc56d9cff7e4049adeb7bab115ee5b59ad76029de164027370a98"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/assets/monorail-source.json",
+      "bytes": 23854,
+      "sha256": "ee19b04d228c4a811236c556c1ba74f66502c4dab4123028533b7adbbbc9a2d6"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/assets/monorail-station-evidence.json",
+      "bytes": 12444,
+      "sha256": "d6d5e1ff1870149e2cb748f2598486fe5fbdc9d3d0549d3a3d3b4aa33ae08e7f"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/cad-openings.js",
+      "bytes": 5781,
+      "sha256": "7b8476fcf5c4f0d383738a8b8c4c0be6eb6f9ca5fe274cee6800df50638fcd97"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/README.md",
+      "bytes": 5692,
+      "sha256": "fe21cc064e963c7903d9f90489c6dd791d5ad3cba18d033114ed22d2bf140503"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/LICENSE_AVATAR_STUDIO",
+      "bytes": 1070,
+      "sha256": "463e1d949eadc76ab09d6b47579a137903a0a109527eb8bbf0c68446d72dc7c7"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/README.md",
+      "bytes": 2390,
+      "sha256": "496a0a1fb289f1c04de0f830b892e61801642b23103b3bd4c000d3cdd988206c"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/THIRD_PARTY_NOTICES.md",
+      "bytes": 1323,
+      "sha256": "8f94ab609a0e609933d229a0ecd4a7a45454bc2856f50d3e5173504935beab5d"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/aisha.crowd.glb",
+      "bytes": 1726104,
+      "sha256": "cd3feeedd8e9a6f2a328d0aff1872477c273e6017cc55f1a6cc3ef8cff56ed1d"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/andre.crowd.glb",
+      "bytes": 1657644,
+      "sha256": "0f78d7bc6a965b4d51d284812bb9b537b7fc3b590d6de01b582460a39d5c4ccb"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/arjun.crowd.glb",
+      "bytes": 1578552,
+      "sha256": "b3726698fef10bba35cbc40f278d9e6500d799a385bda7a97091bb7012ea408d"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/carlos.crowd.glb",
+      "bytes": 1811776,
+      "sha256": "a9eebfe054a0057bd48013f0f0b3055bd4f42f29be3b14105280c59b78a974b9"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/daniel.crowd.glb",
+      "bytes": 1587336,
+      "sha256": "58f42b9a62025e8a41565d4f6f5ef03a6fbd520a1ea4f63be32baae0d1b49a94"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/emma.crowd.glb",
+      "bytes": 1839672,
+      "sha256": "8e5e055a960c9e37da35c1ef86ad786315c2dc1a9d411ce6c0e422d32e35c51f"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/ethan.crowd.glb",
+      "bytes": 1768464,
+      "sha256": "0ebd2b8a69a25d4c9dd315ce454abfe59215effff04e02a7be7a0ba30045ffa5"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/hannah.crowd.glb",
+      "bytes": 1874312,
+      "sha256": "4e476e99993354a91b28704b71814cff702841a104905f0d7c90cfb3d04ecec5"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/james.crowd.glb",
+      "bytes": 1571052,
+      "sha256": "51c278e172c51e4e80e767b2063647748d4cb2adaf62263f7db97d713967f556"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/kenji.crowd.glb",
+      "bytes": 1547024,
+      "sha256": "e2881f7dac71d9d52352679291838850a76ca881ca01111074f14f1151aaf837"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/leo.crowd.glb",
+      "bytes": 1709264,
+      "sha256": "01ec0b8503373409cc47fd28b9c9bed4035671e91a6674d2e669d46967f651a5"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/luca.crowd.glb",
+      "bytes": 1645224,
+      "sha256": "c59fd50bb5a6fdf3433ef3b8de9a670a347e4310eeacd9748b6cf74dc977a940"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/marcus.crowd.glb",
+      "bytes": 1481320,
+      "sha256": "f0670484a45fdd8dc38bd6a67390d91716d73dcdc992642c6aeeb22d6531d83b"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/mei.crowd.glb",
+      "bytes": 1961992,
+      "sha256": "786aea2f5883f783707f710c9a6a566b41315e8bbda6153336707f05ecedaa5b"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/mia.crowd.glb",
+      "bytes": 1919836,
+      "sha256": "efa83ea68e28a55c4ae48ad10ca1fd33e923d9fdc26d2e20e19a714da55e934f"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/noah.crowd.glb",
+      "bytes": 1734176,
+      "sha256": "9eedc688f9ea2726dbbcd3c921aa6b084698c432d6eec80f0cb939e5852d5160"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/olivia.crowd.glb",
+      "bytes": 1938308,
+      "sha256": "2975055a87dfaa53f73e9257afc22e2ee5f74e4dd16850f90a8d007c2876e63e"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/priya.crowd.glb",
+      "bytes": 1923844,
+      "sha256": "55ca420a903650014d65f7263c00ec145173879b45053ea6c2c538700ffb23fc"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/ryan.crowd.glb",
+      "bytes": 1761040,
+      "sha256": "a590081e4319e42cc09593bf5a598e21ed1d3001db674b3d527973b06836b4b9"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/assets/sophia.crowd.glb",
+      "bytes": 1643452,
+      "sha256": "1ba7c86f494c19f1f862024daccc2a662e610686533d22494c272d69f115cbd7"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/avatar_manifest.json",
+      "bytes": 274286,
+      "sha256": "75ff61bac98f8becabd793a303e061e2b4b85294c45c7ca2ca2637cb3dd346b8"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/crowd-renderer.js",
+      "bytes": 16517,
+      "sha256": "24139735f7a2bcaec46a110ad3cca2d00816bd5c60df37baefa23f1125475f1c"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/crowd_factory.js",
+      "bytes": 20059,
+      "sha256": "90c931274dc690c01a0a173c33f10e3ab35e5040dcb9d1c54bfd58f8a88d91c0"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/avatars/sources_manifest.json",
+      "bytes": 8257,
+      "sha256": "42ffe97013ad4e058d9cebe295747308e4038bec91961dba34b922d1d8584bbb"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/capacity.js",
+      "bytes": 3082,
+      "sha256": "ffcbea203ed26729c3c34b3490a3524a9821e0a4bd157d787c402067dbf16040"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/crowd.css",
+      "bytes": 6566,
+      "sha256": "63316725d696b7fa2ec32ba418ff396414cdda6bb76cd2f02cf59bbdf41a46b3"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/data/park-world.json",
+      "bytes": 339746,
+      "sha256": "36c885d8a289f6689841ab5a825dd0bc80fc0319e73f2873574307cede37f160"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/dynamic-obstacles.js",
+      "bytes": 16831,
+      "sha256": "7f0dbb01cfbb287c6545d98811e6dac5025788701bfc535e5f0df3a4455fb6f9"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/elevator_visuals.js",
+      "bytes": 10180,
+      "sha256": "f0067ece3607112d78b10e5e4e48f96d1acce25213e21007a9fca26c78be8c40"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/engine/avatar-adapter.js",
+      "bytes": 4368,
+      "sha256": "4ce77b9277267c79a133affbd3f7964c7130f547a80a2f593aa285c02ffcf2bb"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/engine/crowd.js",
+      "bytes": 35980,
+      "sha256": "2b06a471952948279506f909b5ceed6fb26d9925db1d67abb9f82c6e48b0ce9e"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/engine/dynamic-world.js",
+      "bytes": 8598,
+      "sha256": "69518ebe85b826979ad803c7d6856044c3a7cb456d92471501b59e4ed77b03bb"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/engine/geometry.js",
+      "bytes": 7070,
+      "sha256": "8e56fc60833e02f11b53d07536883fd8e0ba5c51d53e695d2040b388e6fa2a48"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/engine/grid.js",
+      "bytes": 8263,
+      "sha256": "a35378417bff45ef43cac431db2aa29e169089d7142fedddb28977aacfc5285e"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/engine/index.js",
+      "bytes": 288,
+      "sha256": "126268e5b0c0db09a59859a1be28c003e5a6a329b3d991d1e746a3df85519ed0"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/engine/obstacles.js",
+      "bytes": 5049,
+      "sha256": "856a66a22e64acb997114de94a991a2a1becc55c185fc08095abb3875aa12bc2"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/engine/population.js",
+      "bytes": 5592,
+      "sha256": "b5e98bbd511ba45b97ef2a6b4b8ad952b2688c6d963d0947ae7d813dffd30a17"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/engine/transitions.js",
+      "bytes": 21188,
+      "sha256": "dd7c36ac6add17101fd7605726a4e058cfc3a21813bf866c75d813bccb1f415e"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/engine/world.js",
+      "bytes": 28651,
+      "sha256": "600e2f1f78455a56c33486ac81c6c7216a8464aaf7be2145f04553ed158632c2"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/park-crowd.js",
+      "bytes": 20654,
+      "sha256": "0eaf3e877ffe5024fc222ac8ad0f81483c6105688aa70a7b8a9963c1f502aeaa"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/portals-walls.glb",
+      "bytes": 93444,
+      "sha256": "3f8c0ad2b44d8df51e6e4d7e9865c1ec9f796ff338858c2ecf5f3593ca5221f0"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/exhibit-editor.js",
+      "bytes": 28158,
+      "sha256": "ea38c6a8017e5b5581e203b32e4f57a007b078c1d43ebe9ab80957c9d2664a3d"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/exhibits.js",
+      "bytes": 30478,
+      "sha256": "aa64969b22cd1977a683472e5f77f0899a7383d2e3b3e0db8ec20c4f2dc9c15b"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/icebreaker-access.js",
+      "bytes": 4382,
+      "sha256": "c7704f9093bd88b4ad19e5bd64e372b2f149fee55676a6fd177da85bc6ef6531"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/icebreaker-details.js",
+      "bytes": 1974,
+      "sha256": "7d8cebe49bd4a3a3a2324b50cdb2960a15eb4a6f38eec01b83aa1a3d94e90ad5"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/index.html",
+      "bytes": 19201,
+      "sha256": "54eb8cb004e80d7d22b75df0ecdcfbd33424f8f57a5240452762b04320bd596b"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/tram-system.js",
+      "bytes": 36796,
+      "sha256": "02e3ba2acf34c6c94facc47800335391b30a2b986bd76d6e83ed5e4f36eebf64"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/ui-module.js",
+      "bytes": 4556,
+      "sha256": "d205f46af5c92ebb271072c9467f2bf7b47b7a0c38c81065af67c6a6b69ada9e"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/viewer.css",
+      "bytes": 15967,
+      "sha256": "9ff05c00235ad691b40b10f20241cbb9b564c200ff3b7352acfc5b6c89c9db00"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/viewer.js",
+      "bytes": 50647,
+      "sha256": "fb2f0013c6d71fb7e96154581a37db8e878a7c2f8ff2abe301a8a3533aef2a30"
+    }
+  ],
+  "postVerificationFormatting": [
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/dynamic-obstacles.js",
+      "change": "Removed one extra blank line at EOF; no executable code changed",
+      "beforeSha256": "25b77288bad691a0dc89a2341c2375b943fee282ed005ab337b7d38becc1de15",
+      "afterSha256": "7f0dbb01cfbb287c6545d98811e6dac5025788701bfc535e5f0df3a4455fb6f9"
+    },
+    {
+      "path": "review/park-vpechatleniy/tour/crowd/park-crowd.js",
+      "change": "Removed one extra blank line at EOF; no executable code changed",
+      "beforeSha256": "d8186b37b1826d2e145fec3f6bc3437ea4bd2990507b494c4d4d2416d3e90fd9",
+      "afterSha256": "0eaf3e877ffe5024fc222ac8ad0f81483c6105688aa70a7b8a9963c1f502aeaa"
+    }
+  ]
+}
