@@ -93,7 +93,7 @@ if(mount){
  mount.innerHTML=`
  <div class="ic-heading"><div><p class="ic-eyebrow">Проект и объём производства · ${VERSION}</p><h2 id="installations-title">Расчёт инсталляций</h2><p class="ic-intro">Что строим, сколько оборудования и контента потребуется — и какие решения ещё нужно принять.</p></div><div class="ic-downloads"><a href="./installations/park-project-scope.pdf" target="_blank" rel="noopener">Документ PDF</a><a href="./installations/park-project-scope.docx" download>Документ Word</a></div></div>
  <div class="ic-scenario-label"><span class="ic-proposal">Рабочее предложение</span><p>Изменяемые параметры, прозрачные формулы. Ведомость для производства появится после согласования анкеты и планировки.</p></div>
- <nav class="ic-tabs" aria-label="Расчёт инсталляций: разделы"><button type="button" data-view="overview" aria-pressed="true">Проект и выводы</button><button type="button" data-view="calculator" aria-pressed="false">Калькулятор и схема</button><button type="button" data-view="questionnaire" aria-pressed="false">Анкета исходных данных</button></nav>
+ <nav class="ic-tabs" aria-label="Расчёт инсталляций: разделы"><button type="button" data-view="overview" aria-pressed="true">Проект и выводы</button><button type="button" data-view="calculator" aria-pressed="false">Калькулятор и схема</button><button type="button" data-view="engineering" aria-pressed="false">Экраны и электрика</button><button type="button" data-view="questionnaire" aria-pressed="false">Анкета исходных данных</button></nav>
  <div id="ic-scenario-note" class="ic-current-label">Текущий сценарий · базовая матрица</div>
  <div class="ic-kpis" id="ic-kpis" aria-label="Результаты текущего сценария"></div>
  <div class="ic-errors" id="ic-errors" role="alert" hidden></div>
@@ -118,11 +118,25 @@ if(mount){
    <details class="ic-document-section"><summary>Формулы расчёта<span aria-hidden="true">+</span></summary><div class="ic-prose"><p><strong>Присутствие:</strong> экскурсионный поток × время экскурсии / 60 + самостоятельный поток × время визита / 60.</p><p><strong>Запуск групп:</strong> 60 × размер группы / экскурсионный поток.</p><p><strong>Спрос у одной точки:</strong> экскурсионный поток × доля участия + самостоятельный поток × доля участия. Поток не делится на восемь территорий.</p><p><strong>Выпуск станции:</strong> 60 × активных мест / (сеанс + смена в минутах) × целевая загрузка.</p><p><strong>Станций на точку:</strong> максимум из округлённой вверх потребности по среднему потоку, потребности прибывшей группы за остановку и заданного минимального оснащения.</p><p><strong>Поверхности:</strong> главные + интерактивные станции × поверхностей на станцию + медийные + предметные + общие + навигационные.</p><p><strong>Уникальный контент:</strong> шоу + интерактивные региональные комплекты + медийные программы + общие программы + навигация. Копии на параллельных станциях не добавляют сюжетов. Предметные редакционные пакеты выделены отдельно.</p><p><strong>Канал-минуты:</strong> длительность каждого линейного шоу × число отличающихся видеоканалов. Языки и технические версии увеличивают комплектность выдачи отдельно.</p></div></details>
   </div></div>
  </section>
+ <section id="ic-engineering" class="ic-view" aria-label="Размеры экранов, размещение и электроснабжение" hidden><div class="ic-toolbar"><p class="ic-note">Размеры, мощность и кандидаты размещения. Исходный поток передаётся из этого калькулятора.</p><a id="ic-engineering-open" href="./installations/engineering/" target="_blank" rel="noopener">Открыть отдельно ↗</a></div><iframe id="ic-engineering-frame" title="Инженерный калькулятор Парка впечатлений" style="display:block;width:100%;height:1600px;border:0;border-radius:12px" loading="lazy"></iframe></section>
  <section id="ic-questionnaire" class="ic-view" aria-label="Анкета недостающих данных" hidden><div class="ic-question-intro"><p>Форма содержит решения, без которых нельзя зафиксировать число инсталляций и объём контента. Неизвестные ответы оставлены пустыми.</p><button type="button" id="ic-seed-questionnaire">Подставить расчёт как предложение</button><p class="ic-note">Кнопка переносит параметры текущего сценария. Они остаются предложением и не означают согласования.</p><p class="ic-note" id="ic-seed-status" role="status"></p></div><div id="ic-questionnaire-root"></div></section>
  <p id="ic-live" class="ic-sr-only" aria-live="polite" aria-atomic="true"></p>`;
  const $=s=>mount.querySelector(s);
  const set=(s,v)=>{$(s).textContent=v;};
- const changeView = value => {view=value; for(const key of ['overview','calculator','questionnaire'])$('#ic-'+key).hidden=key!==value; mount.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===value))); if(value==='calculator')updatePlan();};
+ const syncEngineering = () => {
+  const u=new URL('./installations/engineering/',location.href);
+  u.searchParams.set('embed','1');
+  u.searchParams.set('parkInstallations',encode({schema:'faza.park.installations.v1',input:result?.valid?result.input:input}));
+  const frame=$('#ic-engineering-frame');
+  if(frame.dataset.loadedUrl!==u.href){frame.src=u.href;frame.dataset.loadedUrl=u.href;}
+  u.searchParams.delete('embed');$('#ic-engineering-open').href=u.href;
+ };
+ window.addEventListener('message',event=>{
+  const frame=$('#ic-engineering-frame');
+  if(event.origin!==location.origin||event.source!==frame.contentWindow||event.data?.type!=='faza-engineering-height')return;
+  const height=Number(event.data.height);if(Number.isFinite(height)&&height>=300&&height<=20000)frame.style.height=Math.ceil(height)+'px';
+ });
+ const changeView = value => {view=value; for(const key of ['overview','calculator','engineering','questionnaire'])$('#ic-'+key).hidden=key!==value; mount.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===value))); if(value==='calculator')updatePlan();if(value==='engineering')syncEngineering();};
  mount.querySelectorAll('[data-view],[data-go]').forEach(b=>b.addEventListener('click',()=>changeView(b.dataset.view||b.dataset.go)));
  const plan=createParkPlan($('#ic-plan'),{onSelectDistrict(index){selectedDistrict=index;updatePlan();}});
  const questionnaire=createInstallationQuestionnaire($('#ic-questionnaire-root'),{initialValues:{},sourceQuestionIds:['Q01','Q02','Q03','Q04','Q05','Q06','Q07','Q08','Q09','Q10','Q11'],onApply(state){
@@ -204,5 +218,6 @@ if(mount){
   if(location.hash!=='#installations')location.hash='installations';
   else window.dispatchEvent(new Event('hashchange'));
  }else if(location.hash==='#calculator')changeView('calculator');
+ if(new URL(location.href).searchParams.get('engineeringView')==='1'&&!hadSharedAnswers)changeView('engineering');
  window.addEventListener('hashchange',()=>{if(location.hash==='#calculator')changeView('calculator');});
 }

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive"><meta name="theme-color" content="#101313">
+  <title>Экраны и электрика — Парк впечатлений / ФАЗА</title>
+  <link rel="stylesheet" href="./style.css?v=20261124-e1">
+  <script type="module" src="./app.js?v=20261124-e1"></script>
+</head>
+<body>
+  <header class="topbar"><a href="../../#installations" class="brand" aria-label="К странице проекта">ФАЗА<span>.</span></a><a href="../../#installations">← Расчёт инсталляций</a><span>Парк впечатлений</span></header>
+  <main>
+    <section class="hero"><div><p class="eyebrow">Инженерный вариант · 24 ноября 2026</p><h1>Экраны.<br>Питание. Крепления<span>.</span></h1><p class="lead">Размер изображения связан с контентом и зрителем. Электрическая нагрузка — с реальными приборами. Расстановка — со всей зоной использования.</p></div><div class="hero-side"><span class="status-tag">Рабочие допущения</span><p>Для обсуждения объёма и задания проектировщикам. Места, крепления и параметры питающих линий требуют исходных данных здания.</p><a class="download primary" href="./park-engineering.pdf" target="_blank" rel="noopener">Инженерное приложение PDF</a></div></section>
+    <div id="error" class="callout danger" hidden role="alert"></div>
+    <section id="metrics" class="metrics" aria-label="Показатели сценария"></section>
+    <nav class="tabs" aria-label="Инженерные разделы">
+      <button data-tab="calculation" aria-pressed="true">Размеры и нагрузка</button><button data-tab="placement" aria-pressed="false">Размещение</button><button data-tab="electrical" aria-pressed="false">Электросхема</button><button data-tab="evidence" aria-pressed="false">Wiki, нормы и вопросы</button>
+    </nav>
+    <section id="calculation" class="panel">
+      <div class="section-head"><div><p class="eyebrow">От потока к поверхности</p><h2>Проверить масштаб решения</h2></div><div class="actions"><button id="reset">Базовый вариант</button><button id="csv">Ведомость CSV</button><button id="share">Ссылка на вариант</button></div></div>
+      <div class="flow-inputs">
+        <label>Экскурсионный поток <span>чел./ч</span><input type="number" min="0" max="3000" step="10" data-flow="guidedFlow" value="300"></label>
+        <label>Самостоятельный поток <span>чел./ч</span><input type="number" min="0" max="5000" step="10" data-flow="independentFlow" value="500"></label>
+        <div class="flow-note" id="flow-note"></div>
+      </div>
+      <p class="muted">Остальные параметры потока наследуются из общего калькулятора. В базовом варианте участвуют 40% каждого потока, на станции 6 активных мест, цикл 2 мин 15 с, целевая загрузка 80%. Эти проценты не используются как коэффициенты электрической нагрузки.</p>
+      <div class="table-wrap"><table class="size-table"><thead><tr><th>Поверхности</th><th>Кол-во</th><th>Ширина, м</th><th>Высота, м</th><th>Всего, м²</th><th>Дальняя позиция, м</th><th>Важный элемент, % высоты</th><th>Осевой обзор</th></tr></thead><tbody id="sizes"></tbody></table></div>
+      <div id="readability-note" class="callout"></div>
+      <div class="two-col">
+        <article class="card"><p class="eyebrow">Чувствительность к типоразмерам</p><h3>Одинаковое количество — разная площадь</h3><div id="range-chart"></div><p class="muted">Три независимых набора размеров. Это сравнение вариантов, а не доверительный интервал или нормативный минимум.</p></article>
+        <article class="card"><p class="eyebrow">Объём ФАЗЫ</p><h3 id="content-title">Контент и носители</h3><div id="content-metrics"></div><p class="muted">Копия программы на параллельной станции добавляет поверхность и оборудование. Уникальный сюжет, приложение или канал увеличивается только при соответствующем изменении задания.</p></article>
+      </div>
+      <details open><summary>Планировочный бюджет электрической мощности</summary><div class="detail-body"><p>Все значения ниже — редактируемые допущения для перечисленного состава. Паспортные максимумы пока неизвестны. В базовом варианте принят один прибор отображения на поверхность; для проекции и LED этот состав уточняется отдельно.</p><div class="table-wrap"><table><thead><tr><th>Оборудование</th><th>Количество</th><th>Бюджет на прибор, Вт</th><th>Сумма, кВт</th><th>Основание</th></tr></thead><tbody id="power-table"></tbody></table></div><div class="reserve"><label>Планировочный резерв, %<input id="reserve" type="number" min="0" max="100" step="5" value="20"></label><p id="reserve-note"></p></div><p class="callout amber">Полная мощность парка не определена. В этот бюджет не включены звук, эффекты, приводы экспонатов, выставочный свет, HVAC, лифты и монорельс. Резерв не заменяет расчёт спроса, пуска, защиты и охлаждения.</p></div></details>
+      <details><summary>Методика и формулы</summary><div class="detail-body prose"><p><strong>Площадь:</strong> сумма W × H активных физических поверхностей. Корпус, опора, монтажное поле и площадь зрителей учитываются отдельно. Проекторы на одном полотне не создают дополнительную площадь полотна.</p><p><strong>16:9:</strong> W = 0,0254 × D × 16 / √337; H = 0,0254 × D × 9 / √337, D в дюймах. Для нестандартного холста задаются фактические W и H.</p><p><strong>Предварительный осевой BDM:</strong> r ≈ 200 × q × H; q — доля высоты важной детали. Проверка использует открытое пояснение AVIXA. Она не удостоверяет полное соответствие DISCAS и не проверяет боковые места, заслонение людьми, блики, субтитры или доступность органов ввода.</p><p><strong>Мощность:</strong> сумма по уникальным ID электроприёмников на границе AC-ввода. Общий сервер учитывается один раз. Неизвестная мощность остаётся неизвестной.</p><p><strong>Проекция:</strong> throw = throw ratio × W; конкретная оптика, тени, засветка, контраст и вентиляционные зазоры проверяются по выбранному оборудованию. Отношение сторон не задаёт автоматически разрешение или число проекторов.</p></div></details>
+    </section>
+    <section id="placement" class="panel" hidden>
+      <div class="section-head"><div><p class="eyebrow">Метрическая геометрия</p><h2>Кандидаты размещения</h2></div><a href="./placement-candidates.json" download class="download">Координатный реестр JSON</a></div>
+      <p id="placement-summary" class="callout">Загружаем геометрию…</p>
+      <div class="plan-toolbar"><div class="segmented"><button data-floor="main" aria-pressed="true">Нижний уровень</button><button data-floor="upper" aria-pressed="false">Верхний уровень</button></div><label>Компоновка<select id="variant"><option value="B">B · три полотна вокруг группы</option><option value="A">A · три полотна в ряд</option></select></label><label><input type="checkbox" id="show-envelopes" checked> Зоны зрителей и обслуживания</label><label><input type="checkbox" id="show-obstacles" checked> Существующие объекты</label><button id="plan-reset">Весь этаж</button></div>
+      <div class="plan-layout"><div class="plan-shell"><svg id="plan" role="img" aria-label="Схема кандидатов экранных сцен на метрическом плане"></svg><div class="plan-legend"><span><i class="key candidate"></i>Кандидат</span><span><i class="key existing"></i>Существующий объект</span><span><i class="key envelope"></i>Резерв сцены</span></div><p class="muted">Координаты X/Z в метрах, высота Y. Схема имеет масштаб; географические названия секторам пока не присвоены.</p></div><aside id="selection" class="card selection"></aside></div>
+      <div class="two-col"><article class="card"><h3>Что проверено</h3><div id="placement-checks"></div></article><article class="card"><h3>Что остаётся проверить</h3><p>Утверждённые эвакуационные пути и противопожарные отсеки, дверные створки, доступность, очереди в пиковом сценарии, видимость, высота и вентиляция оборудования, несущие основания, кабельные трассы и согласование с экспонатами.</p><p class="muted">Консервативная маска движения аватара не является расчётом эвакуации. Модель здания содержит неполностью перенесённые стены и кровлю.</p></article></div>
+      <details open><summary>Сцены, для которых место ещё не найдено</summary><div class="detail-body" id="unplaced"></div></details>
+    </section>
+    <section id="electrical" class="panel" hidden>
+      <div class="section-head"><div><p class="eyebrow">Структура электроснабжения</p><h2>Однолинейная схема AV</h2></div><button id="download-sld">Скачать схему SVG</button></div>
+      <p class="callout amber">Концептуальная схема для задания. Точка подключения, система заземления, разрешённая мощность и токи КЗ здания пока не установлены. Номиналы автоматов, сечения и марки кабелей не назначены.</p>
+      <p>Схема распределяет всю текущую программу поровну между двумя уровнями по гипотезе 4 + 4 территории. Она ещё не связана с кандидатами плана B, где условные сектора распределены 5 + 3 и размещены 105 из базовых 152 поверхностей. Поэтажные нагрузки и трассы нужно пересчитать после согласования мест.</p>
+      <div id="sld" class="sld-shell"></div>
+      <div class="two-col"><article class="card"><h3>Обычные AV-нагрузки</h3><p>Предлагаются два распределительных щита по уровням, отдельные линии территориальных блоков, общих инсталляций и навигации, отдельная ветвь управления. Внутри каждого блока — группировка по приборам, пуску, утечкам и обслуживанию. Точные линии формируются после паспортов и длин трасс.</p><p id="power-unknown"></p></article><article class="card"><h3>Пожарный режим и резерв</h3><p>Питание противопожарных систем и аварийного освещения задаётся их проектом. Оно не проходит через условный AV-выключатель на этой схеме. Интерфейс пожарного сигнала, приоритет СОУЭ, остановка шоу и требуемое состояние оборудования согласуются в общей матрице причин и действий.</p><p>ИБП для управления — возможная отдельная задача. Его мощность, автономия и состав поддерживаемых устройств пока не определены.</p></article></div>
+      <details><summary>Какие расчёты закроют подбор кабелей и защиты</summary><div class="detail-body prose"><p>Паспортные максимальные и рабочие токи, пусковые броски, утечки, коэффициент мощности и гармоники; режимы и доказанный спрос; длины, способы прокладки, группировка и температура; допустимый ток, падение напряжения, КЗ, отключающая способность, селективность и автоматическое отключение; защитное заземление, уравнивание потенциалов, пожарное исполнение кабелей и работоспособность требуемых цепей.</p><p>Энергия за смену и тепло считаются по рабочим режимам. Планировочный бюджет мощности нельзя объявлять энергопотреблением или нагрузкой системы охлаждения без этих режимов.</p></div></details>
+    </section>
+    <section id="evidence" class="panel" hidden>
+      <div class="section-head"><div><p class="eyebrow">Основания и границы точности</p><h2>Что уже есть в Wiki</h2></div></div>
+      <div id="evidence-content"></div>
+      <details open><summary>Исходные данные для проектирования и ФАЗЫ</summary><div class="detail-body"><p>Ответы сохраняются в этом браузере. Для передачи команде скачайте JSON и приложите к проекту. Форма сама не отправляет сведения.</p><form id="engineering-form"><div id="question-fields" class="question-grid"></div><div class="actions"><button type="button" id="export-answers">Скачать ответы JSON</button><span id="answers-status" role="status"></span></div></form></div></details>
+      <details><summary>Источники и статус получения</summary><div class="detail-body" id="sources"></div></details>
+    </section>
+    <p id="action-status" class="muted" role="status" aria-live="polite"></p><div id="share-fallback" hidden><label>Ссылка на сценарий<input id="share-url" readonly></label></div>
+  </main>
+  <footer><span>ФАЗА / Парк впечатлений</span><span>Гипотеза паспорта инженерный расчёт рабочие чертежи</span></footer>
+</body>
+</html>
