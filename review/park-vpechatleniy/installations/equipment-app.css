@@ -269,3 +269,7 @@ body[data-folder="installations"] .intro {margin:24px 0 22px;}
 body[data-folder="installations"] .intro h1 {font-size:clamp(34px,4.2vw,58px);letter-spacing:-.05em;}
 .equipment-planner .ep-map-head {display:block;}
 .equipment-planner .ep-map-head p {margin:.35rem 0 0;}
+.equipment-planner .ep-open-3d{align-self:flex-start;flex-shrink:0;min-height:44px;padding:.7rem 1rem;border:1px solid #728b69;border-radius:10px;background:#284536;color:#f4f8ee;font:inherit;font-weight:650;cursor:pointer}
+.equipment-planner .ep-open-3d:hover{background:#375940}
+.equipment-planner .ep-open-3d:focus-visible{outline:3px solid #b3d797;outline-offset:3px}
+@media(max-width:700px){.equipment-planner .ep-heading{flex-wrap:wrap;gap:.8rem}.equipment-planner .ep-open-3d{width:100%}}

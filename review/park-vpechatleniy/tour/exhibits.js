@@ -174,6 +174,7 @@ export async function createExhibitSystem({
     const initial = initialLayout?.instances.find(row => row.instanceId === p.instanceId);
     return {
       instanceId: p.instanceId, exhibitId: entry.row.id, name: entry.row.name,
+      equipmentPlanId: entry.root.userData.equipmentPlanId || null, managedEquipment: Boolean(entry.root.userData.equipmentPlanId),
       ordinal: entry.row.placements.indexOf(p) + 1, copies: entry.row.requestedInstances,
       zone: p.zone, floating: p.floating, x: p.x, y: p.baseY, z: p.z,
       rotationY: p.rotationY, scaleFactor: p.scaleFactor, visible: p.visible, floorY: p.floorY,
@@ -193,6 +194,7 @@ export async function createExhibitSystem({
       schema: 'park-exhibit-layout', version: 1, units: 'meters', upAxis: 'Y',
       instances: listInstances().map(p => ({
         instanceId: p.instanceId, exhibitId: p.exhibitId, floating: p.floating,
+        equipmentPlanId: p.equipmentPlanId, managedEquipment: p.managedEquipment,
         x: rounded(p.x), y: rounded(p.y), z: rounded(p.z), rotationY: rounded(p.rotationY),
         scaleFactor: p.scaleFactor, visible: p.visible, floorY: p.floorY,
       })),
@@ -510,8 +512,8 @@ export async function createExhibitSystem({
   // Complete exhibition assemblies participate in the same editor, persistence
   // and placement transaction as the imported models. Register before binding
   // navigation; there is no unguarded asynchronous addition after visitors start.
-  function addAssembly({ id, name, root, placement, collisionParts, supportSamples = null, provenance = 'parametric-exhibition-assembly' }) {
-    if (disposed || placementGuard) throw new Error('Добавление разделов возможно до запуска посетителей.');
+  function addAssembly({ id, name, root, placement, collisionParts, supportSamples = null, provenance = 'parametric-exhibition-assembly', equipmentPlanId = null, initiallyVisible = true, notify = true }) {
+    if (disposed || (placementGuard && (!equipmentPlanId || initiallyVisible))) throw new Error('Новые объекты добавляются скрытыми и включаются после проверки проходов.');
     if (!root?.isObject3D || !/^[A-Z][A-Z0-9_-]{1,35}$/.test(id) || records.some(row => row.id === id)) throw new TypeError('Неверная или повторная сборка.');
     const instanceId = placement.id || id + '-1';
     if (instances.has(instanceId)) throw new TypeError('Повторный экземпляр.');
@@ -528,7 +530,7 @@ export async function createExhibitSystem({
     if (!evidence.valid) return { ok:false, error:'Раздел не установлен: не подтверждены все точки пола.', evidence };
     const baseY = evidence.floorY + (placement.offsetY || 0);
     Object.assign(root.userData, { exhibitId:id, exhibitName:name, instanceId, zone:placement.zone || id,
-      floating:Boolean(placement.floating), editorVisible:true, assembly:true, provenance });
+      floating:Boolean(placement.floating), editorVisible:Boolean(initiallyVisible), assembly:true, provenance, equipmentPlanId });
     if (collisionParts) root.userData.collisionParts = collisionParts.map(part => ({...part,min:[...part.min],max:[...part.max]}));
     root.name = name + ' · ' + instanceId;
     root.traverse(node => { if (node.isMesh) Object.assign(node.userData, {
@@ -540,11 +542,41 @@ export async function createExhibitSystem({
     const p = { instanceId, zone:placement.zone || id, x:placement.x,z:placement.z,
       requestedFloorY:placement.floorY,floorY:evidence.floorY,baseY:rounded(baseY),
       rotationY:placement.rotationY || 0, floating:Boolean(placement.floating),offsetY:placement.offsetY || 0,
-      scaleFactor:1,visible:true,dimensions:vectorData(size),worldBounds:boxData(getPlacementBounds(size,placement,baseY)),...evidence };
+      scaleFactor:1,visible:Boolean(initiallyVisible),dimensions:vectorData(size),worldBounds:boxData(getPlacementBounds(size,placement,baseY)),...evidence };
     row.placements.push(p); records.push(row);
-    root.position.set(p.x,p.baseY,p.z);root.rotation.y=p.rotationY;group.add(root);roots.push(root);
+    root.position.set(p.x,p.baseY,p.z);root.rotation.y=p.rotationY;root.visible=p.visible;group.add(root);roots.push(root);
     root.updateMatrixWorld(true); instances.set(instanceId,{root,row,placement:p,size,supportSamples});
-    initialLayout=getLayout();emit();return {ok:true,instanceId,evidence};
+    if(!equipmentPlanId)initialLayout=getLayout();
+    else if(initialLayout)initialLayout.instances.push(getLayout().instances.find(row=>row.instanceId===instanceId));
+    if(notify)emit();return {ok:true,instanceId,evidence};
+  }
+
+  /** New plan roots are registered invisible, then moved/shown together through
+   * the same visitor/navigation transaction as the ordinary 3D editor. */
+  function updateInstances(changes, { notify = true, source = 'equipment-plan' } = {}) {
+    try {
+      if (!Array.isArray(changes)) throw new TypeError('Нужен список изменений оборудования.');
+      const seen = new Set(), prepared = [];
+      for (const change of changes) {
+        const id = change.instanceId, entry = instances.get(id);
+        if (!entry || seen.has(id)) throw new Error('Неизвестный или повторный экземпляр оборудования.');
+        seen.add(id);
+        const result = prepareUpdate(entry, change.patch || change, change.options || {});
+        if (!result.ok) return { ...result, instanceId: id };
+        prepared.push(result);
+      }
+      const result = commitPlacements(prepared, source);
+      if (result.ok && notify) emit();
+      return { ...result, count: result.ok ? prepared.length : 0 };
+    } catch (error) { return { ok: false, error: error.message || String(error) }; }
+  }
+  function manageInstance(id, equipmentPlanId, name) {
+    const entry = instances.get(id);
+    if (!entry || !equipmentPlanId) return false;
+    entry.root.userData.equipmentPlanId = equipmentPlanId;
+    if(name){entry.row.name=name;entry.root.userData.exhibitName=name;entry.root.name=name;}
+    entry.root.traverse(node => { if(node.isMesh)node.userData.equipmentPlanId=equipmentPlanId; });
+    return true;
   }
 
   function refreshInstanceGeometry(id, { collisionParts, extendFootprint = false } = {}) {
@@ -571,12 +603,16 @@ export async function createExhibitSystem({
 
   return {
     group, roots, materials, getState, listInstances, getLayout, applyLayout, updateInstance, pickFloor,
-    addAssembly, refreshInstanceGeometry,
+    addAssembly, refreshInstanceGeometry, updateInstances, manageInstance,
+    isManagedInstance(id) { return Boolean(instances.get(id)?.root.userData.equipmentPlanId); },
     floorAt(x,z,y){return floorAt(x,z,y);},
     checkSupport(size,placement){return supportEvidence(new THREE.Vector3(...size),placement);},
     getInstance(id) { const entry = instances.get(id); return entry ? instanceData(entry) : null; },
     getInstanceRoot(id) { return instances.get(id)?.root || null; },
-    resetLayout(options) { return applyLayout(initialLayout, options); },
+    resetLayout(options) {
+      const current=getLayout(),initial=new Map((initialLayout?.instances||[]).map(row=>[row.instanceId,row]));
+      return applyLayout({...current,instances:current.instances.map(row=>row.managedEquipment?row:(initial.get(row.instanceId)||row))},options);
+    },
     setPlacementGuard(guard) {
       if (guard !== null && typeof guard !== 'function') throw new TypeError('Нужна функция проверки расстановки.');
       placementGuard = guard;
@@ -592,7 +628,7 @@ export async function createExhibitSystem({
     },
     getBounds(id) {
       if (disposed) return null;
-      const selected = id ? roots.filter(root => root.userData.exhibitId === id || root.userData.instanceId === id) : roots;
+      const selected = roots.filter(root => root.visible && (!id || root.userData.exhibitId === id || root.userData.instanceId === id));
       if (!selected.length) return null;
       const bounds = new THREE.Box3();
       selected.forEach(root => { root.updateWorldMatrix(true, true); bounds.union(new THREE.Box3().setFromObject(root)); });
@@ -619,4 +655,3 @@ export async function createExhibitSystem({
     },
   };
 }
-

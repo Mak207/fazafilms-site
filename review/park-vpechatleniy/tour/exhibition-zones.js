@@ -100,26 +100,32 @@ export function createIcebreakerEnvironment({panoramaUrl='assets/zones/arctic-au
   }
   const ice=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,0),iceMaterial,positions.length),matrix=new THREE.Matrix4(),rotation=new THREE.Quaternion();
   positions.forEach((p,i)=>{rotation.setFromEuler(new THREE.Euler(.15,p.angle,.2));matrix.compose(new THREE.Vector3(p.x,top+.015,p.z),rotation,new THREE.Vector3(p.size,p.size*.45,p.size));ice.setMatrixAt(i,matrix);});ice.instanceMatrix.needsUpdate=true;group.add(ice);
-  const led=layout.led,panels=led.panels||[led],totalWidth=panels.reduce((n,p)=>n+p.width,0),screens=[];
+  const led=layout.led,panels=led.panels||[led],totalWidth=panels.reduce((n,p)=>n+p.width,0),screens=[],equipmentParts=[];
   const panoramaImage=new Image();panoramaImage.src=panoramaUrl;
   const media=createLiveMedia({theme:'arctic',image:panoramaImage,width:2048,height:640,showText:false,fps:12});
   let u=0;
   for(const [index,panel]of panels.entries()){
     const centre=local(panel.center),angle=panel.rotationY-yaw,frameWidth=panel.frameWidth||panel.width,frameHeight=panel.frameHeight||panel.height;
-    const frame=new THREE.Mesh(new THREE.BoxGeometry(frameWidth,frameHeight,panel.thickness),dark);
+    const holder=new THREE.Group();holder.position.set(centre[0],0,centre[2]);holder.rotation.y=angle;group.add(holder);
+    const partStart=parts.length,owned=[];
+    const frame=new THREE.Mesh(new THREE.BoxGeometry(frameWidth,frameHeight,panel.thickness),dark);owned.push(frame);
     frame.position.fromArray(centre);frame.rotation.y=angle;frame.name=`Полярная ночь · LED ${index+1}`;group.add(frame);
     const faceGeometry=new THREE.PlaneGeometry(panel.width,panel.height),uv=faceGeometry.getAttribute('uv');
     for(let i=0;i<uv.count;i++)uv.setX(i,(u+uv.getX(i)*panel.width)/totalWidth);
     const face=new THREE.Mesh(faceGeometry,new THREE.MeshBasicMaterial({map:media.texture,side:THREE.FrontSide,toneMapped:false}));
     face.position.fromArray(centre);face.rotation.y=angle;face.translateZ(panel.thickness/2+.002);face.name=`Полярная панорама · продолжение ${index+1}`;
-    face.userData={installationId:'lider',installationAction:'arctic-toggle',mediaTheme:'arctic'};group.add(face);pickables.push(face);
+    face.userData={installationId:'lider',installationAction:'arctic-toggle',mediaTheme:'arctic'};group.add(face);pickables.push(face);owned.push(face);
     parts.push({id:`Арктическая LED-панорама ${index+1}`,min:[-frameWidth/2,-frameHeight/2,-panel.thickness/2],max:[frameWidth/2,frameHeight/2,panel.thickness/2],position:centre,rotationY:angle,socialTarget:false});
     const legHeight=centre[1]-frameHeight/2;
     for(const x of[-frameWidth/2+.35,frameWidth/2-.35]){
       const p=[centre[0]+Math.cos(angle)*x,legHeight/2,centre[2]-Math.sin(angle)*x];
-      const leg=new THREE.Mesh(new THREE.CylinderGeometry(.055,.07,legHeight,10),dark);leg.position.fromArray(p);leg.name='LED · опора до реального пола';group.add(leg);
+      const leg=new THREE.Mesh(new THREE.CylinderGeometry(.055,.07,legHeight,10),dark);leg.position.fromArray(p);leg.name='LED · опора до реального пола';group.add(leg);owned.push(leg);
       parts.push({id:`LED ${index+1} · опора ${x<0?1:2}`,min:[-.07,-legHeight/2,-.07],max:[.07,legHeight/2,.07],position:p,socialTarget:false});
     }
+    group.updateWorldMatrix(true,true);for(const node of owned)holder.attach(node);
+    parts.splice(partStart);
+    const collisionParts=[{id:'screen',min:[-frameWidth/2,legHeight,-panel.thickness/2],max:[frameWidth/2,legHeight+frameHeight,panel.thickness/2],socialTarget:false},...[-frameWidth/2+.35,frameWidth/2-.35].map((x,i)=>({id:'leg-'+i,min:[x-.07,0,-.07],max:[x+.07,legHeight,.07],socialTarget:false}))];
+    equipmentParts.push({sourceId:panel.id||`lider-led-${index+1}`,root:holder,collisionParts});
     screens.push({id:panel.id||`lider-led-${index+1}`,title:'Полярная ночь и льды',theme:'arctic',width:panel.width,height:panel.height,frameWidth,frameHeight,cabinets:panel.cabinets,group:frame,face,media,panoramaRange:[u/totalWidth,(u+panel.width)/totalWidth]});u+=panel.width;
   }
   // The restored GLB is complete. Its full envelope blocks visitors and editing
@@ -131,7 +137,7 @@ export function createIcebreakerEnvironment({panoramaUrl='assets/zones/arctic-au
   const overviewPose={position:local([4,11.4,31]),target:local([-7,9.5,42.4]),fov:55};
   const interiorPose={position:local([.5,8.85,38.3]),target:local([-7.1,9.7,43]),fov:62};
   let time=0;
-  return {group,pickables,pickTargets:pickables,screens,getCollisionParts:()=>parts,overviewPose,interiorPose,
+  return {group,pickables,pickTargets:pickables,screens,getEquipmentParts:()=>equipmentParts.slice(),getCollisionParts:()=>parts,overviewPose,interiorPose,
     interact(action){if(action==='arctic-toggle')return media.interact('toggle');if(action==='arctic-next')return media.interact('next');return false;},
     update(dt){time+=Math.max(0,dt);const changed=media.update(dt);water.roughness=.24+Math.sin(time*.5)*.025;lights.forEach((light,i)=>{light.intensity=12+Math.sin(time*.35+i)*2;});return changed;},
     getState:()=>({iceBlocks:positions.length,panoramas:1,physicalLedSurfaces:panels.length,ledSizeMetres:[totalWidth,Math.max(...panels.map(p=>p.height))],ledAreaSquareMetres:panels.reduce((a,p)=>a+p.width*p.height,0),cabinetCount:panels.reduce((a,p)=>a+(p.cabinets?.count||0),0),panels:panels.map(p=>({id:p.id,width:p.width,height:p.height,frameWidth:p.frameWidth,frameHeight:p.frameHeight,cabinets:p.cabinets,center:p.center})),continuousPanorama:true,media:media.getState(),iceIslandSquareMetres:layout.iceIsland.area,sourceZone:'northwest-main',screenContent:'Полярная ночь, дрейфующие льды и движущееся северное сияние',originalGLBUnchanged:true,wholeOriginalShip:true,addedWheelhouse:false,shipLengthMetres:layout.ship.length,lighting:'Local cold-blue and aurora-green lights only; park lighting unchanged'}),

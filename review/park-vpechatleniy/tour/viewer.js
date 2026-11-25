@@ -1,5 +1,6 @@
 import { createZoneMap } from './zone-map.js?v=park-floor-colors-20261125';
-import { createExhibitionZones } from './zones-controller.js?v=park-exhibition-20261125-r2';
+import { createExhibitionZones } from './zones-controller.js?v=equipment-3d-20261125';
+import { loadEquipmentSceneLink } from '../installations/equipment-link.js?v=equipment-3d-20261125';
 import * as THREE from 'three';
 import { GLTFLoader } from '/golden-ring/interactives/vendor/three-0.180/GLTFLoader.js';
 import { MeshoptDecoder } from '/golden-ring/tour/vendor/meshopt_decoder.mjs';
@@ -8,8 +9,8 @@ import { createTramStationControls } from './tram-station-controls.js?v=park-exh
 import { createTramSystem, MONORAIL_ROUTE_CONFIG, MONORAIL_BOARDING_GATE } from './tram-system.js?v=park-exhibition-20261125-r2';
 import { KTX2Loader } from './vendor/ktx2/loaders/KTX2Loader.js';
 import { RoomEnvironment } from './vendor/RoomEnvironment.js';
-import { createExhibitSystem } from './exhibits.js?v=park-exhibition-20261125-r2';
-import { createExhibitEditor } from './exhibit-editor.js?v=park-exhibition-20261125-r2';
+import { createExhibitSystem } from './exhibits.js?v=equipment-3d-20261125';
+import { createExhibitEditor } from './exhibit-editor.js?v=equipment-3d-20261125';
 import { startParkCrowd } from './crowd/park-crowd.js?v=park-exhibition-20261125-r2';
 import { createDynamicObstacleAdapter } from './crowd/dynamic-obstacles.js?v=park-exhibition-20261125-r2';
 import { attachIcebreakerDetails } from './icebreaker-details.js?v=park-exhibition-20261125-r2';
@@ -24,6 +25,7 @@ const loading = $('loading'), progress = $('progress'), detail = $('loading-deta
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Keep the initial request while selection handlers update the address bar.
 const initialNavigation=new URLSearchParams(location.search);
+window.addEventListener('beforeunload',()=>equipmentLink?.dispose(),{once:true});
 const exhibitQuality=initialNavigation.get('quality')==='high'?'high':'fast';
 const exhibitManifestPath=exhibitQuality==='high'?'assets/exhibits/manifest.json':'assets/exhibits/preview/manifest.json';
 const diagnostics = window.__parkViewer = { state:'loading', errors:[], source:'выставка_3D вид.dwg' };
@@ -59,6 +61,17 @@ Object.defineProperty(diagnostics,'zoneMap',{get:()=>zoneMap?.getState()||{ready
 let exhibits=null,icebreakerAccess=null,exhibitProgress={state:'waiting',loadedObjects:0,placedInstances:0,objects:[]};
 Object.defineProperty(diagnostics,'exhibits',{get:()=>exhibits?.getState()||exhibitProgress});
 let exhibitEditor=null,editingInstanceId=null,editCutawayTimer=null,dynamicObstacles=null,visitorPlacementReady=false,placementNotice=null;
+let equipmentLink=null,pendingEquipmentFocus=null;
+Object.defineProperty(diagnostics,'equipmentPlan',{enumerable:true,get:()=>exhibitionZones?.equipmentPlanState?.()||{active:false}});
+function focusEquipmentFromPlan(request){
+  pendingEquipmentFocus=request;
+  if(!inspectionReady||!rgoZones||!exhibitionZones)return;
+  pendingEquipmentFocus=null;
+  if(request.id){if(exhibitionZones.focusEquipment(request.id))return;}
+  if(request.hallId){exhibitionZones.focus('rgo-'+request.hallId.replace('RGO-',''));return;}
+  if(request.regionId){exhibitionZones.focusRegion(request.regionId);return;}
+  exhibitionZones.focus('all');
+}
 Object.defineProperty(diagnostics,'editor',{enumerable:true,get:()=>exhibitEditor?.getState()||{ready:false,selectedInstanceId:null,dragging:false}});
 Object.defineProperty(diagnostics,'dynamicObstacles',{enumerable:true,get:()=>dynamicObstacles?.getState()||{ready:false}});
 const viewerUI=initViewerUI();
@@ -510,19 +523,20 @@ $('tram-camera').onchange=()=>{
 
 function syncExhibitControls(state){
   exhibitProgress=state;
-  const count=state.placedInstances||0,total=state.requestedInstances||0;
+  const count=state.visibleInstances??state.placedInstances??0,total=state.requestedInstances||0;
   const noun=count%100>=11&&count%100<=14?'экспонатов':count%10===1?'экспонат':[2,3,4].includes(count%10)?'экспоната':'экспонатов';
   $('exhibit-status').textContent=state.state==='loading'?'Загружаем экспонаты · '+count+' / '+total:state.state==='error'?'Экспонаты не загрузились':!inspectionReady?'Подготавливаем осмотр экспонатов…':'В парке · '+count+' '+noun;
   const select=$('exhibit-select'),selected=select.value;
-  const options=[...select.options].map(option=>option.value);
+  select.replaceChildren(new Option('Все экспонаты','all'));
   for(const row of state.objects||[]){
-    if(row.status!=='loaded'||!row.placements?.length||options.includes(row.id))continue;
+    const visible=(row.placements||[]).filter(item=>item.visible!==false);
+    if(row.status!=='loaded'||!visible.length)continue;
     const option=document.createElement('option');option.value=row.id;
-    option.textContent=row.name+(row.placements.length>1?' · '+row.placements.length+' шт.':'');select.append(option);
+    option.textContent=row.name+(visible.length>1?' · '+visible.length+' шт.':'');select.append(option);
   }
   select.append(...[...select.options].filter(option=>option.value!=='all').sort((a,b)=>a.value.localeCompare(b.value)));
   const interactive=Boolean(exhibits)&&inspectionReady&&count>0;
-  select.value=selected||'all';select.disabled=!interactive;
+  select.value=[...select.options].some(option=>option.value===selected)?selected:'all';select.disabled=!interactive;
   $('exhibit-visible').disabled=!interactive;$('exhibit-visible').setAttribute('aria-pressed',String(state.visible!==false));
   root.querySelector('[data-view="exhibits"]').disabled=!interactive;
   needsRender=true;
@@ -550,6 +564,17 @@ async function startExhibits(loader,monorailReady){
         else focusExhibit(id);
         $('view-name').textContent=label;diagnostics.selectedExhibit=id;diagnostics.view='section';
       }});
+    equipmentLink=await loadEquipmentSceneLink({
+      onSnapshot(snapshot){
+        const result=exhibitionZones.setEquipmentPlan(snapshot);
+        if(result.ok){exhibitEditor?.refresh?.();rgoZones?.refresh?.();syncExhibitControls(exhibits.getState());needsRender=true;}
+        return result;
+      },
+      onPreview:(id,position)=>{const result=exhibitionZones.previewEquipment(id,position);if(result?.ok)needsRender=true;return result;},
+      onPreviewEnd:id=>{exhibitionZones.cancelEquipmentPreview(id);needsRender=true;},
+      onFocus:focusEquipmentFromPlan,
+      onError(message){$('scene-notice').textContent=message;$('scene-notice').hidden=false;needsRender=true;}
+    });
     zoneMap=await createZoneMap({scene,getNavigation:()=>exhibitionZones?.getNavigation(),requestRender:()=>{needsRender=true;},onFocus:(position,target,label,regionId)=>{
       leaveRgoView();
       exhibitEditor?.clearSelection();editingInstanceId=null;clearExhibitInspection();stopFollowing();
@@ -582,7 +607,9 @@ async function startExhibits(loader,monorailReady){
       needsRender=true;
     }});
     exhibitEditor=createExhibitEditor({system:exhibits,scene,camera,controls,domElement:canvas,deferRestore:true,
-      onFocus:id=>focusExhibit(id),onEditStart:beginExhibitEdit,onEditEnd:endExhibitEdit,onChange:exhibitEditorChanged});
+      onFocus:id=>focusExhibit(id),onEditStart:beginExhibitEdit,onEditEnd:endExhibitEdit,onChange:exhibitEditorChanged,
+      validateManagedChange:(id,position)=>equipmentLink?.validateMove(id,position)||{ok:false,error:'План оборудования ещё загружается.'},
+      onManagedChange:(id,position)=>equipmentLink?.move(id,position)});
     exhibitEditor.setEnabled(false);
     syncExhibitControls(exhibits.getState());
     const state=exhibits.getState();
@@ -827,6 +854,7 @@ async function startRgoLayer(){
     if((choice||requestedObject||requestedMedia)&&!matchMedia('(max-width: 600px)').matches){
       viewerUI.openPanel('rgo-panel');rgoZones.setVisible(true);
     }else rgoZones.setVisible(false);
+    if(pendingEquipmentFocus)focusEquipmentFromPlan(pendingEquipmentFocus);
   }catch(error){
     diagnostics.errors.push('RGO: '+(error?.message||String(error)));
     $('rgo-toggle').disabled=false;const message=document.createElement('p');message.className='rgo-load-error';

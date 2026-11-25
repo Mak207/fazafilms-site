@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { TransformControls } from './vendor/TransformControls.js';
-import { getPlacementBounds } from './exhibits.js?v=park-exhibition-20261125-r2';
+import { getPlacementBounds } from './exhibits.js?v=equipment-3d-20261125';
 
 const STORAGE_KEY = 'park-exhibit-layout-v3-exhibition-20261125';
 const PREVIOUS_STORAGE_KEY = 'park-exhibit-layout-v2-source-zones-20261124';
@@ -11,12 +11,58 @@ const number = value => Math.round(value * 1000) / 1000;
 const dimensionFormat = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 3 });
 const dimensionLabel = dimensions => dimensions.map(value => dimensionFormat.format(value)).join(' × ') + ' м';
 const sameLayout = (a, b) => JSON.stringify(a.instances) === JSON.stringify(b.instances);
+const editKeys = ['x', 'y', 'z', 'rotationY', 'scaleFactor', 'visible', 'floorY'];
+const managedRow = (row, isManaged = () => false) => Boolean(row?.managedEquipment || row?.equipmentPlanId || isManaged(row?.instanceId));
+const rowChanged = (before, after) => editKeys.some(key => before?.[key] !== after?.[key]);
+
+/** Old exhibit saves may predate added equipment. The current plan owns its poses. */
+export function mergeSavedExhibitLayout(saved, current, isManaged = () => false) {
+  if (saved?.schema !== 'park-exhibit-layout' || saved.version !== 1 || saved.units !== 'meters' || saved.upAxis !== 'Y' || !Array.isArray(saved.instances)) {
+    throw new Error('Нужен файл расстановки Парка впечатлений, версия 1, метры / Y вверх.');
+  }
+  const known = new Map(current.instances.map(row => [row.instanceId, row])), rows = new Map();
+  let preservedEquipment = 0;
+  for (const row of saved.instances) {
+    if (!row || typeof row.instanceId !== 'string' || rows.has(row.instanceId)) throw new Error('Неизвестный или повторный экземпляр в сохранении.');
+    rows.set(row.instanceId, row);
+    if (managedRow(row, isManaged) || managedRow(known.get(row.instanceId), isManaged)) { preservedEquipment++; continue; }
+    if (!known.has(row.instanceId)) throw new Error('В сохранении есть неизвестный экспонат.');
+  }
+  return {
+    layout: { ...current, instances: current.instances.map(row => ({ ...((managedRow(row, isManaged) ? null : rows.get(row.instanceId)) || row) })) },
+    preservedEquipment,
+  };
+}
+
+/** Apply only an edit's changed objects; a newer plan keeps its other positions. */
+export function rebaseExhibitHistory(target, current, changedIds) {
+  const ids = new Set(changedIds), rows = new Map(target.instances.map(row => [row.instanceId, row]));
+  return { ...current, instances: current.instances.map(row => {
+    if (row.equipmentPlanId && !row.visible) return { ...row };
+    const previous = ids.has(row.instanceId) && rows.get(row.instanceId);
+    return previous ? { ...row, ...previous, ...(row.equipmentPlanId ? {equipmentPlanId:row.equipmentPlanId, managedEquipment:true} : {}) } : { ...row };
+  }) };
+}
+
+export function changedExhibitIds(before, after) {
+  const rows = new Map(before.instances.map(row => [row.instanceId, row]));
+  return after.instances.filter(row => rows.has(row.instanceId) && rowChanged(rows.get(row.instanceId), row)).map(row => row.instanceId);
+}
+
+export function managedExhibitChanges(before, after) {
+  const ids = new Set(changedExhibitIds(before, after));
+  return after.instances.filter(row => ids.has(row.instanceId) && row.equipmentPlanId).map(row => ({
+    id: row.equipmentPlanId,
+    position: { x:row.x, y:row.y, z:row.z, yaw:row.rotationY, floorId:Number(row.floorY ?? row.y) > 10 ? 'upper' : 'main' },
+  }));
+}
 
 
 /** Independent instance editor. Camera modes and cutaway remain viewer-owned. */
 export function createExhibitEditor({
   system, scene, camera, controls, domElement,
   onFocus = () => {}, onEditStart = () => {}, onEditEnd = () => {}, onChange = () => {},
+  validateManagedChange = () => ({ok:true}), onManagedChange = () => {},
   deferRestore = false,
 }) {
   if (!system?.updateInstance || !scene?.isScene || !camera || !controls || !domElement) {
@@ -40,6 +86,8 @@ export function createExhibitEditor({
   highlight.visible = false;
   scene.add(highlight);
   const cards = new Map(), undo = [], redo = [];
+  const selector = $('editor-instances');
+  let catalogSignature = '', lastRememberRejected = false;
   let enabled = true, disposed = false, selectedId = null, mode = 'move', floorMode = 'auto';
   let drag = null, pendingMove = null, moveFrame = 0, busy = false;
   let gizmoDrag = null, wheelEdit = null, wheelTimer = 0, snap = false;
@@ -86,7 +134,7 @@ export function createExhibitEditor({
   }
 
   function getState() {
-    const instances = system.listInstances();
+    const instances = system.listInstances().filter(row => !managedRow(row, system.isManagedInstance) || row.visible);
     return {
       enabled, open: !panel.hidden, selectedInstanceId: selectedId, mode, floorMode,
       dragging: Boolean(drag || gizmoDrag || wheelEdit), gizmo: { visible: gizmoHelper.visible, mode: gizmo.mode, axis: gizmo.axis, snap }, busy, totalInstances: instances.length,
@@ -101,8 +149,62 @@ export function createExhibitEditor({
 
   function notify() { invoke(onChange, getState()); }
 
+  function syncCatalog() {
+    const items = system.listInstances().filter(row => !managedRow(row, system.isManagedInstance) || row.visible);
+    const signature = items.map(row => [row.instanceId,row.name,row.zone,row.copies,row.ordinal].join('|')).join('\n');
+    if (selectedId && !items.some(row => row.instanceId === selectedId)) { selectedId = null; gizmo.detach(); }
+    if (signature === catalogSignature) return;
+    catalogSignature = signature; cards.clear(); selector.replaceChildren();
+    const placeholder = document.createElement('option'); placeholder.value = ''; placeholder.textContent = 'Выберите объект в списке или в 3D'; selector.append(placeholder);
+    const groups = new Map();
+    for (const item of items) {
+      const zone = item.zone || 'Общие пространства';
+      if (!groups.has(zone)) { const group = document.createElement('optgroup'); group.label = zone; groups.set(zone, group); selector.append(group); }
+      const option = document.createElement('option'); option.value = item.instanceId;
+      option.textContent = item.name + (item.copies > 1 ? ' · ' + item.ordinal : '');
+      groups.get(zone).append(option); cards.set(item.instanceId, option);
+    }
+    selector.value = selectedId || '';
+  }
+
+  function validatePosition(id, position) {
+    try {
+      const result = validateManagedChange(id, position);
+      if (result?.then) return {ok:false,error:'Проверка положения ещё не завершена.'};
+      return result?.ok === false ? result : {ok:true};
+    } catch (error) { return {ok:false,error:error.message || 'Положение оборудования не принято.'}; }
+  }
+
+  function updateEditableInstance(id, patch, options = {}) {
+    const item = system.getInstance(id);
+    if (item?.equipmentPlanId) {
+      if ((patch.scaleFactor !== undefined && patch.scaleFactor !== item.scaleFactor) || (patch.visible !== undefined && patch.visible !== item.visible)) {
+        return {ok:false,error:'Количество оборудования меняется на схеме зоны. Здесь можно переместить и повернуть его.'};
+      }
+      const floorY = options.floorY ?? patch.floorY ?? item.floorY ?? item.y;
+      const result = validatePosition(item.equipmentPlanId, {x:patch.x ?? item.x,z:patch.z ?? item.z,y:patch.y ?? floorY,yaw:patch.rotationY ?? item.rotationY,floorId:floorY > 10 ? 'upper' : 'main'});
+      if (!result.ok) return result;
+    }
+    return system.updateInstance(id, patch, options);
+  }
+
+  function validateChanges(before, after) {
+    for (const change of managedExhibitChanges(before, after)) {
+      const result = validatePosition(change.id, change.position);
+      if (!result.ok) return result;
+    }
+    return {ok:true};
+  }
+
+  function publishChanges(before, after) {
+    for (const change of managedExhibitChanges(before, after)) invoke(onManagedChange, change.id, change.position);
+  }
+
   function renderSelection({ fields = true } = {}) {
+    syncCatalog();
     const item = selectedId && system.getInstance(selectedId);
+    const managed = Boolean(item?.equipmentPlanId);
+    if (managed && mode === 'scale') mode = 'move';
     $('editor-selection').hidden = !item;
     $('editor-empty').hidden = Boolean(item);
     for (const [id, button] of cards) {
@@ -111,12 +213,12 @@ export function createExhibitEditor({
       button.classList.toggle('is-hidden', !current.visible);
       button.classList.toggle('is-modified', current.modified);
       button.textContent = current.name + (current.copies > 1 ? ' · ' + current.ordinal : '') + (current.visible ? '' : ' · скрыт');
-      button.title = `${current.name} · ${id}${current.visible ? '' : ' · скрыт'}`;
+      button.title = current.name + (current.visible ? '' : ' · скрыт');
     }
     $('editor-instances').value = item?.instanceId || '';
     if (item) {
       $('editor-selected-name').textContent = item.name;
-      $('editor-selected-id').textContent = item.instanceId + (item.floating ? ' · подвесной' : item.floorY < 10 ? ' · основной этаж' : ' · антресоль');
+      $('editor-selected-id').textContent = (managed ? '' : item.instanceId + ' · ') + (item.floating ? 'подвесной' : item.floorY < 10 ? 'основной этаж' : 'антресоль');
       if ($('editor-dimensions')) $('editor-dimensions').textContent = dimensionLabel(item.dimensions);
       if ($('editor-instance-note')) {
         $('editor-instance-note').hidden = true;
@@ -124,7 +226,8 @@ export function createExhibitEditor({
       }
       $('editor-visibility').textContent = item.visible ? 'Скрыть' : 'Показать';
       $('editor-visibility').setAttribute('aria-pressed', String(!item.visible));
-      $('editor-floor-row').hidden = item.floating;
+      $('editor-visibility').hidden = managed;
+      $('editor-floor-row').hidden = item.floating || managed;
       $('editor-height-row').hidden = !item.floating;
       $('editor-floor-current').textContent = item.floating ? '' : `Сейчас: ${item.floorY < 10 ? 'основной этаж' : 'антресоль'}`;
       $('editor-gesture-hint').textContent = !item.visible ? 'Нажмите «Показать», чтобы изменить экземпляр.' :
@@ -134,9 +237,10 @@ export function createExhibitEditor({
         item.floating ? 'Тяните объект по горизонтали; зелёная стрелка меняет высоту.' : 'Тяните объект или стрелки. Правая кнопка сдвигает вид, колесо приближает.';
       for (const button of panel.querySelectorAll('[data-editor-mode]')) {
         button.setAttribute('aria-pressed', String(button.dataset.editorMode === mode));
-        button.disabled = !enabled || busy || !item.visible;
+        button.disabled = !enabled || busy || !item.visible || managed && button.dataset.editorMode === 'scale';
       }
       for (const input of $('editor-transform').querySelectorAll('input, button')) input.disabled = !enabled || busy || !item.visible;
+      if ($('editor-scale')) $('editor-scale').disabled = !enabled || busy || !item.visible || managed;
       if (fields) {
         $('editor-x').value = number(item.x);
         $('editor-z').value = number(item.z);
@@ -171,7 +275,8 @@ export function createExhibitEditor({
         localStorage.setItem(key, rejectedSavedRaw);
         rejectedSavedBackupKey = key;
       }
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...system.getLayout(), savedAt: new Date().toISOString() }));
+      const layout = system.getLayout();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...layout, instances:layout.instances.filter(row => !managedRow(row, system.isManagedInstance)), equipmentSource:'zone-plan', savedAt: new Date().toISOString() }));
       saveState = 'saved'; saveError = null;
       $('editor-save-status').textContent = 'Сохранено в этом браузере · одинаково для 2K и 4K';
     } catch (error) {
@@ -181,13 +286,22 @@ export function createExhibitEditor({
   }
 
   function remember(before, action) {
+    lastRememberRejected = false;
     const after = system.getLayout();
     if (sameLayout(before, after)) return false;
-    undo.push(before);
+    const changedIds = changedExhibitIds(before, after), validation = validateChanges(before, after);
+    if (!validation.ok) {
+      const restored = system.applyLayout(rebaseExhibitHistory(before, after, changedIds), {notify:false});
+      lastRememberRejected = true;
+      setMessage(validation.error + (restored.ok ? ' Положение восстановлено.' : ' ' + restored.error), true);
+      return false;
+    }
+    undo.push({before, after, changedIds});
     if (undo.length > MAX_UNDO) undo.shift();
     redo.length = 0;
     lastAction = action; lastError = null;
     persist();
+    publishChanges(before, after);
     return true;
   }
 
@@ -241,6 +355,7 @@ export function createExhibitEditor({
 
   function setMode(value) {
     if (!['view', 'move', 'rotate', 'scale'].includes(value)) return;
+    if (value === 'scale' && system.getInstance(selectedId)?.equipmentPlanId) return;
     if (drag) finishDrag(false);
     if (gizmoDrag) finishGizmo(false);
     finishWheel();
@@ -293,9 +408,9 @@ export function createExhibitEditor({
     domElement.classList.remove('editing-exhibit');
     if (commit) {
       remember(current.before, current.mode === 'scale' ? 'Размер экземпляра изменён' : current.mode === 'rotate' ? 'Экземпляр повёрнут' : 'Экземпляр перемещён');
-      setMessage(current.invalid ? 'Позиция с пересечением отклонена. Сохранено последнее допустимое положение.' : 'Изменение сохранено.', current.invalid);
+      if (!lastRememberRejected) setMessage(current.invalid ? 'Позиция с пересечением отклонена. Сохранено последнее допустимое положение.' : 'Изменение сохранено.', current.invalid);
     } else {
-      const result = system.applyLayout(current.before, { notify: false });
+      const result = system.applyLayout(rebaseExhibitHistory(current.before, system.getLayout(), [current.id]), { notify: false });
       setMessage(result.ok ? 'Изменение отменено.' : result.error, !result.ok);
     }
     $('editor-message').setAttribute('aria-live', 'polite');
@@ -321,7 +436,7 @@ export function createExhibitEditor({
     }
     const candidate = { ...item, ...patch };
     if (patch.scaleFactor !== undefined) candidate.dimensions = item.originalDimensions.map(n => n * patch.scaleFactor);
-    const result = system.updateInstance(current.id, patch, options);
+    const result = updateEditableInstance(current.id, patch, options);
     current.invalid = !result.ok;
     renderSelection();
     if (!result.ok) { updateHighlight(candidate, true); setMessage(result.error + ' Оставлено последнее допустимое положение.', true); }
@@ -340,14 +455,14 @@ export function createExhibitEditor({
   function wheelScale(event) {
     if (drag || gizmoDrag) { event.preventDefault(); event.stopImmediatePropagation(); return; }
     const item = selectedId && system.getInstance(selectedId);
-    if (!enabled || busy || panel.hidden || mode !== 'scale' || !item?.visible || event.ctrlKey || event.metaKey) return;
+    if (!enabled || busy || panel.hidden || mode !== 'scale' || !item?.visible || item.equipmentPlanId || event.ctrlKey || event.metaKey) return;
     event.preventDefault(); event.stopImmediatePropagation();
     if (!wheelEdit) { wheelEdit = { id: selectedId, before: system.getLayout() }; invoke(onEditStart, selectedId); }
     const options = { floorMode: 'auto', notify: false };
     if (!item.floating) options.floorY = item.floorY;
     const step = THREE.MathUtils.clamp(-event.deltaY * .0015, -.12, .12);
     const scaleFactor = THREE.MathUtils.clamp(item.scaleFactor * Math.exp(step), .05, 30);
-    const result = system.updateInstance(selectedId, { scaleFactor }, options);
+    const result = updateEditableInstance(selectedId, { scaleFactor }, options);
     renderSelection();
     setMessage(result.ok ? 'Размер: ' + dimensionLabel(result.instance.dimensions) : result.error, !result.ok);
     if (wheelTimer) clearTimeout(wheelTimer);
@@ -452,7 +567,7 @@ export function createExhibitEditor({
       if (snap) { patch.x = Math.round(patch.x * 4) / 4; patch.z = Math.round(patch.z * 4) / 4; }
       candidate = { ...item, ...patch, y: item.floating ? item.y : options.floorY };
     }
-    const result = system.updateInstance(drag.id, patch, options);
+    const result = updateEditableInstance(drag.id, patch, options);
     drag.invalid = !result.ok; drag.lastResult = result;
     renderSelection();
     if (!result.ok) {
@@ -500,10 +615,10 @@ export function createExhibitEditor({
     if (commit) {
       const changed = remember(current.before, current.mode === 'scale' ? 'Размер экземпляра изменён' :
         current.mode === 'rotate' ? 'Экземпляр повёрнут' : 'Экземпляр перемещён');
-      setMessage(current.invalid ? 'Неподдерживаемая позиция отклонена. Сохранена последняя допустимая.' :
+      if (!lastRememberRejected) setMessage(current.invalid ? 'Неподдерживаемая позиция отклонена. Сохранена последняя допустимая.' :
         changed ? (saveState === 'saved' ? 'Расстановка сохранена в этом браузере.' : 'Изменения применены. Для сохранения скачайте JSON.') : 'Положение не изменено.', current.invalid);
     } else {
-      const result = system.applyLayout(current.before, { notify: false });
+      const result = system.applyLayout(rebaseExhibitHistory(current.before, system.getLayout(), [current.id]), { notify: false });
       if (!result.ok) remember(current.before, 'Сохранена последняя допустимая позиция');
       setMessage(result.ok ? 'Перемещение отменено.' : 'Отмена недоступна: ' + result.error + ' Сохранена текущая допустимая позиция.', !result.ok);
     }
@@ -525,28 +640,19 @@ export function createExhibitEditor({
 
   function travelHistory(from, to, label) {
     if (!enabled || busy || drag || gizmoDrag || wheelEdit || !from.length) return;
-    const target = from.at(-1), before = system.getLayout();
+    const entry = from.at(-1), before = system.getLayout();
+    const target = rebaseExhibitHistory(from === undo ? entry.before : entry.after, before, entry.changedIds);
     invoke(onEditStart, selectedId);
-    const result = system.applyLayout(target, { notify: false });
+    const validation = validateChanges(before, target);
+    const result = validation.ok ? system.applyLayout(target, { notify: false }) : validation;
     if (result.ok) {
-      from.pop(); to.push(before); persist(); lastAction = label; lastError = null;
+      from.pop(); to.push(entry); persist(); publishChanges(before, system.getLayout()); lastAction = label; lastError = null;
       setMessage(label + (saveState === 'saved' ? '. Расстановка сохранена.' : '. Для сохранения скачайте JSON.'));
     } else setMessage(result.error, true);
     renderSelection(); invoke(onEditEnd, selectedId); notify();
   }
 
-  const selector = $('editor-instances');
-  const placeholder = document.createElement('option');
-  placeholder.value = ''; placeholder.textContent = 'Выберите объект в списке или в 3D';
-  selector.append(placeholder);
-  const groups = new Map();
-  for (const item of system.listInstances()) {
-    const zone = item.zone || 'Общие пространства';
-    if (!groups.has(zone)) { const group = document.createElement('optgroup'); group.label = zone; groups.set(zone, group); selector.append(group); }
-    const option = document.createElement('option'); option.value = item.instanceId;
-    option.textContent = item.name + (item.copies > 1 ? ' · ' + item.ordinal : '');
-    groups.get(zone).append(option); cards.set(item.instanceId, option);
-  }
+  syncCatalog();
   selector.addEventListener('change', () => { if (selector.value) selectInstance(selector.value); else clearSelection(); }, { signal });
   $('editor-snap')?.addEventListener('click', () => { snap = !snap; syncGizmo(); notify(); }, { signal });
   document.addEventListener('park-edit-instance', event => {
@@ -566,7 +672,7 @@ export function createExhibitEditor({
   $('editor-visibility').addEventListener('click', () => {
     const item = system.getInstance(selectedId);
     if (!item) return;
-    transact(item.visible ? 'Экземпляр скрыт' : 'Экземпляр показан', () => system.updateInstance(selectedId, { visible: !item.visible }, { notify: false }));
+    transact(item.visible ? 'Экземпляр скрыт' : 'Экземпляр показан', () => updateEditableInstance(selectedId, { visible: !item.visible }, { notify: false }));
   }, { signal });
   $('editor-transform').addEventListener('submit', event => {
     event.preventDefault();
@@ -578,8 +684,8 @@ export function createExhibitEditor({
     if (!values.every(Number.isFinite)) { setMessage('Введите числовые координаты и угол.', true); return; }
     const patch = { x: values[0], z: values[1], rotationY: radians(values[2]) };
     if (item.floating) patch.y = values[3];
-    if (scaleInput) patch.scaleFactor = scaleInput.valueAsNumber;
-    transact('Координаты обновлены', () => system.updateInstance(selectedId, patch, { floorMode, notify: false }));
+    if (scaleInput && !item.equipmentPlanId) patch.scaleFactor = scaleInput.valueAsNumber;
+    transact('Координаты обновлены', () => updateEditableInstance(selectedId, patch, { floorMode, notify: false }));
   }, { signal });
   $('editor-undo').addEventListener('click', () => travelHistory(undo, redo, 'Изменение отменено'), { signal });
   $('editor-redo').addEventListener('click', () => travelHistory(redo, undo, 'Изменение повторено'), { signal });
@@ -602,7 +708,7 @@ export function createExhibitEditor({
       const layout = JSON.parse(await file.text());
       if (disposed) return;
       busy = false;
-      transact('Расстановка импортирована', () => system.applyLayout(layout, { notify: false }));
+      transact('Расстановка экспонатов импортирована', () => system.applyLayout(mergeSavedExhibitLayout(layout, system.getLayout(), system.isManagedInstance).layout, { notify: false }));
     } catch (error) { setMessage('Не удалось прочитать JSON: ' + error.message, true); }
     finally { busy = false; if (!disposed) { renderSelection(); notify(); } }
   }, { signal });
@@ -657,7 +763,7 @@ export function createExhibitEditor({
         if(previous){retainRejectedSave(previous);saveState='source-zones-updated';$('editor-save-status').textContent='Показана обновлённая расстановка. Прежнюю можно скачать.';}
         return { ok: true, restored: false, previousLayoutPreserved:Boolean(previous) };
       }
-      const layout = JSON.parse(saved);
+      const layout = mergeSavedExhibitLayout(JSON.parse(saved), system.getLayout(), system.isManagedInstance).layout;
       invoke(onEditStart, null); editing = true;
       const result = system.applyLayout(layout, { notify: false });
       if (!result.ok) {
@@ -690,6 +796,10 @@ export function createExhibitEditor({
 
   return {
     getState, selectInstance, clearSelection, restoreSavedLayout, setMode, setOpen,
+    refresh() {
+      if (disposed) return;
+      renderSelection({fields:!drag && !gizmoDrag && !wheelEdit}); notify();
+    },
     setEnabled(value) {
       enabled = Boolean(value); toggle.disabled = !enabled;
       if (!enabled) setOpen(false);
