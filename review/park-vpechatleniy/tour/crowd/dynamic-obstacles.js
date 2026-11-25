@@ -224,7 +224,10 @@ export function createDynamicObstacleAdapter({ exhibits, onChange = () => {} }) 
             const local=new THREE.Matrix4().compose(new THREE.Vector3(...position),new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),yaw),new THREE.Vector3(1,1,1));
             partMatrix=matrix.clone().multiply(local);
           }
-          proxies.push(boxToObstacle(dataBox(part),partMatrix,{...metadata,id:id+'::'+partId,socialTarget:part.socialTarget!==false}));
+          // Movement reserves (for example the swept VR area) still belong to
+          // the exhibit guard, but empty reserved air does not block sight.
+          proxies.push(boxToObstacle(dataBox(part),partMatrix,{...metadata,id:id+'::'+partId,socialTarget:part.socialTarget!==false,
+            collisionKind:part.kind||'solid',occludesSight:part.occludesSight??part.kind!=='interactive-safety-zone'}));
         }
       }else proxies.push(boxToObstacle(localBounds(root),matrix,{...metadata,id}));
     }

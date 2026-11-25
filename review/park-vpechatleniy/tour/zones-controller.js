@@ -1,3 +1,4 @@
+import {createWalkInteractionAPI} from './walk-media.js?v=park-walk-20261125';
 import {createEquipmentPlanScene} from './equipment-plan-scene.js?v=equipment-3d-20261125';
 import {createExhibitionEquipment} from './exhibition-equipment.js?v=park-exhibition-20261125-r2';
 import {elevateAircraftOnColumns} from './aircraft-supports.js?v=park-exhibition-20261125-r2';
@@ -96,7 +97,7 @@ export async function createExhibitionZones({exhibits,loader,camera,requestRende
       if(!part.collisionParts)root.traverse(node=>{
         const b=node.userData.collisionBounds;if(!b)return;
         const box=new THREE.Box3(new THREE.Vector3(...b.min),new THREE.Vector3(...b.max)).applyMatrix4(new THREE.Matrix4().multiplyMatrices(inverse,node.matrixWorld));
-        collisionParts.push({id:node.uuid,min:box.min.toArray(),max:box.max.toArray(),socialTarget:node.userData.kind!=='interactive-safety-zone'});
+        collisionParts.push({id:node.uuid,min:box.min.toArray(),max:box.max.toArray(),kind:node.userData.kind||'solid',occludesSight:node.userData.occludesSight,socialTarget:node.userData.kind!=='interactive-safety-zone'});
       });
       root.removeFromParent();root.position.set(0,0,0);root.rotation.set(0,0,0);
       const id=('EP_'+part.sourceId).toUpperCase().replace(/[^A-Z0-9_-]/g,'_').slice(0,35),floorY=exhibits.getInstance(zone.id)?.floorY||7.2;
@@ -157,7 +158,7 @@ export async function createExhibitionZones({exhibits,loader,camera,requestRende
   const fixedRegions={'Z01-1':'rgo','Z02-1':'volga','Z03-1':'siberia','Z04-1':'siberia','O12-1':'northwest','O16-1':'south'};
   for(const item of rgoMovables)fixedRegions[item.placement.id]='rgo';
   const fallbackRegions={O01:'ural',O02:'ural',O03:'ural',O04:'ural',O07:'central-square',O08:'central-square'};
-  let selected=null,selectedRegion=null,selectedObject=null,selectedMedia=null,pointerStart=null,lastNavigation='';
+  let selected=null,selectedRegion=null,selectedObject=null,selectedMedia=null,pointerStart=null,lastNavigation='',walkMode=false;
   function makeSelect(id,title){const label=document.createElement('label');label.className='exhibition-select-label';const caption=document.createElement('span');caption.textContent=title;const input=document.createElement('select');input.id=id;input.setAttribute('aria-label',title);label.append(caption,input);hallControl.after(label);return {label,input};}
   const mediaSelect=makeSelect('zone-media-select','Экраны и интерактивы'),objectSelect=makeSelect('zone-object-select','Экспонат');
   const status=document.createElement('p');status.className='exhibition-media-status';status.id='zone-media-status';mediaSelect.label.after(status);
@@ -239,9 +240,10 @@ export async function createExhibitionZones({exhibits,loader,camera,requestRende
   document.getElementById('zone-overview').onclick=()=>selectedRegion==='rgo'?focus('rgo',{inside:false}):focusRegion(selectedRegion);
   document.getElementById('zone-close').onclick=()=>{bar.hidden=true;};
   edit.onclick=()=>{const id=selectedMedia?media.records.get(selectedMedia)?.instanceId:selectedObject?.startsWith('rgo-item:')?objects('rgo').find(i=>i.id===selectedObject)?.instanceId:selectedObject||zones.get(selected)?.id;if(id)document.dispatchEvent(new CustomEvent('park-edit-instance',{detail:{instanceId:id}}));};
+  const walkInteractions=createWalkInteractionAPI({getMediaRecords:()=>media.records,getAllMediaRecords:()=>equipmentPlan?.active?equipmentPlan.pool:mediaRecords,zones,exhibits,actionLabels,requestRender});
   const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),canvas=document.getElementById('canvas');
-  function onDown(event){if(event.button===0||event.pointerType!=='mouse')pointerStart={id:event.pointerId,x:event.clientX,y:event.clientY,time:performance.now()};}
-  function onUp(event){if(!pointerStart||pointerStart.id!==event.pointerId)return;const start=pointerStart;pointerStart=null;if(Math.hypot(event.clientX-start.x,event.clientY-start.y)>4||performance.now()-start.time>500||canvas.classList.contains('editing-exhibit'))return;
+  function onDown(event){if(walkMode)return;if(event.button===0||event.pointerType!=='mouse')pointerStart={id:event.pointerId,x:event.clientX,y:event.clientY,time:performance.now()};}
+  function onUp(event){if(walkMode){pointerStart=null;return;}if(!pointerStart||pointerStart.id!==event.pointerId)return;const start=pointerStart;pointerStart=null;if(Math.hypot(event.clientX-start.x,event.clientY-start.y)>4||performance.now()-start.time>500||canvas.classList.contains('editing-exhibit'))return;
     const rect=canvas.getBoundingClientRect();pointer.set((event.clientX-rect.left)/rect.width*2-1,1-(event.clientY-rect.top)/rect.height*2);raycaster.setFromCamera(pointer,camera);
     const zone=zones.get(selected),targets=[...(equipmentPlan?.active?equipmentPlan.pickTargets:[...equipment.pickTargets,...embeddedPickTargets]),...(zone?.module.pickTargets||zone?.module.pickables||[])];const hit=raycaster.intersectObjects(targets,true).find(hit=>{for(let n=hit.object;n;n=n.parent)if(!n.visible)return false;return true;});if(!hit)return;
     if(hit.object.userData.equipmentId){const id=hit.object.userData.equipmentId;if(selectedMedia===id)act('media-next');else focusEquipment(id,{navigate:false});return;}
@@ -249,15 +251,17 @@ export async function createExhibitionZones({exhibits,loader,camera,requestRende
   }
   canvas.addEventListener('pointerdown',onDown);canvas.addEventListener('pointerup',onUp);
   return {focus,focusRegion,focusObject,focusEquipment,act,getNavigation,equipment,media,rgo,zones,assemblies,assets,
-    setEquipmentPlan(snapshot){const result=equipmentPlan.sync(snapshot);if(result.ok){if(selectedMedia&&!equipmentPlan.records.has(selectedMedia))selectedMedia=null;updatePanel();emitNavigation();}return result;},
+    getWalkTargets:walkInteractions.getWalkTargets,activateWalkTarget:walkInteractions.activateWalkTarget,getWalkMedia:walkInteractions.getWalkMedia,setWalkVideos:walkInteractions.setWalkVideos,pauseWalkVideos:walkInteractions.pauseWalkVideos,
+    setWalkMode(value){walkMode=Boolean(value);pointerStart=null;},
+    setEquipmentPlan(snapshot){const result=equipmentPlan.sync(snapshot);if(result.ok){walkInteractions.sync();if(selectedMedia&&!equipmentPlan.records.has(selectedMedia))selectedMedia=null;updatePanel();emitNavigation();}return result;},
     previewEquipment:(id,position)=>equipmentPlan.preview(id,position),
     cancelEquipmentPreview:id=>equipmentPlan.cancelPreview(id),
     equipmentPlanState:()=>equipmentPlan.getState(),
     getEquipmentPlanPose:id=>equipmentPlan.getPose(id),
     hidePanel(){bar.hidden=true;pointerStart=null;},
     refreshNavigation(){updatePanel();},
-    update(dt){let changed=false;for(const module of modules)if(module.update?.(dt,camera))changed=true;return changed;},
+    update(dt){let changed=walkInteractions.updateWalkMedia();for(const module of modules)if(module.update?.(dt,camera))changed=true;return changed;},
     getState:()=>({ready:true,selected,selectedRegion,selectedObject,selectedMedia,modelsLoaded:assets.size,assetErrors:errors,equipment:equipment.getState(),navigation:getNavigation(),assemblies:assemblies.map(({id,evidence})=>({id,matchedSamples:evidence.matchedSamples,requiredSamples:evidence.requiredSamples})),zones:[...zones.entries()].map(([id,zone])=>({...zone.module.getState(),id,name:zone.name,instanceId:zone.id}))}),
-    dispose(){canvas.removeEventListener('pointerdown',onDown);canvas.removeEventListener('pointerup',onUp);modules.forEach(m=>m.dispose?.());},
+    dispose(){walkInteractions.dispose();canvas.removeEventListener('pointerdown',onDown);canvas.removeEventListener('pointerup',onUp);modules.forEach(m=>m.dispose?.());},
   };
 }
