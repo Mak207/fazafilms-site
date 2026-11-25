@@ -34,3 +34,10 @@ html[data-walking=true] #view-caption,html[data-walking=true] #scene-notice,html
 @media(pointer:coarse){.walk-movement{display:grid}.walk-target{bottom:132px}.walk-key-hint{display:none}}
 @media(max-width:700px){.workspace-tabs{grid-template-columns:repeat(4,minmax(0,1fr));width:100%;gap:4px}.workspace-tab{min-height:44px}.walk-hud{top:8px;left:8px;right:8px;gap:5px}.walk-location{padding:6px 8px;max-width:46%}.walk-location span{font-size:.75rem}.walk-location strong{font-size:.875rem}.walk-hud button{font-size:.8125rem;min-height:44px;padding:6px 9px}.walk-feedback{top:72px;font-size:.8125rem}.walk-panel{width:calc(100% - 16px)}.walk-target{bottom:125px;max-width:calc(100% - 20px);padding:9px 11px}.walk-target>strong{font-size:.9375rem}.walk-movement{display:grid;left:10px;bottom:10px;grid-template-columns:repeat(3,62px);grid-template-rows:46px 46px;gap:4px}.walk-movement button{min-height:46px}.walk-media-dialog{padding:8px}.walk-media-card{padding:12px}.walk-video-choose{align-items:start}.walk-video-choose span{font-size:.8125rem}}
 @media(max-height:560px) and (orientation:landscape){.walk-target{left:auto;right:12px;bottom:12px;transform:none;max-width:48%}.walk-media-card{padding:10px}#walk-media-canvas{max-height:43vh}.walk-instructions{display:none}.walk-movement{grid-template-rows:40px 40px}.walk-movement button{min-height:40px}}
+
+/* The calculation page owns zone selection and fullscreen; keep its embedded view about walking. */
+html[data-installations-walk=true] #viewer{grid-template-rows:minmax(0,1fr)}
+html[data-installations-walk=true] .viewer-header,
+html[data-installations-walk=true] .viewer-toolbar,
+html[data-installations-walk=true] #walk-change-zone{display:none!important}
+html[data-installations-walk=true] .walk-location{max-width:75%}

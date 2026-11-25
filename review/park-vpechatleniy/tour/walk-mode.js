@@ -105,7 +105,7 @@ export async function createWalkMode({
     if (active) url.searchParams.set('walk', zoneId); else url.searchParams.delete('walk');
     history.replaceState(null, '', url);
   }
-  function start(id = ui.walk_zone.value) {
+  function start(id = ui.walk_zone.value, { focus = true } = {}) {
     const zone = zones.get(id); if (!zone || disposed) return { ok: false, reason: 'unknown-zone' };
     clearInput();
     const spawn = world.spawnNear({ x: zone.x, z: zone.z, level: zone.level, polygons: zone.polygons, maxDistance: 24 });
@@ -124,7 +124,7 @@ export async function createWalkMode({
     if (Math.hypot(zone.x - spawn.x, zone.z - spawn.z) < .5) yaw = 0;
     pitch = -.04; paused = false; target = null; targetSignature = ''; validationTimer = 0;
     setUi(); feedback(''); closePanels?.(); updateCamera(); updateTarget(); writeUrl();
-    canvas.focus({ preventScroll: true });
+    if (focus) canvas.focus({ preventScroll: true });
     document.dispatchEvent(new CustomEvent('park-walk-change', { detail: { active, zoneId, level: position.level } }));
     return { ok: true, position: { ...position }, zoneId };
   }
@@ -184,7 +184,7 @@ export async function createWalkMode({
     return item;
   }
   async function activate(id = target?.id, action) {
-    if (!active || !id || mediaId) return { ok: false };
+    if (blockedInput() || !id) return { ok: false };
     const item = stillReachable(id);
     if (!item) { feedback('Подойдите ближе к экрану или интерактиву.'); return { ok: false }; }
     const selectedAction = action || item.actions?.find(row => row.id === 'toggle' || row.id === 'activate')?.id || item.actions?.[0]?.id || 'toggle';
@@ -195,6 +195,7 @@ export async function createWalkMode({
       const token = (operations.get(id) || 0) + 1; operations.set(id, token);
       const startingZone = zoneId;
       const result = await controller.activateWalkTarget(id, selectedAction);
+      if (paused || document.hidden) { pauseOtherVideos(); return result; }
       if (!active || zoneId !== startingZone || operations.get(id) !== token) return result;
       lastInteraction = { id, action: selectedAction, ok: Boolean(result?.ok) };
       feedback(result?.message || (result?.ok ? '' : 'Не удалось включить объект. Попробуйте ещё раз.'));
@@ -203,6 +204,7 @@ export async function createWalkMode({
   }
 
   function openMedia(id) {
+    if (!active || paused || document.hidden) return false;
     const item = stillReachable(id), media = controller.getWalkMedia(id);
     if (!item || !media?.source) { feedback('На этом объекте пока нет экрана для просмотра.'); return false; }
     clearInput(); mediaFocus = document.activeElement; mediaId = id; mediaDraw = 1;
@@ -249,7 +251,7 @@ export async function createWalkMode({
     if (media.error) ui.walk_video_status.textContent = media.error;
   }
   async function chooseVideo(file) {
-    if (!file || !mediaId) return;
+    if (!file || !mediaId || !active || paused || document.hidden) return;
     if (!/^video\//.test(file.type) && !/\.(mp4|webm|mov|m4v|ogv)$/i.test(file.name)) {
       ui.walk_video_status.textContent = 'Выберите видеофайл MP4 или WebM.'; return;
     }
@@ -263,6 +265,7 @@ export async function createWalkMode({
     ui.walk_video_status.textContent = 'Видео открыто на этом экране до закрытия страницы.';
     const token = (operations.get(id) || 0) + 1; operations.set(id, token);
     const play = await controller.activateWalkTarget(id, 'play');
+    if (paused || document.hidden) { pauseOtherVideos(); return; }
     if (!active || mediaId !== id || operations.get(id) !== token) return;
     if (!play?.ok && play?.message) ui.walk_video_status.textContent = play.message;
     renderMedia(true); requestRender();
@@ -276,6 +279,19 @@ export async function createWalkMode({
         controller.activateWalkTarget(id, 'pause').catch(() => {});
       }
     }
+  }
+
+  function setPaused(value) {
+    paused = Boolean(value); clearInput();
+    if (paused) {
+      pauseOtherVideos();
+      ui.walk_target.hidden = ui.walk_crosshair.hidden = ui.walk_movement.hidden = true;
+    } else if (active) {
+      validationTimer = 1; targetSignature = '';
+      // Resume the same viewpoint; neither media nor walking keys restart automatically.
+      update(0);
+    }
+    requestRender();
   }
 
   function update(dt) {
@@ -336,26 +352,32 @@ export async function createWalkMode({
   ui.walk_toggle.addEventListener('click', clearInput, { signal });
   ui.walk_media_close.addEventListener('click', () => closeMedia(), { signal });
   ui.walk_media_play.addEventListener('click', async () => {
+    if (!active || paused || document.hidden) return;
     clearInput(); const id = mediaId; if (!id) return;
     if (controller.getWalkMedia(id)?.kind === 'video' && !controller.getWalkMedia(id).playing) pauseOtherVideos(id);
     const token = (operations.get(id) || 0) + 1; operations.set(id, token);
     const result = await controller.activateWalkTarget(id, 'toggle');
+    if (paused || document.hidden) { pauseOtherVideos(); return; }
     if (!active || mediaId !== id || operations.get(id) !== token) return;
     if (result?.message) ui.walk_video_status.textContent = result.message;
     renderMedia(true); requestRender();
   }, { signal });
   ui.walk_media_mute.addEventListener('click', () => {
+    if (!active || paused || document.hidden) return;
     const media = controller.getWalkMedia(mediaId); if (media?.kind === 'video') media.source.muted = !media.source.muted;
     renderMedia(true);
   }, { signal });
   for (const [button, action] of [[ui.walk_media_next, 'next'], [ui.walk_media_restart, 'reset']]) button.addEventListener('click', async () => {
+    if (!active || paused || document.hidden) return;
     const id = mediaId; if (!id) return;
     const result = await controller.activateWalkTarget(id, action);
+    if (paused || document.hidden) { pauseOtherVideos(); return; }
     if (!active || mediaId !== id) return;
     if (result?.message) ui.walk_video_status.textContent = result.message;
     renderMedia(true); requestRender();
   }, { signal });
   ui.walk_media_seek.addEventListener('input', () => {
+    if (!active || paused || document.hidden) return;
     const media = controller.getWalkMedia(mediaId);
     if (media?.kind === 'video' && Number.isFinite(media.source.duration)) media.source.currentTime = Math.max(0, Math.min(media.source.duration, Number(ui.walk_media_seek.value)));
     renderMedia(true); requestRender();
@@ -399,7 +421,7 @@ export async function createWalkMode({
   for (const name of ['pointercancel', 'lostpointercapture']) canvas.addEventListener(name, event => pointers.delete(event.pointerId), { signal });
   canvas.addEventListener('wheel', event => { if (active) event.preventDefault(); }, { passive: false, signal });
   document.addEventListener('keydown', event => {
-    if (!active) return;
+    if (!active || paused || document.hidden) return;
     if (mediaId) {
       if (event.key === 'Escape') { event.preventDefault(); event.stopImmediatePropagation(); closeMedia(); }
       if (event.key === 'Tab') {
@@ -423,18 +445,20 @@ export async function createWalkMode({
   window.addEventListener('blur', clearInput, { signal });
   document.addEventListener('visibilitychange', () => { clearInput(); if (document.hidden) pauseOtherVideos(); }, { signal });
   window.addEventListener('message', event => {
+    if (new URL(location.href).searchParams.get('embedded') === 'installations') return;
     if (event.origin === location.origin && event.source === window.parent && event.data?.type === 'park-tour-visibility') {
-      paused = !event.data.visible; clearInput(); if (paused) pauseOtherVideos();
+      setPaused(!event.data.visible);
     }
   }, { signal });
   document.addEventListener('focusin', event => { if (active && editable(event.target)) clearInput(); }, { signal });
   ui.walk_toggle.disabled = false; ui.walk_start.disabled = false; setUi();
 
   return {
-    start, stop, update, activate, openMedia, closeMedia, clearInput, world,
+    start, stop, update, activate, openMedia, closeMedia, clearInput, setPaused, world,
+    getZones: () => [...zones.values()].map(({ id, name, level, regionId, hallId }) => ({ id, name, level, regionId, hallId })),
     refreshLayout() { if (!active) return; clearInput(); world.sync(true); validationTimer = 1; update(0); targetSignature = ''; updateTarget(); },
     get active() { return active; },
-    getState: () => ({ ready: true, active, zoneId, position: position ? { ...position } : null,
+    getState: () => ({ ready: true, active, paused, zoneId, position: position ? { ...position } : null,
       eyeHeight: EYE_HEIGHT, yaw, pitch, distance: totalDistance, collisionCount, lookChanges,
       targetId: target?.id || null, mediaId, lastInteraction, zoneCount: zones.size,
       world: world.getState(), keysHeld: keys.size + heldButtons.size }),

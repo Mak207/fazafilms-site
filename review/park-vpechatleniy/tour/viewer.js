@@ -1,6 +1,7 @@
 import { createZoneMap } from './zone-map.js?v=park-floor-colors-20261125';
 import { createExhibitionZones } from './zones-controller.js?v=park-walk-20261125';
-import { createWalkMode } from './walk-mode.js?v=park-walk-20261125';
+import { createWalkMode } from './walk-mode.js?v=installations-walk-20261125';
+import { createInstallationsWalkBridge } from './installations-walk-bridge.js?v=installations-walk-20261125';
 import { loadEquipmentSceneLink } from '../installations/equipment-link.js?v=equipment-3d-20261125';
 import * as THREE from 'three';
 import { GLTFLoader } from '/golden-ring/interactives/vendor/three-0.180/GLTFLoader.js';
@@ -26,7 +27,9 @@ const loading = $('loading'), progress = $('progress'), detail = $('loading-deta
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Keep the initial request while selection handlers update the address bar.
 const initialNavigation=new URLSearchParams(location.search);
-window.addEventListener('beforeunload',()=>equipmentLink?.dispose(),{once:true});
+const installationsWalkEmbedded=initialNavigation.get('embedded')==='installations'&&window.parent!==window;
+if(installationsWalkEmbedded)document.documentElement.dataset.installationsWalk='true';
+window.addEventListener('beforeunload',()=>{equipmentLink?.dispose();installationsWalkBridge.dispose();},{once:true});
 const exhibitQuality=initialNavigation.get('quality')==='high'?'high':'fast';
 const exhibitManifestPath=exhibitQuality==='high'?'assets/exhibits/manifest.json':'assets/exhibits/preview/manifest.json';
 const diagnostics = window.__parkViewer = { state:'loading', errors:[], source:'выставка_3D вид.dwg' };
@@ -67,6 +70,8 @@ let exhibitEditor=null,editingInstanceId=null,editCutawayTimer=null,dynamicObsta
 let equipmentLink=null,pendingEquipmentFocus=null;
 Object.defineProperty(diagnostics,'equipmentPlan',{enumerable:true,get:()=>exhibitionZones?.equipmentPlanState?.()||{active:false}});
 function focusEquipmentFromPlan(request){
+  // The embedded walk has its own selected-zone channel. General 3D focus must not steal its camera.
+  if(installationsWalkEmbedded)return;
   pendingEquipmentFocus=request;
   if(!inspectionReady||!rgoZones||!exhibitionZones)return;
   pendingEquipmentFocus=null;
@@ -109,10 +114,16 @@ const camera = new THREE.PerspectiveCamera(43, 1, 0.05, 4000);
 camera.position.set(90,70,100);
 const viewDirections = {overview:new THREE.Vector3(1.9,1.12,.72), top:new THREE.Vector3(0,1,.001), front:new THREE.Vector3(0,.16,1), back:new THREE.Vector3(-1,.55,-1.25)};
 const viewNames = {overview:'Общий вид',top:'Вид сверху',front:'Вид спереди',back:'С другой стороны'};
+const installationsWalkBridge=createInstallationsWalkBridge({onVisibility(visible){
+  active=visible;
+  if(visible){window.dispatchEvent(new Event('resize'));needsRender=true;}
+}});
+Object.defineProperty(diagnostics,'installationsWalk',{enumerable:true,get:()=>installationsWalkBridge.getState()});
 
 function fail(error) {
   const message = error?.message || String(error);
   diagnostics.errors.push(message);diagnostics.state='error';root.dataset.state='error';
+  installationsWalkBridge.error('Не удалось загрузить прогулку. Обновите страницу, чтобы повторить.');
   loading.hidden=false;$('loading-title').textContent='Не удалось открыть 3D-модель';
   detail.textContent='Проверьте соединение и повторите загрузку.';$('retry').hidden=false;
   console.error('Park viewer:',error);
@@ -350,6 +361,7 @@ $('fullscreen').onclick=async()=>{
 };
 document.addEventListener('fullscreenchange',()=>{$('fullscreen').textContent=document.fullscreenElement?'Свернуть':'На весь экран';needsRender=true;});
 window.addEventListener('message',event=>{
+  if(installationsWalkEmbedded)return;
   if(event.origin!==location.origin||event.source!==window.parent||event.data?.type!=='park-tour-visibility')return;
   active=Boolean(event.data.visible);if(active){window.dispatchEvent(new Event('resize'));needsRender=true;}
 });
@@ -945,6 +957,7 @@ function startWalkingMode(){
     });
     diagnostics.startWalk=id=>walkMode.start(id);
     diagnostics.stopWalk=()=>walkMode.stop();
+    if(installationsWalkEmbedded){installationsWalkBridge.attach(walkMode);return walkMode;}
     const requested=initialNavigation.get('walk');
     if(requested){
       viewerUI.openPanel('walk-panel');
@@ -955,6 +968,7 @@ function startWalkingMode(){
     diagnostics.errors.push('Прогулка: '+(error?.message||String(error)));
     $('walk-toggle').disabled=false;
     $('walk-status').textContent='Не удалось подготовить прогулку. Обновите страницу, чтобы загрузить проходы и объекты.';
+    installationsWalkBridge.error($('walk-status').textContent);
     return null;
   });
   return walkStartPromise;
