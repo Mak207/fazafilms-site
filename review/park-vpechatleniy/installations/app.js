@@ -1,1 +1,1 @@
-import './equipment-app.js?v=installations-walk-20261125';
+import './equipment-app.js?v=walk-split-20261125';

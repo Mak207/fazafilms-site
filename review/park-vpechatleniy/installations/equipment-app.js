@@ -1,7 +1,7 @@
 import { createDefaultState, normalizeState, setQuantity, getInstances, getSummary, getContentPlan, getUnitMetrics } from './equipment-model.js?v=equipment-3d-20261125';
-import { createEquipmentMap } from './equipment-map.js?v=equipment-3d-20261125';
+import { createEquipmentMap } from './equipment-map.js?v=walk-split-20261125';
 import {equipmentVariant, readEquipmentVariant, createEquipmentChannel, encodeEquipmentVariant, consumeEquipmentShare} from './equipment-state.js?v=equipment-3d-20261125';
-import {createEquipmentWalk} from './equipment-walk.js?v=installations-walk-20261125';
+import {createEquipmentWalk} from './equipment-walk.js?v=walk-split-20261125';
 
 const STORAGE_KEY = 'faza.park.equipment-plan.v1';
 const NF = new Intl.NumberFormat('ru-RU', {maximumFractionDigits: 1});
@@ -23,6 +23,7 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
   let scope = {regionId:'rgo', hallId:null, floorId:null}, mapFloor='main';
   let exhibitId = '', selectedId = '', view = 'plan', report = null, map, destroyed = false, announcementTimer, clearAnnouncementTimer;
   let history = [], future = [], lastEdit = null, channel=null, walk=null, applyingRemote=false;
+  let splitMap=null, splitMapPending=null, splitScope=null;
   const abort = new AbortController();
   const url = new URL(locationObject.href);
   const restored=readEquipmentVariant(data,{storage:safeStorage,locationObject,initialState});
@@ -80,7 +81,40 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
   const mapScope = () => ({...scope,floorId:mapFloor,exhibitId:exhibitId||null});
   const walkScope = () => ({regionId:scope.regionId,hallId:scope.hallId,floorId:mapFloor});
   const walkLabel = () => `${scopeName()} · ${mapFloor==='upper'?'Верхний уровень':'Нижний уровень'}`;
-  function updateWalkScope() {walk?.updateScope(walkScope(),walkLabel());}
+  function updateWalkScope() {walk?.updateScope(walkScope(),walkLabel());splitScope=walkScope();syncSplitMap();}
+  const mapState = (nextScope=mapScope(),nextExhibit=exhibitId) => ({data,instances:getInstances(data,state),scope:nextScope,selectedId,positions:state.positions||{},exhibitId:nextExhibit});
+  function syncSplitMap() {if(splitMap)splitMap.update(mapState(splitScope||walkScope(),''));}
+  function selectEquipment(source,id) {
+    selectedId=(typeof id==='string'?id:id?.id)||'';renderSelection();
+    // The source SVG owns its active pointer gesture. Updating it here would
+    // replace the grabbed element on the very first pointerdown.
+    if(source!==map)map?.update(mapState());
+    if(source!==splitMap)syncSplitMap();
+  }
+  function moveEquipment(id,position) {commit({...state,positions:{...state.positions,[id]:position}},{message:'Положение и поворот сохранены на плане и в 3D.'});}
+  function previewEquipment(id,position,meta) {if(meta?.valid!==false)channel?.preview(id,position);else channel?.endPreview(id);}
+  function endEquipmentPreview(id,meta) {channel?.endPreview(id,meta);}
+  function suspendSplitMap() {
+    splitMap?.cancelInteraction?.();
+    // This end barrier must reach the iframe before layout/visibility changes.
+    channel?.endPreview();
+  }
+  function ensureSplitMap(host) {
+    if(splitMap){syncSplitMap();splitMap.refreshLayout?.();return Promise.resolve(splitMap);}
+    if(splitMapPending)return splitMapPending;
+    splitMapPending=Promise.resolve(map?.ready).then(geometry=>{
+      if(destroyed||!walk?.isSplitVisible?.())return null;
+      splitMap=mapFactory(host,{geometry,
+        onSelect:id=>selectEquipment(splitMap,id),onMove:moveEquipment,
+        onPreview:previewEquipment,onPreviewEnd:endEquipmentPreview,
+        onScopeChange:next=>selectScope(next)});
+      // Only the original map accepts automatic placement into the shared
+      // state. Both views read those same positions; neither creates a variant.
+      syncSplitMap();splitMap.refreshLayout?.();return splitMap;
+    }).catch(()=>{if(!destroyed)host.textContent='Не удалось загрузить схему зоны. Обновите страницу.';return null;})
+      .finally(()=>{splitMapPending=null;});
+    return splitMapPending;
+  }
   const scopeInstances = () => getInstances(data,state).filter(i=>matches(i,mapScope()) && (!exhibitId || data.groups.find(g=>g.id===i.groupId)?.exhibitId===exhibitId));
   function announce(text) { clearTimeout(announcementTimer);clearTimeout(clearAnnouncementTimer); $('#ep-announcement').textContent=''; announcementTimer=setTimeout(()=>{if(!destroyed){$('#ep-announcement').textContent=text;clearAnnouncementTimer=setTimeout(()=>{if(!destroyed)$('#ep-announcement').textContent='';},5000);}},100); }
   function savedVariant() {return equipmentVariant(data,state,{scope,mapFloor,exhibitId});}
@@ -172,7 +206,7 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
     report=next;
     const placed=(next.all||next).placed||[],positions={...state.positions};
     for(const item of placed) if((!item.seedPosition||state.positions[item.id]) && Number.isFinite(item.position?.x) && Number.isFinite(item.position?.z))positions[item.id]={...item.position};
-    if(JSON.stringify(positions)!==JSON.stringify(state.positions)){state=normalizeState(data,{...state,positions});persist();}
+    if(JSON.stringify(positions)!==JSON.stringify(state.positions)){state=normalizeState(data,{...state,positions});persist();syncSplitMap();}
     renderPlacement();
   }
   function renderSelection() {
@@ -188,11 +222,14 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
     if(view==='equipment')renderEquipment();if(view==='content')renderContent();if(view==='basis')renderBasis();
     for(const key of views){$(`#ep-panel-${key}`).hidden=key!==view;const tab=$(`#ep-tab-${key}`);tab.setAttribute('aria-selected',String(key===view));tab.tabIndex=key===view?0:-1;}
     root.querySelector('[data-action="undo"]').disabled=!history.length;root.querySelector('[data-action="redo"]').disabled=!future.length;
-    map?.update({data,instances:getInstances(data,state),scope:mapScope(),selectedId,positions:state.positions||{},exhibitId});renderPlacement();renderSelection();
+    walk?.setHistory?.({canUndo:!!history.length,canRedo:!!future.length});
+    map?.update(mapState());syncSplitMap();renderPlacement();renderSelection();
     for(const node of root.querySelectorAll('[data-section]'))if(openSections.has(node.dataset.section))node.open=openSections.get(node.dataset.section);
     if(focus){const replacement=Array.from(root.querySelectorAll('[data-equipment-count]')).find(n=>n.dataset.equipmentCount===focus.group&&n.dataset.location===focus.location);if(replacement){replacement.value=focus.value;replacement.focus({preventScroll:true});}}
   }
-  function selectScope(next) {if(next.floorId)mapFloor=next.floorId;scope={...scope,...next,floorId:null};if(scope.hallId||scope.regionId==='rgo')mapFloor='main';exhibitId='';selectedId='';lastEdit=null;renderSelectors();persist();render(true);updateWalkScope();}
+  function selectScope(next) {if(next.hallId){const hall=data.halls.find(h=>h.id===next.hallId||h.id===`RGO-${next.hallId}`);if(hall)next={...next,hallId:hall.id};}if(next.floorId)mapFloor=next.floorId;scope={...scope,...next,floorId:null};if(scope.hallId||scope.regionId==='rgo')mapFloor='main';exhibitId='';selectedId='';lastEdit=null;renderSelectors();persist();render(true);updateWalkScope();}
+  function undo() {if(!history.length)return;future.push(copy(state));state=history.pop();lastEdit=null;persist();render(true);announce('Последнее изменение отменено.');}
+  function redo() {if(!future.length)return;history.push(copy(state));state=future.pop();lastEdit=null;persist();render(true);announce('Изменение восстановлено.');}
   function selectView(next) {if(!views.includes(next))return;view=next;render(false);}
   function exportCSV() {
     const rows=[['Зона','Зал','Экспонат','Оборудование','Количество','Ширина, м','Высота, м','Экраны','LED-кабинеты','Площадь изображения, м²','Активные места','Контент']];
@@ -234,8 +271,8 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
     const action=b.dataset.action;
     if(action==='3d'){open3D();return;}
     if(action==='add'){const g=data.groups.find(g=>g.id===$('#ep-add-type')?.value);if(g){mapFloor=g.floorId;$('#ep-floor').value=mapFloor;commit(setQuantity(data,state,g.id,1),{refreshEditor:true,message:`Добавлено: ${groupName(g)}.`});selectedId=getInstances(data,state).find(i=>i.groupId===g.id)?.id||'';render(true);}return;}
-    if(action==='undo'&&history.length){future.push(copy(state));state=history.pop();lastEdit=null;persist();render(true);announce('Последнее изменение отменено.');}
-    if(action==='redo'&&future.length){history.push(copy(state));state=future.pop();lastEdit=null;persist();render(true);announce('Изменение восстановлено.');}
+    if(action==='undo')undo();
+    if(action==='redo')redo();
     if(action==='reset')commit(copy(baseline),{refreshEditor:true,message:'Восстановлено начальное оснащение. Его можно вернуть кнопкой «Отменить».'});
     if(action==='share')share();if(action==='csv')exportCSV();
   });
@@ -251,14 +288,17 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
   });
   if(restored.shared&&restored.restored){channel.publish(savedVariant(),{force:true});consumeEquipmentShare(root.ownerDocument.defaultView,locationObject);}
   renderSelectors();
-  walk=walkFactory($('#ep-walk'),{scope:walkScope(),label:walkLabel()});
+  splitScope=walkScope();
+  walk=walkFactory($('#ep-walk'),{scope:splitScope,label:walkLabel(),
+    onSplitChange(visible,{mount,scope:nextScope}){if(visible){splitScope={...nextScope};ensureSplitMap(mount);}},
+    onMapSuspend:suspendSplitMap,onMapResize:()=>splitMap?.refreshLayout?.(),onUndo:undo,onRedo:redo});
   render(true);
-  map=mapFactory($('#ep-map'),{onSelect:id=>{selectedId=typeof id==='string'?id:id?.id;renderSelection();map.update({data,instances:getInstances(data,state),scope:mapScope(),selectedId,positions:state.positions||{},exhibitId});},onMove:(id,position)=>commit({...state,positions:{...state.positions,[id]:position}},{message:'Положение и поворот сохранены на плане и в 3D.'}),onPreview:(id,position,meta)=>{if(meta?.valid!==false)channel.preview(id,position);else channel.endPreview(id);},onPreviewEnd:(id,meta)=>channel.endPreview(id,meta),onScopeChange:next=>selectScope(next),onReport:acceptPlacement});
-  map?.update({data,instances:getInstances(data,state),scope:mapScope(),selectedId,positions:state.positions||{},exhibitId});
+  map=mapFactory($('#ep-map'),{onSelect:id=>selectEquipment(map,id),onMove:moveEquipment,onPreview:previewEquipment,onPreviewEnd:endEquipmentPreview,onScopeChange:next=>selectScope(next),onReport:acceptPlacement});
+  map?.update(mapState());
   if(map?.ready) Promise.resolve(map.ready).then(()=>{if(destroyed)return;report=map.getPlacementReport?.()||report;renderPlacement();}).catch(()=>{if(!destroyed)$('#ep-placement-status').textContent='План здания не загрузился. Количества и ведомость доступны; обновите страницу, чтобы повторить.';});
   if(restoreMessage)announce(restoreMessage);
   channel.request();
-  return {getState:()=>copy(state),getScope:()=>({...scope}),getSummary:summary,setQuantity:(id,n)=>changeQuantity(id,n),selectScope,selectView,getPlacementReport:()=>report,destroy(){destroyed=true;abort.abort();channel?.dispose();walk?.destroy();clearTimeout(announcementTimer);clearTimeout(clearAnnouncementTimer);map?.destroy();root.remove();}};
+  return {getState:()=>copy(state),getScope:()=>({...scope}),getSummary:summary,setQuantity:(id,n)=>changeQuantity(id,n),selectScope,selectView,getPlacementReport:()=>report,destroy(){destroyed=true;abort.abort();walk?.destroy();splitMap?.destroy();map?.destroy();channel?.dispose();clearTimeout(announcementTimer);clearTimeout(clearAnnouncementTimer);root.remove();}};
 }
 
 const mount = typeof document!=='undefined' ? document.getElementById('park-installations') : null;

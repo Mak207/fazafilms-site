@@ -10,7 +10,7 @@ const zones = source.zones.map(row => ({ id: row.id, name: row.title, level: row
 zones.push(...colors.rgo.halls.map(row => ({ id: 'rgo-' + row.id, name: row.name, level: 'main', regionId: 'rgo', hallId: row.id })));
 
 function fixture({ embedded = true } = {}) {
-  const sent = [], displays = [], calls = [], pauses = [];
+  const sent = [], displays = [], calls = [], pauses = [], layouts = [], resets = [];
   const win = new EventTarget(), parent = { postMessage: (data, origin) => sent.push({ data, origin }) };
   win.parent = parent; win.document = new EventTarget(); win.location = new URL('https://fazafilms.ru/review/park-vpechatleniy/tour/' + (embedded ? '?embedded=installations' : ''));
   let current = { active: false, zoneId: null }, fail = false;
@@ -18,11 +18,11 @@ function fixture({ embedded = true } = {}) {
     start(id, options) { calls.push({ id, options }); if (fail) return { ok: false }; current = { ...current, active: true, zoneId: id }; return { ok: true }; },
     setPaused(value) { pauses.push(value); },
   };
-  const bridge = createInstallationsWalkBridge({ windowObject: win, onVisibility: value => displays.push(value) });
+  const bridge = createInstallationsWalkBridge({ windowObject: win, onVisibility: value => displays.push(value), onLayout: value => layouts.push(value), onPreviewReset: reason => resets.push(reason) });
   function receive(kind, payload = {}, { origin = win.location.origin, source = parent } = {}) {
     const event = new Event('message'); Object.assign(event, { origin, source, data: { protocol: INSTALLATIONS_WALK_PROTOCOL, kind, sequence: 1, ...payload } }); win.dispatchEvent(event);
   }
-  return { win, parent, sent, displays, calls, pauses, walk, bridge, receive, fail: value => fail = value };
+  return { win, parent, sent, displays, calls, pauses, layouts, resets, walk, bridge, receive, fail: value => fail = value };
 }
 
 test('every equipment region, floor and RGO hall resolves to its existing walk start', () => {
@@ -96,4 +96,35 @@ test('blocked starts and boot failures produce a usable status without a false s
 test('standalone tour ignores the embed protocol', () => {
   const f = fixture({ embedded: false }); f.bridge.attach(f.walk); f.receive('visibility', { visible: true }); f.receive('zone', { scope: { regionId: 'rgo' } });
   assert.equal(f.bridge.enabled, false); assert.equal(f.calls.length, 0); assert.equal(f.sent.length, 0); assert.equal(f.displays.length, 0); f.bridge.dispose();
+});
+
+test('split layout handshake survives load without changing zone or camera entry', () => {
+  const f = fixture(); f.receive('layout', { sequence: 4, split: true });
+  assert.equal(f.bridge.getState().split, true); assert.equal(f.calls.length, 0);
+  f.bridge.attach(f.walk); f.receive('visibility', { visible: true }); f.receive('zone', { scope: { regionId: 'rgo' } });
+  const entries = f.calls.length;
+  f.receive('layout', { sequence: 5, split: true }); f.receive('layout', { sequence: 6, split: false }); f.receive('layout', { sequence: 7, split: true });
+  assert.deepEqual(f.layouts, [true, true, false, true]); assert.equal(f.calls.length, entries);
+  assert.ok(f.resets.includes('layout')); f.bridge.dispose();
+});
+
+test('layout has its own sequence and rejects foreign sources and malformed values', () => {
+  const f = fixture(); f.receive('visibility', { sequence: 99, visible: true });
+  f.receive('layout', { sequence: 1, split: true }); assert.equal(f.bridge.getState().split, true);
+  f.receive('layout', { sequence: 2, split: false }, { origin: 'https://other.example' });
+  f.receive('layout', { sequence: 2, split: false }, { source: {} });
+  f.receive('layout', { sequence: 2, split: 'false' }); f.receive('layout', { sequence: 0, split: false });
+  assert.deepEqual(f.layouts, [true]); assert.equal(f.bridge.getState().visible, true);
+  f.receive('layout', { sequence: 2, split: false }); assert.equal(f.bridge.getState().split, false); f.bridge.dispose();
+});
+
+test('hide, actual zone changes, restart and walk exit cancel transient previews', () => {
+  const f = fixture(); f.bridge.attach(f.walk); f.receive('visibility', { visible: true }); f.receive('layout', { split: true });
+  f.receive('zone', { scope: { regionId: 'rgo' } }); assert.deepEqual(f.resets, ['zone']);
+  f.receive('zone', { sequence: 2, scope: { regionId: 'rgo' } }); assert.deepEqual(f.resets, ['zone']);
+  f.receive('zone', { sequence: 3, scope: { regionId: 'rgo' }, restart: true });
+  f.receive('visibility', { sequence: 2, visible: false });
+  const event = new Event('park-walk-change'); event.detail = { active: false }; f.win.document.dispatchEvent(event);
+  assert.deepEqual(f.resets, ['zone', 'zone', 'hidden', 'exit']);
+  f.bridge.dispose(); assert.equal(f.resets.at(-1), 'dispose');
 });

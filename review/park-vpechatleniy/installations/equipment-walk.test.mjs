@@ -13,12 +13,17 @@ catch(error){
 }
 const url='https://fazafilms.ru/review/park-vpechatleniy/?v=test#installations';
 const fixtures=new Set();
-function fixture({hidden=false}={}){
+function fixture({hidden=false,fullscreen=false,options={}}={}){
   const win=new Window({url,settings:{disableIframePageLoading:true}});
   win.document.body.innerHTML='<section id="installations"><div id="host"></div></section>';
   const section=win.document.querySelector('section');section.hidden=hidden;
   const host=win.document.getElementById('host');
-  const controller=createEquipmentWalk(host,{scope:{regionId:'rgo',hallId:null,floorId:'main'},label:'РГО · Нижний уровень'});
+  if(fullscreen){
+    Object.defineProperty(win.document,'fullscreenElement',{value:null,writable:true,configurable:true});
+    host.requestFullscreen=async()=>{win.document.fullscreenElement=host;win.document.dispatchEvent(new win.Event('fullscreenchange'));};
+    win.document.exitFullscreen=async()=>{win.document.fullscreenElement=null;win.document.dispatchEvent(new win.Event('fullscreenchange'));};
+  }
+  const controller=createEquipmentWalk(host,{scope:{regionId:'rgo',hallId:null,floorId:'main'},label:'РГО · Нижний уровень',...options});
   const frame=host.querySelector('iframe'),messages=[],child=new Window({url});
   // Iframe navigation is deliberately disabled; this explicit window tests only the transport.
   Object.defineProperty(frame,'contentWindow',{value:child,configurable:true});
@@ -38,16 +43,17 @@ test('hidden installations do not load another scene until the section opens',()
   assert.equal(source.origin,f.win.location.origin);
   assert.equal(source.pathname,'/review/park-vpechatleniy/tour/index.html');
   assert.equal(source.searchParams.get('embedded'),'installations');
-  assert.equal(source.searchParams.get('v'),'installations-walk-20261125');
+  assert.equal(source.searchParams.get('v'),'walk-split-20261125');
 });
 
 test('ready receives the latest selected zone without replacing the iframe',()=>{
   const f=fixture(),frame=f.frame,src=frame.src;
   f.controller.updateScope({regionId:'rgo',hallId:'RGO-05',floorId:'main'},'Полярная наука');
   f.messages.length=0;f.send({kind:'ready'});
-  assert.deepEqual(f.messages.map(x=>x.message.kind),['visibility','zone']);
+  assert.deepEqual(f.messages.map(x=>x.message.kind),['visibility','layout','zone']);
   assert.equal(f.messages[0].message.visible,true);
-  assert.deepEqual(f.messages[1].message.scope,{regionId:'rgo',hallId:'RGO-05',floorId:'main'});
+  assert.equal(f.messages[1].message.split,false);
+  assert.deepEqual(f.messages[2].message.scope,{regionId:'rgo',hallId:'RGO-05',floorId:'main'});
   assert.ok(f.messages.every(x=>x.targetOrigin===f.win.location.origin));
   assert.equal(f.host.querySelector('iframe'),frame);
   assert.equal(frame.src,src);
@@ -104,6 +110,94 @@ test('a child boot error removes the loading cover and a later ready clears it',
   f.send({kind:'ready'});
   assert.equal(f.host.querySelector('[data-walk-restart]').disabled,false);
   assert.equal(f.host.querySelector('.ep-walk-status').textContent,'');
+});
+
+test('the scheme button opens the right-hand pane and closes it without replacing the map or iframe',()=>{
+  const changes=[];
+  const f=fixture({options:{onSplitChange:(visible,context)=>changes.push({visible,...context})}});
+  const frame=f.frame,src=frame.src,mapHost=f.controller.getMapHost(),pane=mapHost.parentElement,stage=f.host.querySelector('.ep-walk-stage'),button=f.host.querySelector('[data-walk-split]');
+  const map=f.win.document.createElement('svg');mapHost.append(map);
+  f.send({kind:'ready'});f.messages.length=0;
+  assert.equal(f.controller.isSplitVisible(),false);
+  assert.equal(pane.hidden,true);
+  assert.equal(button.getAttribute('aria-controls'),pane.id);
+  button.click();
+  assert.equal(f.controller.isSplitVisible(),true);
+  assert.equal(pane.hidden,false);
+  assert.equal(stage.classList.contains('is-split'),true);
+  assert.deepEqual(Array.from(stage.children).map(n=>n.className),['ep-walk-viewport','ep-walk-map-panel']);
+  assert.equal(button.getAttribute('aria-pressed'),'true');
+  assert.equal(button.getAttribute('aria-expanded'),'true');
+  assert.equal(changes[0].mount,mapHost);
+  assert.deepEqual(changes[0].scope,{regionId:'rgo',hallId:null,floorId:'main'});
+  f.controller.setSplitVisible(true);
+  assert.equal(changes.length,1,'Opening an already open pane has no additional effect.');
+  button.click();
+  assert.equal(pane.hidden,true);
+  assert.equal(stage.classList.contains('is-split'),false);
+  assert.equal(button.getAttribute('aria-pressed'),'false');
+  assert.equal(button.getAttribute('aria-expanded'),'false');
+  assert.equal(f.controller.getMapHost(),mapHost);
+  assert.equal(map.parentElement,mapHost);
+  assert.equal(f.host.querySelector('iframe'),frame);
+  assert.equal(frame.src,src);
+  assert.deepEqual(f.messages.map(x=>[x.message.kind,x.message.split]),[['layout',true],['layout',false]]);
+  assert.deepEqual(changes.map(x=>x.visible),[true,false]);
+});
+
+test('layout selected before loading is sent when the child loads and becomes ready',()=>{
+  const f=fixture({hidden:true});f.controller.setSplitVisible(true);
+  assert.equal(f.frame.hasAttribute('src'),false);
+  assert.equal(f.messages.length,0);
+  f.section.hidden=false;f.win.dispatchEvent(new f.win.CustomEvent('park-folder-change'));
+  f.messages.length=0;f.frame.dispatchEvent(new f.win.Event('load'));
+  assert.deepEqual(f.messages.map(x=>x.message.kind),['visibility','layout','zone']);
+  assert.equal(f.messages[1].message.split,true);
+  f.messages.length=0;f.send({kind:'ready'});
+  assert.equal(f.messages.find(x=>x.message.kind==='layout').message.split,true);
+});
+
+test('active gestures can be cancelled before split close, hiding, scope changes and destruction',()=>{
+  const suspensions=[];
+  const f=fixture({options:{onMapSuspend:reason=>suspensions.push({reason,hidden:f.controller.getMapHost().parentElement.hidden})}});
+  f.controller.setSplitVisible(true);f.controller.setSplitVisible(false);
+  f.controller.setSplitVisible(true);f.controller.setVisible(false);f.controller.setVisible(true);
+  f.controller.updateScope({regionId:'rgo',hallId:'RGO-05',floorId:'main'});
+  f.controller.destroy();
+  assert.deepEqual(suspensions.map(x=>x.reason),['split-close','visibility-hidden','scope-change','destroy']);
+  assert.equal(suspensions[0].hidden,false,'The gesture is cancelled while its map is still visible.');
+});
+
+test('fullscreen and resizing keep the same two panes and request a map layout refresh',async()=>{
+  let resizes=0;
+  const f=fixture({fullscreen:true,options:{onMapResize:()=>resizes++}});
+  f.controller.setSplitVisible(true);f.send({kind:'ready'});f.messages.length=0;
+  const frame=f.frame,mapHost=f.controller.getMapHost(),src=frame.src,button=f.host.querySelector('[data-walk-fullscreen]');
+  const before=resizes;button.click();await Promise.resolve();
+  assert.equal(f.win.document.fullscreenElement,f.host);
+  assert.ok(resizes>before);
+  assert.equal(f.controller.isSplitVisible(),true);
+  assert.equal(f.host.querySelector('.ep-walk-stage').classList.contains('is-split'),true);
+  const fullResizes=resizes;f.win.dispatchEvent(new f.win.Event('resize'));assert.ok(resizes>fullResizes);
+  button.click();await Promise.resolve();
+  assert.equal(f.win.document.fullscreenElement,null);
+  assert.equal(f.controller.isSplitVisible(),true);
+  assert.equal(f.controller.getMapHost(),mapHost);
+  assert.equal(f.host.querySelector('iframe'),frame);
+  assert.equal(frame.src,src);
+  assert.equal(f.messages.some(x=>x.message.kind==='zone'),false);
+});
+
+test('undo and redo remain accessible in the map pane and respect the shared history state',()=>{
+  let undo=0,redo=0;
+  const f=fixture({options:{onUndo:()=>undo++,onRedo:()=>redo++}});f.controller.setSplitVisible(true);
+  const undoButton=f.host.querySelector('[data-walk-undo]'),redoButton=f.host.querySelector('[data-walk-redo]');
+  undoButton.click();redoButton.click();assert.equal(undo+redo,0);
+  f.controller.setHistory({canUndo:true,canRedo:false});undoButton.click();redoButton.click();
+  assert.equal(undo,1);assert.equal(redo,0);
+  f.controller.setHistory({canUndo:false,canRedo:true});undoButton.click();redoButton.click();
+  assert.equal(undo,1);assert.equal(redo,1);
+  f.controller.destroy();undoButton.click();redoButton.click();assert.equal(undo+redo,2);
 });
 
 function setGlobals(win){
