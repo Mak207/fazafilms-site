@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
-import {createEquipmentWalk,INSTALLATIONS_WALK_PROTOCOL as protocol} from './equipment-walk.js';
+import {createEquipmentWalk,normalizeWalkView,INSTALLATIONS_WALK_PROTOCOL as protocol} from './equipment-walk.js';
 
 let Window;
 try{({Window}=await import('happy-dom'));}
@@ -43,7 +43,7 @@ test('hidden installations do not load another scene until the section opens',()
   assert.equal(source.origin,f.win.location.origin);
   assert.equal(source.pathname,'/review/park-vpechatleniy/tour/index.html');
   assert.equal(source.searchParams.get('embedded'),'installations');
-  assert.equal(source.searchParams.get('v'),'walk-split-20261125');
+  assert.equal(source.searchParams.get('v'),'walk-location-20261125');
 });
 
 test('ready receives the latest selected zone without replacing the iframe',()=>{
@@ -198,6 +198,61 @@ test('undo and redo remain accessible in the map pane and respect the shared his
   f.controller.setHistory({canUndo:false,canRedo:true});undoButton.click();redoButton.click();
   assert.equal(undo,1);assert.equal(redo,1);
   f.controller.destroy();undoButton.click();redoButton.click();assert.equal(undo+redo,2);
+});
+
+const cameraView=()=>({x:4,y:8.85,z:12,floorId:'main',directionXZ:[0,-1],horizontalFovRad:Math.PI/3,maxDistanceM:24,
+  visiblePolygonXZ:[[4,12],[-2,0],[10,0]],zoneId:'rgo-main'});
+const scopeSequence=f=>f.messages.filter(x=>x.message.kind==='zone').at(-1)?.message.sequence;
+
+test('camera snapshots update independently of iframe layout and normalize their finite coordinates',()=>{
+  const views=[];const f=fixture({options:{onWalkView:view=>views.push(view)}});
+  f.controller.setSplitVisible(true);f.send({kind:'ready'});views.length=0;
+  const frame=f.frame,source=frame.src,count=f.messages.length,view=cameraView();view.directionXZ=[0,-2];
+  f.send({kind:'view',sequence:1,scopeSequence:scopeSequence(f),view});
+  assert.equal(views.length,1);assert.deepEqual(views[0].directionXZ,[0,-1]);assert.equal(views[0].x,4);
+  view.visiblePolygonXZ[0][0]=999;assert.equal(views[0].visiblePolygonXZ[0][0],4,'The callback receives a detached snapshot.');
+  f.send({kind:'view',sequence:2,scopeSequence:scopeSequence(f),view:{...cameraView(),x:5,horizontalFovRad:.7}});
+  assert.equal(views.at(-1).x,5);assert.equal(views.at(-1).horizontalFovRad,.7);
+  assert.equal(f.frame,frame);assert.equal(f.frame.src,source);assert.equal(f.messages.length,count);
+});
+
+test('camera messages reject wrong origins, replay, malformed polygons and obsolete zone sequences',()=>{
+  const views=[];const f=fixture({options:{onWalkView:view=>views.push(view)}});f.controller.setSplitVisible(true);f.send({kind:'ready'});views.length=0;
+  const good={kind:'view',sequence:2,scopeSequence:scopeSequence(f),view:cameraView()};
+  f.send(good,{origin:'https://example.net'});f.send(good,{source:f.win});
+  f.send({...good,sequence:-1});f.send({...good,sequence:1.5});
+  f.send({...good,view:{...cameraView(),x:NaN}});
+  f.send({...good,view:{...cameraView(),directionXZ:[0,0]}});
+  f.send({...good,view:{...cameraView(),visiblePolygonXZ:Array.from({length:129},()=>[0,0])}});
+  assert.equal(views.length,0);f.send(good);assert.equal(views.length,1);
+  f.send(good);f.send({...good,sequence:1});assert.equal(views.length,1);
+  f.controller.updateScope({regionId:'rgo',hallId:'RGO-05',floorId:'main'});assert.equal(views.at(-1),null);
+  const afterClear=views.length;
+  f.send({...good,sequence:3});assert.equal(views.length,afterClear);
+  f.send({...good,sequence:4,scopeSequence:scopeSequence(f),view:{...cameraView(),zoneId:'rgo-05'}});
+  assert.equal(views.at(-1).zoneId,'rgo-05');
+});
+
+test('the walking marker is cleared on split close, hidden page, exit, restart and iframe reload',()=>{
+  const views=[];const f=fixture({options:{onWalkView:view=>views.push(view)}});f.controller.setSplitVisible(true);f.send({kind:'ready'});
+  let sequence=0;
+  const sendView=()=>f.send({kind:'view',sequence:++sequence,scopeSequence:scopeSequence(f),view:cameraView()});
+  sendView();assert.ok(views.at(-1));f.controller.setSplitVisible(false);assert.equal(views.at(-1),null);
+  sendView();assert.equal(views.at(-1),null);f.controller.setSplitVisible(true);sendView();assert.ok(views.at(-1));
+  f.controller.setVisible(false);assert.equal(views.at(-1),null);sendView();assert.equal(views.at(-1),null);
+  f.controller.setVisible(true);sendView();assert.ok(views.at(-1));f.send({kind:'status',active:false});assert.equal(views.at(-1),null);
+  sendView();f.host.querySelector('[data-walk-restart]').click();assert.equal(views.at(-1),null);
+  sendView();f.frame.dispatchEvent(new f.win.Event('load'));assert.equal(views.at(-1),null);
+  f.send({kind:'view',sequence:0,scopeSequence:scopeSequence(f),view:cameraView()});assert.ok(views.at(-1),'A reloaded child may restart its own sequence.');
+  f.send({kind:'view',sequence:1,scopeSequence:scopeSequence(f),view:null});assert.equal(views.at(-1),null);
+  f.controller.destroy();assert.equal(views.at(-1),null);
+});
+
+test('camera snapshot validation limits angle, range and floor without accepting coercible values',()=>{
+  assert.equal(normalizeWalkView(null),null);
+  for(const patch of [{floorId:'roof'},{horizontalFovRad:0},{horizontalFovRad:Math.PI},{horizontalFovRad:Infinity},{maxDistanceM:101},{maxDistanceM:'24'},{y:'8.85'},{visiblePolygonXZ:[[1,2],[2,3],[4,Infinity]]}])
+    assert.equal(normalizeWalkView({...cameraView(),...patch}),undefined);
+  assert.deepEqual(normalizeWalkView(cameraView()),cameraView());
 });
 
 function setGlobals(win){

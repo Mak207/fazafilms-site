@@ -223,6 +223,7 @@ export function createEquipmentMap(mount,{onSelect,onMove,onPreview,onPreviewEnd
   const abort=new AbortController(),on=(n,type,fn,options={})=>n.addEventListener(type,fn,{...options,signal:abort.signal});
   let geometry=providedGeometry||null,state={data:{},instances:[],scope:{floorId:'main'},positions:{}},report={placed:[],unplaced:[],total:0,placedCount:0,unplacedCount:0,positions:{},warnings:[]},destroyed=false;
   let box=[-90,-55,180,110],fitBox=[...box],scopeKey='',selectedNodes=new Map(),drag=null,lastPlacementKey='',labelsOn=true,transformControls=null,suppressClickUntil=0;
+  let walkView=null,walkOverlay=null,walkSector=null,walkMarker=null,walkDirection=null,walkFollowPending=false;
   const clipId=`epm-floor-${++mapSequence}`;
   const root=element('section','equipment-map');root.setAttribute('aria-label','Расположение оборудования');
   const toolsBar=element('div','epm-toolbar'),fit=button('Вся зона'),zoomOut=button('−','Уменьшить схему'),zoomIn=button('+','Увеличить схему'),zoomValue=element('span','epm-zoom-value','100%'),showLabels=button('Названия');showLabels.setAttribute('aria-pressed','true');
@@ -251,7 +252,80 @@ export function createEquipmentMap(mount,{onSelect,onMove,onPreview,onPreviewEnd
   function unitsPerPixel() {const matrix=svg.getScreenCTM?.(),scale=matrix&&Math.hypot(matrix.a,matrix.b);if(scale>0)return 1/scale;const rect=svg.getBoundingClientRect();return Math.max(box[2]/(rect.width||900),box[3]/(rect.height||620));}
   function normalizedYaw(value) {return Math.atan2(Math.sin(value),Math.cos(value));}
   function finalPosition(record,p) {return {...p,x:round(p.x),z:round(p.z),yaw:normalizedYaw(p.yaw||0),floorId:floorIdOf(record)};}
+  function normalizeWalkView(value) {
+    if(!value||value.active===false||!['main','upper'].includes(value.floorId)||![value.x,value.z,value.horizontalFovRad].every(Number.isFinite)||value.horizontalFovRad<=0||value.horizontalFovRad>=Math.PI)return null;
+    const direction=value.directionXZ;
+    if(!Array.isArray(direction)||direction.length!==2||!direction.every(Number.isFinite))return null;
+    const length=Math.hypot(...direction);if(length<1e-8)return null;
+    const polygon=value.visiblePolygonXZ;
+    const checkedPolygon=Array.isArray(polygon)&&polygon.length>=3&&polygon.length<=1024&&polygon.every(point=>Array.isArray(point)&&point.length===2&&point.every(Number.isFinite))?polygon.map(point=>[...point]):null;
+    return {x:value.x,z:value.z,floorId:value.floorId,directionXZ:direction.map(n=>n/length),horizontalFovRad:value.horizontalFovRad,
+      visiblePolygonXZ:checkedPolygon,hasPolygon:Object.prototype.hasOwnProperty.call(value,'visiblePolygonXZ'),maxDistanceM:Number.isFinite(value.maxDistanceM)&&value.maxDistanceM>0?Math.min(value.maxDistanceM,500):12};
+  }
+  function refreshWalkMarker() {
+    if(!walkView||!walkMarker||walkOverlay?.parentNode!==svg)return;
+    const [x,y]=viewPoint([walkView.x,walkView.z]);
+    walkMarker.setAttribute('transform',`translate(${round(x)} ${round(y)}) scale(${unitsPerPixel()})`);
+    // The plan maps world +X upwards and world +Z to the right.
+    walkDirection.setAttribute('transform',`rotate(${Math.atan2(walkView.directionXZ[1],walkView.directionXZ[0])*180/Math.PI})`);
+  }
+  function followWalkingPosition() {
+    if(!walkFollowPending||!walkView||!geometry||destroyed)return;
+    // Editing and panning belong to the user. Do not defer a camera return
+    // until the pointer is released: a later real walking step can request it.
+    if(drag){walkFollowPending=false;return;}
+    const floor=geometry.floors.find(item=>item.id===(state.scope?.floorId||'main'))||geometry.floors[0];
+    if(floor?.id!==walkView.floorId){walkFollowPending=false;return;}
+    const rect=svg.getBoundingClientRect(),matrix=svg.getScreenCTM?.();
+    if(!rect.width||!rect.height||!matrix)return;
+    const [x,y]=viewPoint([walkView.x,walkView.z]);
+    const screenX=matrix.a*x+matrix.c*y+matrix.e,screenY=matrix.b*x+matrix.d*y+matrix.f;
+    const paddingX=Math.min(38,rect.width*.18),paddingY=Math.min(30,rect.height*.18);
+    const left=rect.left+paddingX,right=rect.left+rect.width-paddingX,top=rect.top+paddingY,bottom=rect.top+rect.height-paddingY;
+    const dx=screenX<left?screenX-left:screenX>right?screenX-right:0,dy=screenY<top?screenY-top:screenY>bottom?screenY-bottom:0;
+    walkFollowPending=false;if(!dx&&!dy)return;
+    let inverse;try{inverse=matrix.inverse();}catch{return;}
+    const shiftX=inverse.a*dx+inverse.c*dy,shiftY=inverse.b*dx+inverse.d*dy;
+    if(!Number.isFinite(shiftX)||!Number.isFinite(shiftY))return;
+    box[0]+=shiftX;box[1]+=shiftY;applyView();
+  }
+  function renderWalkView() {
+    if(!geometry||destroyed)return;
+    if(!walkView){if(walkOverlay){walkOverlay.setAttribute('display','none');walkOverlay.setAttribute('aria-hidden','true');}return;}
+    const floor=geometry.floors.find(item=>item.id===(state.scope?.floorId||'main'))||geometry.floors[0];
+    if(!floor||!svg.firstElementChild)return;
+    if(walkOverlay?.parentNode!==svg){
+      walkOverlay=svgElement('g',{class:'epm-walk-view','pointer-events':'none',role:'img','aria-label':'Вы на схеме. Стрелка показывает направление взгляда.',focusable:'false'});
+      walkSector=svgElement('path',{class:'epm-walk-sector','clip-path':`url(#${clipId})`,'pointer-events':'none'});
+      walkMarker=svgElement('g',{class:'epm-walk-marker','pointer-events':'none'});
+      walkDirection=svgElement('g',{class:'epm-walk-direction','pointer-events':'none'});
+      walkDirection.append(svgElement('path',{d:'M 0 -23 L 5.5 -13 L -5.5 -13 Z',class:'epm-walk-arrow'}));
+      const label=svgElement('text',{x:16,y:5,class:'epm-walk-label'});label.textContent='Вы';
+      walkMarker.append(walkDirection,svgElement('circle',{r:10.5,class:'epm-walk-halo'}),svgElement('circle',{r:7,class:'epm-walk-dot'}),label);
+      walkOverlay.append(walkSector,walkMarker);svg.append(walkOverlay);
+    }
+    const visible=walkView.floorId===floor.id;
+    walkOverlay.setAttribute('display',visible?'inline':'none');walkOverlay.setAttribute('aria-hidden',String(!visible));
+    if(!visible)return;
+    followWalkingPosition();
+    let polygon=walkView.visiblePolygonXZ;
+    if(!polygon&&!walkView.hasPolygon){
+      // Before a clipped visibility polygon is supplied, use the camera angle.
+      const centre=Math.atan2(walkView.directionXZ[1],walkView.directionXZ[0]),half=walkView.horizontalFovRad/2;
+      polygon=[[walkView.x,walkView.z],...Array.from({length:33},(_,index)=>{const angle=centre-half+walkView.horizontalFovRad*index/32;return [walkView.x+Math.cos(angle)*walkView.maxDistanceM,walkView.z+Math.sin(angle)*walkView.maxDistanceM];})];
+    }
+    walkSector.setAttribute('d',polygon?pathFromRing(polygon):'');walkSector.setAttribute('display',polygon?'inline':'none');
+    refreshWalkMarker();
+  }
+  function setWalkView(value) {
+    if(destroyed)return false;
+    const previous=walkView;walkView=normalizeWalkView(value);
+    if(!walkView)walkFollowPending=false;
+    else if(!previous||previous.floorId!==walkView.floorId||Math.hypot(walkView.x-previous.x,walkView.z-previous.z)>1e-4)walkFollowPending=true;
+    renderWalkView();return Boolean(walkView);
+  }
   function refreshControlSize(position) {
+    refreshWalkMarker();
     const unit=unitsPerPixel();
     for(const group of selectedNodes.values())group.querySelector('.epm-device-hit')?.setAttribute('r',Math.max(.6,14*unit));
     if(!transformControls)return;
@@ -273,7 +347,7 @@ export function createEquipmentMap(mount,{onSelect,onMove,onPreview,onPreviewEnd
   }
   function beginTransform(event,record,mode) {
     if(event.button!==0||!onMove||drag)return;
-    const q=svgPoint(event);if(!q)return;event.stopPropagation();event.preventDefault();hideTip();
+    const q=svgPoint(event);if(!q)return;walkFollowPending=false;event.stopPropagation();event.preventDefault();hideTip();
     if(state.selectedId!==record.id){state.selectedId=record.id;onSelect?.(record.id);render();}
     const node=selectedNodes.get(record.id);if(!node)return;
     const centre=viewPoint([record.position.x,record.position.z]);
@@ -347,6 +421,7 @@ export function createEquipmentMap(mount,{onSelect,onMove,onPreview,onPreviewEnd
     }
     drawTransformControls(visible.find(p=>p.id===state.selectedId));
     applyView();
+    renderWalkView();
     const scoped=scopedReport(report,state.scope),floorLabel=floor.id==='upper'?'Верхний уровень':'Нижний уровень';status.textContent=`${floorLabel} · размещено ${scoped.placedCount} из ${scoped.total}`;
     fit.textContent=state.scope?.regionId?'Вся зона':'Весь этаж';
     hint.textContent='Перетащите оборудование мышью. Для поворота потяните круглый маркер. Shift — шаг 15°. Esc — отмена.'+(selectedRegion==='rgo'?' Границы залов РГО показаны условно.':'');
@@ -363,7 +438,7 @@ export function createEquipmentMap(mount,{onSelect,onMove,onPreview,onPreviewEnd
   on(fit,'click',()=>{fitView();render();});on(zoomIn,'click',()=>zoom(.8));on(zoomOut,'click',()=>zoom(1.25));
   on(showLabels,'click',()=>{labelsOn=!labelsOn;showLabels.setAttribute('aria-pressed',String(labelsOn));render();});
   on(svg,'wheel',event=>{if(!event.ctrlKey||drag)return;event.preventDefault();zoom(event.deltaY>0?1.12:.89,svgPoint(event));},{passive:false});
-  on(svg,'pointerdown',event=>{if(event.button!==0||drag||event.target.closest?.('.epm-equipment,.epm-transform'))return;const p=svgPoint(event);if(!p)return;drag={mode:'pan',start:p,clientStart:[event.clientX,event.clientY],box:[...box],moved:false,pointerId:event.pointerId};try{svg.setPointerCapture?.(event.pointerId);}catch{}root.classList.add('is-panning');hideTip();});
+  on(svg,'pointerdown',event=>{if(event.button!==0||drag||event.target.closest?.('.epm-equipment,.epm-transform'))return;const p=svgPoint(event);if(!p)return;walkFollowPending=false;drag={mode:'pan',start:p,clientStart:[event.clientX,event.clientY],box:[...box],moved:false,pointerId:event.pointerId};try{svg.setPointerCapture?.(event.pointerId);}catch{}root.classList.add('is-panning');hideTip();});
   on(svg,'pointermove',event=>{
     if(!drag||event.pointerId!==drag.pointerId)return;const p=svgPoint(event);if(!p)return;const dx=p[0]-drag.start[0],dy=p[1]-drag.start[1];
     if(Math.hypot(event.clientX-drag.clientStart[0],event.clientY-drag.clientStart[1])>3)drag.moved=true;
@@ -409,8 +484,8 @@ export function createEquipmentMap(mount,{onSelect,onMove,onPreview,onPreviewEnd
   const ready=(geometry?Promise.resolve(geometry):loadEquipmentGeometry({signal:abort.signal})).then(g=>{if(destroyed)return;geometry=g;update(state);return geometry;}).catch(error=>{if(destroyed||error.name==='AbortError')return;status.textContent='Не удалось загрузить план. Обновите страницу.';root.classList.add('has-error');throw error;});
   // Prevent an unhandled rejection when the host uses the visible load state only.
   ready.catch(()=>{});
-  return {ready,update,getPlacementReport:()=>scopedReport(report,state.scope),fit:fitView,focus:focusItem,
+  return {ready,update,setWalkView,getPlacementReport:()=>scopedReport(report,state.scope),fit:fitView,focus:focusItem,
     cancelInteraction(){finishDrag(null,true);hideTip();},
-    refreshLayout(){refreshControlSize(drag?.proposed);},
+    refreshLayout(){followWalkingPosition();refreshControlSize(drag?.proposed);},
     destroy(){finishDrag(null,true);destroyed=true;abort.abort();root.remove();}};
 }

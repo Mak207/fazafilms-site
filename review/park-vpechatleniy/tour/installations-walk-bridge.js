@@ -28,14 +28,23 @@ export function resolveInstallationsWalkZone(scope, zones = []) {
 }
 
 /** Isolated same-origin channel for the single embedded walk; equipment uses its existing channel. */
-export function createInstallationsWalkBridge({ windowObject = globalThis.window, onVisibility = () => {}, onLayout = () => {}, onPreviewReset = () => {} } = {}) {
+export function createInstallationsWalkBridge({ windowObject = globalThis.window, onVisibility = () => {}, onLayout = () => {}, onPreviewReset = () => {}, onViewRequest = () => {} } = {}) {
   const win = windowObject, parent = win?.parent, origin = win?.location?.origin;
   let enabled = false;
   try { enabled = Boolean(parent && parent !== win && origin && origin !== 'null' && new URL(win.location.href).searchParams.get('embedded') === 'installations'); } catch {}
   let walk = null, visible = false, split = false, disposed = false, pending = null, appliedKey = null, appliedScope = null;
-  let zoneSequence = -1, visibilitySequence = -1, layoutSequence = -1;
+  let zoneSequence = -1, visibilitySequence = -1, layoutSequence = -1, appliedZoneSequence = -2, viewSequence = 0, hasView = false;
   const post = payload => { if (enabled && !disposed) { try { parent.postMessage({ protocol: INSTALLATIONS_WALK_PROTOCOL, ...payload }, origin); } catch {} } };
   const state = () => walk?.getState?.() || { ready: false, active: false };
+  function sendView(view) {
+    if (!enabled || disposed) return false;
+    const current = state();
+    if (view !== null && (!visible || !split || !current.active || current.paused || pending || appliedZoneSequence !== zoneSequence || zoneSequence < 0)) return false;
+    hasView = view !== null;
+    post({ kind: 'view', sequence: ++viewSequence, scopeSequence: zoneSequence, view: view === null ? null : clone(view) });
+    return true;
+  }
+  function clearView() { if (hasView || walk) sendView(null); }
   function status({ ok = true, error = false, text = '', scope = appliedScope } = {}) {
     const current = state();
     post({ kind: 'status', ok, error, text, scope, active: Boolean(current.active), zoneId: current.zoneId || null });
@@ -46,7 +55,7 @@ export function createInstallationsWalkBridge({ windowObject = globalThis.window
     if (!resolved) { pending = null; status({ ok: false, text: 'Не удалось найти выбранную зону для прогулки.' }); return false; }
     const key = JSON.stringify(resolved.scope), current = state();
     if (!pending.restart && appliedKey === key && current.active && current.zoneId === resolved.zone.id) {
-      pending = null; walk.setPaused?.(false); return true;
+      pending = null; appliedZoneSequence = zoneSequence; walk.setPaused?.(false); onViewRequest(); return true;
     }
     pending = null;
     onPreviewReset('zone');
@@ -55,8 +64,9 @@ export function createInstallationsWalkBridge({ windowObject = globalThis.window
       status({ ok: false, scope: resolved.scope, text: result?.message || 'В выбранной зоне нет свободного места для начала прогулки. Измените расстановку или выберите другую зону.' });
       return false;
     }
-    appliedKey = key; appliedScope = resolved.scope; walk.setPaused?.(false);
+    appliedKey = key; appliedScope = resolved.scope; appliedZoneSequence = zoneSequence; walk.setPaused?.(false);
     status({ scope: resolved.scope, text: 'Прогулка: ' + resolved.zone.name });
+    onViewRequest();
     return true;
   }
   function receive(event) {
@@ -67,17 +77,19 @@ export function createInstallationsWalkBridge({ windowObject = globalThis.window
       const next = typeof message.visible === 'boolean' ? message.visible : message.active;
       if (typeof next !== 'boolean' || message.sequence <= visibilitySequence) return;
       visibilitySequence = message.sequence; visible = next;
-      if (!visible) onPreviewReset('hidden');
+      if (!visible) { onPreviewReset('hidden'); clearView(); }
       walk?.setPaused?.(!visible); onVisibility(visible);
-      if (visible) applyPending();
+      if (visible) { applyPending(); onViewRequest(); }
     } else if (message.kind === 'layout') {
       if (typeof message.split !== 'boolean' || message.sequence <= layoutSequence) return;
       layoutSequence = message.sequence; split = message.split;
-      if (!split) onPreviewReset('layout');
+      if (!split) { onPreviewReset('layout'); clearView(); }
       onLayout(split);
+      if (split) onViewRequest();
     } else if (message.kind === 'zone') {
       if (message.sequence <= zoneSequence || !message.scope || typeof message.scope !== 'object' || Array.isArray(message.scope)) return;
       zoneSequence = message.sequence;
+      clearView();
       pending = { scope: { regionId: message.scope.regionId || null, hallId: message.scope.hallId || null, floorId: message.scope.floorId || 'main' }, restart: message.restart === true };
       applyPending();
     }
@@ -85,6 +97,7 @@ export function createInstallationsWalkBridge({ windowObject = globalThis.window
   function walkChanged(event) {
     if (!enabled || disposed || !walk || event.detail?.active !== false) return;
     onPreviewReset('exit');
+    clearView();
     status({ text: 'Прогулка остановлена. Нажмите «К началу зоны», чтобы продолжить.' });
   }
   if (enabled) { win.addEventListener('message', receive); win.document?.addEventListener?.('park-walk-change', walkChanged); onVisibility(false); }
@@ -94,8 +107,9 @@ export function createInstallationsWalkBridge({ windowObject = globalThis.window
       if (!enabled || disposed) return;
       walk = mode; walk?.setPaused?.(!visible); post({ kind: 'ready' }); applyPending();
     },
-    error(text) { status({ ok: false, error: true, text: String(text || 'Не удалось подготовить прогулку.') }); },
-    getState: () => ({ enabled, ready: Boolean(walk), visible, split, pending: pending ? clone(pending.scope) : null, appliedKey }),
-    dispose() { if (disposed) return; disposed = true; onPreviewReset('dispose'); win?.removeEventListener?.('message', receive); win?.document?.removeEventListener?.('park-walk-change', walkChanged); walk?.setPaused?.(true); walk = null; pending = null; },
+    sendView,
+    error(text) { clearView(); status({ ok: false, error: true, text: String(text || 'Не удалось подготовить прогулку.') }); },
+    getState: () => ({ enabled, ready: Boolean(walk), visible, split, pending: pending ? clone(pending.scope) : null, appliedKey, zoneSequence, appliedZoneSequence }),
+    dispose() { if (disposed) return; clearView(); disposed = true; onPreviewReset('dispose'); win?.removeEventListener?.('message', receive); win?.document?.removeEventListener?.('park-walk-change', walkChanged); walk?.setPaused?.(true); walk = null; pending = null; },
   };
 }

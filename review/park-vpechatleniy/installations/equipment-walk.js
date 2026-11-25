@@ -7,12 +7,29 @@ const normalizedScope = value => ({
   floorId:value?.floorId==='upper'?'upper':'main'
 });
 
+/** A bounded, finite camera snapshot; it is never part of the saved equipment variant. */
+export function normalizeWalkView(value) {
+  if(value===null)return null;
+  const finite=n=>typeof n==='number'&&Number.isFinite(n)&&Math.abs(n)<=100000;
+  if(!value||typeof value!=='object'||Array.isArray(value)||!['main','upper'].includes(value.floorId))return undefined;
+  if(![value.x,value.y,value.z].every(finite)||!Array.isArray(value.directionXZ)||value.directionXZ.length!==2||!value.directionXZ.every(finite))return undefined;
+  const length=Math.hypot(...value.directionXZ),fov=value.horizontalFovRad;
+  if(length<1e-6||typeof fov!=='number'||!Number.isFinite(fov)||fov<=0||fov>=Math.PI)return undefined;
+  const range=value.maxDistanceM===undefined?24:value.maxDistanceM;
+  if(!Number.isFinite(range)||range<=0||range>100)return undefined;
+  const polygon=value.visiblePolygonXZ;
+  if(!Array.isArray(polygon)||polygon.length<3||polygon.length>128||polygon.some(p=>!Array.isArray(p)||p.length!==2||!p.every(finite)))return undefined;
+  return {x:value.x,y:value.y,z:value.z,floorId:value.floorId,directionXZ:value.directionXZ.map(n=>n/length),horizontalFovRad:fov,maxDistanceM:range,
+    visiblePolygonXZ:polygon.map(p=>[...p]),...(typeof value.zoneId==='string'&&/^[a-z0-9-]{1,64}$/i.test(value.zoneId)?{zoneId:value.zoneId}:{})};
+}
+
 /** The same iframe stays mounted while the equipment planner updates. */
 export function createEquipmentWalk(host,{scope,label='',windowObject=host?.ownerDocument?.defaultView,onStatus=()=>{},
-  onSplitChange=()=>{},onMapSuspend=()=>{},onMapResize=()=>{},onUndo=()=>{},onRedo=()=>{}}={}) {
+  onSplitChange=()=>{},onMapSuspend=()=>{},onMapResize=()=>{},onWalkView=()=>{},onUndo=()=>{},onRedo=()=>{}}={}) {
   if(!host||!windowObject)throw Error('Не удалось открыть прогулку.');
   const win=windowObject,doc=host.ownerDocument,origin=win.location.origin;
   let currentScope=normalizedScope(scope),sequence=0,visible=false,loaded=false,ready=false,disposed=false,splitVisible=false;
+  let viewSequence=-1,viewScopeSequence=-1;
   const listeners=[];
   const listen=(target,type,handler)=>{target.addEventListener(type,handler);listeners.push(()=>target.removeEventListener(type,handler));};
   host.classList.add('ep-walk');host.setAttribute('role','region');host.setAttribute('aria-label','Прогулка по выбранной зоне');
@@ -25,7 +42,7 @@ export function createEquipmentWalk(host,{scope,label='',windowObject=host?.owne
         <div class="ep-walk-map"></div>
       </section>
     </div>
-    <p class="ep-walk-help"><span class="ep-walk-help-desktop">Нажмите на 3D-вид: WASD или стрелки — идти, мышь — оглядеться, E — включить интерактив.</span><span class="ep-walk-help-touch">Оглядывайтесь пальцем, двигайтесь кнопками на экране.</span><span class="ep-walk-split-help" hidden> На схеме перетаскивайте оборудование и поворачивайте его круглым маркером.</span></p><p class="ep-walk-status" role="status" aria-live="polite"></p>`;
+    <p class="ep-walk-help"><span class="ep-walk-help-desktop">Нажмите на 3D-вид: WASD или стрелки — идти, мышь — оглядеться, E — включить интерактив.</span><span class="ep-walk-help-touch">Оглядывайтесь пальцем, двигайтесь кнопками на экране.</span><span class="ep-walk-split-help" hidden> На схеме «Вы» — ваше положение, сектор — направление и угол обзора. Оборудование можно перетаскивать и поворачивать круглым маркером.</span></p><p class="ep-walk-status" role="status" aria-live="polite"></p>`;
   const frame=host.querySelector('iframe'),zoneLabel=host.querySelector('.ep-walk-zone'),loading=host.querySelector('.ep-walk-loading'),status=host.querySelector('.ep-walk-status');
   const restartButton=host.querySelector('[data-walk-restart]'),fullscreenButton=host.querySelector('[data-walk-fullscreen]');
   const splitButton=host.querySelector('[data-walk-split]'),stage=host.querySelector('.ep-walk-stage'),mapPanel=host.querySelector('.ep-walk-map-panel'),mapHost=host.querySelector('.ep-walk-map'),splitHelp=host.querySelector('.ep-walk-split-help');
@@ -34,19 +51,21 @@ export function createEquipmentWalk(host,{scope,label='',windowObject=host?.owne
   restartButton.disabled=true;
   fullscreenButton.hidden=typeof host.requestFullscreen!=='function';
   const url=new URL('tour/index.html',new URL('./',win.location.href));
-  url.searchParams.set('embedded','installations');url.searchParams.set('v','walk-split-20261125');
+  url.searchParams.set('embedded','installations');url.searchParams.set('v','walk-location-20261125');
 
   function post(kind,payload={}) {
     if(disposed||!loaded||origin==='null')return;
-    try{frame.contentWindow?.postMessage({protocol:INSTALLATIONS_WALK_PROTOCOL,kind,sequence:++sequence,...payload},origin);}catch{}
+    const sent=++sequence;
+    try{frame.contentWindow?.postMessage({protocol:INSTALLATIONS_WALK_PROTOCOL,kind,sequence:sent,...payload},origin);}catch{}
+    return sent;
   }
-  function sendZone(restart=false){post('zone',{scope:{...currentScope},...(restart?{restart:true}:{})});}
+  function sendZone(restart=false){onWalkView(null);viewScopeSequence=post('zone',{scope:{...currentScope},...(restart?{restart:true}:{})})??-1;}
   function sendLayout(){post('layout',{split:splitVisible});}
   function refreshMapLayout(){if(!disposed&&splitVisible&&visible)onMapResize();}
   function setSplitVisible(next){
     if(disposed||splitVisible===Boolean(next))return;
     const nextVisible=Boolean(next);
-    if(!nextVisible)onMapSuspend('split-close');
+    if(!nextVisible){onMapSuspend('split-close');onWalkView(null);}
     splitVisible=nextVisible;stage.classList.toggle('is-split',splitVisible);mapPanel.hidden=!splitVisible;splitHelp.hidden=!splitVisible;
     splitButton.setAttribute('aria-pressed',String(splitVisible));splitButton.setAttribute('aria-expanded',String(splitVisible));
     sendLayout();onSplitChange(splitVisible,{mount:mapHost,scope:{...currentScope}});refreshMapLayout();
@@ -55,7 +74,7 @@ export function createEquipmentWalk(host,{scope,label='',windowObject=host?.owne
   function setVisible(next){
     if(disposed)return;
     const changed=visible!==Boolean(next);
-    if(changed&&!next)onMapSuspend('visibility-hidden');
+    if(changed&&!next){onMapSuspend('visibility-hidden');onWalkView(null);}
     visible=Boolean(next);
     if(visible&&!loaded){loaded=true;frame.src=url.href;}
     if(changed||!ready)post('visibility',{visible});
@@ -67,14 +86,23 @@ export function createEquipmentWalk(host,{scope,label='',windowObject=host?.owne
     return section?!section.closest('[hidden]'):doc.body?.dataset.folder==='installations';
   }
   const refreshVisibility=()=>setVisible(isVisible());
-  listen(frame,'load',()=>{if(!loaded)return;post('visibility',{visible});sendLayout();sendZone();});
-  listen(frame,'error',()=>{loading.hidden=true;setStatus('Не удалось загрузить прогулку. Обновите страницу.');});
+  listen(frame,'load',()=>{if(!loaded)return;viewSequence=-1;post('visibility',{visible});sendLayout();sendZone();});
+  listen(frame,'error',()=>{onWalkView(null);loading.hidden=true;setStatus('Не удалось загрузить прогулку. Обновите страницу.');});
   listen(win,'message',event=>{
     if(disposed||event.origin!==origin||event.source!==frame.contentWindow||event.data?.protocol!==INSTALLATIONS_WALK_PROTOCOL)return;
     if(event.data.kind==='ready'){
       ready=true;loading.hidden=true;restartButton.disabled=false;setStatus('');post('visibility',{visible});sendLayout();sendZone();
+    }else if(event.data.kind==='view'){
+      const message=event.data;
+      if(!Number.isSafeInteger(message.sequence)||message.sequence<0||message.sequence<=viewSequence)return;
+      if(message.scopeSequence!==viewScopeSequence)return;
+      const view=normalizeWalkView(message.view);if(view===undefined)return;
+      if(view&&(!ready||!visible||!splitVisible))return;
+      viewSequence=message.sequence;
+      onWalkView(view);
     }else if(event.data.kind==='status'){
-      if(event.data.error===true){ready=false;loading.hidden=true;restartButton.disabled=true;}
+      if(event.data.error===true){ready=false;loading.hidden=true;restartButton.disabled=true;onWalkView(null);}
+      else if(event.data.active===false)onWalkView(null);
       if(typeof event.data.text==='string')setStatus(event.data.text);
     }
   });
@@ -114,6 +142,6 @@ export function createEquipmentWalk(host,{scope,label='',windowObject=host?.owne
     isSplitVisible:()=>splitVisible,
     setSplitVisible,
     setHistory({canUndo=false,canRedo=false}={}){if(disposed)return;undoButton.disabled=!canUndo;redoButton.disabled=!canRedo;},
-    destroy(){if(disposed)return;onMapSuspend('destroy');post('visibility',{visible:false});disposed=true;observer?.disconnect();resizeObserver?.disconnect();listeners.forEach(remove=>remove());host.replaceChildren();}
+    destroy(){if(disposed)return;onMapSuspend('destroy');onWalkView(null);post('visibility',{visible:false});disposed=true;observer?.disconnect();resizeObserver?.disconnect();listeners.forEach(remove=>remove());host.replaceChildren();}
   };
 }

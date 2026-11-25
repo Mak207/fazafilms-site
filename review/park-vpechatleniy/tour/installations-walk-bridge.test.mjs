@@ -10,7 +10,7 @@ const zones = source.zones.map(row => ({ id: row.id, name: row.title, level: row
 zones.push(...colors.rgo.halls.map(row => ({ id: 'rgo-' + row.id, name: row.name, level: 'main', regionId: 'rgo', hallId: row.id })));
 
 function fixture({ embedded = true } = {}) {
-  const sent = [], displays = [], calls = [], pauses = [], layouts = [], resets = [];
+  const sent = [], displays = [], calls = [], pauses = [], layouts = [], resets = [], viewRequests = [];
   const win = new EventTarget(), parent = { postMessage: (data, origin) => sent.push({ data, origin }) };
   win.parent = parent; win.document = new EventTarget(); win.location = new URL('https://fazafilms.ru/review/park-vpechatleniy/tour/' + (embedded ? '?embedded=installations' : ''));
   let current = { active: false, zoneId: null }, fail = false;
@@ -18,11 +18,11 @@ function fixture({ embedded = true } = {}) {
     start(id, options) { calls.push({ id, options }); if (fail) return { ok: false }; current = { ...current, active: true, zoneId: id }; return { ok: true }; },
     setPaused(value) { pauses.push(value); },
   };
-  const bridge = createInstallationsWalkBridge({ windowObject: win, onVisibility: value => displays.push(value), onLayout: value => layouts.push(value), onPreviewReset: reason => resets.push(reason) });
+  const bridge = createInstallationsWalkBridge({ windowObject: win, onVisibility: value => displays.push(value), onLayout: value => layouts.push(value), onPreviewReset: reason => resets.push(reason), onViewRequest: () => viewRequests.push(true) });
   function receive(kind, payload = {}, { origin = win.location.origin, source = parent } = {}) {
     const event = new Event('message'); Object.assign(event, { origin, source, data: { protocol: INSTALLATIONS_WALK_PROTOCOL, kind, sequence: 1, ...payload } }); win.dispatchEvent(event);
   }
-  return { win, parent, sent, displays, calls, pauses, layouts, resets, walk, bridge, receive, fail: value => fail = value };
+  return { win, parent, sent, displays, calls, pauses, layouts, resets, viewRequests, walk, bridge, receive, fail: value => fail = value };
 }
 
 test('every equipment region, floor and RGO hall resolves to its existing walk start', () => {
@@ -127,4 +127,24 @@ test('hide, actual zone changes, restart and walk exit cancel transient previews
   const event = new Event('park-walk-change'); event.detail = { active: false }; f.win.document.dispatchEvent(event);
   assert.deepEqual(f.resets, ['zone', 'zone', 'hidden', 'exit']);
   f.bridge.dispose(); assert.equal(f.resets.at(-1), 'dispose');
+});
+
+test('view packets use their own monotonic sequence and the applied parent zone sequence', () => {
+  const f = fixture(), view = { x: 1, y: 8.85, z: 2, floorId: 'main', directionXZ: [0, -1], horizontalFovRad: 1, visiblePolygonXZ: [[1, 2], [0, -2], [2, -2]], maxDistanceM: 24 };
+  f.bridge.attach(f.walk); assert.equal(f.bridge.sendView(view), false);
+  f.receive('visibility', { visible: true }); f.receive('layout', { split: true }); f.receive('zone', { sequence: 7, scope: { regionId: 'rgo' } });
+  assert.equal(f.bridge.sendView(view), true); const first = f.sent.at(-1).data; assert.equal(first.kind, 'view'); assert.equal(first.scopeSequence, 7); assert.deepEqual(first.view, view);
+  const calls = f.calls.length, requests = f.viewRequests.length;
+  f.receive('zone', { sequence: 8, scope: { regionId: 'rgo' } }); assert.equal(f.sent.at(-1).data.view, null); assert.equal(f.calls.length, calls); assert.ok(f.viewRequests.length > requests);
+  assert.equal(f.bridge.sendView(view), true); const next = f.sent.at(-1).data; assert.equal(next.scopeSequence, 8); assert.ok(next.sequence > first.sequence);
+  f.receive('visibility', { sequence: 2, visible: false }); assert.equal(f.sent.at(-1).data.view, null); assert.equal(f.bridge.sendView(view), false);
+  f.receive('visibility', { sequence: 3, visible: true }); f.receive('layout', { sequence: 2, split: false }); assert.equal(f.sent.at(-1).data.view, null); assert.equal(f.bridge.sendView(view), false);
+  f.bridge.dispose();
+});
+
+test('a blocked or pending new zone cannot label the previous viewpoint with its scope sequence', () => {
+  const f = fixture(), view = { x: 1, y: 8.85, z: 2, floorId: 'main', directionXZ: [0, -1], horizontalFovRad: 1, visiblePolygonXZ: [] };
+  f.bridge.attach(f.walk); f.receive('visibility', { visible: true }); f.receive('layout', { split: true }); f.receive('zone', { scope: { regionId: 'rgo' } }); assert.equal(f.bridge.sendView(view), true);
+  f.fail(true); f.receive('zone', { sequence: 2, scope: { regionId: 'south' } }); assert.equal(f.bridge.sendView(view), false); assert.notEqual(f.bridge.getState().appliedZoneSequence, f.bridge.getState().zoneSequence);
+  f.fail(false); f.receive('zone', { sequence: 3, scope: { regionId: 'south' } }); assert.equal(f.bridge.sendView(view), true); assert.equal(f.sent.at(-1).data.scopeSequence, 3); f.bridge.dispose();
 });
