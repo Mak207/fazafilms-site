@@ -1,0 +1,324 @@
+{
+  "wholeShip": {
+    "sourceTriangles": 295970,
+    "addedWheelhouse": false,
+    "bounds": {
+      "min": [
+        -15.223396921242964,
+        7.2,
+        38.98095196555565
+      ],
+      "max": [
+        -1.8738726579248084,
+        11.988289520144463,
+        44.721807377788934
+      ],
+      "size": [
+        13.349524263318155,
+        4.788289520144462,
+        5.740855412233287
+      ]
+    }
+  },
+  "silos": {
+    "state": {
+      "id": "Z02",
+      "flowing": true,
+      "elapsed": 2.0000000000000004,
+      "intensity": 1,
+      "silos": 3,
+      "fallingKernels": 432,
+      "surfaceKernels": 2700,
+      "floorFootprintMetres": [
+        7.5,
+        4.2
+      ],
+      "heightMetres": 16.89,
+      "heightFit": {
+        "floorY": 13.2,
+        "firstRoofY": 30.345833587646485,
+        "designHeightMetres": 16.89,
+        "topWorldY": 30.09,
+        "roofClearanceMetres": 0.2558335876464852,
+        "method": "Full conservative cylinder and return-pipe OBBs against all 2,927,007 CAD triangles",
+        "evidence": "assets/zones/physical-revisions-qa.json"
+      },
+      "controlHeightMetres": 1.17,
+      "individualKernelSizePreserved": true,
+      "provenance": "procedural-threejs",
+      "physics": "gravity-based looping particles; illustrative flow, not a process-engineering calculation",
+      "actions": [
+        "grain-toggle"
+      ],
+      "levels": [
+        5.714927412622616,
+        5.878631534695694,
+        5.93918060885162
+      ]
+    },
+    "bounds": {
+      "min": [
+        -2.997665906571223,
+        13.199999999850988,
+        -4.747665906571223
+      ],
+      "max": [
+        4.497665906571223,
+        30.064999997615814,
+        2.747665906571223
+      ],
+      "size": [
+        7.495331813142446,
+        16.864999997764826,
+        7.495331813142446
+      ]
+    },
+    "fallingParticlesChanged": true,
+    "pauseStable": true
+  },
+  "aircraft": {
+    "state": {
+      "liftMetres": 0.6,
+      "columns": [
+        {
+          "localXZ": [
+            0,
+            -5.5
+          ],
+          "heightMetres": 1.0533138359973315,
+          "measuredUndersideY": 1.0413138359973315,
+          "topContactOverlapMetres": 0.012
+        },
+        {
+          "localXZ": [
+            -0.9,
+            1
+          ],
+          "heightMetres": 0.8333178709475466,
+          "measuredUndersideY": 0.8213178709475466,
+          "topContactOverlapMetres": 0.012
+        },
+        {
+          "localXZ": [
+            0.9,
+            1
+          ],
+          "heightMetres": 0.840244517126925,
+          "measuredUndersideY": 0.828244517126925,
+          "topContactOverlapMetres": 0.012
+        },
+        {
+          "localXZ": [
+            0,
+            4.8
+          ],
+          "heightMetres": 0.7931849949271101,
+          "measuredUndersideY": 0.7811849949271101,
+          "topContactOverlapMetres": 0.012
+        }
+      ],
+      "sourceModelCut": false,
+      "sourceGeometryUnchanged": true,
+      "referenceFloorY": 7.2,
+      "uppermostAirframeY": 11.953085515473356,
+      "limitingCeilingY": 12.199999809265137,
+      "minimumTailCeilingClearanceMetres": 0.24691429379178054,
+      "evidence": "assets/zones/physical-revisions-qa.json"
+    },
+    "bounds": {
+      "min": [
+        8.588467773026625,
+        7.20000000089407,
+        -52.47897207146154
+      ],
+      "max": [
+        23.062108272286395,
+        11.953085708618165,
+        -37.250562650374434
+      ],
+      "size": [
+        14.47364049925977,
+        4.753085707724095,
+        15.228409421087107
+      ]
+    },
+    "sourceTriangles": 299312
+  },
+  "ice": {
+    "state": {
+      "iceBlocks": 160,
+      "panoramas": 1,
+      "physicalLedSurfaces": 2,
+      "ledSizeMetres": [
+        13.984,
+        4.446
+      ],
+      "ledAreaSquareMetres": 62.17286399999999,
+      "cabinetCount": 299,
+      "panels": [
+        {
+          "id": "lider-led-east",
+          "width": 6.08,
+          "height": 4.446,
+          "frameWidth": 6.4,
+          "frameHeight": 4.7,
+          "cabinets": {
+            "columns": 10,
+            "rows": 13,
+            "count": 130
+          },
+          "center": [
+            -4,
+            9.7,
+            46.3
+          ]
+        },
+        {
+          "id": "lider-led-west",
+          "width": 7.904,
+          "height": 4.446,
+          "frameWidth": 8.2,
+          "frameHeight": 4.7,
+          "cabinets": {
+            "columns": 13,
+            "rows": 13,
+            "count": 169
+          },
+          "center": [
+            -12.5,
+            9.7,
+            45.5
+          ]
+        }
+      ],
+      "continuousPanorama": true,
+      "media": {
+        "theme": "arctic",
+        "playing": true,
+        "chapter": 0,
+        "frames": 24,
+        "animated": true,
+        "kind": "original-generated-animation"
+      },
+      "iceIslandSquareMetres": 66.93618150509106,
+      "sourceZone": "northwest-main",
+      "screenContent": "Полярная ночь, дрейфующие льды и движущееся северное сияние",
+      "originalGLBUnchanged": true,
+      "wholeOriginalShip": true,
+      "addedWheelhouse": false,
+      "shipLengthMetres": 13.65,
+      "lighting": "Local cold-blue and aurora-green lights only; park lighting unchanged"
+    },
+    "bounds": {
+      "min": [
+        -17.0458822995142,
+        7.199999997019767,
+        37.744616424877876
+      ],
+      "max": [
+        -0.10795930634139417,
+        12.049999904632568,
+        46.638432124613345
+      ],
+      "size": [
+        16.937922993172805,
+        4.8499999076128,
+        8.89381569973547
+      ]
+    },
+    "pauseStable": true,
+    "UVRanges": [
+      [
+        0,
+        0.43478260869565216
+      ],
+      [
+        0.43478260869565216,
+        1
+      ]
+    ]
+  },
+  "camera": {
+    "lider": {
+      "position": [
+        3.9999999999999982,
+        11.4,
+        31
+      ],
+      "target": [
+        -7,
+        9.5,
+        42.4
+      ],
+      "fov": 55,
+      "aspect": 1.7777777777777777,
+      "ndcMin": [
+        -0.6130837908649358,
+        -0.7664926530854692,
+        0.9871939514138584
+      ],
+      "ndcMax": [
+        0.5872080578038292,
+        0.39644117710050447,
+        0.9965801036073983
+      ],
+      "inside": true
+    },
+    "grain": {
+      "position": [
+        -3.4926406871192874,
+        25.2,
+        24.45584412271571
+      ],
+      "target": [
+        0.75,
+        21.5,
+        -1
+      ],
+      "fov": 50,
+      "aspect": 1.7777777777777777,
+      "ndcMin": [
+        -0.18643642482383255,
+        -0.8238515188029408,
+        0.9955414803468199
+      ],
+      "ndcMax": [
+        0.23857963909672833,
+        0.8194422867933651,
+        0.9972266492976937
+      ],
+      "inside": true
+    },
+    "aircraft": {
+      "position": [
+        20,
+        9.3,
+        -26
+      ],
+      "target": [
+        16,
+        8.8,
+        -45
+      ],
+      "fov": 55,
+      "aspect": 1.7777777777777777,
+      "ndcMin": [
+        -0.7196159274290023,
+        -0.33747133529358275,
+        0.9906956862642072
+      ],
+      "ndcMax": [
+        0.5571369403935522,
+        0.5441201778818162,
+        0.996866626003584
+      ],
+      "inside": true
+    }
+  },
+  "obstacleCounts": {
+    "O12-1": 73,
+    "Z02-1": 7,
+    "O05-1": 27,
+    "O16-1": 283
+  }
+}

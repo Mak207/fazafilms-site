@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {createLiveMedia} from './live-media.js?v=park-exhibition-20261125-r2';
 
 // Metres, Y up. These are controllable exhibition assemblies; their provenance
 // is procedural Three.js geometry, never an ungenerated Hitem3D asset.
@@ -123,6 +124,19 @@ function seedRandom(seed) {
 export function createGrainSilos(options = {}) {
   const kit = makeKit('grain-silos', 'Прозрачные силосы · движение зерна', options);
   const { root, standard, basic, box, cyl, tube, collider, action } = kit;
+  // The limiting roof triangle over the complete cylinder/return-pipe envelope
+  // is at Y=30.3458336. The floor is Y=13.20: 16.89m leaves 0.2558m clear.
+  // Only the storage cylinder is extended; kernels, hopper and controls retain
+  // their physical sizes. The original CAD is never changed to make this fit.
+  const heightMetres = clamp(Number(options.heightMetres) || 16.89, 5.0, 16.89);
+  const cylinderBottom = 1.26, cylinderTop = heightMetres - .46;
+  const cylinderHeight = cylinderTop - cylinderBottom, returnTop = heightMetres - .09;
+  const clearance = { floorY:13.2, firstRoofY:30.345833587646485,
+    designHeightMetres:heightMetres, topWorldY:13.2 + heightMetres,
+    roofClearanceMetres:30.345833587646485 - 13.2 - heightMetres,
+    method:'Full conservative cylinder and return-pipe OBBs against all 2,927,007 CAD triangles',
+    evidence:'assets/zones/physical-revisions-qa.json' };
+  root.userData.heightFit = clearance;
   const metal = standard(0x71848c, { metalness: .7, roughness: .34 }), ivory = standard(0xe6e2d7);
   const grainMat = standard(0xc99b48, { roughness: .91 }), dark = standard(0x263a3e), light = basic(0xffcf75, { toneMapped: false });
   const grainCanvas=document.createElement('canvas');grainCanvas.width=grainCanvas.height=512;
@@ -146,23 +160,23 @@ export function createGrainSilos(options = {}) {
   for (let i = 0; i < count; i++) {
     const x = (i - 1) * 2.35;
     const assembly = new THREE.Group(); assembly.position.x = x; assembly.name = `Прозрачный силос ${i + 1}`; root.add(assembly);
-    collider(`silo-${i + 1}`, [[-.94, 0, -.94], [.94, 4.97, .94]], assembly);
+    collider(`silo-${i + 1}`, [[-.94, 0, -.94], [.94, heightMetres, .94]], assembly);
     // Cylindrical acrylic wall and a visible lower conical hopper are separate parts.
-    cyl(.86, .86, 3.25, [0, 2.885, 0], kit.glass, assembly, true, 48);
+    cyl(.86, .86, cylinderHeight, [0, cylinderBottom + cylinderHeight / 2, 0], kit.glass, assembly, true, 48);
     cyl(.86, .13, .79, [0, .865, 0], kit.glass, assembly, true, 48);
-    for (const y of [1.26, 2.35, 3.43, 4.51]) {
+    for (const y of Array.from({length:9},(_,j)=>cylinderBottom+cylinderHeight*j/8)) {
       const ring = kit.mesh(new THREE.TorusGeometry(.872, .026, 6, 48), metal, [0, y, 0], assembly); ring.rotation.x = Math.PI / 2;
     }
-    cyl(.9, .9, .1, [0, 4.57, 0], ivory, assembly);
+    cyl(.9, .9, .1, [0, cylinderTop + .06, 0], ivory, assembly);
     for (const angle of [Math.PI / 4, 3 * Math.PI / 4, 5 * Math.PI / 4, 7 * Math.PI / 4]) {
       const px = Math.cos(angle) * .73, pz = Math.sin(angle) * .73;
       tube([px, .08, pz], [px, 1.4, pz], .04, metal, assembly);
     }
-    cyl(.09, .09, .36, [0, 4.69, 0], metal, assembly);
+    cyl(.09, .09, .30, [0, cylinderTop + .20, 0], metal, assembly);
     tube([0, .32, 0], [0, .32, -1.03], .09, metal, assembly);
-    tube([0, .32, -1.03], [0, 4.87, -1.03], .065, metal, assembly);
-    tube([0, 4.87, -1.03], [0, 4.87, 0], .065, metal, assembly);
-    collider(`silo-${i+1}-return`,[[-.16,.23,-1.12],[.16,4.96,-.9]],assembly);
+    tube([0, .32, -1.03], [0, returnTop, -1.03], .065, metal, assembly);
+    tube([0, returnTop, -1.03], [0, returnTop, 0], .065, metal, assembly);
+    collider(`silo-${i+1}-return`,[[-.16,.23,-1.12],[.16,heightMetres,-.9]],assembly);
     cyl(.8,.13,.72,[0,.89,0],pileMaterial,assembly,false,48);
     const pile = cyl(.8, .8, 1, [0, 1.76, 0], pileMaterial, assembly, false, 48);
     const mound = cyl(.015, .79, .28, [0, 2.4, 0], pileMaterial, assembly, false, 48);
@@ -188,10 +202,16 @@ export function createGrainSilos(options = {}) {
     ctx.fillStyle = '#112d31'; ctx.font = '600 36px sans-serif'; ctx.fillText(flowing ? 'ПРИОСТАНОВИТЬ' : 'ЗАПУСТИТЬ', 78, 256);
     ctx.fillStyle = '#a9c5c6'; ctx.font = '27px sans-serif'; ctx.fillText('Нажмите на панель', 52, 354);
     ctx.fillText('Подача · насыпь · возврат', 52, 418);
+    for(let i=0;i<silos.length;i++){
+      const y=205+i*70,level=silos[i].level;
+      ctx.fillStyle='#a9c5c6';ctx.font='25px sans-serif';ctx.fillText(['Пшеница','Ячмень','Овёс'][i]+' · '+level.toFixed(1)+' м',535,y,430);
+      ctx.fillStyle='#26464b';ctx.fillRect(535,y+12,420,15);ctx.fillStyle='#d2b568';ctx.fillRect(535,y+12,420*clamp(level/cylinderTop,0,1),15);
+    }
+    ctx.fillStyle='#284a50';ctx.fillRect(535,439,420,4);ctx.fillStyle=flowing?'#75d9ab':'#e9bc69';ctx.beginPath();ctx.arc(535+(elapsed*.18%1)*420,441,9,0,TAU);ctx.fill();
   }, controls);
   controlScreen.group.rotation.x = -.22;
   action(controlScreen.group, 'grain-toggle', () => { flowing = !flowing; controlScreen.redraw(); });
-  kit.label('ЭЛЕВАТОР · ЗЕРНО В ДВИЖЕНИИ', [5.6, .39], [0, 5.15, .05]);
+  kit.label('ЭЛЕВАТОР · ЗЕРНО В ДВИЖЕНИИ', [5.6, .39], [0, 2.65, 1.03]);
   function update(delta) {
     if (!Number.isFinite(delta) || delta < 0) return false;
     if (flowing) elapsed += Math.min(delta, .12) * intensity;
@@ -199,8 +219,8 @@ export function createGrainSilos(options = {}) {
     for (let index = 0; index < silos.length; index++) {
       const silo = silos[index];
       // Continuous closed-loop demonstration: the return pipe regulates the bed.
-      silo.level = 1.28 + .88 + Math.sin(elapsed * .1 + index * .7) * .28;
-      const peak = silo.level + .27, top = 4.45, duration = Math.sqrt(2 * (top - peak) / 9.81);
+      silo.level = cylinderBottom + cylinderHeight * .29 + Math.sin(elapsed * .1 + index * .7) * .28;
+      const peak = silo.level + .27, top = cylinderTop - .06, duration = Math.sqrt(2 * (top - peak) / 9.81);
       for (let i = 0; i < fallingPerSilo; i++) {
         const grain = silo.phases[i], t = ((elapsed / duration + grain.p) % 1) * duration;
         dummy.position.set(Math.cos(grain.angle) * grain.r, top - 4.905 * t * t, Math.sin(grain.angle) * grain.r);
@@ -229,8 +249,12 @@ export function createGrainSilos(options = {}) {
   update(0);
   return { ...kit, update, setFlowing(value) { flowing = Boolean(value); controlScreen.redraw(); kit.changed(); },
     setIntensity(value) { if (Number.isFinite(value)) intensity = clamp(value, .2, 2); },
+    getMediaEntries:()=>[{id:'grain-control',name:'Живое зерно · пульт',width:1.15,height:.58,theme:'grain',face:controlScreen.face,
+      interact(action){if(action==='toggle')flowing=!flowing;else if(action==='reset'){elapsed=0;flowing=true;}else intensity=intensity<1.5?2:1;controlScreen.redraw();kit.changed();return true;},
+      getState:()=>({theme:'grain',playing:flowing,animated:true,kind:'interactive-grain-control',elapsed,intensity})}],
     getState: () => ({ id: root.userData.installationId, flowing, elapsed, intensity, silos: count, fallingKernels: count * fallingPerSilo,
-      surfaceKernels: count * pilePerSilo, floorFootprintMetres: [7.5, 4.2], heightMetres: 5.4,
+      surfaceKernels: count * pilePerSilo, floorFootprintMetres: [7.5, 4.2], heightMetres,
+      heightFit:clearance, controlHeightMetres:1.17, individualKernelSizePreserved:true,
       provenance: 'procedural-threejs', physics: 'gravity-based looping particles; illustrative flow, not a process-engineering calculation',
       actions: ['grain-toggle'], levels: silos.map(s => s.level) }) };
 }
@@ -274,7 +298,7 @@ export function createFlightCockpits(options = {}) {
   for (let index = 0; index < cabinCount; index++) {
     const cabin = new THREE.Group(); cabin.position.x = (index - (cabinCount - 1) / 2) * cabinSpacing;
     root.add(cabin); cabin.name = `Кабина МС-21 ${index + 1}`;
-    const state = { active: false, bank: 0, pitch: 0, heading: 0, elapsed: 0 }; states.push(state);
+    const state = { active: true, bank: 0, pitch: 0, heading: 0, elapsed: 0 }; states.push(state);
     const externalSource = options.shellFactory?.(index) || options.shells?.[index] || options.shell;
     let external = null, flight;
     // Source ownership stays with its loader: clones share GPU resources.
@@ -390,6 +414,10 @@ export function createFlightCockpits(options = {}) {
     return active && root.visible;
   }
   return { ...kit, update,
+    getMediaEntries:()=>stations.map(({state,screen},index)=>({id:`flight-panorama-${index+1}`,name:`Кабина ${options.stationNumber||index+1} · полёт`,
+      width:screen.size[0],height:screen.size[1],theme:'flight',face:screen.face,
+      interact(action){if(action==='toggle')state.active=!state.active;else if(action==='reset')Object.assign(state,{active:true,bank:0,pitch:0,heading:0,elapsed:0});else{state.active=true;state.bank=state.bank>=.12?-.18:.18;}screen.redraw();kit.changed();return true;},
+      getState:()=>({theme:'flight',playing:state.active,animated:true,kind:'interactive-flight-panorama',elapsed:state.elapsed,bank:state.bank,pitch:state.pitch,heading:state.heading})})),
     control(index, patch = {}) { const state = states[index]; if (!state) return false;
       if (patch.active !== undefined) state.active = Boolean(patch.active);
       if (Number.isFinite(patch.bank)) state.bank = clamp(patch.bank, -.45, .45);
@@ -444,8 +472,16 @@ export function createChersonesusInterior(options = {}) {
   const floorWidth = compact ? 6.22 : 7.4, floorLength = compact ? 9.2 : 16;
   const screenWidth = compact ? 5.2 : 6.3, screenZ = compact ? 4.05 : -7.25, facing = compact ? Math.PI : 0;
   const sand = standard(0xc3ae88, { roughness: .93 }), pale = standard(0xd4c5a8, { roughness: .88 }), bronze = standard(0x705a42, { metalness: .22 }), dark = standard(0x282a29), led = basic(0xffcf87, { toneMapped: false });
-  let sceneIndex = 0, elapsed = 0, lastRedraw = -1;
+  let sceneIndex = 0, elapsed = 0;
   const vrActive = [false, false], vrRings = [];
+  const movingScreens=[];
+  function attachMedia(screen,id,name,theme,extra={}){
+    const media=createLiveMedia({theme,title:name,width:screen.canvas.width,height:screen.canvas.height,...extra});
+    screen.face.material.map=media.texture;screen.face.material.needsUpdate=true;
+    const item={id,name,width:screen.size[0],height:screen.size[1],theme,face:screen.face,media,
+      interact(action){const changed=media.interact(action);kit.changed();return changed;},getState:()=>media.getState()};
+    movingScreens.push(item);return media;
+  }
   // Thin deck and patterned lines are visible; it is NOT declared as a new CAD floor.
   box([floorWidth, .035, floorLength], [0, .0175, 0], sand);
   for (let z = -floorLength / 2 + .5; z <= floorLength / 2 - .5; z += 1) box([floorWidth - .04, .006, .015], [0, .038, z], bronze);
@@ -459,6 +495,8 @@ export function createChersonesusInterior(options = {}) {
       if(sceneIndex===2){ctx.fillStyle='rgba(74,33,10,.22)';ctx.fillRect(0,0,w,h);}
     } else drawChersonesus(ctx,w,h,sceneIndex,t);
   }, root, { resolution: [2048, 1024], rotationY: facing });
+  const panoramaMedia=attachMedia(panorama,'chersonesus-panorama','Херсонес · история и наследие','heritage',{image:options.panoramaImage,showText:false});
+  panorama.redraw=()=>{panoramaMedia.interact('reset');for(let i=0;i<sceneIndex;i++)panoramaMedia.interact('next');};
   collider('panorama-wall', [[-screenWidth / 2 - .1, .04, screenZ - .15], [screenWidth / 2 + .1, compact ? 3.06 : 3.1, screenZ + .15]]);
   action(panorama.group, 'chersonesus-scene', () => { sceneIndex = (sceneIndex + 1) % 3; panorama.redraw(elapsed); });
   kit.label('ХЕРСОНЕС ТАВРИЧЕСКИЙ', [compact ? 4.9 : 5.9, .2], [0, compact ? 2.9 : 2.95, screenZ - (compact ? -.01 : .01)], root, { background: '#655945', color: '#fff0cc', rotationY: facing });
@@ -522,6 +560,7 @@ export function createChersonesusInterior(options = {}) {
       ctx.fillText('или смените сцену на панораме', 75, 286, w - 150);
       ctx.fillStyle = '#ede5d3'; ctx.font = '30px sans-serif'; ctx.fillText('История · архитектура · археология', 75, 375, w - 150);
     }, root, { rotationY: facing });
+    attachMedia(information,`chersonesus-information-${side<0?1:2}`,title,side<0?'sailing':'heritage');
     action(information.group, `chersonesus-info-${side < 0 ? 1 : 2}`, () => { sceneIndex = side < 0 ? 0 : 1; panorama.redraw(elapsed); });
     collider(`information-${side}`, [[infoX - infoWidth / 2 - .04, .04, infoZ - .14], [infoX + infoWidth / 2 + .04, 2.36, infoZ + .14]]);
   }
@@ -532,11 +571,13 @@ export function createChersonesusInterior(options = {}) {
   function update(delta) {
     if (!Number.isFinite(delta) || delta < 0) return false;
     elapsed += Math.min(delta, .12);
-    if (Math.floor(elapsed * 8) !== lastRedraw) { panorama.redraw(elapsed); lastRedraw = Math.floor(elapsed * 8); }
+    for(const screen of movingScreens)screen.media.update(Math.min(delta,.12));
     for (let i = 0; i < vrRings.length; i++) if (vrActive[i]) vrRings[i].material.color.setRGB(.36, .72 + Math.sin(elapsed * 2) * .08, .61);
     return root.visible;
   }
   return { ...kit, update,
+    getMediaEntries:()=>movingScreens.map(({media,...entry})=>entry),
+    dispose(){for(const screen of movingScreens)screen.media.dispose();kit.dispose();},
     setScene(index) { if (Number.isFinite(index)) sceneIndex = ((Math.trunc(index) % 3) + 3) % 3; panorama.redraw(elapsed); kit.changed(); },
     getState: () => ({ id: root.userData.installationId, provenance: 'procedural-threejs-functional-interior', museumCases: cases.length,
       vrBays: 2, vrBaySizeMetres: [2.5, 2.5], vrSeparationMetres: .7, screens: 3,
@@ -544,6 +585,7 @@ export function createChersonesusInterior(options = {}) {
       footprintMetres: [floorWidth, floorLength], heightMetres: compact ? 3.06 : 3.1, centralAisleMetres: 2.2, centralAisleCentreX: compact ? .65 : .15,
       layout: compact ? 'compact-source-zone' : 'original-24m',
       hitemArchaeologyCases: options.archaeology ? 2 : 0, panoramaImageLoaded: Boolean(options.panoramaImage?.complete && options.panoramaImage?.naturalWidth),
+      animatedScreens:movingScreens.length,media:movingScreens.map(screen=>({id:screen.id,...screen.media.getState()})),
       actualAisleRequiresShellVerification: true, safetyDimensionsAreDesignAllowancesNotCertifiedNorms: true,
       sceneIndex, vrActive: vrActive.slice(), actions: ['chersonesus-scene', 'chersonesus-vr-1', 'chersonesus-vr-2',
         ...cases.map((_, i) => `chersonesus-case-${i + 1}`), 'chersonesus-info-1', 'chersonesus-info-2'] }) };

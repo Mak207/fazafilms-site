@@ -1,29 +1,30 @@
-import { createZoneMap } from './zone-map.js?v=park-zones-20261124';
-import { createExhibitionZones } from './zones-controller.js?v=park-zones-20261124';
+import { createZoneMap } from './zone-map.js?v=park-floor-colors-20261125';
+import { createExhibitionZones } from './zones-controller.js?v=park-exhibition-20261125-r2';
 import * as THREE from 'three';
 import { GLTFLoader } from '/golden-ring/interactives/vendor/three-0.180/GLTFLoader.js';
 import { MeshoptDecoder } from '/golden-ring/tour/vendor/meshopt_decoder.mjs';
 import { OrbitControls } from './vendor/OrbitControls.js';
-import { createTramStationControls } from './tram-station-controls.js?v=park-zones-20261124';
-import { createTramSystem, MONORAIL_ROUTE_CONFIG, MONORAIL_BOARDING_GATE } from './tram-system.js?v=park-zones-20261124';
+import { createTramStationControls } from './tram-station-controls.js?v=park-exhibition-20261125-r2';
+import { createTramSystem, MONORAIL_ROUTE_CONFIG, MONORAIL_BOARDING_GATE } from './tram-system.js?v=park-exhibition-20261125-r2';
 import { KTX2Loader } from './vendor/ktx2/loaders/KTX2Loader.js';
 import { RoomEnvironment } from './vendor/RoomEnvironment.js';
-import { createExhibitSystem } from './exhibits.js?v=park-zones-20261124';
-import { createExhibitEditor } from './exhibit-editor.js?v=park-zones-20261124';
-import { startParkCrowd } from './crowd/park-crowd.js?v=park-zones-20261124';
-import { createDynamicObstacleAdapter } from './crowd/dynamic-obstacles.js?v=park-zones-20261124';
-import { attachIcebreakerDetails } from './icebreaker-details.js?v=park-zones-20261124';
-import { createIcebreakerAccess, ICEBREAKER_OPENING } from './icebreaker-access.js?v=park-zones-20261124';
-import { applyWorkingOpenings } from './cad-openings.js?v=park-zones-20261124';
-import { initViewerUI } from './ui-module.js?v=park-zones-20261124';
-import { createRgoZones } from './rgo-zones.js?v=park-zones-20261124';
+import { createExhibitSystem } from './exhibits.js?v=park-exhibition-20261125-r2';
+import { createExhibitEditor } from './exhibit-editor.js?v=park-exhibition-20261125-r2';
+import { startParkCrowd } from './crowd/park-crowd.js?v=park-exhibition-20261125-r2';
+import { createDynamicObstacleAdapter } from './crowd/dynamic-obstacles.js?v=park-exhibition-20261125-r2';
+import { attachIcebreakerDetails } from './icebreaker-details.js?v=park-exhibition-20261125-r2';
+import { applyWorkingOpenings } from './cad-openings.js?v=park-exhibition-20261125-r2';
+import { initViewerUI } from './ui-module.js?v=park-exhibition-20261125-r2';
+import { createRgoZones } from './rgo-zones.js?v=park-floor-colors-20261125';
 import { MeshBVH, acceleratedRaycast, CENTER } from './vendor/three-mesh-bvh/index.module.js';
 
 const $ = id => document.getElementById(id);
 const root = $('viewer'), stage = $('stage'), canvas = $('canvas');
 const loading = $('loading'), progress = $('progress'), detail = $('loading-detail');
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const exhibitQuality=new URLSearchParams(location.search).get('quality')==='high'?'high':'fast';
+// Keep the initial request while selection handlers update the address bar.
+const initialNavigation=new URLSearchParams(location.search);
+const exhibitQuality=initialNavigation.get('quality')==='high'?'high':'fast';
 const exhibitManifestPath=exhibitQuality==='high'?'assets/exhibits/manifest.json':'assets/exhibits/preview/manifest.json';
 const diagnostics = window.__parkViewer = { state:'loading', errors:[], source:'выставка_3D вид.dwg' };
 function qualityUrl(value){
@@ -162,7 +163,7 @@ try {
       const edgeMaterial=new THREE.LineBasicMaterial({color:0x26382e,transparent:true,opacity:.22,depthWrite:false});
       const edgeCache=new Map();
       sourceMeshes=[];model.traverse(node=>{if(node.isMesh&&!node.isInstancedMesh)sourceMeshes.push(node)});
-      diagnostics.workingOpenings=applyWorkingOpenings(sourceMeshes,[MONORAIL_BOARDING_GATE,ICEBREAKER_OPENING]);
+      diagnostics.workingOpenings=applyWorkingOpenings(sourceMeshes,[MONORAIL_BOARDING_GATE]);
       envelopeMeshes=sourceMeshes.filter(node=>/^A-(ROOF|WALL|CLNG|GLAZ)/.test(node.name));
       roofMeshes=sourceMeshes.filter(node=>/^A-ROOF__/.test(node.name));
       let edgeBudget=500000;
@@ -528,35 +529,43 @@ function syncExhibitControls(state){
 }
 async function startExhibits(loader,monorailReady){
   try{
-    exhibits=await createExhibitSystem({scene,loader,sourceMeshes,manifestUrl:exhibitManifestPath+'?v=park-zones-20261124',
+    exhibits=await createExhibitSystem({scene,loader,sourceMeshes,manifestUrl:exhibitManifestPath+'?v=park-exhibition-20261125-r2',
       anisotropy:Math.min(8,renderer.capabilities.getMaxAnisotropy()),onChange:()=>{needsRender=true;},onProgress:syncExhibitControls});
     const icebreaker=exhibits.getInstance('O12-1');
     if(icebreaker){
       const lettering=attachIcebreakerDetails(exhibits.getInstanceRoot('O12-1'),icebreaker.originalDimensions||icebreaker.dimensions);
       diagnostics.icebreaker={lettering:lettering?.text||'АТОМФЛОТ',labelledSides:lettering?.sides||2,dimensions:icebreaker.originalDimensions||icebreaker.dimensions};
-      icebreakerAccess=createIcebreakerAccess({scene,exhibits});
+      // Original whole ship: no added walk-in wheelhouse or CAD access opening.
+      icebreakerAccess=null;
     }
     exhibitionZones=await createExhibitionZones({exhibits,loader,camera,getIcebreakerAccess:()=>icebreakerAccess,onStationFocus:id=>{const focused=stationControls?.focusStation(id);if(focused)viewerUI.openPanel('monorail-panel');return focused;},requestRender:()=>{needsRender=true;},
       onOverview:()=>{zoneMap?.setVisible(true);setView('exhibits');},onFocus:(id,position,target,label,fov=62)=>{
+        const keepNavigationOpen=!$('rgo-panel').hidden;
         leaveRgoView();
-        zoneMap?.setVisible(false);viewerUI.closePanels();
+        zoneMap?.setVisible(false);
+        if(!keepNavigationOpen)viewerUI.closePanels();
         exhibitEditor?.clearSelection();editingInstanceId=null;clearExhibitInspection();stopFollowing();
         setHallOpen(true);exhibits.setVisible(true);currentView=null;
         if(position&&target){camera.fov=camera.aspect<.8?Math.min(86,Math.max(fov,82)):fov;camera.updateProjectionMatrix();moveCamera(position,target);inspectedExhibitId=id;applyInspectionCutaway(position);}
         else focusExhibit(id);
         $('view-name').textContent=label;diagnostics.selectedExhibit=id;diagnostics.view='section';
       }});
-    zoneMap=await createZoneMap({scene,requestRender:()=>{needsRender=true;},onFocus:(position,target,label)=>{
+    zoneMap=await createZoneMap({scene,getNavigation:()=>exhibitionZones?.getNavigation(),requestRender:()=>{needsRender=true;},onFocus:(position,target,label,regionId)=>{
       leaveRgoView();
       exhibitEditor?.clearSelection();editingInstanceId=null;clearExhibitInspection();stopFollowing();
       setHallOpen(true);exhibits.setVisible(true);currentView=null;
-      exhibitionZones.hidePanel();moveCamera(position,target);
+      exhibitionZones.focusRegion(regionId,{navigate:false});moveCamera(position,target);
       $('view-name').textContent=label;diagnostics.view='zone-map';
     }});
     diagnostics.focusZone=(id)=>zoneMap.focus(id);
     diagnostics.focusSection=(id,options)=>exhibitionZones.focus(id,options);
     diagnostics.interact=(action)=>exhibitionZones.act(action);
     await monorailReady;
+    // The zone selector is rebuilt after loading the exhibits. Keep station
+    // destinations regardless of which asynchronous subsystem finished first.
+    for(const item of stationControls?.getMenuItems()||[]){
+      if(![...$('section-select').options].some(option=>option.value===item.value))$('section-select').add(new Option(item.label,item.value));
+    }
     await prepareInspectionRaycasts();
     inspectionReady=true;
     exhibits.setSection(false,null);
@@ -581,10 +590,6 @@ async function startExhibits(loader,monorailReady){
       $('scene-notice').textContent=state.rejectedInstances?'Часть экспонатов ещё требует уточнения позиции. Показаны подтверждённые размещения.':'Часть экспонатов не загрузилась. Обновите страницу для повторной загрузки.';$('scene-notice').hidden=false;
     }
     if(currentView==='overview')setView('overview',true);
-    const requestedSection=new URLSearchParams(location.search).get('section');
-    if(requestedSection)exhibitionZones.focus(requestedSection);
-    const requestedZone=new URLSearchParams(location.search).get('zone');
-    if(requestedZone)zoneMap.focus(requestedZone);
   }catch(error){
     inspectionError=error?.message||String(error);
     exhibitProgress={state:'error',loadedObjects:0,placedInstances:0,objects:[],errors:[inspectionError]};
@@ -798,17 +803,29 @@ function navigateRgo({box,direction,label},instant=false){
 }
 async function startRgoLayer(){
   try{
-    rgoZones=await createRgoZones({THREE,scene,canvas,camera,panel:$('rgo-panel'),existingLayoutRevised:true,
+    rgoZones=await createRgoZones({THREE,scene,canvas,camera,panel:$('rgo-panel'),controller:exhibitionZones,existingLayoutRevised:true,
       onNavigate:request=>navigateRgo(request),onOverview:()=>setView('overview'),requestRender:()=>{needsRender=true;},
       getExhibitRoot:id=>exhibits?.getInstanceRoot(id)||null,
       getExistingObstacles:()=>[...(dynamicObstacles?.snapshot().proxies||[]),...(monorail?.getCollisionObstacles()||[])]
     });
     $('rgo-toggle').disabled=false;
-    $('rgo-toggle').addEventListener('click',()=>{if(!$('rgo-panel').hidden&&!rgoZones.getState().activeView)rgoZones.showOverview();});
-    const choice=new URLSearchParams(location.search).get('rgo');
+    $('rgo-toggle').addEventListener('click',()=>{
+      if($('rgo-panel').hidden){rgoZones.setVisible(false);return;}
+      if(!exhibitionZones.getNavigation().selectedRegion)rgoZones.showOverview();
+      rgoZones.setVisible(true);
+    });
+    const requestedSection=initialNavigation.get('section'),requestedZone=initialNavigation.get('zone');
+    if(requestedSection)exhibitionZones.focus(requestedSection);
+    if(requestedZone)zoneMap.focus(requestedZone);
+    const choice=initialNavigation.get('rgo');
     if(choice==='all'||/^0[0-8]$/.test(choice||'')){
-      if(choice==='all')rgoZones.showOverview({writeUrl:false});else rgoZones.selectHall('RGO-'+choice,{writeUrl:false});
-      if(!matchMedia('(max-width: 600px)').matches)viewerUI.openPanel('rgo-panel');
+      if(choice==='all')rgoZones.showOverview();else rgoZones.selectHall('RGO-'+choice);
+    }
+    const requestedObject=initialNavigation.get('object'),requestedMedia=initialNavigation.get('media');
+    if(requestedObject)exhibitionZones.focusObject(requestedObject);
+    if(requestedMedia)exhibitionZones.focusEquipment(requestedMedia);
+    if((choice||requestedObject||requestedMedia)&&!matchMedia('(max-width: 600px)').matches){
+      viewerUI.openPanel('rgo-panel');rgoZones.setVisible(true);
     }else rgoZones.setVisible(false);
   }catch(error){
     diagnostics.errors.push('RGO: '+(error?.message||String(error)));

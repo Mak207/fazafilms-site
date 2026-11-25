@@ -1,7 +1,9 @@
 import * as THREE from 'three';
-import { getPlacementBounds } from './exhibits.js?v=park-zones-20261124';
+import { TransformControls } from './vendor/TransformControls.js';
+import { getPlacementBounds } from './exhibits.js?v=park-exhibition-20261125-r2';
 
-const STORAGE_KEY = 'park-exhibit-layout-v2-source-zones-20261124';
+const STORAGE_KEY = 'park-exhibit-layout-v3-exhibition-20261125';
+const PREVIOUS_STORAGE_KEY = 'park-exhibit-layout-v2-source-zones-20261124';
 const MAX_UNDO = 50;
 const degrees = radians => radians * 180 / Math.PI;
 const radians = value => value * Math.PI / 180;
@@ -9,24 +11,7 @@ const number = value => Math.round(value * 1000) / 1000;
 const dimensionFormat = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 3 });
 const dimensionLabel = dimensions => dimensions.map(value => dimensionFormat.format(value)).join(' × ') + ' м';
 const sameLayout = (a, b) => JSON.stringify(a.instances) === JSON.stringify(b.instances);
-const ICONS = {
-  O01: '<ellipse cx="16" cy="9" rx="12" ry="4"/><path d="M4 9v14c0 5 24 5 24 0V9M12 27v-9h8v9M7 14h3m12 0h3"/>',
-  O02: '<path d="M3 26a13 18 0 0 1 26 0ZM3 26l7-11 6-7 6 7 7 11M10 15h12M7 21h18M10 15l6 11 6-11M16 8v7"/>',
-  O03: '<circle cx="16" cy="12" r="9"/><path d="M12 21l-3 8h14l-3-8M12 9h.1M19 7h.1M20 15h.1M13 15h.1"/>',
-  O04: '<rect x="10" y="3" width="12" height="10" rx="5"/><path d="M12 7h8M10 14l-4 8m16-8 4 8M10 14v8l-2 7m14-15v8l2 7M10 22h12M14 16h4"/>',
-  O05: '<path d="M16 2l3 11 11 7v3l-11-3v6l4 3v1l-7-2-7 2v-1l4-3v-6L2 23v-3l11-7Z"/>',
-  O06: '<path d="M5 4h22l-3 19H8ZM12 4l-1 19m9-19 1 19M2 27q4-4 8 0t8 0 8 0l4-1M4 10h24"/>',
-  O07: '<path d="M3 16c2-8 17-8 19 0l7-7-1 7 2 6-9-3C12 28 4 24 3 16ZM8 14h.1M13 21l3 5M8 7l-2-3m3 3 2-4"/>',
-  O08: '<path d="M2 16c2-10 19-11 21 0l7-7-2 8 2 7-9-3C12 28 3 24 2 16ZM7 14h.1M5 20c5 2 9 2 13-1M11 23l5 5"/>',
-  O09: '<path d="M12 23V10l4-8 4 8v13ZM12 18l-5 7h5m8-7 5 7h-5M14 26l2 4 2-4M12 11h8"/>',
-  O10: '<path d="M8 29V4h12v25M8 4l12 8-12 8 12 9M20 7h7v4h-7M20 16h6v4h-6M5 29h19M8 12h12M8 20h12"/>',
-  O11: '<rect x="11" y="6" width="11" height="20" rx="5"/><path d="M11 13H4v13H1m21-9h7v-8h-7M14 2v4m5-4v4M10 29h14M14 11h5m-5 5h5"/>',
-  O12: '<path d="M2 20h28l-7 8H8ZM7 20v-6h17v6M12 14V8h8v6M16 8V3m-6 22h.1m5 0h.1m5 0h.1M3 30q4-3 8 0t8 0 8 0"/>',
-  O13: '<circle cx="10" cy="24" r="5"/><circle cx="24" cy="25" r="3"/><path d="M5 20V9h13v13m0-11h8v11M8 9V5h10v4M2 17H0m0 0v10m0-5h5M8 13h6v5H8Z"/>',
-  O14: '<rect x="12" y="12" width="8" height="8" rx="2"/><path d="M12 12 6 6m14 6 6-6M12 20l-6 6m14-6 6 6"/><ellipse cx="6" cy="6" rx="5" ry="3"/><ellipse cx="26" cy="6" rx="5" ry="3"/><ellipse cx="6" cy="26" rx="5" ry="3"/><ellipse cx="26" cy="26" rx="5" ry="3"/>',
-  O15: '<path d="M2 23h28M3 23C5 3 27 3 29 23M7 23V13m6 10V9m6 14V9m6 14V13M3 23v6m26-6v6M7 13l6 10 6-14 6 14"/>',
-  O16: '<path d="M2 11 16 3l14 8ZM5 12v15h22V12M3 29h26M9 27V17a3 3 0 0 1 6 0v10m2 0V17a3 3 0 0 1 6 0v10M5 12h22"/>',
-};
+
 
 /** Independent instance editor. Camera modes and cutaway remain viewer-owned. */
 export function createExhibitEditor({
@@ -57,6 +42,23 @@ export function createExhibitEditor({
   const cards = new Map(), undo = [], redo = [];
   let enabled = true, disposed = false, selectedId = null, mode = 'move', floorMode = 'auto';
   let drag = null, pendingMove = null, moveFrame = 0, busy = false;
+  let gizmoDrag = null, wheelEdit = null, wheelTimer = 0, snap = false;
+  const proxy = new THREE.Object3D();
+  proxy.name = 'Редактор · опорная точка';
+  proxy.userData.editorHelper = true;
+  scene.add(proxy);
+  // Route the documented TransformControls pointer methods in capture phase.
+  // OrbitControls never receives the same gesture, and geometry changes always
+  // pass through the exhibit system's collision transaction.
+  const gizmo = new TransformControls(camera, domElement);
+  gizmo.disconnect(); gizmo.domElement = domElement; domElement.style.touchAction = 'none';
+  const gizmoHelper = gizmo.getHelper();
+  gizmoHelper.name = 'Перенос · поворот · размер';
+  gizmoHelper.traverse(node => { node.userData.editorHelper = true; node.renderOrder = 1001; });
+  scene.add(gizmoHelper); gizmo.enabled = false; gizmoHelper.visible = false;
+  gizmo.setSize(1.15);
+  const modeNames = { move: 'translate', rotate: 'rotate', scale: 'scale', view: 'translate' };
+
   let saveState = 'empty', saveError = null, restored = false, lastAction = null, lastError = null;
   let rejectedSavedRaw = null, rejectedSavedBackupKey = null, recoveryExport = null;
 
@@ -87,7 +89,7 @@ export function createExhibitEditor({
     const instances = system.listInstances();
     return {
       enabled, open: !panel.hidden, selectedInstanceId: selectedId, mode, floorMode,
-      dragging: Boolean(drag), busy, totalInstances: instances.length,
+      dragging: Boolean(drag || gizmoDrag || wheelEdit), gizmo: { visible: gizmoHelper.visible, mode: gizmo.mode, axis: gizmo.axis, snap }, busy, totalInstances: instances.length,
       visibleInstances: instances.filter(row => row.visible).length,
       hiddenInstances: instances.filter(row => !row.visible).length,
       modifiedInstances: instances.filter(row => row.modified).length,
@@ -108,16 +110,17 @@ export function createExhibitEditor({
       button.setAttribute('aria-pressed', String(id === selectedId));
       button.classList.toggle('is-hidden', !current.visible);
       button.classList.toggle('is-modified', current.modified);
-      button.setAttribute('aria-label', `${current.name}, экземпляр ${current.ordinal} из ${current.copies}${current.visible ? '' : ', скрыт'}`);
+      button.textContent = current.name + (current.copies > 1 ? ' · ' + current.ordinal : '') + (current.visible ? '' : ' · скрыт');
       button.title = `${current.name} · ${id}${current.visible ? '' : ' · скрыт'}`;
     }
+    $('editor-instances').value = item?.instanceId || '';
     if (item) {
       $('editor-selected-name').textContent = item.name;
       $('editor-selected-id').textContent = item.instanceId + (item.floating ? ' · подвесной' : item.floorY < 10 ? ' · основной этаж' : ' · антресоль');
       if ($('editor-dimensions')) $('editor-dimensions').textContent = dimensionLabel(item.dimensions);
       if ($('editor-instance-note')) {
-        $('editor-instance-note').hidden = item.exhibitId !== 'O12';
-        $('editor-instance-note').textContent = item.exhibitId === 'O12' ? 'Переход к рубке показан для исходного размера и положения.' : '';
+        $('editor-instance-note').hidden = true;
+        $('editor-instance-note').textContent = '';
       }
       $('editor-visibility').textContent = item.visible ? 'Скрыть' : 'Показать';
       $('editor-visibility').setAttribute('aria-pressed', String(!item.visible));
@@ -126,9 +129,9 @@ export function createExhibitEditor({
       $('editor-floor-current').textContent = item.floating ? '' : `Сейчас: ${item.floorY < 10 ? 'основной этаж' : 'антресоль'}`;
       $('editor-gesture-hint').textContent = !item.visible ? 'Нажмите «Показать», чтобы изменить экземпляр.' :
         mode === 'view' ? 'Мышью или пальцами осмотрите объект.' :
-        mode === 'rotate' ? 'Потяните влево или вправо для поворота.' :
-        mode === 'scale' ? 'Влево — меньше. Вправо — больше.' :
-        item.floating ? 'Перетаскивание сохраняет высоту.' : 'Перетащите объект на нужное место.';
+        mode === 'rotate' ? 'Тяните кольцо вокруг объекта или сам объект влево / вправо.' :
+        mode === 'scale' ? 'Тяните ручку размера или крутите колесо над сценой. Пропорции сохраняются.' :
+        item.floating ? 'Тяните объект по горизонтали; зелёная стрелка меняет высоту.' : 'Тяните объект или стрелки. Правая кнопка сдвигает вид, колесо приближает.';
       for (const button of panel.querySelectorAll('[data-editor-mode]')) {
         button.setAttribute('aria-pressed', String(button.dataset.editorMode === mode));
         button.disabled = !enabled || busy || !item.visible;
@@ -154,7 +157,7 @@ export function createExhibitEditor({
         saveState === 'unavailable' ? 'Нужен экспорт' : saveState === 'invalid' ? 'Ошибка файла' : 'Автосохранение';
       saveIndicator.title = $('editor-save-status').textContent;
     }
-    updateHighlight();
+    updateHighlight(); syncGizmo();
   }
 
   function persist() {
@@ -189,7 +192,7 @@ export function createExhibitEditor({
   }
 
   function transact(action, operation) {
-    if (!enabled || busy || drag) return false;
+    if (!enabled || busy || drag || gizmoDrag || wheelEdit) return false;
     const before = system.getLayout();
     invoke(onEditStart, selectedId);
     const result = operation();
@@ -205,9 +208,11 @@ export function createExhibitEditor({
   function selectInstance(id, { focus = true } = {}) {
     if (disposed || !enabled || !system.getInstance(id)) return false;
     if (drag) finishDrag(false);
+    if (gizmoDrag) finishGizmo(false);
+    finishWheel();
     selectedId = id;
     setOpen(true);
-    catalog.open = false; panel.scrollTop = 0;
+    panel.scrollTop = 0;
     renderSelection();
     setMessage('Изменения сохраняются автоматически в этом браузере.');
     if (focus) invoke(onFocus, id);
@@ -217,8 +222,10 @@ export function createExhibitEditor({
 
   function clearSelection() {
     if (drag) finishDrag(false);
+    if (gizmoDrag) finishGizmo(false);
+    finishWheel();
     selectedId = null;
-    catalog.open = true;
+    $('editor-instances').value = '';
     renderSelection();
     notify();
   }
@@ -235,6 +242,8 @@ export function createExhibitEditor({
   function setMode(value) {
     if (!['view', 'move', 'rotate', 'scale'].includes(value)) return;
     if (drag) finishDrag(false);
+    if (gizmoDrag) finishGizmo(false);
+    finishWheel();
     mode = value;
     renderSelection(); notify();
   }
@@ -247,17 +256,143 @@ export function createExhibitEditor({
     return raycaster.ray;
   }
 
-  function pointerDown(event) {
-    // Touch remains with OrbitControls, including two-finger zoom. All editing
-    // operations also have explicit form controls for touch and keyboard use.
-    if (!enabled || busy || panel.hidden || !selectedId || mode === 'view' ||
-        event.button !== 0 || event.pointerType === 'touch' || drag) return;
-    const item = system.getInstance(selectedId), root = system.getInstanceRoot(selectedId);
-    if (!item?.visible || !system.group.visible || !root) return;
+
+  function syncGizmo() {
+    const item = selectedId && system.getInstance(selectedId);
+    const active = Boolean(enabled && !busy && !panel.hidden && item?.visible && system.group.visible && mode !== 'view');
+    gizmo.enabled = active; gizmoHelper.visible = active;
+    if (!active) { if (!gizmoDrag) gizmo.detach(); return; }
+    gizmo.setMode(modeNames[mode]); gizmo.setSpace(mode === 'rotate' ? 'world' : 'local');
+    gizmo.showX = mode !== 'rotate';
+    gizmo.showY = mode !== 'move' || Boolean(item.floating);
+    gizmo.showZ = mode !== 'rotate';
+    gizmo.setTranslationSnap(snap ? .25 : null);
+    gizmo.setRotationSnap(snap ? Math.PI / 12 : null);
+    gizmo.setScaleSnap(null);
+    if (!gizmoDrag) {
+      proxy.position.set(item.x, item.y + item.dimensions[1] * .5, item.z);
+      proxy.rotation.set(0, item.rotationY, 0);
+      proxy.scale.setScalar(item.scaleFactor);
+      proxy.updateMatrixWorld(true);
+      if (gizmo.object !== proxy) gizmo.attach(proxy);
+      gizmoHelper.updateMatrixWorld(true);
+    }
+    $('editor-snap')?.setAttribute('aria-pressed', String(snap));
+  }
+
+  function gizmoPointer(event) {
     pointerRay(event);
-    root.updateWorldMatrix(true, true);
-    const hit = raycaster.intersectObject(root, true)[0];
-    if (!hit) return;
+    return { x: pointer.x, y: pointer.y, button: event.button ?? -1 };
+  }
+
+  function finishGizmo(commit = true) {
+    if (!gizmoDrag) return;
+    const current = gizmoDrag; gizmoDrag = null; gizmo.dragging = false; gizmo.axis = null;
+    if (domElement.hasPointerCapture(current.pointerId)) domElement.releasePointerCapture(current.pointerId);
+    controls.enabled = current.wasEnabled;
+    domElement.classList.remove('editing-exhibit');
+    if (commit) {
+      remember(current.before, current.mode === 'scale' ? 'Размер экземпляра изменён' : current.mode === 'rotate' ? 'Экземпляр повёрнут' : 'Экземпляр перемещён');
+      setMessage(current.invalid ? 'Позиция с пересечением отклонена. Сохранено последнее допустимое положение.' : 'Изменение сохранено.', current.invalid);
+    } else {
+      const result = system.applyLayout(current.before, { notify: false });
+      setMessage(result.ok ? 'Изменение отменено.' : result.error, !result.ok);
+    }
+    $('editor-message').setAttribute('aria-live', 'polite');
+    renderSelection(); invoke(onEditEnd, current.id); notify();
+  }
+
+  function applyGizmoChange() {
+    if (!gizmoDrag) return;
+    const current = gizmoDrag, item = system.getInstance(current.id), patch = {};
+    const options = { floorMode: 'auto', notify: false };
+    if (!item.floating) options.floorY = item.floorY;
+    if (current.mode === 'rotate') {
+      const forward = new THREE.Vector3(0, 0, 1).applyQuaternion(proxy.quaternion);
+      patch.rotationY = Math.atan2(forward.x, forward.z);
+    }
+    else if (current.mode === 'scale') {
+      const axis = (gizmo.axis || 'X').replace(/[^XYZ]/g, '')[0]?.toLowerCase() || 'x';
+      patch.scaleFactor = THREE.MathUtils.clamp(Math.abs(proxy.scale[axis]), .05, 30);
+      proxy.scale.setScalar(patch.scaleFactor);
+    } else {
+      patch.x = proxy.position.x; patch.z = proxy.position.z;
+      if (item.floating) patch.y = proxy.position.y - current.offsetY;
+    }
+    const candidate = { ...item, ...patch };
+    if (patch.scaleFactor !== undefined) candidate.dimensions = item.originalDimensions.map(n => n * patch.scaleFactor);
+    const result = system.updateInstance(current.id, patch, options);
+    current.invalid = !result.ok;
+    renderSelection();
+    if (!result.ok) { updateHighlight(candidate, true); setMessage(result.error + ' Оставлено последнее допустимое положение.', true); }
+    else { lastError = null; setMessage(current.mode === 'scale' ? 'Размер: ' + dimensionLabel(result.instance.dimensions) : 'Отпустите мышь, чтобы сохранить.'); }
+    notify();
+  }
+
+  function finishWheel() {
+    if (wheelTimer) clearTimeout(wheelTimer); wheelTimer = 0;
+    if (!wheelEdit) return;
+    const current = wheelEdit; wheelEdit = null;
+    remember(current.before, 'Размер экземпляра изменён');
+    renderSelection(); invoke(onEditEnd, current.id); notify();
+  }
+
+  function wheelScale(event) {
+    if (drag || gizmoDrag) { event.preventDefault(); event.stopImmediatePropagation(); return; }
+    const item = selectedId && system.getInstance(selectedId);
+    if (!enabled || busy || panel.hidden || mode !== 'scale' || !item?.visible || event.ctrlKey || event.metaKey) return;
+    event.preventDefault(); event.stopImmediatePropagation();
+    if (!wheelEdit) { wheelEdit = { id: selectedId, before: system.getLayout() }; invoke(onEditStart, selectedId); }
+    const options = { floorMode: 'auto', notify: false };
+    if (!item.floating) options.floorY = item.floorY;
+    const step = THREE.MathUtils.clamp(-event.deltaY * .0015, -.12, .12);
+    const scaleFactor = THREE.MathUtils.clamp(item.scaleFactor * Math.exp(step), .05, 30);
+    const result = system.updateInstance(selectedId, { scaleFactor }, options);
+    renderSelection();
+    setMessage(result.ok ? 'Размер: ' + dimensionLabel(result.instance.dimensions) : result.error, !result.ok);
+    if (wheelTimer) clearTimeout(wheelTimer);
+    wheelTimer = setTimeout(finishWheel, 260); notify();
+  }
+
+  gizmo.addEventListener('objectChange', applyGizmoChange);
+  gizmo.addEventListener('mouseUp', () => finishGizmo(true));
+
+  function pickInstance(event) {
+    pointerRay(event); system.group.updateWorldMatrix(true, true);
+    for (const hit of raycaster.intersectObject(system.group, true)) {
+      let node = hit.object, visible = true, id = null;
+      while (node && node !== scene) {
+        if (!node.visible || node.userData?.editorHelper) visible = false;
+        if (node.userData?.instanceId) id = node.userData.instanceId;
+        node = node.parent;
+      }
+      if (visible && id && system.getInstance(id)?.visible) return { hit, id };
+    }
+    return null;
+  }
+
+  function pointerDown(event) {
+    // The Objects panel enables direct manipulation; regular viewing retains
+    // orbit / right-button pan / wheel zoom, and touch keeps two-finger gestures.
+    if (!enabled || busy || panel.hidden || mode === 'view' || event.button !== 0 || event.pointerType === 'touch' || drag || gizmoDrag) return;
+    finishWheel();
+    if (selectedId && gizmo.enabled) {
+      const p = gizmoPointer(event);
+      gizmoHelper.updateMatrixWorld(true); gizmo.pointerHover(p);
+      if (gizmo.axis) {
+        const item = system.getInstance(selectedId);
+        gizmoDrag = { id: selectedId, pointerId: event.pointerId, mode, before: system.getLayout(), start: item,
+          wasEnabled: controls.enabled, offsetY: item.dimensions[1] * .5, invalid: false };
+        event.preventDefault(); event.stopImmediatePropagation();
+        invoke(onEditStart, selectedId); controls.enabled = false;
+        domElement.setPointerCapture(event.pointerId); domElement.classList.add('editing-exhibit');
+        $('editor-message').setAttribute('aria-live', 'off'); gizmo.pointerDown(p); notify(); return;
+      }
+    }
+    const picked = pickInstance(event);
+    if (!picked) return;
+    if (selectedId !== picked.id) selectInstance(picked.id, { focus: false });
+    const item = system.getInstance(selectedId), root = system.getInstanceRoot(selectedId), hit = picked.hit;
     event.preventDefault(); event.stopImmediatePropagation();
     const before = system.getLayout(), wasEnabled = controls.enabled;
     invoke(onEditStart, selectedId);
@@ -266,7 +401,7 @@ export function createExhibitEditor({
     const point = raycaster.ray.intersectPlane(plane, new THREE.Vector3());
     drag = {
       id: selectedId, pointerId: event.pointerId, mode, before, start: item,
-      startX: event.clientX, wasEnabled, plane,
+      startX: event.clientX, startY: event.clientY, wasEnabled, plane,
       offset: point ? new THREE.Vector3(item.x - point.x, 0, item.z - point.z) : new THREE.Vector3(),
       invalid: false, lastResult: null,
     };
@@ -287,12 +422,13 @@ export function createExhibitEditor({
     let candidate;
     if (drag.mode === 'rotate') {
       patch.rotationY = drag.start.rotationY + (event.clientX - drag.startX) * 0.012;
+      if (snap) patch.rotationY = Math.round(patch.rotationY / (Math.PI / 12)) * (Math.PI / 12);
       options.floorMode = 'auto';
       if (!item.floating) options.floorY = item.floorY;
       candidate = { ...item, ...patch };
     } else if (drag.mode === 'scale') {
-      const exponent = THREE.MathUtils.clamp((event.clientX - drag.startX) * 0.0075, -5, 5);
-      patch.scaleFactor = drag.start.scaleFactor * Math.exp(exponent);
+      const exponent = THREE.MathUtils.clamp(((event.clientX - drag.startX) - (event.clientY - drag.startY)) * 0.006, -5, 5);
+      patch.scaleFactor = THREE.MathUtils.clamp(drag.start.scaleFactor * Math.exp(exponent), .05, 30);
       options.floorMode = 'auto';
       if (!item.floating) options.floorY = item.floorY;
       candidate = { ...item, ...patch, dimensions: item.originalDimensions.map(value => value * patch.scaleFactor) };
@@ -313,6 +449,7 @@ export function createExhibitEditor({
         patch.x = floor.x + drag.offset.x; patch.z = floor.z + drag.offset.z;
         options.floorY = floor.floorY;
       }
+      if (snap) { patch.x = Math.round(patch.x * 4) / 4; patch.z = Math.round(patch.z * 4) / 4; }
       candidate = { ...item, ...patch, y: item.floating ? item.y : options.floorY };
     }
     const result = system.updateInstance(drag.id, patch, options);
@@ -331,6 +468,14 @@ export function createExhibitEditor({
   }
 
   function pointerMove(event) {
+    if (gizmoDrag && event.pointerId === gizmoDrag.pointerId) {
+      event.preventDefault(); event.stopImmediatePropagation(); gizmo.pointerMove(gizmoPointer(event)); return;
+    }
+    if (!drag && gizmo.enabled && event.pointerType !== 'touch') {
+      const axis = gizmo.axis; gizmo.pointerHover(gizmoPointer(event));
+      domElement.classList.toggle('over-exhibit-handle', Boolean(gizmo.axis));
+      if (axis !== gizmo.axis) notify();
+    }
     if (!drag || event.pointerId !== drag.pointerId) return;
     event.preventDefault(); event.stopImmediatePropagation();
     pendingMove = { clientX: event.clientX, clientY: event.clientY, pointerId: event.pointerId };
@@ -368,13 +513,18 @@ export function createExhibitEditor({
   }
 
   function pointerUp(event) {
+    if (gizmoDrag && event.pointerId === gizmoDrag.pointerId) {
+      event.preventDefault(); event.stopImmediatePropagation();
+      if (event.type === 'pointerup') gizmo.pointerUp({ button: 0 }); else finishGizmo(false);
+      return;
+    }
     if (!drag || event.pointerId !== drag.pointerId) return;
     event.preventDefault(); event.stopImmediatePropagation();
     finishDrag(event.type === 'pointerup');
   }
 
   function travelHistory(from, to, label) {
-    if (!enabled || busy || drag || !from.length) return;
+    if (!enabled || busy || drag || gizmoDrag || wheelEdit || !from.length) return;
     const target = from.at(-1), before = system.getLayout();
     invoke(onEditStart, selectedId);
     const result = system.applyLayout(target, { notify: false });
@@ -385,17 +535,23 @@ export function createExhibitEditor({
     renderSelection(); invoke(onEditEnd, selectedId); notify();
   }
 
+  const selector = $('editor-instances');
+  const placeholder = document.createElement('option');
+  placeholder.value = ''; placeholder.textContent = 'Выберите объект в списке или в 3D';
+  selector.append(placeholder);
+  const groups = new Map();
   for (const item of system.listInstances()) {
-    const button = document.createElement('button');
-    button.type = 'button'; button.className = 'editor-instance';
-    button.dataset.instanceId = item.instanceId;
-    button.innerHTML = '<svg viewBox="0 0 32 32" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">' + ICONS[item.exhibitId] + '</svg>';
-    const label = document.createElement('span'); label.className = 'editor-card-id';
-    label.textContent = item.exhibitId.slice(1) + (item.copies > 1 ? '·' + item.ordinal : '');
-    button.append(label);
-    button.addEventListener('click', () => selectInstance(item.instanceId), { signal });
-    $('editor-instances').append(button); cards.set(item.instanceId, button);
+    const zone = item.zone || 'Общие пространства';
+    if (!groups.has(zone)) { const group = document.createElement('optgroup'); group.label = zone; groups.set(zone, group); selector.append(group); }
+    const option = document.createElement('option'); option.value = item.instanceId;
+    option.textContent = item.name + (item.copies > 1 ? ' · ' + item.ordinal : '');
+    groups.get(zone).append(option); cards.set(item.instanceId, option);
   }
+  selector.addEventListener('change', () => { if (selector.value) selectInstance(selector.value); else clearSelection(); }, { signal });
+  $('editor-snap')?.addEventListener('click', () => { snap = !snap; syncGizmo(); notify(); }, { signal });
+  document.addEventListener('park-edit-instance', event => {
+    if (event.detail?.instanceId) { if (mode === 'view') mode = 'move'; selectInstance(event.detail.instanceId, { focus: false }); }
+  }, { signal });
   toggle.disabled = false;
   toggle.addEventListener('click', () => setOpen(panel.hidden), { signal });
   panel.addEventListener('park-panel-close', () => setOpen(false), { signal });
@@ -439,8 +595,8 @@ export function createExhibitEditor({
   $('editor-import').addEventListener('click', () => $('editor-import-file').click(), { signal });
   $('editor-import-file').addEventListener('change', async event => {
     const file = event.target.files[0]; event.target.value = '';
-    if (!file || busy || drag) return;
-    if (file.size > 512 * 1024) { setMessage('Файл слишком большой для расстановки из 24 экземпляров.', true); return; }
+    if (!file || busy || drag || gizmoDrag || wheelEdit) return;
+    if (file.size > 512 * 1024) { setMessage('Файл расстановки превышает допустимый размер.', true); return; }
     busy = true; renderSelection();
     try {
       const layout = JSON.parse(await file.text());
@@ -454,17 +610,19 @@ export function createExhibitEditor({
   domElement.addEventListener('pointermove', pointerMove, { capture: true, signal });
   domElement.addEventListener('pointerup', pointerUp, { capture: true, signal });
   domElement.addEventListener('pointercancel', pointerUp, { capture: true, signal });
-  domElement.addEventListener('lostpointercapture', () => { if (drag) finishDrag(false); }, { signal });
+  domElement.addEventListener('lostpointercapture', () => { if (drag) finishDrag(false); if (gizmoDrag) finishGizmo(false); }, { signal });
   domElement.addEventListener('dblclick', event => {
     if (!panel.hidden && selectedId && mode !== 'view') { event.preventDefault(); event.stopImmediatePropagation(); }
   }, { capture: true, signal });
-  domElement.addEventListener('wheel', event => {
-    if (drag) { event.preventDefault(); event.stopImmediatePropagation(); }
-  }, { capture: true, passive: false, signal });
-  window.addEventListener('blur', () => { if (drag) finishDrag(false); }, { signal });
+  domElement.addEventListener('wheel', wheelScale, { capture: true, passive: false, signal });
+  window.addEventListener('blur', () => { if (drag) finishDrag(false); if (gizmoDrag) finishGizmo(false); }, { signal });
   document.addEventListener('keydown', event => {
     if (panel.hidden || !enabled || /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) return;
-    if (event.key === 'Escape' && drag) { event.preventDefault(); event.stopImmediatePropagation(); finishDrag(false); }
+    if (event.key === 'Escape' && (drag || gizmoDrag)) { event.preventDefault(); event.stopImmediatePropagation(); if (drag) finishDrag(false); if (gizmoDrag) finishGizmo(false); }
+    if (!event.ctrlKey && !event.metaKey && !event.altKey && !drag && !gizmoDrag) {
+      const shortcut = { g: 'move', r: 'rotate', s: 'scale', v: 'view' }[event.key.toLowerCase()];
+      if (shortcut) { event.preventDefault(); setMode(shortcut); }
+    }
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
       event.preventDefault(); event.stopImmediatePropagation();
       event.shiftKey ? travelHistory(redo, undo, 'Изменение повторено') : travelHistory(undo, redo, 'Изменение отменено');
@@ -490,13 +648,13 @@ export function createExhibitEditor({
   // Called after the live placement guard is bound, while the crowd is empty.
   // Failed imports are atomic in the exhibit system and never overwrite storage.
   function restoreSavedLayout() {
-    if (disposed || busy || drag) return { ok: false, error: 'Редактор пока не готов к восстановлению.' };
+    if (disposed || busy || drag || gizmoDrag || wheelEdit) return { ok: false, error: 'Редактор пока не готов к восстановлению.' };
     let saved, editing = false;
     try {
       saved = localStorage.getItem(STORAGE_KEY);
       if (!saved) {
-        const previous=localStorage.getItem('park-exhibit-layout-v1');
-        if(previous){retainRejectedSave(previous);saveState='source-zones-updated';$('editor-save-status').textContent='Показана расстановка по исходным зонам. Прежнюю можно скачать.';}
+        const previous=localStorage.getItem(PREVIOUS_STORAGE_KEY)||localStorage.getItem('park-exhibit-layout-v1');
+        if(previous){retainRejectedSave(previous);saveState='source-zones-updated';$('editor-save-status').textContent='Показана обновлённая расстановка. Прежнюю можно скачать.';}
         return { ok: true, restored: false, previousLayoutPreserved:Boolean(previous) };
       }
       const layout = JSON.parse(saved);
@@ -531,7 +689,7 @@ export function createExhibitEditor({
   renderSelection(); notify();
 
   return {
-    getState, selectInstance, clearSelection, restoreSavedLayout,
+    getState, selectInstance, clearSelection, restoreSavedLayout, setMode, setOpen,
     setEnabled(value) {
       enabled = Boolean(value); toggle.disabled = !enabled;
       if (!enabled) setOpen(false);
@@ -540,8 +698,12 @@ export function createExhibitEditor({
     dispose() {
       if (disposed) return;
       if (drag) finishDrag(false);
+      if (gizmoDrag) finishGizmo(false);
+      finishWheel();
       disposed = true; enabled = false;
       events.abort(); if (moveFrame) cancelAnimationFrame(moveFrame);
+      gizmo.dispose(); gizmoHelper.removeFromParent(); proxy.removeFromParent();
+      domElement.classList.remove('editing-exhibit', 'over-exhibit-handle'); domElement.style.touchAction = 'none';
       highlight.removeFromParent(); highlight.geometry.dispose(); highlight.material.dispose();
       recoveryExport?.remove();
       $('editor-instances').replaceChildren(); panel.hidden = true;

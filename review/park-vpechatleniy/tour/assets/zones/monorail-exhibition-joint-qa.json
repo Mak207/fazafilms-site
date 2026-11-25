@@ -1,0 +1,737 @@
+{
+  "schemaVersion": 1,
+  "revision": "park-monorail-exhibition-joint-20261125",
+  "passed": true,
+  "route": {
+    "lengthMetres": 354.3045892735288,
+    "method": "periodic C2 cubic B-spline with Gaussian fairing",
+    "stationCount": 3,
+    "stationIds": [
+      "nw-existing-terrace-loop",
+      "ne-existing-terrace-loop",
+      "se-existing-terrace-loop"
+    ],
+    "changedForJointCheck": false
+  },
+  "method": "15-axis full 3D OBB SAT using pitched complete wagon and beam; conservative compound exhibit/display envelopes. Full-source and runtime-preview Hitem3D triangle/OBB narrowphase resolves sparse bounding-box contacts for O07/O09/O10 and the conservative upper O16 enclosure. Source CAD was independently verified by monorail-smoothing-qa.json and physical-revisions-qa.json.",
+  "scope": {
+    "staticExhibitionObstacles": 911,
+    "registeredExhibitAssemblies": 93,
+    "byGroup": {
+      "equipment": 104,
+      "base-exhibits": 37,
+      "revised-exhibits": 390,
+      "rgo": 380
+    },
+    "equipmentAssemblies": 52,
+    "fullRouteSamples": 7087,
+    "maxSampleSpacingMetres": 0.05,
+    "wagonSizeMetres": [
+      2.289036393,
+      3.103501946,
+      12
+    ],
+    "testedWagonIncludingMargin": [
+      2.489036393,
+      3.303501946,
+      12.2
+    ],
+    "allFaceMarginMetres": 0.1,
+    "wagonPitchIncluded": true,
+    "bothWagonsUseSameFullRing": true,
+    "beamIncludingMargin": [
+      1.15,
+      0.98,
+      0.25
+    ],
+    "supportCount": 33,
+    "supportSolids": 99,
+    "stationFixedParts": 68,
+    "stationDeploymentEnvelopes": 25
+  },
+  "sampleMotion": {
+    "maxCenterStepMetres": 0.05016647815885958,
+    "maxFrameAngleStepDegrees": 0.38305915481237246,
+    "maxTangentAngleStepDegrees": 0.3829258333512024,
+    "nearestPoseSurfaceTravelEstimateMetres": 0.04798623923743582,
+    "note": "Dense numerical sweep with0.10m margin. The estimate is derived from measured adjacent pose motion and the complete wagon radius; it is not a certified analytic continuous collision proof."
+  },
+  "results": {
+    "wagonAndBeamIntersections": 0,
+    "supportAndStationIntersections": 0,
+    "railHits": [],
+    "fixedHits": [],
+    "obbBroadphaseCandidates": 702,
+    "exactSourceTriangleQueries": 1404,
+    "boundingBoxRefinements": [
+      {
+        "instanceId": "O10-1",
+        "monorailPart": "beam",
+        "boxCandidates": 123,
+        "actualMeshContacts": 0,
+        "previewMeshContacts": 0
+      },
+      {
+        "instanceId": "O09-1",
+        "monorailPart": "wagon",
+        "boxCandidates": 22,
+        "actualMeshContacts": 0,
+        "previewMeshContacts": 0
+      },
+      {
+        "instanceId": "O07-1",
+        "monorailPart": "wagon",
+        "boxCandidates": 187,
+        "actualMeshContacts": 0,
+        "previewMeshContacts": 0
+      },
+      {
+        "instanceId": "O07-1",
+        "monorailPart": "beam",
+        "boxCandidates": 9,
+        "actualMeshContacts": 0,
+        "previewMeshContacts": 0
+      },
+      {
+        "instanceId": "O07-2",
+        "monorailPart": "wagon",
+        "boxCandidates": 237,
+        "actualMeshContacts": 0,
+        "previewMeshContacts": 0
+      },
+      {
+        "instanceId": "O07-2",
+        "monorailPart": "beam",
+        "boxCandidates": 12,
+        "actualMeshContacts": 0,
+        "previewMeshContacts": 0
+      },
+      {
+        "instanceId": "O16-1",
+        "monorailPart": "wagon",
+        "boxCandidates": 112,
+        "actualMeshContacts": 0,
+        "previewMeshContacts": 0
+      }
+    ]
+  },
+  "adjustments": {
+    "rgoCanopy": {
+      "route": "periodic-c2-spline",
+      "sourceSha256": "fb58c3f26e41a21ce9ae9d5b05ecaff5b498ba498f0d7ccc38f8282594b35e94",
+      "originalStripCount": 295,
+      "stripCount": 296,
+      "changedSegments": 12,
+      "method": "Subtract new shaft footprint +0.10m XZ clearance from existing CAD-clipped canopy strips; retain all earlier architectural and column cutouts.",
+      "changes": [
+        {
+          "sourceSlat": 169,
+          "x": 11.685110000000158,
+          "before": [
+            -61.72339273668565,
+            -60.95144064629216
+          ],
+          "after": [
+            [
+              -61.72339273668565,
+              -61.16794268605725
+            ]
+          ]
+        },
+        {
+          "sourceSlat": 172,
+          "x": 12.10511000000016,
+          "before": [
+            -63.0201,
+            -60.81768592028488
+          ],
+          "after": [
+            [
+              -63.0201,
+              -61.16794268605725
+            ]
+          ]
+        },
+        {
+          "sourceSlat": 224,
+          "x": 22.605110000000202,
+          "before": [
+            -60.05413243155968,
+            -53.881370000000004
+          ],
+          "after": [
+            [
+              -59.930380841926855,
+              -53.881370000000004
+            ]
+          ]
+        },
+        {
+          "sourceSlat": 227,
+          "x": 23.025110000000204,
+          "before": [
+            -60.160098680532826,
+            -53.881370000000004
+          ],
+          "after": [
+            [
+              -59.930380841926855,
+              -53.881370000000004
+            ]
+          ]
+        },
+        {
+          "sourceSlat": 264,
+          "x": 30.585110000000235,
+          "before": [
+            -61.40236709594726,
+            -26.22977
+          ],
+          "after": [
+            [
+              -61.40236709594726,
+              -55.34328657688179
+            ],
+            [
+              -54.46328657688178,
+              -26.22977
+            ]
+          ]
+        },
+        {
+          "sourceSlat": 266,
+          "x": 31.005110000000236,
+          "before": [
+            -54.69245652863257,
+            -26.22977
+          ],
+          "after": [
+            [
+              -54.46328657688178,
+              -26.22977
+            ]
+          ]
+        },
+        {
+          "sourceSlat": 268,
+          "x": 31.425110000000238,
+          "before": [
+            -54.62581291287925,
+            -44.532491672337436
+          ],
+          "after": [
+            [
+              -54.62581291287925,
+              -44.60434385017421
+            ]
+          ]
+        },
+        {
+          "sourceSlat": 269,
+          "x": 31.425110000000238,
+          "before": [
+            -43.79620841688163,
+            -34.58947451633157
+          ],
+          "after": [
+            [
+              -43.7243438501742,
+              -34.66185601544897
+            ]
+          ]
+        },
+        {
+          "sourceSlat": 270,
+          "x": 31.425110000000238,
+          "before": [
+            -33.85319126087577,
+            -26.22977
+          ],
+          "after": [
+            [
+              -33.78185601544896,
+              -26.22977
+            ]
+          ]
+        },
+        {
+          "sourceSlat": 271,
+          "x": 31.84511000000024,
+          "before": [
+            -61.40236709594726,
+            -44.600399549258846
+          ],
+          "after": [
+            [
+              -61.40236709594726,
+              -44.60434385017421
+            ]
+          ]
+        },
+        {
+          "sourceSlat": 272,
+          "x": 31.84511000000024,
+          "before": [
+            -43.72830053996022,
+            -34.65738239325298
+          ],
+          "after": [
+            [
+              -43.7243438501742,
+              -34.66185601544897
+            ]
+          ]
+        },
+        {
+          "sourceSlat": 273,
+          "x": 31.84511000000024,
+          "before": [
+            -33.78528338395436,
+            -26.22977
+          ],
+          "after": [
+            [
+              -33.78185601544896,
+              -26.22977
+            ]
+          ]
+        }
+      ]
+    },
+    "whale": {
+      "dx": 0.25,
+      "dz": 0.25,
+      "displacement": 0.3535533905932738,
+      "x": 10.75,
+      "z": 55.75,
+      "baseY": 14.2,
+      "rotationY": 1.5707963267948966,
+      "size": [
+        2.869315754135384,
+        2.1759140572544715,
+        8
+      ],
+      "sourceId": "O07-2",
+      "floorY": 7.199999809265137,
+      "worldBounds": {
+        "min": [
+          6.75,
+          14.2,
+          54.31534212293231
+        ],
+        "max": [
+          14.75,
+          16.37591405725447,
+          57.18465787706769
+        ]
+      }
+    },
+    "chersonesus": {
+      "dx": 0,
+      "dz": -0.1,
+      "displacement": 0.1,
+      "x": -10,
+      "z": 54.9,
+      "baseY": 13.2,
+      "rotationY": 0,
+      "sourceId": "O16-1",
+      "floorProbeCount": 9,
+      "compoundParts": 283
+    },
+    "rgoSuspendedShip": {
+      "x": 29.9819,
+      "z": -44.08905,
+      "reason": "Working exhibition ship and its cables moved 1 metre away from the actual smoothed monorail support 6; source hall stays 04",
+      "deltaX": -1
+    },
+    "screen": {
+      "id": "RGO-02-LED-02",
+      "name": "Широкое медийное полотно",
+      "hallId": "02",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "media",
+      "width": 3.6479999999999997,
+      "height": 1.368,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        10.5,
+        7.2,
+        -60.5
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 6,
+      "cabinetRows": 4,
+      "cabinetCount": 24,
+      "pixelWidth": 2304,
+      "pixelHeight": 864,
+      "source": "rgo-data.json#RGO-02-LED-02",
+      "theme": "sailing",
+      "x": 9.334,
+      "z": -61.21,
+      "yaw": -0.7853981633974483,
+      "score": 2.1536041873802687,
+      "footprint": [
+        [
+          10.835894803240226,
+          -60.047516451729315
+        ],
+        [
+          10.496483548270684,
+          -59.708105196759774
+        ],
+        [
+          7.832105196759772,
+          -62.37248354827069
+        ],
+        [
+          8.171516451729316,
+          -62.71189480324023
+        ],
+        [
+          10.835894803240226,
+          -60.047516451729315
+        ]
+      ],
+      "reserve": [
+        [
+          10.376275395468971,
+          -59.67274985770045
+        ],
+        [
+          9.244904545570494,
+          -58.54137900780197
+        ],
+        [
+          6.6653790078019695,
+          -61.1209045455705
+        ],
+        [
+          7.796749857700445,
+          -62.25227539546898
+        ],
+        [
+          10.376275395468971,
+          -59.67274985770045
+        ]
+      ],
+      "viewPosition": [
+        8.52082720163547,
+        8.85,
+        -60.396827201635475
+      ],
+      "cameraPosition": [
+        7.012427016008328,
+        8.85,
+        -58.88842701600833
+      ],
+      "position": [
+        9.334,
+        7.2,
+        -61.21
+      ],
+      "rotationY": -0.7853981633974483,
+      "depth": 0.48
+    }
+  },
+  "registration": {
+    "zonesAwaitedBeforeDynamicObstacles": true,
+    "equipmentConstructedBeforeZonesReturn": true,
+    "editorAfterDynamicObstacles": true,
+    "equipmentCallsAddAssembly": true,
+    "dynamicAdapterEnumeratesRegisteredRoots": true,
+    "note": "Inspection of the executed registration order. createExhibitionZones awaits construction and all addAssembly calls; the adapter is created afterwards and snapshots registered roots."
+  },
+  "sceneConsistency": {
+    "whale": true,
+    "chersonesus": true,
+    "rgoShip": true,
+    "equipment": true
+  },
+  "sourceCadSha256": "0fe60c53a9fc72c9ed0ad15ac8808ca721b3a7af8e96d81329cdc748c78fd792",
+  "modelEvidence": [
+    {
+      "id": "O07-1",
+      "sha256": "011022534c34f5c9fd49a27d799884830eae606464f7c67929e914c9773cb513",
+      "sourceTriangles": 299998,
+      "normalizedDimensions": [
+        2.869315754135384,
+        2.1759140572544715,
+        8
+      ],
+      "fittedDimensions": [
+        2.869315754135384,
+        2.1759140572544715,
+        8
+      ],
+      "pose": {
+        "x": 8.25,
+        "y": 14.2,
+        "z": 45.75,
+        "yaw": 1.5707963267948966
+      },
+      "quality": "full-source"
+    },
+    {
+      "id": "O07-2",
+      "sha256": "011022534c34f5c9fd49a27d799884830eae606464f7c67929e914c9773cb513",
+      "sourceTriangles": 299998,
+      "normalizedDimensions": [
+        2.869315754135384,
+        2.1759140572544715,
+        8
+      ],
+      "fittedDimensions": [
+        2.869315754135384,
+        2.1759140572544715,
+        8
+      ],
+      "pose": {
+        "x": 10.75,
+        "y": 14.2,
+        "z": 55.75,
+        "yaw": 1.5707963267948966
+      },
+      "quality": "full-source"
+    },
+    {
+      "id": "O09-1",
+      "sha256": "3438d1c7acd2eeee135dbea49f2c8a56b9b7746a2b06ff2ed916f343ea67ad15",
+      "sourceTriangles": 298610,
+      "normalizedDimensions": [
+        2.7812366477446138,
+        13,
+        2.923274125618019
+      ],
+      "fittedDimensions": [
+        2.7812366477446138,
+        13,
+        2.923274125618019
+      ],
+      "pose": {
+        "x": -14.5,
+        "y": 7.2,
+        "z": -75.25,
+        "yaw": 0
+      },
+      "quality": "full-source"
+    },
+    {
+      "id": "O10-1",
+      "sha256": "78d40cc1eb0f5f0a68b0fbaea208a7638393372ecc5217f078400cd8bab877c2",
+      "sourceTriangles": 294942,
+      "normalizedDimensions": [
+        5.852407983885736,
+        8.16,
+        4.442351217725691
+      ],
+      "fittedDimensions": [
+        5.852407983885736,
+        8.16,
+        4.442351217725691
+      ],
+      "pose": {
+        "x": -13.5,
+        "y": 7.2,
+        "z": -69,
+        "yaw": 1.5707963267948966
+      },
+      "quality": "full-source"
+    },
+    {
+      "id": "O16-1",
+      "sha256": "a6eee8e3c1c514cc64f0dc3f7e2cbd7854696e9345ecfd8097f5a4da4e42ed3f",
+      "sourceTriangles": 297610,
+      "normalizedDimensions": [
+        10.587071964841604,
+        5.840688518586339,
+        24
+      ],
+      "fittedDimensions": [
+        8.900000000001349,
+        5.53068851858634,
+        14
+      ],
+      "pose": {
+        "x": -10,
+        "y": 13.2,
+        "z": 54.9,
+        "yaw": 0
+      },
+      "quality": "full-source"
+    },
+    {
+      "id": "O07-1",
+      "sha256": "e721376786c08cb06656960d51e787762f470ccacf10f89321f0cba9dbb6ffa4",
+      "sourceTriangles": 299998,
+      "normalizedDimensions": [
+        2.869315754135384,
+        2.1759140572544715,
+        8
+      ],
+      "fittedDimensions": [
+        2.869315754135384,
+        2.1759140572544715,
+        8
+      ],
+      "pose": {
+        "x": 8.25,
+        "y": 14.2,
+        "z": 45.75,
+        "yaw": 1.5707963267948966
+      },
+      "quality": "runtime-preview"
+    },
+    {
+      "id": "O07-2",
+      "sha256": "e721376786c08cb06656960d51e787762f470ccacf10f89321f0cba9dbb6ffa4",
+      "sourceTriangles": 299998,
+      "normalizedDimensions": [
+        2.869315754135384,
+        2.1759140572544715,
+        8
+      ],
+      "fittedDimensions": [
+        2.869315754135384,
+        2.1759140572544715,
+        8
+      ],
+      "pose": {
+        "x": 10.75,
+        "y": 14.2,
+        "z": 55.75,
+        "yaw": 1.5707963267948966
+      },
+      "quality": "runtime-preview"
+    },
+    {
+      "id": "O09-1",
+      "sha256": "d10dbc862e67c68a8ae5314fdb1473d6e16c5471c2b0868715e90531760a21b2",
+      "sourceTriangles": 298610,
+      "normalizedDimensions": [
+        2.7812366477446138,
+        13,
+        2.923274125618019
+      ],
+      "fittedDimensions": [
+        2.7812366477446138,
+        13,
+        2.923274125618019
+      ],
+      "pose": {
+        "x": -14.5,
+        "y": 7.2,
+        "z": -75.25,
+        "yaw": 0
+      },
+      "quality": "runtime-preview"
+    },
+    {
+      "id": "O10-1",
+      "sha256": "cff51ecafa71a3fc9166ad60c60fcb4a51a4b0899f0c644a7c5c561318f96807",
+      "sourceTriangles": 294942,
+      "normalizedDimensions": [
+        5.852407983885736,
+        8.16,
+        4.442351217725691
+      ],
+      "fittedDimensions": [
+        5.852407983885736,
+        8.16,
+        4.442351217725691
+      ],
+      "pose": {
+        "x": -13.5,
+        "y": 7.2,
+        "z": -69,
+        "yaw": 1.5707963267948966
+      },
+      "quality": "runtime-preview"
+    },
+    {
+      "id": "O16-1",
+      "sha256": "3ef69ebc8e10cf494449f1206e791995c7ccee16d63a7e3d514472300ebff03e",
+      "sourceTriangles": 297610,
+      "normalizedDimensions": [
+        10.587071964841604,
+        5.840688518586339,
+        24
+      ],
+      "fittedDimensions": [
+        8.900000000001349,
+        5.53068851858634,
+        14
+      ],
+      "pose": {
+        "x": -10,
+        "y": 13.2,
+        "z": 54.9,
+        "yaw": 0
+      },
+      "quality": "runtime-preview"
+    }
+  ],
+  "sourceFiles": {
+    "perimeter-route.js": "8d8fdedbf73500b069aa6ee30a4b35dcabed1d04353c184a29d384d7103e3654",
+    "perimeter-smoothing.js": "175ba80c1ba9395832ccb71da1b3aae75fcdbc6374fb1b81a6fc881b179ad920",
+    "tram-system.js": "6ba2b0d3b6933c7e1504f4a2cc1d8697b6d63023db1cb6d73f8ac7d8666d556b",
+    "rgo-gallery.js": "710988a3658de7af3da826656922eca53b4dbd5645403d8d39a88115519f48be",
+    "exhibition-equipment.js": "72864c065a7f8aa1a9510e9d3e22474292d45093804577a21e79fcbb04c4a2bb",
+    "exhibition-zones.js": "68d06afc6d309b1a4bb7f10683ab97f81b6b470dbfc340f574480a9bc7f237c1",
+    "exhibition-interactives.js": "3916fab0e0ba2d42fc2fd3e8cf581d04be0815174a2f499e8ca0b0a00237e47a",
+    "aircraft-supports.js": "f1f49424dcfa820595b45c09f64467bd3b0dc16b086c5e75dfa8cb88e3440847",
+    "chersonesus-fit.js": "8bd64a5109bec87e2a091fd2847dad17b38f57bf60d4ce357b015c93117e39b8",
+    "zones-controller.js": "a0f37d154137ac50570b5ef2166fb5b19893b15060aa69a504cf1c0b90f5ed0c",
+    "viewer.js": "10c15af17f466cfa6ba286f9bb34acbb320585d1869bd3013f07b67e4d68cdf9",
+    "crowd/dynamic-obstacles.js": "855e0165278caf2477f98dd35cdbee44a3be176f32d728260d8b9ad4de15726b",
+    "assets/zones/rgo-layout.json": "bc600ca47667915fa60c3da73276125cf901fdfc0d01a2c96f9d78f9550b21da",
+    "assets/zones/equipment-layout.json": "6d5824412aef8148af9b778c705a7bc8c780f2e84351eef2e93c1b78bf958208",
+    "assets/zones/lider-layout.json": "96daad7094da498b5054a501ba00a1b2b4a92865f060482c3a1fbc6a4c295035",
+    "assets/zones/physical-revisions-runtime-obstacles.json": "a11a010e945417d4d22a0852418817c391ffe4f6cfb04e0a22c53660e2c2c400",
+    "assets/zones/o16-compact-collision-parts.json": "06aab296abf5cb04b55ff9ead2a9c86a3f02236c5a6845ecd20af30ac9a05be5",
+    "assets/zones/placements-final.json": "40fdf54c4cfa5600c3619f8c8df4e65d01b78ae94b751bfbbcc720d8b6591702",
+    "assets/exhibits/manifest.json": "85aad9a4e4f24064dec07a901d6cd5428338a9c1590a5180feb4a8348f9a5db1",
+    "assets/exhibits/preview/manifest.json": "1d5921f4b48574ea7944152f376314916e6bf5905b97ed5ee7362ed58672c979"
+  },
+  "obstacleExports": {
+    "completeRuntimeScene": "f3e8ababe02221ab111704e786354072ad3ec06b96a11293312a3492172b06a5",
+    "equipment": "4b72ba443f419e30857026d530995de3d67ad91ce44c02fe7ee99a634c050ecb",
+    "rgo": "9df6efb0488d0721fa6b84b64f3d079ad01f6c594a36673294a46d8dac867d76",
+    "physical": "a11a010e945417d4d22a0852418817c391ffe4f6cfb04e0a22c53660e2c2c400"
+  },
+  "limitations": [
+    "This is geometric exhibition design QA, not a certified ride safety, structural load or evacuation calculation.",
+    "CAD and source meshes are converted geometry; missing source CAD surfaces remain a limitation.",
+    "CPU constructors and numerical geometry were exercised; browser image/GPU rendering verification is separate.",
+    "The O16 upper enclosure is refined with the full original297610-triangle source after the exact8.9×14m compact fit and0.31m floor datum; its portal cut is intentionally retained as extra solid for this conservative clearance check.",
+    "Dense0.05m full-body sampling is reported as numerical coverage, with0.10m face allowance; no claim of formal continuous-collision certification."
+  ],
+  "validatedSourceHashes": {
+    "perimeter-route.js": "8352fc5f61ceae9b6766fa4b1df4e17a1300bb3be5a32399fa4b085c7f3d15be",
+    "perimeter-smoothing.js": "175ba80c1ba9395832ccb71da1b3aae75fcdbc6374fb1b81a6fc881b179ad920",
+    "tram-system.js": "e5a6fc5c837c53d2c59efc5bc89204a7feae8bc03797cdaa2fcc4632d0bb9489",
+    "rgo-gallery.js": "cdf7ed6c039d111c49f1ea18e49b0b1cb011e48c8fb5f7eaaced4558e4875b33",
+    "exhibition-equipment.js": "0fc6a6b1edd186bb5fb630859284758ae8d38038b34c006a9fc0facea7a6f6aa",
+    "exhibition-zones.js": "aaa2c4b0529d9bc67b66340d4aea8a2f734ea8c2180dbfc75e9613841685549f",
+    "exhibition-interactives.js": "b75624461b8cff7a2f5e8ad2e648fb1fac029ac69e2104753ee25adb1ac85f24",
+    "aircraft-supports.js": "f1f49424dcfa820595b45c09f64467bd3b0dc16b086c5e75dfa8cb88e3440847",
+    "chersonesus-fit.js": "8bd64a5109bec87e2a091fd2847dad17b38f57bf60d4ce357b015c93117e39b8",
+    "zones-controller.js": "0f2bb4bddcb9ba1d29fbb3ef42cd300441332570e6f66cc4927f225af754926d",
+    "viewer.js": "0532b6e13dc13283551bd49efadcad01599b057d5aa6f65f293ff8af9c99b4bd",
+    "crowd/dynamic-obstacles.js": "855e0165278caf2477f98dd35cdbee44a3be176f32d728260d8b9ad4de15726b",
+    "assets/zones/rgo-layout.json": "bc600ca47667915fa60c3da73276125cf901fdfc0d01a2c96f9d78f9550b21da",
+    "assets/zones/equipment-layout.json": "6d5824412aef8148af9b778c705a7bc8c780f2e84351eef2e93c1b78bf958208",
+    "assets/zones/lider-layout.json": "96daad7094da498b5054a501ba00a1b2b4a92865f060482c3a1fbc6a4c295035",
+    "assets/zones/physical-revisions-runtime-obstacles.json": "a11a010e945417d4d22a0852418817c391ffe4f6cfb04e0a22c53660e2c2c400",
+    "assets/zones/o16-compact-collision-parts.json": "06aab296abf5cb04b55ff9ead2a9c86a3f02236c5a6845ecd20af30ac9a05be5",
+    "assets/zones/placements-final.json": "d76f833297ec0a838f64ae676e1cff785b224334575f76ec963754debb1f9b1f",
+    "assets/exhibits/manifest.json": "85aad9a4e4f24064dec07a901d6cd5428338a9c1590a5180feb4a8348f9a5db1",
+    "assets/exhibits/preview/manifest.json": "1d5921f4b48574ea7944152f376314916e6bf5905b97ed5ee7362ed58672c979"
+  },
+  "releaseHashRefresh": {
+    "buildId": "park-exhibition-20261125-r2",
+    "reason": "Release cache versioning, UI labels/media metadata/camera-only changes and documentation reconciliation after successful geometry tests. Runtime collision geometry remains frozen at the recorded successful joint run.",
+    "geometryRetestedForHashRefresh": false
+  }
+}

@@ -41,3 +41,18 @@ button,input,select{font:inherit}button{cursor:pointer;border:1px solid var(--li
 .zone-action-controls{margin-top:8px}.zone-action-controls>summary{cursor:pointer;min-height:34px;padding:7px 0;color:#e8dcc0;font-size:13px;border-top:1px solid #526d5d}.zone-action-controls[data-collapsible="false"]>summary{display:none}
 @media(min-width:601px){.zone-action-controls>summary{display:none}}
 @media(max-width:600px){body[data-az-page="tour"] .viewer-header .header-actions{display:flex;min-width:0;width:100%;max-width:100%;gap:6px}body[data-az-page="tour"] .viewer-header .section-selector{flex:1 1 0;min-width:0;max-width:none;width:auto}body[data-az-page="tour"] .viewer-header .section-selector select{min-width:0;width:100%;max-width:100%}body[data-az-page="tour"] .viewer-header #fullscreen{flex:0 0 44px;width:44px;min-width:44px;padding:0;font-size:0}body[data-az-page="tour"] .viewer-header #fullscreen:after{content:"⛶";font-size:23px;line-height:1}.zone-action-controls{margin-top:6px}.zone-actions-heading p{margin-bottom:7px}#crowd-toggle span{font-size:9px}}
+
+
+/* Direct scene manipulation: keep the object picker readable and the canvas free. */
+.editor-catalog{display:grid;gap:6px;margin:6px 0 10px}.editor-catalog>label{font-size:.875rem;color:#e0ebe2}
+.editor-catalog>select{font-size:.875rem;min-height:42px;width:100%;max-width:100%}
+.editor-modes button{min-height:40px;font-size:.8125rem}.editor-hint{font-size:.8125rem;line-height:1.45}
+.editor-snap{width:100%;min-height:34px;padding:5px 8px;font-size:.75rem;background:transparent;color:#c5d5c8;border-color:#415b49}
+.editor-snap[aria-pressed=true]{background:#385941;color:#f7fff5;border-color:#a0ccaa}
+.over-exhibit-handle{cursor:grab}.editor-selected strong{font-size:.875rem}.editor-selected span{font-size:.75rem}
+.exhibit-editor{width:320px}.editor-message.is-error{font-size:.8125rem}.editor-history>span{font-size:.75rem}
+@media(max-width:600px){.editor-catalog>select{font-size:16px}.exhibit-editor{width:calc(100% - 16px)}.editor-modes button{min-height:42px;font-size:.8125rem}}
+@media(max-width:600px){.exhibit-editor:has(#editor-selection:not([hidden])) .editor-catalog>label{min-height:24px;padding-right:36px}}
+
+/* Color fills are independent from source outlines and camera navigation. */
+.floor-colors-button{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:42px;font-size:.875rem;border-color:#92a78c;margin:4px 0 8px}.floor-colors-button:before{content:"";width:20px;height:20px;flex:none;border-radius:4px;background:conic-gradient(#ffad74 0 25%,#69cbb8 25% 50%,#79aef2 50% 75%,#c794ea 75%);border:1px solid #fff6}.floor-colors-button[aria-pressed=true]{background:#d9e9c9;border-color:#d9e9c9;color:#18251d}.floor-hall-legend{display:grid;gap:7px;padding:6px 0}.floor-hall-legend-item{display:flex;align-items:center;gap:8px;font-size:.875rem;line-height:1.35}.floor-hall-legend-item:before{content:"";background:var(--hall-color);width:18px;height:18px;border:1px solid #ffffff80;border-radius:4px;flex:none}.has-floor-color{border-left:6px solid var(--hall-color)!important}

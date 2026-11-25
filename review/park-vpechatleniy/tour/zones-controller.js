@@ -1,9 +1,10 @@
-import {createIcebreakerWheelhouse} from './icebreaker-wheelhouse.js?v=park-zones-20261124';
-import {applyChersonesusCompactFit} from './chersonesus-fit.js?v=park-zones-20261124';
+import {createExhibitionEquipment} from './exhibition-equipment.js?v=park-exhibition-20261125-r2';
+import {elevateAircraftOnColumns} from './aircraft-supports.js?v=park-exhibition-20261125-r2';
+import {applyChersonesusCompactFit} from './chersonesus-fit.js?v=park-exhibition-20261125-r2';
 import * as THREE from 'three';
-import {createIcebreakerEnvironment,loadZoneAssets} from './exhibition-zones.js?v=park-zones-20261124';
-import {createMappedRgoGallery} from './rgo-gallery.js?v=park-zones-20261124';
-import {createGrainSilos,createFlightCockpits,createChersonesusInterior,getInstallationAction} from './exhibition-interactives.js?v=park-zones-20261124';
+import {createIcebreakerEnvironment,loadZoneAssets} from './exhibition-zones.js?v=park-exhibition-20261125-r2';
+import {createMappedRgoGallery} from './rgo-gallery.js?v=park-exhibition-20261125-r2';
+import {createGrainSilos,createFlightCockpits,createChersonesusInterior,getInstallationAction} from './exhibition-interactives.js?v=park-exhibition-20261125-r2';
 
 function fitModel(source,dimensions,{rotationY=0}={}){
   if(!source)return null;
@@ -24,28 +25,25 @@ export async function createExhibitionZones({exhibits,loader,camera,requestRende
   const sources=await loadZoneAssets(loader).catch(error=>({models:new Map(),errors:[{error:error.message}]}));
   errors.push(...sources.errors);
   const assets=sources.models;
-  const [rgoLayout,rgoProgram,liderLayout,aircraftParts]=await Promise.all(['rgo-layout.json','rgo-primary-program.json','lider-layout.json','o05-collision-parts.json'].map(async name=>{const response=await fetch('assets/zones/'+name,{cache:'no-store'});if(!response.ok)throw new Error('Не загружена первичная схема РГО.');return response.json();}));
-  exhibits.refreshInstanceGeometry('O05-1',{collisionParts:aircraftParts.collisionParts});
+  const [rgoLayout,rgoProgram,liderLayout,aircraftParts,equipmentLayout,sourceZones,sourceAssignments]=await Promise.all(['rgo-layout.json','rgo-primary-program.json','lider-layout.json','o05-collision-parts.json','equipment-layout.json','source-zones.json','object-regions-primary.json'].map(async name=>{const response=await fetch('assets/zones/'+name,{cache:'no-store'});if(!response.ok)throw new Error('Не загружена первичная схема РГО.');return response.json();}));
+  const aircraft=elevateAircraftOnColumns({root:exhibits.getInstanceRoot('O05-1'),sourceCollisionParts:aircraftParts.collisionParts,liftMetres:.60});
+  if(aircraft){exhibits.refreshInstanceGeometry('O05-1',{collisionParts:aircraft.getCollisionParts(),extendFootprint:true});modules.push(aircraft);}
   const rgo=createMappedRgoGallery({assets,layout:rgoLayout,program:rgoProgram});
+  const rgoMovables=rgo.detachMovableExhibits();
   const rgoPlacement={id:'Z01-1',x:0,z:0,floorY:7.2,rotationY:0,zone:'РГО'};
   const rgoResult=exhibits.addAssembly({id:'Z01',name:'РГО · Музей и Аллея открытий',root:rgo.group,placement:rgoPlacement,collisionParts:rgo.getCollisionParts(),supportSamples:rgo.supportSamples,provenance:'primary-plan-018-mapped-to-CAD-with-reference-finishes-and-Hitem3D-components'});
   if(!rgoResult.ok)throw new Error(rgoResult.error);
   modules.push(rgo);assemblies.push({id:'Z01',...rgoResult});
+  for(const item of rgoMovables){const result=exhibits.addAssembly({...item,provenance:'individually-editable-RGO-exhibit-from-primary-hall-layout'});if(!result.ok)throw new Error(item.name+': '+result.error);assemblies.push({id:item.id,...result});}
   zones.set('rgo',{name:'РГО',id:'Z01-1',root:rgo.group,module:rgo,description:'Музей и Аллея РГО · девять залов по исходной схеме',actions:['rgo-previous','rgo-next']});
 
   const iceRoot=exhibits.getInstanceRoot('O12-1');
   if(iceRoot){
-    const wheelhouse=createIcebreakerWheelhouse({shipRoot:iceRoot,...liderLayout.wheelhouse,onChange:requestRender});
     const ice=createIcebreakerEnvironment({layout:liderLayout});iceRoot.add(ice.group);
-    exhibits.refreshInstanceGeometry('O12-1',{collisionParts:[...wheelhouse.getCollisionParts(),...ice.getCollisionParts()],extendFootprint:true});
-    const module={pickTargets:wheelhouse.pickTargets,update(dt){const a=wheelhouse.update(dt),b=ice.update(dt);return a||b;},
-      getState:()=>({...ice.getState(),wheelhouse:wheelhouse.getState(),lift:getIcebreakerAccess()?.getState().lift}),
-      interact(action){if(action==='lider-lift-up'||action==='lider-lift-down')return getIcebreakerAccess()?.requestLift(action==='lider-lift-up'?'upper':'lower')||false;return wheelhouse.interact(action);},
-      dispose(){wheelhouse.dispose();ice.dispose();}};
-    modules.push(module);zones.set('lider',{name:'Ледокол «Лидер»',id:'O12-1',root:iceRoot,module,defaultInside:false,
-      description:'СЗФО · Арктика · проходимая рубка и переход через подъёмник · льды и северное сияние',
-      actions:['lider-left','lider-toggle','lider-right','lider-reset','lider-entry','lider-lift-down','lider-lift-up'],
-      interiorPose:{...wheelhouse.interiorPose,fov:66},overviewPose:ice.overviewPose});
+    exhibits.refreshInstanceGeometry('O12-1',{collisionParts:ice.getCollisionParts(),extendFootprint:true});
+    modules.push(ice);zones.set('lider',{name:'Ледокол «Лидер»',id:'O12-1',root:iceRoot,module:ice,defaultInside:false,
+      description:'СЗФО · цельный ледокол · полярная ночь, льды и северное сияние',
+      actions:['arctic-toggle','arctic-next'],interiorPose:ice.overviewPose,overviewPose:ice.overviewPose});
   }
 
   const silos=createGrainSilos({id:'Z02',onChange:requestRender});
@@ -53,8 +51,8 @@ export async function createExhibitionZones({exhibits,loader,camera,requestRende
     placement:{id:'Z02-1',x:.75,z:-1,floorY:13.2,rotationY:-Math.PI/4,zone:'Приволжский ФО'},collisionParts:silos.getCollisionParts()});
   if(!silosResult.ok)throw new Error(silosResult.error);
   modules.push(silos);assemblies.push({id:'Z02',...silosResult});
-  zones.set('grain',{name:'Зерновые силосы',id:'Z02-1',root:silos.root,module:silos,description:'Три прозрачных цилиндра с раздельными потоками зёрен',actions:['grain-toggle'],
-    interiorPose:{position:[6,2.7,6],target:[0,2.5,0]},overviewPose:{position:[9,6,10],target:[0,2.5,0]}});
+  zones.set('grain',{name:'Зерновые силосы',id:'Z02-1',root:silos.root,module:silos,defaultInside:false,description:'Три прозрачных цилиндра с раздельными потоками зёрен',actions:['grain-toggle'],
+    interiorPose:{position:[6,2.7,6],target:[0,2.5,0]},overviewPose:{position:[15,12,21],target:[0,8.3,0],fov:50}});
 
   const cockpitSource=assets.get('X04_COCKPIT');
   for(let index=0;index<2;index++){
@@ -83,60 +81,139 @@ export async function createExhibitionZones({exhibits,loader,camera,requestRende
       interiorPose:{position:[.65,1.65,-4.3],target:[.35,1.7,4.05],fov:65},overviewPose:{position:[13,10,-15],target:[0,1.8,0],fov:46}});
   }
 
+  const baseInstanceIds=new Set(exhibits.listInstances().map(p=>p.instanceId));
+  const equipment=createExhibitionEquipment({exhibits,layout:equipmentLayout,onChange:requestRender});modules.push(equipment);
+  // Existing embedded displays share the same selection and playback controls;
+  // their host module remains responsible for animation and collision geometry.
+  const mediaRecords=new Map(equipment.records),embeddedPickTargets=[];
+  for(const [key,zone]of zones){
+    const entries=zone.module.getMediaEntries?.()||zone.module.screens||[];
+    for(const entry of entries){
+      const id='embedded:'+zone.id+':'+entry.id,regionId=key==='lider'?'northwest':key.startsWith('flight')?'siberia':key==='chersonesus'?'south':key==='grain'?'volga':'rgo';
+      const control=entry.media||{getState:()=>entry.getState?.()||{playing:true},interact:action=>entry.interact?.(action)};
+      const cabinetCount=entry.cabinetCount||entry.cabinets?.count||0;
+      const record={id,name:entry.name||entry.title||zone.name,instanceId:zone.id,regionId,hallId:entry.hallId||null,anchorId:zone.id,anchorIds:[zone.id],category:'media',categoryLabel:cabinetCount?'LED-панорама':'Экран экспоната',width:entry.width,height:entry.height,cabinetCount,cabinetColumns:entry.cabinetColumns||entry.cabinets?.columns||0,cabinetRows:entry.cabinetRows||entry.cabinets?.rows||0,theme:entry.theme||'heritage',media:control,face:entry.face,embedded:true,zone,entry};
+      mediaRecords.set(id,record);if(entry.face){entry.face.userData.equipmentId=id;embeddedPickTargets.push(entry.face);}
+    }
+  }
+  for(const item of rgoMovables.filter(i=>i.media)){
+    const nav=rgo.getNavigationItems().find(i=>i.id===item.sourceId),id='embedded:'+item.placement.id;
+    mediaRecords.set(id,{id,name:item.name,instanceId:item.placement.id,regionId:'rgo',hallId:nav.hallId,anchorId:'rgo-item:'+item.sourceId,anchorIds:['rgo-item:'+item.sourceId],category:'media',categoryLabel:'Панорамный экран',width:7,height:2.6,cabinetCount:0,theme:'future',media:item.media,embedded:true,rgoItem:item.sourceId});
+  }
+  const nameKey=r=>[r.regionId,r.hallId||'',r.name].join('|'),nameCounts=new Map(),nameOrdinals=new Map();
+  for(const r of mediaRecords.values())nameCounts.set(nameKey(r),(nameCounts.get(nameKey(r))||0)+1);
+  for(const r of mediaRecords.values()){const key=nameKey(r),ordinal=(nameOrdinals.get(key)||0)+1;nameOrdinals.set(key,ordinal);r.sourceTitle=r.name;r.displayName=nameCounts.get(key)>1?r.name+' · '+ordinal:r.name;}
+  const media={records:mediaRecords,
+    getItems(filter={}){return [...mediaRecords.values()].filter(r=>(!filter.regionId||r.regionId===filter.regionId)&&(!filter.hallId||r.hallId===filter.hallId)&&(!filter.anchorId||(r.anchorIds||[r.anchorId]).includes(filter.anchorId))).map(r=>({id:r.id,name:r.displayName,sourceTitle:r.sourceTitle,displayName:r.displayName,instanceId:r.instanceId,category:r.category,categoryLabel:r.categoryLabel,regionId:r.regionId,hallId:r.hallId,anchorId:r.anchorId,anchorIds:r.anchorIds||[r.anchorId],theme:r.theme,width:r.width,height:r.height,cabinetCount:r.cabinetCount,cabinetColumns:r.cabinetColumns,cabinetRows:r.cabinetRows,source:r.source,embedded:Boolean(r.embedded)}));},
+    getPose(id){const r=mediaRecords.get(id);if(!r)return null;if(!r.embedded)return {...equipment.getPose(id),label:r.displayName};if(r.rgoItem){const p=rgo.getItemPose(r.rgoItem);return {instanceId:r.instanceId,label:r.displayName,position:new THREE.Vector3(...p.position),target:new THREE.Vector3(...p.target),fov:p.fov};}const pose=r.zone.interiorPose||r.zone.module.interiorPose||r.zone.overviewPose;r.zone.root.updateWorldMatrix(true,true);return {instanceId:r.instanceId,label:r.displayName,position:r.zone.root.localToWorld(new THREE.Vector3(...pose.position)),target:r.zone.root.localToWorld(new THREE.Vector3(...pose.target)),fov:pose.fov||62};},
+    interact(id,action='next'){const r=mediaRecords.get(id);if(!r)return false;const changed=r.media.interact(action);requestRender();return changed;},
+  };
   const select=document.getElementById('section-select'),bar=document.getElementById('zone-actions'),buttons=document.getElementById('zone-action-buttons'),info=document.getElementById('zone-description');
   const hallSelect=document.getElementById('rgo-hall-select'),hallControl=document.getElementById('rgo-hall-control');
-  for(const hall of rgoProgram.halls){const option=document.createElement('option');option.value=hall.id;option.textContent=hall.id+' · '+hall.title;hallSelect.add(option);}
-  hallSelect.onchange=()=>act('rgo-hall-'+hallSelect.value);
-  let selected=null,pointerStart=null;
-  function updatePanel(){
-    const zone=zones.get(selected);bar.hidden=!zone;buttons.replaceChildren();if(!zone)return;
-    const actionControls=document.getElementById('zone-action-controls');
-    actionControls.dataset.collapsible=String(zone.actions.length>2);
-    actionControls.open=!matchMedia('(max-width: 600px)').matches||zone.actions.length<=2;
-    info.textContent=selected==='rgo'?'РГО · '+rgoProgram.halls.find(h=>h.id===rgo.activeHall).title:zone.description;
-    hallControl.hidden=selected!=='rgo';hallSelect.value=rgo.activeHall;
-    for(const action of zone.actions){const button=document.createElement('button');button.type='button';button.textContent=actionLabels[action]||action;
-      button.dataset.zoneAction=action;button.onclick=()=>act(action);buttons.append(button);}
-    document.getElementById('zone-inside').textContent=selected==='lider'?'В рубку':selected==='grain'?'Ближе к экспонату':'Внутри раздела';
+  const labelMap={rgo:'РГО · Аллея открытий','rgo-museum':'Музей РГО','far-east':'Дальний Восток',siberia:'Сибирь',ural:'Урал',volga:'Поволжье',central:'Центр и Черноземье',northwest:'Арктика и северо-запад',south:'Юг России',caucasus:'Северный Кавказ','central-square':'Центральная площадь',history:'Зал правителей'};
+  Object.assign(actionLabels,{'arctic-toggle':'Полярная ночь: пуск / пауза','arctic-next':'Другой момент панорамы','media-toggle':'Контент: пуск / пауза','media-next':'Следующая сцена','media-reset':'Начать сначала'});
+  const regionOrder=['rgo','far-east','siberia','ural','volga','central','northwest','south','caucasus','rgo-museum','central-square','history'];
+  const aliases=new Map([...zones].map(([key,value])=>[value.id,key]));
+  const originalRegions=new Map(sourceAssignments.instances.map(p=>[p.instanceId,p]));
+  const fixedRegions={'Z01-1':'rgo','Z02-1':'volga','Z03-1':'siberia','Z04-1':'siberia','O12-1':'northwest','O16-1':'south'};
+  for(const item of rgoMovables)fixedRegions[item.placement.id]='rgo';
+  const fallbackRegions={O01:'ural',O02:'ural',O03:'ural',O04:'ural',O07:'central-square',O08:'central-square'};
+  let selected=null,selectedRegion=null,selectedObject=null,selectedMedia=null,pointerStart=null,lastNavigation='';
+  function makeSelect(id,title){const label=document.createElement('label');label.className='exhibition-select-label';const caption=document.createElement('span');caption.textContent=title;const input=document.createElement('select');input.id=id;input.setAttribute('aria-label',title);label.append(caption,input);hallControl.after(label);return {label,input};}
+  const mediaSelect=makeSelect('zone-media-select','Экраны и интерактивы'),objectSelect=makeSelect('zone-object-select','Экспонат');
+  const status=document.createElement('p');status.className='exhibition-media-status';status.id='zone-media-status';mediaSelect.label.after(status);
+  const edit=document.createElement('button');edit.type='button';edit.className='exhibition-edit-action';edit.textContent='Изменить мышью';edit.title='Положение, поворот и размер выбранного объекта';document.querySelector('.zone-navigation').append(edit);
+  const emitNavigation=()=>{document.dispatchEvent(new CustomEvent('park-navigation-change'));};
+  function option(value,text){const o=document.createElement('option');o.value=value;o.textContent=text;return o;}
+  select.replaceChildren(option('rgo',labelMap.rgo));
+  for(const id of regionOrder.slice(1))select.append(option('zone:'+id,labelMap[id]));
+  const quick=document.createElement('optgroup');quick.label='Быстрый переход';for(const [id,z]of zones)if(id!=='rgo')quick.append(option(id,z.name));select.append(quick,option('all','Весь парк'));
+  hallSelect.replaceChildren();for(const hall of rgoProgram.halls)hallSelect.append(option(hall.id,hall.id+' · '+hall.title));
+  function objects(regionId=selectedRegion){
+    if(regionId==='rgo')return rgo.getNavigationItems().map(item=>({...item,id:'rgo-item:'+item.id,regionId:'rgo',floorY:7.2}));
+    return exhibits.listInstances().filter(p=>baseInstanceIds.has(p.instanceId)&&p.instanceId!=='Z01-1').map(p=>{
+      const primary=originalRegions.get(p.instanceId),regionId=fixedRegions[p.instanceId]||primary?.regionId||fallbackRegions[p.exhibitId]||null;
+      return {id:p.instanceId,instanceId:p.instanceId,name:p.name+(p.copies>1?' · '+p.ordinal:''),regionId,floorY:p.floorY,sourceStatus:primary?.status||'confirmed',position:[p.x,p.y,p.z],kind:'model'};
+    }).filter(p=>!regionId||p.regionId===regionId);
   }
+  function getNavigation(){return {selectedRegion,selectedObject,selectedMedia,activeHall:rgo.activeHall,regions:regionOrder.map(id=>({id,name:labelMap[id],objects:objects(id),equipment:media.getItems({regionId:id})})),halls:rgoProgram.halls.map(h=>({id:h.id,name:h.title,objects:objects('rgo').filter(x=>x.hallId===h.id),equipment:media.getItems({regionId:'rgo',hallId:h.id})}))};}
+  function matchingMedia(){const filter={regionId:selectedRegion};if(selectedRegion==='rgo')filter.hallId=rgo.activeHall;else if(selectedObject)filter.anchorId=selectedObject;let result=media.getItems(filter);if(!result.length&&selectedRegion!=='rgo')result=media.getItems({regionId:selectedRegion});return result;}
+  function updateUrl(){const u=new URL(location.href);u.searchParams.set('section',selectedRegion==='rgo'?'rgo':selected||'zone:'+selectedRegion);if(selectedRegion==='rgo')u.searchParams.set('rgo',rgo.activeHall);else u.searchParams.delete('rgo');if(selectedObject)u.searchParams.set('object',selectedObject);else u.searchParams.delete('object');if(selectedMedia)u.searchParams.set('media',selectedMedia);else u.searchParams.delete('media');history.replaceState(null,'',u);}
+  function updatePanel(){
+    bar.hidden=!selectedRegion;if(!selectedRegion)return;const zone=zones.get(selected);
+    info.textContent=selectedRegion==='rgo'?'РГО · '+rgoProgram.halls.find(h=>h.id===rgo.activeHall)?.title:zone?.description||labelMap[selectedRegion];
+    select.value=selectedRegion==='rgo'?'rgo':selected||'zone:'+selectedRegion;
+    hallControl.hidden=selectedRegion!=='rgo';hallSelect.value=rgo.activeHall;
+    const shown=objects().filter(o=>selectedRegion!=='rgo'||o.hallId===rgo.activeHall);
+    objectSelect.input.replaceChildren(option('',selectedRegion==='rgo'?'Зал целиком':'Зона целиком'));
+    for(const o of shown)objectSelect.input.append(option(o.id,o.name));objectSelect.input.value=selectedObject||'';
+    objectSelect.label.hidden=!shown.length;
+    const availableMedia=matchingMedia();mediaSelect.input.replaceChildren(option('','Выберите экран или интерактив'));
+    for(const m of availableMedia)mediaSelect.input.append(option(m.id,m.name));mediaSelect.input.value=selectedMedia||'';mediaSelect.label.hidden=!availableMedia.length;
+    const record=selectedMedia?media.records.get(selectedMedia):null;
+    status.hidden=!record;status.textContent=record?(record.categoryLabel||(record.category==='projection'?'Проекционный экран':record.category==='interactive'?'Интерактивная станция':'LED-экран'))+' · '+record.width.toFixed(2)+' × '+record.height.toFixed(2)+' м'+(record.cabinetCount?' · '+record.cabinetColumns+' × '+record.cabinetRows+' кабинетов':'')+' · '+(record.media.getState().playing?'контент воспроизводится':'пауза'):'';
+    const actions=selectedMedia?['media-toggle','media-next','media-reset']:(zone?.actions||[]);buttons.replaceChildren();
+    for(const action of actions){const b=document.createElement('button');b.type='button';b.textContent=actionLabels[action]||action;b.dataset.zoneAction=action;b.onclick=()=>act(action);buttons.append(b);}
+    const actionControls=document.getElementById('zone-action-controls');actionControls.hidden=!actions.length;actionControls.dataset.collapsible=String(actions.length>2);actionControls.open=!matchMedia('(max-width:600px)').matches||actions.length<=2;
+    document.getElementById('zone-inside').textContent=selectedMedia?'К экрану':selectedObject?'К экспонату':selectedRegion==='rgo'?'В зал':'Ближе';
+    document.getElementById('zone-overview').textContent=selectedRegion==='rgo'?'Зал целиком':'Зона целиком';
+    edit.hidden=!(record||selectedObject||zone);emitNavigation();
+  }
+  function focusRegion(id,{navigate=true}={}){
+    if(id==='rgo'){
+      if(navigate)return focus('rgo');
+      selectedRegion='rgo';selected='rgo';selectedObject=null;selectedMedia=null;
+      rgo.setCutaway(true);updatePanel();updateUrl();requestRender();return true;
+    }
+    if(!labelMap[id])return false;
+    selectedRegion=id;selected=null;selectedObject=null;selectedMedia=null;updatePanel();
+    if(navigate){const entries=sourceZones.zones.filter(z=>z.regionId===id),box=new THREE.Box3();for(const z of entries)for(const poly of z.polygons)for(const [x,y]of poly)box.expandByPoint(new THREE.Vector3(x,z.floorY,y));if(!box.isEmpty()){const target=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3()),span=Math.max(size.x,size.z,14);onFocus('zone:'+id,target.clone().add(new THREE.Vector3(span*.4,span*.85,span*.55)),target,labelMap[id],48);}}
+    rgo.setCutaway(true);updateUrl();requestRender();return true;
+  }
+  function focusObject(id,{navigate=true}={}){
+    if(!id)return selectedRegion==='rgo'?focus('rgo'):focusRegion(selectedRegion,{navigate});
+    if(id.startsWith('rgo-item:')){const item=objects('rgo').find(p=>p.id===id);if(!item)return false;selectedRegion='rgo';selected='rgo';selectedObject=id;selectedMedia=null;rgo.setHall(item.hallId);rgo.setCutaway(false);updatePanel();const pose=rgo.getItemPose(id.slice(9));if(navigate&&pose)onFocus(item.instanceId,pose.world?new THREE.Vector3(...pose.position):rgo.group.localToWorld(new THREE.Vector3(...pose.position)),pose.world?new THREE.Vector3(...pose.target):rgo.group.localToWorld(new THREE.Vector3(...pose.target)),item.name,pose.fov);}
+    else {const item=objects(null).find(p=>p.id===id);if(!item)return false;selectedRegion=item.regionId;selected=aliases.get(id)||null;selectedObject=id;selectedMedia=null;updatePanel();if(navigate){const zone=zones.get(selected);if(zone){const pose=zone.overviewPose||zone.module.overviewPose;if(pose)onFocus(id,zone.root.localToWorld(new THREE.Vector3(...pose.position)),zone.root.localToWorld(new THREE.Vector3(...pose.target)),zone.name,pose.fov||48);else onFocus(id,null,null,item.name);}else if(id==='O05-1'){const root=exhibits.getInstanceRoot(id);root.updateWorldMatrix(true,true);onFocus(id,root.localToWorld(new THREE.Vector3(-13.26958309608666,2.1,14.174560467825845)),root.localToWorld(new THREE.Vector3(0,1.6,0)),item.name,55);}else onFocus(id,null,null,item.name);}}
+    updateUrl();requestRender();return true;
+  }
+  function focusEquipment(id,{navigate=true}={}){const item=media.records.get(id);if(!item)return false;selectedRegion=item.regionId;if(item.regionId==='rgo'){selected='rgo';rgo.setHall(item.hallId);selectedObject=item.rgoItem?'rgo-item:'+item.rgoItem:null;rgo.setCutaway(false);}else{selectedObject=item.anchorId||null;selected=aliases.get(selectedObject)||null;rgo.setCutaway(true);}selectedMedia=id;updatePanel();if(navigate){const pose=media.getPose(id);onFocus(pose.instanceId,pose.position,pose.target,pose.label,pose.fov);}updateUrl();requestRender();return true;}
   function focus(id,{inside}={}){
-    if(id.startsWith('station:')){bar.hidden=true;return Boolean(onStationFocus(id.slice(8)));}
+    if(!id)return false;if(id.startsWith('station:')){bar.hidden=true;return Boolean(onStationFocus(id.slice(8)));}
+    if(id.startsWith('zone:'))return focusRegion(id.slice(5));if(id.startsWith('rgo-item:')||baseInstanceIds.has(id))return focusObject(id);
+    if(media.records.has(id))return focusEquipment(id);
     if(id.startsWith('rgo-')){rgo.setHall(id.slice(4));id='rgo';}
-    if(id==='all'){selected=null;select.value='all';bar.hidden=true;rgo.setCutaway(true);onOverview();return true;}
+    if(id==='all'){selected=null;selectedRegion=null;selectedObject=null;selectedMedia=null;select.value='all';bar.hidden=true;rgo.setCutaway(true);onOverview();return true;}
     const zone=zones.get(id);if(!zone)return false;inside??=zone.defaultInside!==false;
-    selected=id;select.value=id;updatePanel();
+    selected=id;selectedRegion=id==='rgo'?'rgo':fixedRegions[zone.id];selectedObject=id==='rgo'?null:zone.id;selectedMedia=null;updatePanel();
     const pose=(inside?zone.interiorPose:zone.overviewPose)||(inside?zone.module.interiorPose:zone.module.overviewPose);
     zone.root.updateWorldMatrix(true,true);rgo.setCutaway(!inside||id!=='rgo');
-    if(pose)onFocus(zone.id,zone.root.localToWorld(new THREE.Vector3(...pose.position)),zone.root.localToWorld(new THREE.Vector3(...pose.target)),zone.name,pose.fov||(inside?62:43));
-    else onFocus(zone.id,null,null,zone.name);
-    requestRender();return true;
+    if(pose)onFocus(zone.id,zone.root.localToWorld(new THREE.Vector3(...pose.position)),zone.root.localToWorld(new THREE.Vector3(...pose.target)),zone.name,pose.fov||(inside?62:43));else onFocus(zone.id,null,null,zone.name);
+    updateUrl();requestRender();return true;
   }
   function act(action){
-    const zone=zones.get(selected);if(!zone)return false;
-    if(action==='lider-entry'){const pose=getIcebreakerAccess()?.getEntrancePose();if(!pose)return false;onFocus(zone.id,pose.position,pose.target,'Вход в рубку «Лидера»',62);requestRender();return true;}
-    const result=typeof zone.module.interact==='function'?zone.module.interact(action):zone.module.action?.(action);
+    if(action.startsWith('media-')){const ok=media.interact(selectedMedia,action.slice(6));updatePanel();return ok;}
+    const zone=zones.get(selected);if(!zone)return false;const result=typeof zone.module.interact==='function'?zone.module.interact(action):zone.module.action?.(action);
     if(result&&selected==='rgo')focus('rgo');requestRender();return Boolean(result);
   }
-  select.disabled=false;select.onchange=()=>focus(select.value);
-  document.getElementById('zone-inside').onclick=()=>focus(selected,{inside:true});
-  document.getElementById('zone-overview').onclick=()=>focus(selected,{inside:false});
+  select.disabled=false;select.onchange=()=>focus(select.value);hallSelect.onchange=()=>focus('rgo-'+hallSelect.value);objectSelect.input.onchange=()=>focusObject(objectSelect.input.value);mediaSelect.input.onchange=()=>{if(mediaSelect.input.value)focusEquipment(mediaSelect.input.value);};
+  document.getElementById('zone-inside').onclick=()=>{if(selectedMedia)focusEquipment(selectedMedia);else if(selected)focus(selected,{inside:true});else if(selectedObject)focusObject(selectedObject);else focusRegion(selectedRegion);};
+  document.getElementById('zone-overview').onclick=()=>selectedRegion==='rgo'?focus('rgo',{inside:false}):focusRegion(selectedRegion);
   document.getElementById('zone-close').onclick=()=>{bar.hidden=true;};
+  edit.onclick=()=>{const id=selectedMedia?media.records.get(selectedMedia)?.instanceId:selectedObject?.startsWith('rgo-item:')?objects('rgo').find(i=>i.id===selectedObject)?.instanceId:selectedObject||zones.get(selected)?.id;if(id)document.dispatchEvent(new CustomEvent('park-edit-instance',{detail:{instanceId:id}}));};
   const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),canvas=document.getElementById('canvas');
   function onDown(event){if(event.button===0||event.pointerType!=='mouse')pointerStart={id:event.pointerId,x:event.clientX,y:event.clientY,time:performance.now()};}
-  function onUp(event){
-    if(!pointerStart||pointerStart.id!==event.pointerId)return;const start=pointerStart;pointerStart=null;
-    if(Math.hypot(event.clientX-start.x,event.clientY-start.y)>5||performance.now()-start.time>600||!selected)return;
-    const zone=zones.get(selected),rect=canvas.getBoundingClientRect();pointer.set((event.clientX-rect.left)/rect.width*2-1,1-(event.clientY-rect.top)/rect.height*2);raycaster.setFromCamera(pointer,camera);
-    const targets=zone.module.pickTargets||zone.module.pickables||[];
-    const hits=raycaster.intersectObjects(targets,true).filter(hit=>{for(let node=hit.object;node;node=node.parent)if(!node.visible)return false;return true;});
-    const first=hits[0];if(!first)return;
-    const action=getInstallationAction(first);if(action)act(action.action);else if(first.object.userData.zoneAction)act(first.object.userData.zoneAction);
-    requestRender();
+  function onUp(event){if(!pointerStart||pointerStart.id!==event.pointerId)return;const start=pointerStart;pointerStart=null;if(Math.hypot(event.clientX-start.x,event.clientY-start.y)>4||performance.now()-start.time>500||canvas.classList.contains('editing-exhibit'))return;
+    const rect=canvas.getBoundingClientRect();pointer.set((event.clientX-rect.left)/rect.width*2-1,1-(event.clientY-rect.top)/rect.height*2);raycaster.setFromCamera(pointer,camera);
+    const zone=zones.get(selected),targets=[...equipment.pickTargets,...embeddedPickTargets,...(zone?.module.pickTargets||zone?.module.pickables||[])];const hit=raycaster.intersectObjects(targets,true).find(hit=>{for(let n=hit.object;n;n=n.parent)if(!n.visible)return false;return true;});if(!hit)return;
+    if(hit.object.userData.equipmentId){const id=hit.object.userData.equipmentId;if(selectedMedia===id)act('media-next');else focusEquipment(id,{navigate:false});return;}
+    const action=getInstallationAction(hit);if(action)act(action.action);else if(hit.object.userData.zoneAction)act(hit.object.userData.zoneAction);requestRender();
   }
   canvas.addEventListener('pointerdown',onDown);canvas.addEventListener('pointerup',onUp);
-  return {focus,act,zones,assemblies,assets,hidePanel(){bar.hidden=true;selected=null;pointerStart=null;select.value='all';},
+  return {focus,focusRegion,focusObject,focusEquipment,act,getNavigation,equipment,media,rgo,zones,assemblies,assets,
+    hidePanel(){bar.hidden=true;pointerStart=null;},
+    refreshNavigation(){updatePanel();},
     update(dt){let changed=false;for(const module of modules)if(module.update?.(dt,camera))changed=true;return changed;},
-    getState:()=>({ready:true,selected,modelsLoaded:assets.size,assetErrors:errors,assemblies:assemblies.map(({id,evidence})=>({id,matchedSamples:evidence.matchedSamples,requiredSamples:evidence.requiredSamples})),zones:[...zones.entries()].map(([id,zone])=>({...zone.module.getState(),id,name:zone.name,instanceId:zone.id}))}),
+    getState:()=>({ready:true,selected,selectedRegion,selectedObject,selectedMedia,modelsLoaded:assets.size,assetErrors:errors,equipment:equipment.getState(),navigation:getNavigation(),assemblies:assemblies.map(({id,evidence})=>({id,matchedSamples:evidence.matchedSamples,requiredSamples:evidence.requiredSamples})),zones:[...zones.entries()].map(([id,zone])=>({...zone.module.getState(),id,name:zone.name,instanceId:zone.id}))}),
     dispose(){canvas.removeEventListener('pointerdown',onDown);canvas.removeEventListener('pointerup',onUp);modules.forEach(m=>m.dispose?.());},
   };
 }

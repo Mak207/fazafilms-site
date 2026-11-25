@@ -1,0 +1,4807 @@
+{
+  "schemaVersion": 1,
+  "version": "park-equipment-20261125",
+  "source": "018 and current region/exhibit assignment; furniture positions are a working design constrained by the source contours",
+  "rgoLedSurfaceCount": 26,
+  "cabinetCount": 602,
+  "items": [
+    {
+      "id": "MEDIA-O01-1",
+      "name": "Лунная база · модули",
+      "hallId": null,
+      "regionId": "ural",
+      "zoneId": "ural-upper",
+      "anchorId": "O01-1",
+      "anchorIds": [
+        "O01-1"
+      ],
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 13.2,
+      "sourcePosition": [
+        -6.25,
+        13.2,
+        -24
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "object-regions-primary.json#O01-1; equipment is working design",
+      "theme": "space",
+      "x": -0.75,
+      "z": -24.75,
+      "yaw": 0,
+      "score": 5.55090082779363,
+      "footprint": [
+        [
+          0.22199999999999998,
+          -24.99
+        ],
+        [
+          0.22199999999999998,
+          -24.51
+        ],
+        [
+          -1.722,
+          -24.51
+        ],
+        [
+          -1.722,
+          -24.99
+        ],
+        [
+          0.22199999999999998,
+          -24.99
+        ]
+      ],
+      "reserve": [
+        [
+          0.16199999999999992,
+          -24.3
+        ],
+        [
+          0.16199999999999992,
+          -22.7
+        ],
+        [
+          -1.662,
+          -22.7
+        ],
+        [
+          -1.662,
+          -24.3
+        ],
+        [
+          0.16199999999999992,
+          -24.3
+        ]
+      ],
+      "viewPosition": [
+        -0.75,
+        14.85,
+        -23.5
+      ],
+      "cameraPosition": [
+        -0.75,
+        14.85,
+        -22.55
+      ],
+      "position": [
+        -0.75,
+        13.2,
+        -24.75
+      ],
+      "rotationY": 0,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-O02-1",
+      "name": "Лунная база · среда обитания",
+      "hallId": null,
+      "regionId": "ural",
+      "zoneId": "ural-upper",
+      "anchorId": "O02-1",
+      "anchorIds": [
+        "O02-1"
+      ],
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 13.2,
+      "sourcePosition": [
+        -16.75,
+        13.2,
+        -32.25
+      ],
+      "sourceYaw": 1.5707963267948966,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "object-regions-primary.json#O02-1; equipment is working design",
+      "theme": "space",
+      "x": -15,
+      "z": -27,
+      "yaw": 4.71238898038469,
+      "score": 5.628233684902358,
+      "footprint": [
+        [
+          -14.76,
+          -26.028
+        ],
+        [
+          -15.24,
+          -26.028
+        ],
+        [
+          -15.24,
+          -27.972
+        ],
+        [
+          -14.76,
+          -27.972
+        ],
+        [
+          -14.76,
+          -26.028
+        ]
+      ],
+      "reserve": [
+        [
+          -15.45,
+          -26.088
+        ],
+        [
+          -17.05,
+          -26.088
+        ],
+        [
+          -17.05,
+          -27.912
+        ],
+        [
+          -15.45,
+          -27.912
+        ],
+        [
+          -15.45,
+          -26.088
+        ]
+      ],
+      "viewPosition": [
+        -16.25,
+        14.85,
+        -27
+      ],
+      "cameraPosition": [
+        -17.2,
+        14.85,
+        -27
+      ],
+      "position": [
+        -15,
+        13.2,
+        -27
+      ],
+      "rotationY": 4.71238898038469,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-O03-1",
+      "name": "Луна · орбитальные исследования",
+      "hallId": null,
+      "regionId": "ural",
+      "zoneId": "ural-upper",
+      "anchorId": "O03-1",
+      "anchorIds": [
+        "O03-1"
+      ],
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 13.2,
+      "sourcePosition": [
+        -8.5,
+        13.2,
+        -16.5
+      ],
+      "sourceYaw": 0.7853981633974483,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "object-regions-primary.json#O03-1; equipment is working design",
+      "theme": "space",
+      "x": -15.75,
+      "z": -16.5,
+      "yaw": 0,
+      "score": 7.273561944901924,
+      "footprint": [
+        [
+          -14.778,
+          -16.74
+        ],
+        [
+          -14.778,
+          -16.26
+        ],
+        [
+          -16.722,
+          -16.26
+        ],
+        [
+          -16.722,
+          -16.74
+        ],
+        [
+          -14.778,
+          -16.74
+        ]
+      ],
+      "reserve": [
+        [
+          -14.838000000000001,
+          -16.05
+        ],
+        [
+          -14.838000000000001,
+          -14.45
+        ],
+        [
+          -16.662,
+          -14.45
+        ],
+        [
+          -16.662,
+          -16.05
+        ],
+        [
+          -14.838000000000001,
+          -16.05
+        ]
+      ],
+      "viewPosition": [
+        -15.75,
+        14.85,
+        -15.25
+      ],
+      "cameraPosition": [
+        -15.75,
+        14.85,
+        -14.3
+      ],
+      "position": [
+        -15.75,
+        13.2,
+        -16.5
+      ],
+      "rotationY": 0,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-O04-1",
+      "name": "Работа космонавта",
+      "hallId": null,
+      "regionId": "ural",
+      "zoneId": "ural-upper",
+      "anchorId": "O04-1",
+      "anchorIds": [
+        "O04-1"
+      ],
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 13.2,
+      "sourcePosition": [
+        -12.25,
+        13.2,
+        -12.75
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "object-regions-primary.json#O04-1; equipment is working design",
+      "theme": "space",
+      "x": -14.25,
+      "z": -9.75,
+      "yaw": 3.9269908169872414,
+      "score": 3.7233609999736066,
+      "footprint": [
+        [
+          -14.767602163828553,
+          -8.892986581201905
+        ],
+        [
+          -15.107013418798095,
+          -9.232397836171447
+        ],
+        [
+          -13.732397836171447,
+          -10.607013418798095
+        ],
+        [
+          -13.392986581201905,
+          -10.267602163828553
+        ],
+        [
+          -14.767602163828553,
+          -8.892986581201905
+        ]
+      ],
+      "reserve": [
+        [
+          -15.213079435976077,
+          -9.423316667091814
+        ],
+        [
+          -16.344450285874554,
+          -10.554687516990292
+        ],
+        [
+          -15.054687516990292,
+          -11.844450285874554
+        ],
+        [
+          -13.923316667091814,
+          -10.713079435976077
+        ],
+        [
+          -15.213079435976077,
+          -9.423316667091814
+        ]
+      ],
+      "viewPosition": [
+        -15.133883476483184,
+        14.85,
+        -10.633883476483184
+      ],
+      "cameraPosition": [
+        -15.805634918610405,
+        14.85,
+        -11.305634918610405
+      ],
+      "position": [
+        -14.25,
+        13.2,
+        -9.75
+      ],
+      "rotationY": 3.9269908169872414,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-O05-1",
+      "name": "МС-21 · как устроен полёт",
+      "hallId": null,
+      "regionId": "siberia",
+      "zoneId": "siberia-main",
+      "anchorId": "O05-1",
+      "anchorIds": [
+        "O05-1"
+      ],
+      "category": "media",
+      "width": 3.6479999999999997,
+      "height": 1.368,
+      "bottom": 0.85,
+      "floorY": 7.2,
+      "sourcePosition": [
+        16,
+        7.2,
+        -45
+      ],
+      "sourceYaw": 0.9599310885968813,
+      "cabinetColumns": 6,
+      "cabinetRows": 4,
+      "cabinetCount": 24,
+      "source": "object-regions-primary.json#O05-1; equipment is working design",
+      "theme": "flight",
+      "x": 25.5,
+      "z": -45.75,
+      "yaw": 4.71238898038469,
+      "score": 9.642133013026593,
+      "footprint": [
+        [
+          25.74,
+          -43.866
+        ],
+        [
+          25.26,
+          -43.866
+        ],
+        [
+          25.26,
+          -47.634
+        ],
+        [
+          25.74,
+          -47.634
+        ],
+        [
+          25.74,
+          -43.866
+        ]
+      ],
+      "reserve": [
+        [
+          25.05,
+          -43.926
+        ],
+        [
+          23.45,
+          -43.926
+        ],
+        [
+          23.45,
+          -47.574
+        ],
+        [
+          25.05,
+          -47.574
+        ],
+        [
+          25.05,
+          -43.926
+        ]
+      ],
+      "viewPosition": [
+        24.25,
+        8.85,
+        -45.75
+      ],
+      "cameraPosition": [
+        22.2168,
+        8.85,
+        -45.75
+      ],
+      "position": [
+        25.5,
+        7.2,
+        -45.75
+      ],
+      "rotationY": 4.71238898038469,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-O06-1",
+      "name": "ГЭС · энергия воды",
+      "hallId": null,
+      "regionId": "siberia",
+      "zoneId": "siberia-upper",
+      "anchorId": "O06-1",
+      "anchorIds": [
+        "O06-1"
+      ],
+      "category": "media",
+      "width": 3.6479999999999997,
+      "height": 1.368,
+      "bottom": 0.85,
+      "floorY": 13.2,
+      "sourcePosition": [
+        -2.75,
+        13.2,
+        -44.5
+      ],
+      "sourceYaw": 1.5707963267948966,
+      "cabinetColumns": 6,
+      "cabinetRows": 4,
+      "cabinetCount": 24,
+      "source": "object-regions-primary.json#O06-1; equipment is working design",
+      "theme": "hydro",
+      "x": 0.75,
+      "z": -51.75,
+      "yaw": 0,
+      "score": 8.097744983856156,
+      "footprint": [
+        [
+          2.634,
+          -51.99
+        ],
+        [
+          2.634,
+          -51.51
+        ],
+        [
+          -1.134,
+          -51.51
+        ],
+        [
+          -1.134,
+          -51.99
+        ],
+        [
+          2.634,
+          -51.99
+        ]
+      ],
+      "reserve": [
+        [
+          2.574,
+          -51.3
+        ],
+        [
+          2.574,
+          -49.7
+        ],
+        [
+          -1.0739999999999998,
+          -49.7
+        ],
+        [
+          -1.0739999999999998,
+          -51.3
+        ],
+        [
+          2.574,
+          -51.3
+        ]
+      ],
+      "viewPosition": [
+        0.75,
+        14.85,
+        -50.5
+      ],
+      "cameraPosition": [
+        0.75,
+        14.85,
+        -48.4668
+      ],
+      "position": [
+        0.75,
+        13.2,
+        -51.75
+      ],
+      "rotationY": 0,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-O08-1",
+      "name": "Киты и жизнь океана",
+      "hallId": null,
+      "regionId": "central-square",
+      "zoneId": "central-square-main",
+      "anchorId": "O08-1",
+      "anchorIds": [
+        "O07-1",
+        "O07-2",
+        "O08-1",
+        "O08-2",
+        "O08-3"
+      ],
+      "category": "media",
+      "width": 3.6479999999999997,
+      "height": 1.368,
+      "bottom": 0.85,
+      "floorY": 7.2,
+      "sourcePosition": [
+        0,
+        7.2,
+        25.5
+      ],
+      "sourceYaw": 1.5707963267948966,
+      "cabinetColumns": 6,
+      "cabinetRows": 4,
+      "cabinetCount": 24,
+      "source": "object-regions-primary.json#O08-1; equipment is working design",
+      "theme": "ocean",
+      "x": 0,
+      "z": 25.5,
+      "yaw": 0.7853981633974483,
+      "score": 0.023561944901923447,
+      "footprint": [
+        [
+          1.1624835482706841,
+          23.998105196759774
+        ],
+        [
+          1.501894803240227,
+          24.337516451729314
+        ],
+        [
+          -1.1624835482706841,
+          27.001894803240226
+        ],
+        [
+          -1.501894803240227,
+          26.662483548270686
+        ],
+        [
+          1.1624835482706841,
+          23.998105196759774
+        ]
+      ],
+      "reserve": [
+        [
+          1.6079608204182088,
+          24.528435282649685
+        ],
+        [
+          2.739331670316685,
+          25.65980613254816
+        ],
+        [
+          0.15980613254815978,
+          28.239331670316684
+        ],
+        [
+          -0.9715647173503162,
+          27.10796082041821
+        ],
+        [
+          1.6079608204182088,
+          24.528435282649685
+        ]
+      ],
+      "viewPosition": [
+        0.8838834764831843,
+        8.85,
+        26.383883476483184
+      ],
+      "cameraPosition": [
+        2.3215729839916723,
+        8.85,
+        27.821572983991672
+      ],
+      "position": [
+        0,
+        7.2,
+        25.5
+      ],
+      "rotationY": 0.7853981633974483,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-O09-1",
+      "name": "Ангара · старт и орбита",
+      "hallId": null,
+      "regionId": "far-east",
+      "zoneId": "far-east-main",
+      "anchorId": "O09-1",
+      "anchorIds": [
+        "O09-1"
+      ],
+      "category": "media",
+      "width": 3.6479999999999997,
+      "height": 1.368,
+      "bottom": 0.85,
+      "floorY": 7.2,
+      "sourcePosition": [
+        -14.5,
+        7.2,
+        -75.25
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 6,
+      "cabinetRows": 4,
+      "cabinetCount": 24,
+      "source": "object-regions-primary.json#O09-1; equipment is working design",
+      "theme": "space",
+      "x": -11.25,
+      "z": -77.25,
+      "yaw": 3.9269908169872414,
+      "score": 3.9338941051280543,
+      "footprint": [
+        [
+          -12.412483548270684,
+          -75.74810519675977
+        ],
+        [
+          -12.751894803240226,
+          -76.08751645172931
+        ],
+        [
+          -10.087516451729316,
+          -78.75189480324023
+        ],
+        [
+          -9.748105196759774,
+          -78.41248354827069
+        ],
+        [
+          -12.412483548270684,
+          -75.74810519675977
+        ]
+      ],
+      "reserve": [
+        [
+          -12.85796082041821,
+          -76.2784352826497
+        ],
+        [
+          -13.989331670316686,
+          -77.40980613254817
+        ],
+        [
+          -11.409806132548159,
+          -79.98933167031669
+        ],
+        [
+          -10.278435282649683,
+          -78.85796082041821
+        ],
+        [
+          -12.85796082041821,
+          -76.2784352826497
+        ]
+      ],
+      "viewPosition": [
+        -12.133883476483184,
+        8.85,
+        -78.13388347648319
+      ],
+      "cameraPosition": [
+        -13.571572983991672,
+        8.85,
+        -79.57157298399167
+      ],
+      "position": [
+        -11.25,
+        7.2,
+        -77.25
+      ],
+      "rotationY": 3.9269908169872414,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-O10-1",
+      "name": "Подготовка ракеты к старту",
+      "hallId": null,
+      "regionId": "far-east",
+      "zoneId": "far-east-main",
+      "anchorId": "O10-1",
+      "anchorIds": [
+        "O10-1"
+      ],
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        -13.5,
+        7.2,
+        -69
+      ],
+      "sourceYaw": 1.5707963267948966,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "object-regions-primary.json#O10-1; equipment is working design",
+      "theme": "space",
+      "x": -18,
+      "z": -68.25,
+      "yaw": 3.141592653589793,
+      "score": 4.609195787527511,
+      "footprint": [
+        [
+          -18.972,
+          -68.01
+        ],
+        [
+          -18.972,
+          -68.49
+        ],
+        [
+          -17.028,
+          -68.49
+        ],
+        [
+          -17.028,
+          -68.01
+        ],
+        [
+          -18.972,
+          -68.01
+        ]
+      ],
+      "reserve": [
+        [
+          -18.912,
+          -68.7
+        ],
+        [
+          -18.912,
+          -70.3
+        ],
+        [
+          -17.088,
+          -70.3
+        ],
+        [
+          -17.088,
+          -68.7
+        ],
+        [
+          -18.912,
+          -68.7
+        ]
+      ],
+      "viewPosition": [
+        -18,
+        8.85,
+        -69.5
+      ],
+      "cameraPosition": [
+        -18,
+        8.85,
+        -70.45
+      ],
+      "position": [
+        -18,
+        7.2,
+        -68.25
+      ],
+      "rotationY": 3.141592653589793,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-O11-1",
+      "name": "Технологии энергии",
+      "hallId": null,
+      "regionId": "siberia",
+      "zoneId": "siberia-upper",
+      "anchorId": "O11-1",
+      "anchorIds": [
+        "O11-1"
+      ],
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 13.2,
+      "sourcePosition": [
+        3,
+        13.2,
+        -32
+      ],
+      "sourceYaw": -0.7853981633974483,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "object-regions-primary.json#O11-1; equipment is working design",
+      "theme": "energy",
+      "x": 7.5,
+      "z": -33,
+      "yaw": 0,
+      "score": 4.633334173548367,
+      "footprint": [
+        [
+          8.472,
+          -33.24
+        ],
+        [
+          8.472,
+          -32.76
+        ],
+        [
+          6.5280000000000005,
+          -32.76
+        ],
+        [
+          6.5280000000000005,
+          -33.24
+        ],
+        [
+          8.472,
+          -33.24
+        ]
+      ],
+      "reserve": [
+        [
+          8.411999999999999,
+          -32.55
+        ],
+        [
+          8.411999999999999,
+          -30.95
+        ],
+        [
+          6.588,
+          -30.95
+        ],
+        [
+          6.588,
+          -32.55
+        ],
+        [
+          8.411999999999999,
+          -32.55
+        ]
+      ],
+      "viewPosition": [
+        7.5,
+        14.85,
+        -31.75
+      ],
+      "cameraPosition": [
+        7.5,
+        14.85,
+        -30.8
+      ],
+      "position": [
+        7.5,
+        13.2,
+        -33
+      ],
+      "rotationY": 0,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-O13-1",
+      "name": "Уборка урожая",
+      "hallId": null,
+      "regionId": "volga",
+      "zoneId": "volga-upper",
+      "anchorId": "O13-1",
+      "anchorIds": [
+        "O13-1",
+        "O13-2",
+        "O13-3"
+      ],
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 13.2,
+      "sourcePosition": [
+        -3,
+        13.2,
+        10.25
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "object-regions-primary.json#O13-1; equipment is working design",
+      "theme": "agriculture",
+      "x": 0.75,
+      "z": 9.75,
+      "yaw": 0,
+      "score": 3.783186487605389,
+      "footprint": [
+        [
+          1.722,
+          9.51
+        ],
+        [
+          1.722,
+          9.99
+        ],
+        [
+          -0.22199999999999998,
+          9.99
+        ],
+        [
+          -0.22199999999999998,
+          9.51
+        ],
+        [
+          1.722,
+          9.51
+        ]
+      ],
+      "reserve": [
+        [
+          1.662,
+          10.2
+        ],
+        [
+          1.662,
+          11.8
+        ],
+        [
+          -0.16199999999999992,
+          11.8
+        ],
+        [
+          -0.16199999999999992,
+          10.2
+        ],
+        [
+          1.662,
+          10.2
+        ]
+      ],
+      "viewPosition": [
+        0.75,
+        14.85,
+        11
+      ],
+      "cameraPosition": [
+        0.75,
+        14.85,
+        11.95
+      ],
+      "position": [
+        0.75,
+        13.2,
+        9.75
+      ],
+      "rotationY": 0,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-O14-1",
+      "name": "Агродроны · наблюдение поля",
+      "hallId": null,
+      "regionId": "volga",
+      "zoneId": "volga-upper",
+      "anchorId": "O14-1",
+      "anchorIds": [
+        "O14-1",
+        "O14-2",
+        "O14-3",
+        "O14-4"
+      ],
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 13.2,
+      "sourcePosition": [
+        5.25,
+        13.2,
+        9.5
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "object-regions-primary.json#O14-1; equipment is working design",
+      "theme": "agriculture",
+      "x": 5.25,
+      "z": 9.75,
+      "yaw": 4.71238898038469,
+      "score": 0.39137166941154067,
+      "footprint": [
+        [
+          5.49,
+          10.722
+        ],
+        [
+          5.01,
+          10.722
+        ],
+        [
+          5.01,
+          8.778
+        ],
+        [
+          5.49,
+          8.778
+        ],
+        [
+          5.49,
+          10.722
+        ]
+      ],
+      "reserve": [
+        [
+          4.8,
+          10.661999999999999
+        ],
+        [
+          3.2,
+          10.661999999999999
+        ],
+        [
+          3.2,
+          8.838000000000001
+        ],
+        [
+          4.8,
+          8.838000000000001
+        ],
+        [
+          4.8,
+          10.661999999999999
+        ]
+      ],
+      "viewPosition": [
+        4,
+        14.85,
+        9.75
+      ],
+      "cameraPosition": [
+        3.05,
+        14.85,
+        9.75
+      ],
+      "position": [
+        5.25,
+        13.2,
+        9.75
+      ],
+      "rotationY": 4.71238898038469,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-O15-1",
+      "name": "Мост · инженерия пролёта",
+      "hallId": null,
+      "regionId": "south",
+      "zoneId": "south-main",
+      "anchorId": "O15-1",
+      "anchorIds": [
+        "O15-1"
+      ],
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        -11.25,
+        7.2,
+        60.25
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "object-regions-primary.json#O15-1; equipment is working design",
+      "theme": "bridge",
+      "x": -6.75,
+      "z": 59.25,
+      "yaw": 0,
+      "score": 4.6097722286464435,
+      "footprint": [
+        [
+          -5.7780000000000005,
+          59.01
+        ],
+        [
+          -5.7780000000000005,
+          59.49
+        ],
+        [
+          -7.7219999999999995,
+          59.49
+        ],
+        [
+          -7.7219999999999995,
+          59.01
+        ],
+        [
+          -5.7780000000000005,
+          59.01
+        ]
+      ],
+      "reserve": [
+        [
+          -5.838,
+          59.7
+        ],
+        [
+          -5.838,
+          61.3
+        ],
+        [
+          -7.662,
+          61.3
+        ],
+        [
+          -7.662,
+          59.7
+        ],
+        [
+          -5.838,
+          59.7
+        ]
+      ],
+      "viewPosition": [
+        -6.75,
+        8.85,
+        60.5
+      ],
+      "cameraPosition": [
+        -6.75,
+        8.85,
+        61.45
+      ],
+      "position": [
+        -6.75,
+        7.2,
+        59.25
+      ],
+      "rotationY": 0,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-Z02-1",
+      "name": "Путь зерна",
+      "hallId": null,
+      "regionId": "volga",
+      "zoneId": "volga-upper",
+      "anchorId": "Z02-1",
+      "anchorIds": [
+        "Z02-1"
+      ],
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 13.2,
+      "sourcePosition": [
+        0.75,
+        13.2,
+        -1
+      ],
+      "sourceYaw": -0.7853981633974483,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "object-regions-primary.json#Z02-1; equipment is working design",
+      "theme": "grain",
+      "x": -3,
+      "z": 1.5,
+      "yaw": 0.7853981633974483,
+      "score": 4.554062984133833,
+      "footprint": [
+        [
+          -2.4823978361714474,
+          0.6429865812019044
+        ],
+        [
+          -2.1429865812019044,
+          0.9823978361714474
+        ],
+        [
+          -3.5176021638285526,
+          2.3570134187980956
+        ],
+        [
+          -3.8570134187980956,
+          2.0176021638285526
+        ],
+        [
+          -2.4823978361714474,
+          0.6429865812019044
+        ]
+      ],
+      "reserve": [
+        [
+          -2.036920564023922,
+          1.173316667091815
+        ],
+        [
+          -0.9055497141254463,
+          2.3046875169902914
+        ],
+        [
+          -2.195312483009709,
+          3.594450285874554
+        ],
+        [
+          -3.3266833329081846,
+          2.4630794359760775
+        ],
+        [
+          -2.036920564023922,
+          1.173316667091815
+        ]
+      ],
+      "viewPosition": [
+        -2.1161165235168156,
+        14.85,
+        2.3838834764831844
+      ],
+      "cameraPosition": [
+        -1.4443650813895954,
+        14.85,
+        3.055634918610405
+      ],
+      "position": [
+        -3,
+        13.2,
+        1.5
+      ],
+      "rotationY": 0.7853981633974483,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-caucasus-main",
+      "name": "Северный Кавказ · маршрут открытий",
+      "hallId": null,
+      "regionId": "caucasus",
+      "zoneId": "caucasus-main",
+      "anchorId": null,
+      "anchorIds": [],
+      "category": "interactive",
+      "width": 1.824,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        24.2549,
+        7.2,
+        67.94715
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "source-zones.json#caucasus-main; thematic navigation station, working design",
+      "theme": "caucasus",
+      "x": 22.5,
+      "z": 71.25,
+      "yaw": 1.5707963267948966,
+      "score": 3.787243156952963,
+      "footprint": [
+        [
+          22.26,
+          70.278
+        ],
+        [
+          22.74,
+          70.278
+        ],
+        [
+          22.74,
+          72.222
+        ],
+        [
+          22.26,
+          72.222
+        ],
+        [
+          22.26,
+          70.278
+        ]
+      ],
+      "reserve": [
+        [
+          22.95,
+          70.338
+        ],
+        [
+          24.55,
+          70.338
+        ],
+        [
+          24.55,
+          72.162
+        ],
+        [
+          22.95,
+          72.162
+        ],
+        [
+          22.95,
+          70.338
+        ]
+      ],
+      "viewPosition": [
+        23.75,
+        8.85,
+        71.25
+      ],
+      "cameraPosition": [
+        24.7,
+        8.85,
+        71.25
+      ],
+      "position": [
+        22.5,
+        7.2,
+        71.25
+      ],
+      "rotationY": 1.5707963267948966,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-caucasus-upper",
+      "name": "Северный Кавказ · маршрут открытий",
+      "hallId": null,
+      "regionId": "caucasus",
+      "zoneId": "caucasus-upper",
+      "anchorId": null,
+      "anchorIds": [],
+      "category": "interactive",
+      "width": 1.824,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 13.2,
+      "sourcePosition": [
+        18.921641284454115,
+        13.2,
+        66.96435
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "source-zones.json#caucasus-upper; thematic navigation station, working design",
+      "theme": "caucasus",
+      "x": 19.5,
+      "z": 64.5,
+      "yaw": 4.71238898038469,
+      "score": 2.672679577657368,
+      "footprint": [
+        [
+          19.74,
+          65.472
+        ],
+        [
+          19.26,
+          65.472
+        ],
+        [
+          19.26,
+          63.528
+        ],
+        [
+          19.74,
+          63.528
+        ],
+        [
+          19.74,
+          65.472
+        ]
+      ],
+      "reserve": [
+        [
+          19.05,
+          65.412
+        ],
+        [
+          17.45,
+          65.412
+        ],
+        [
+          17.45,
+          63.588
+        ],
+        [
+          19.05,
+          63.588
+        ],
+        [
+          19.05,
+          65.412
+        ]
+      ],
+      "viewPosition": [
+        18.25,
+        14.85,
+        64.5
+      ],
+      "cameraPosition": [
+        17.3,
+        14.85,
+        64.5
+      ],
+      "position": [
+        19.5,
+        13.2,
+        64.5
+      ],
+      "rotationY": 4.71238898038469,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-central-main",
+      "name": "Центр и Черноземье · маршрут открытий",
+      "hallId": null,
+      "regionId": "central",
+      "zoneId": "central-main",
+      "anchorId": null,
+      "anchorIds": [],
+      "category": "interactive",
+      "width": 1.824,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        25.929000000000002,
+        7.2,
+        -0.2815000000000003
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "source-zones.json#central-main; thematic navigation station, working design",
+      "theme": "central",
+      "x": 27,
+      "z": -1.5,
+      "yaw": 0.7853981633974483,
+      "score": 1.6458391252875675,
+      "footprint": [
+        [
+          27.517602163828553,
+          -2.3570134187980956
+        ],
+        [
+          27.857013418798097,
+          -2.0176021638285526
+        ],
+        [
+          26.482397836171447,
+          -0.6429865812019044
+        ],
+        [
+          26.142986581201903,
+          -0.9823978361714474
+        ],
+        [
+          27.517602163828553,
+          -2.3570134187980956
+        ]
+      ],
+      "reserve": [
+        [
+          27.963079435976077,
+          -1.826683332908185
+        ],
+        [
+          29.094450285874554,
+          -0.6953124830097087
+        ],
+        [
+          27.804687516990292,
+          0.594450285874554
+        ],
+        [
+          26.673316667091814,
+          -0.5369205640239224
+        ],
+        [
+          27.963079435976077,
+          -1.826683332908185
+        ]
+      ],
+      "viewPosition": [
+        27.883883476483184,
+        8.85,
+        -0.6161165235168156
+      ],
+      "cameraPosition": [
+        28.555634918610405,
+        8.85,
+        0.055634918610404815
+      ],
+      "position": [
+        27,
+        7.2,
+        -1.5
+      ],
+      "rotationY": 0.7853981633974483,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-central-upper",
+      "name": "Центр и Черноземье · маршрут открытий",
+      "hallId": null,
+      "regionId": "central",
+      "zoneId": "central-upper",
+      "anchorId": null,
+      "anchorIds": [],
+      "category": "interactive",
+      "width": 1.824,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 13.2,
+      "sourcePosition": [
+        27.265842007398753,
+        13.2,
+        5.6221499999999995
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "source-zones.json#central-upper; thematic navigation station, working design",
+      "theme": "central",
+      "x": 27,
+      "z": 5.25,
+      "yaw": 0,
+      "score": 0.45734843981126494,
+      "footprint": [
+        [
+          27.972,
+          5.01
+        ],
+        [
+          27.972,
+          5.49
+        ],
+        [
+          26.028,
+          5.49
+        ],
+        [
+          26.028,
+          5.01
+        ],
+        [
+          27.972,
+          5.01
+        ]
+      ],
+      "reserve": [
+        [
+          27.912,
+          5.7
+        ],
+        [
+          27.912,
+          7.3
+        ],
+        [
+          26.088,
+          7.3
+        ],
+        [
+          26.088,
+          5.7
+        ],
+        [
+          27.912,
+          5.7
+        ]
+      ],
+      "viewPosition": [
+        27,
+        14.85,
+        6.5
+      ],
+      "cameraPosition": [
+        27,
+        14.85,
+        7.45
+      ],
+      "position": [
+        27,
+        13.2,
+        5.25
+      ],
+      "rotationY": 0,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-far-east-upper",
+      "name": "Дальний Восток · маршрут открытий",
+      "hallId": null,
+      "regionId": "far-east",
+      "zoneId": "far-east-upper",
+      "anchorId": null,
+      "anchorIds": [],
+      "category": "interactive",
+      "width": 1.824,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 13.2,
+      "sourcePosition": [
+        3.0527679980125466,
+        13.2,
+        -70.59700000000001
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "source-zones.json#far-east-upper; thematic navigation station, working design",
+      "theme": "space",
+      "x": 1.5,
+      "z": -67.5,
+      "yaw": 1.5707963267948966,
+      "score": 3.511585962861069,
+      "footprint": [
+        [
+          1.26,
+          -68.472
+        ],
+        [
+          1.74,
+          -68.472
+        ],
+        [
+          1.74,
+          -66.528
+        ],
+        [
+          1.26,
+          -66.528
+        ],
+        [
+          1.26,
+          -68.472
+        ]
+      ],
+      "reserve": [
+        [
+          1.95,
+          -68.412
+        ],
+        [
+          3.55,
+          -68.412
+        ],
+        [
+          3.55,
+          -66.588
+        ],
+        [
+          1.95,
+          -66.588
+        ],
+        [
+          1.95,
+          -68.412
+        ]
+      ],
+      "viewPosition": [
+        2.75,
+        14.85,
+        -67.5
+      ],
+      "cameraPosition": [
+        3.7,
+        14.85,
+        -67.5
+      ],
+      "position": [
+        1.5,
+        13.2,
+        -67.5
+      ],
+      "rotationY": 1.5707963267948966,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-history-main",
+      "name": "Зал правителей · маршрут открытий",
+      "hallId": null,
+      "regionId": "history",
+      "zoneId": "history-main",
+      "anchorId": null,
+      "anchorIds": [],
+      "category": "interactive",
+      "width": 1.824,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        -32.73639228016542,
+        7.2,
+        -73.8985
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "source-zones.json#history-main; thematic navigation station, working design",
+      "theme": "heritage",
+      "x": -33,
+      "z": -74.25,
+      "yaw": 0,
+      "score": 0.43936463211823085,
+      "footprint": [
+        [
+          -32.028,
+          -74.49
+        ],
+        [
+          -32.028,
+          -74.01
+        ],
+        [
+          -33.972,
+          -74.01
+        ],
+        [
+          -33.972,
+          -74.49
+        ],
+        [
+          -32.028,
+          -74.49
+        ]
+      ],
+      "reserve": [
+        [
+          -32.088,
+          -73.8
+        ],
+        [
+          -32.088,
+          -72.2
+        ],
+        [
+          -33.912,
+          -72.2
+        ],
+        [
+          -33.912,
+          -73.8
+        ],
+        [
+          -32.088,
+          -73.8
+        ]
+      ],
+      "viewPosition": [
+        -33,
+        8.85,
+        -73
+      ],
+      "cameraPosition": [
+        -33,
+        8.85,
+        -72.05
+      ],
+      "position": [
+        -33,
+        7.2,
+        -74.25
+      ],
+      "rotationY": 0,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-northwest-upper",
+      "name": "Арктика и северо-запад · маршрут открытий",
+      "hallId": null,
+      "regionId": "northwest",
+      "zoneId": "northwest-upper",
+      "anchorId": null,
+      "anchorIds": [],
+      "category": "interactive",
+      "width": 1.824,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 13.2,
+      "sourcePosition": [
+        -21.47335,
+        13.2,
+        28.5154
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "source-zones.json#northwest-upper; thematic navigation station, working design",
+      "theme": "arctic",
+      "x": -24.75,
+      "z": 27.75,
+      "yaw": 0,
+      "score": 3.3648584491030227,
+      "footprint": [
+        [
+          -23.778,
+          27.51
+        ],
+        [
+          -23.778,
+          27.99
+        ],
+        [
+          -25.722,
+          27.99
+        ],
+        [
+          -25.722,
+          27.51
+        ],
+        [
+          -23.778,
+          27.51
+        ]
+      ],
+      "reserve": [
+        [
+          -23.838,
+          28.2
+        ],
+        [
+          -23.838,
+          29.8
+        ],
+        [
+          -25.662,
+          29.8
+        ],
+        [
+          -25.662,
+          28.2
+        ],
+        [
+          -23.838,
+          28.2
+        ]
+      ],
+      "viewPosition": [
+        -24.75,
+        14.85,
+        29
+      ],
+      "cameraPosition": [
+        -24.75,
+        14.85,
+        29.95
+      ],
+      "position": [
+        -24.75,
+        13.2,
+        27.75
+      ],
+      "rotationY": 0,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-rgo-museum-main",
+      "name": "Музей РГО · маршрут открытий",
+      "hallId": null,
+      "regionId": "rgo-museum",
+      "zoneId": "rgo-museum-main",
+      "anchorId": null,
+      "anchorIds": [],
+      "category": "interactive",
+      "width": 1.824,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        -32.13581524100621,
+        7.2,
+        -0.41939999999999955
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "source-zones.json#rgo-museum-main; thematic navigation station, working design",
+      "theme": "expedition",
+      "x": -32.25,
+      "z": -0.75,
+      "yaw": 1.5707963267948966,
+      "score": 0.39688740875124867,
+      "footprint": [
+        [
+          -32.49,
+          -1.722
+        ],
+        [
+          -32.01,
+          -1.722
+        ],
+        [
+          -32.01,
+          0.22199999999999998
+        ],
+        [
+          -32.49,
+          0.22199999999999998
+        ],
+        [
+          -32.49,
+          -1.722
+        ]
+      ],
+      "reserve": [
+        [
+          -31.8,
+          -1.662
+        ],
+        [
+          -30.2,
+          -1.662
+        ],
+        [
+          -30.2,
+          0.16200000000000014
+        ],
+        [
+          -31.8,
+          0.16200000000000014
+        ],
+        [
+          -31.8,
+          -1.662
+        ]
+      ],
+      "viewPosition": [
+        -31,
+        8.85,
+        -0.7499999999999999
+      ],
+      "cameraPosition": [
+        -30.05,
+        8.85,
+        -0.7499999999999999
+      ],
+      "position": [
+        -32.25,
+        7.2,
+        -0.75
+      ],
+      "rotationY": 1.5707963267948966,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-ural-main",
+      "name": "Урал · маршрут открытий",
+      "hallId": null,
+      "regionId": "ural",
+      "zoneId": "ural-main",
+      "anchorId": null,
+      "anchorIds": [],
+      "category": "interactive",
+      "width": 1.824,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        -19.149876639941894,
+        7.2,
+        -21.25215
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "source-zones.json#ural-main; thematic navigation station, working design",
+      "theme": "space",
+      "x": -19.5,
+      "z": -21,
+      "yaw": 0.7853981633974483,
+      "score": 0.4550315148119905,
+      "footprint": [
+        [
+          -18.982397836171447,
+          -21.857013418798097
+        ],
+        [
+          -18.642986581201903,
+          -21.517602163828553
+        ],
+        [
+          -20.017602163828553,
+          -20.142986581201903
+        ],
+        [
+          -20.357013418798097,
+          -20.482397836171447
+        ],
+        [
+          -18.982397836171447,
+          -21.857013418798097
+        ]
+      ],
+      "reserve": [
+        [
+          -18.536920564023923,
+          -21.326683332908186
+        ],
+        [
+          -17.405549714125446,
+          -20.195312483009708
+        ],
+        [
+          -18.695312483009708,
+          -18.905549714125446
+        ],
+        [
+          -19.826683332908186,
+          -20.036920564023923
+        ],
+        [
+          -18.536920564023923,
+          -21.326683332908186
+        ]
+      ],
+      "viewPosition": [
+        -18.616116523516816,
+        8.85,
+        -20.116116523516816
+      ],
+      "cameraPosition": [
+        -17.944365081389595,
+        8.85,
+        -19.444365081389595
+      ],
+      "position": [
+        -19.5,
+        7.2,
+        -21
+      ],
+      "rotationY": 0.7853981633974483,
+      "depth": 0.48
+    },
+    {
+      "id": "MEDIA-volga-main",
+      "name": "Поволжье · маршрут открытий",
+      "hallId": null,
+      "regionId": "volga",
+      "zoneId": "volga-main",
+      "anchorId": null,
+      "anchorIds": [],
+      "category": "interactive",
+      "width": 1.824,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        5.074650000000001,
+        7.2,
+        8.7322
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "source": "source-zones.json#volga-main; thematic navigation station, working design",
+      "theme": "agriculture",
+      "x": 5.25,
+      "z": 9,
+      "yaw": 4.71238898038469,
+      "score": 0.461472376221131,
+      "footprint": [
+        [
+          5.49,
+          9.972
+        ],
+        [
+          5.01,
+          9.972
+        ],
+        [
+          5.01,
+          8.028
+        ],
+        [
+          5.49,
+          8.028
+        ],
+        [
+          5.49,
+          9.972
+        ]
+      ],
+      "reserve": [
+        [
+          4.8,
+          9.912
+        ],
+        [
+          3.2,
+          9.912
+        ],
+        [
+          3.2,
+          8.088
+        ],
+        [
+          4.8,
+          8.088
+        ],
+        [
+          4.8,
+          9.912
+        ]
+      ],
+      "viewPosition": [
+        4,
+        8.85,
+        9
+      ],
+      "cameraPosition": [
+        3.05,
+        8.85,
+        9
+      ],
+      "position": [
+        5.25,
+        7.2,
+        9
+      ],
+      "rotationY": 4.71238898038469,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-00-LED-01",
+      "name": "Экран приветствия",
+      "hallId": "00",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "media",
+      "width": 2.432,
+      "height": 1.368,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        -11,
+        7.2,
+        -60.8
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 4,
+      "cabinetRows": 4,
+      "cabinetCount": 16,
+      "pixelWidth": 1536,
+      "pixelHeight": 864,
+      "source": "rgo-data.json#RGO-00-LED-01",
+      "theme": "welcome",
+      "x": -11.791,
+      "z": -61.906,
+      "yaw": -0.7853981633974483,
+      "score": 1.7285054882412059,
+      "footprint": [
+        [
+          -10.719026119721194,
+          -61.173437374690735
+        ],
+        [
+          -11.058437374690737,
+          -60.834026119721194
+        ],
+        [
+          -12.862973880278807,
+          -62.63856262530926
+        ],
+        [
+          -12.523562625309264,
+          -62.9779738802788
+        ],
+        [
+          -10.719026119721194,
+          -61.173437374690735
+        ]
+      ],
+      "reserve": [
+        [
+          -11.178645527492451,
+          -60.798670780661865
+        ],
+        [
+          -12.310016377390927,
+          -59.66729993076339
+        ],
+        [
+          -14.02970006923661,
+          -61.38698362260908
+        ],
+        [
+          -12.898329219338134,
+          -62.51835447250755
+        ],
+        [
+          -11.178645527492451,
+          -60.798670780661865
+        ]
+      ],
+      "viewPosition": [
+        -12.60417279836453,
+        8.85,
+        -61.09282720163547
+      ],
+      "cameraPosition": [
+        -13.346634918610405,
+        8.85,
+        -60.3503650813896
+      ],
+      "position": [
+        -11.791,
+        7.2,
+        -61.906
+      ],
+      "rotationY": -0.7853981633974483,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-00-NAV-01",
+      "name": "Локальная навигация",
+      "hallId": "00",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "navigation",
+      "width": 1.216,
+      "height": 0.684,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        -14.3,
+        7.2,
+        -55.3
+      ],
+      "sourceYaw": 1.5707963,
+      "cabinetColumns": 2,
+      "cabinetRows": 2,
+      "cabinetCount": 4,
+      "pixelWidth": 768,
+      "pixelHeight": 432,
+      "source": "rgo-data.json#RGO-00-NAV-01",
+      "theme": "welcome",
+      "x": -15.791,
+      "z": -58.906,
+      "yaw": 1.5707963,
+      "score": 4.31968906424318,
+      "footprint": [
+        [
+          -16.030999982101008,
+          -59.57400000643077
+        ],
+        [
+          -15.55099998210101,
+          -59.573999993569224
+        ],
+        [
+          -15.551000017898991,
+          -58.237999993569225
+        ],
+        [
+          -16.03100001789899,
+          -58.238000006430774
+        ],
+        [
+          -16.030999982101008,
+          -59.57400000643077
+        ]
+      ],
+      "reserve": [
+        [
+          -15.44099998258332,
+          -59.555999990621785
+        ],
+        [
+          -13.84099998258332,
+          -59.55599994774995
+        ],
+        [
+          -13.841000017416684,
+          -58.255999947749956
+        ],
+        [
+          -15.441000017416684,
+          -58.25599999062179
+        ],
+        [
+          -15.44099998258332,
+          -59.555999990621785
+        ]
+      ],
+      "viewPosition": [
+        -14.641000000000002,
+        8.85,
+        -58.90599996918587
+      ],
+      "cameraPosition": [
+        -13.591000000000001,
+        8.85,
+        -58.90599994105123
+      ],
+      "position": [
+        -15.791,
+        7.2,
+        -58.906
+      ],
+      "rotationY": 1.5707963,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-01-PROJ-01",
+      "name": "Рельеф и маршруты",
+      "hallId": "01",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "projection",
+      "width": 2.432,
+      "height": 1.368,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        -0.3447,
+        7.2,
+        -58.6384
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 0,
+      "cabinetRows": 0,
+      "cabinetCount": 0,
+      "source": "018: programme projection; working screen assembly",
+      "theme": "maps",
+      "x": 0.155,
+      "z": -60.138,
+      "yaw": 0,
+      "score": 2.2071176560506904,
+      "footprint": [
+        [
+          1.431,
+          -60.378
+        ],
+        [
+          1.431,
+          -59.897999999999996
+        ],
+        [
+          -1.121,
+          -59.897999999999996
+        ],
+        [
+          -1.121,
+          -60.378
+        ],
+        [
+          1.431,
+          -60.378
+        ]
+      ],
+      "reserve": [
+        [
+          1.371,
+          -59.788
+        ],
+        [
+          1.371,
+          -58.188
+        ],
+        [
+          -1.061,
+          -58.188
+        ],
+        [
+          -1.061,
+          -59.788
+        ],
+        [
+          1.371,
+          -59.788
+        ]
+      ],
+      "viewPosition": [
+        0.155,
+        8.85,
+        -58.988
+      ],
+      "cameraPosition": [
+        0.155,
+        8.85,
+        -57.937999999999995
+      ],
+      "position": [
+        0.155,
+        7.2,
+        -60.138
+      ],
+      "rotationY": 0,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-02-INT-01",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "02",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        5,
+        7.2,
+        -54.6
+      ],
+      "sourceYaw": 3.1415927,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-02-INT-01",
+      "theme": "sailing",
+      "x": 5.334,
+      "z": -56.21,
+      "yaw": 2.356194490192345,
+      "score": 2.6502340879094337,
+      "footprint": [
+        [
+          4.4769865812019045,
+          -56.72760216382856
+        ],
+        [
+          4.816397836171447,
+          -57.0670134187981
+        ],
+        [
+          6.191013418798095,
+          -55.692397836171445
+        ],
+        [
+          5.851602163828552,
+          -55.352986581201904
+        ],
+        [
+          4.4769865812019045,
+          -56.72760216382856
+        ]
+      ],
+      "reserve": [
+        [
+          4.9366059889731595,
+          -57.10236875785742
+        ],
+        [
+          6.067976838871636,
+          -58.23373960775589
+        ],
+        [
+          7.357739607755899,
+          -56.943976838871635
+        ],
+        [
+          6.226368757857423,
+          -55.81260598897316
+        ],
+        [
+          4.9366059889731595,
+          -57.10236875785742
+        ]
+      ],
+      "viewPosition": [
+        6.1471727983645295,
+        8.85,
+        -57.02317279836453
+      ],
+      "cameraPosition": [
+        6.889634918610405,
+        8.85,
+        -57.7656349186104
+      ],
+      "position": [
+        5.334,
+        7.2,
+        -56.21
+      ],
+      "rotationY": 2.356194490192345,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-02-INT-02",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "02",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        7.6,
+        7.2,
+        -54.6
+      ],
+      "sourceYaw": 3.1415927,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-02-INT-02",
+      "theme": "sailing",
+      "x": 7.6,
+      "z": -54.6,
+      "yaw": 3.1415927,
+      "score": 0.4154872780338766,
+      "footprint": [
+        [
+          6.62800001113845,
+          -54.35999995488928
+        ],
+        [
+          6.627999988861551,
+          -54.83999995488928
+        ],
+        [
+          8.571999988861549,
+          -54.84000004511072
+        ],
+        [
+          8.572000011138448,
+          -54.36000004511072
+        ],
+        [
+          6.62800001113845,
+          -54.35999995488928
+        ]
+      ],
+      "reserve": [
+        [
+          6.687999983756429,
+          -54.949999957673896
+        ],
+        [
+          6.687999909500098,
+          -56.54999995767389
+        ],
+        [
+          8.511999909500096,
+          -56.550000042326104
+        ],
+        [
+          8.511999983756427,
+          -54.95000004232611
+        ],
+        [
+          6.687999983756429,
+          -54.949999957673896
+        ]
+      ],
+      "viewPosition": [
+        7.599999946628262,
+        8.85,
+        -55.75
+      ],
+      "cameraPosition": [
+        7.599999897897545,
+        8.85,
+        -56.8
+      ],
+      "position": [
+        7.6,
+        7.2,
+        -54.6
+      ],
+      "rotationY": 3.1415927,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-02-INT-03",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "02",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        10.2,
+        7.2,
+        -54.6
+      ],
+      "sourceYaw": 3.1415927,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-02-INT-03",
+      "theme": "sailing",
+      "x": 10.2,
+      "z": -54.71,
+      "yaw": 2.356194490192345,
+      "score": 0.40431987192168917,
+      "footprint": [
+        [
+          9.342986581201904,
+          -55.22760216382856
+        ],
+        [
+          9.682397836171447,
+          -55.5670134187981
+        ],
+        [
+          11.057013418798094,
+          -54.192397836171445
+        ],
+        [
+          10.717602163828552,
+          -53.852986581201904
+        ],
+        [
+          9.342986581201904,
+          -55.22760216382856
+        ]
+      ],
+      "reserve": [
+        [
+          9.80260598897316,
+          -55.60236875785742
+        ],
+        [
+          10.933976838871637,
+          -56.73373960775589
+        ],
+        [
+          12.223739607755899,
+          -55.443976838871635
+        ],
+        [
+          11.092368757857422,
+          -54.31260598897316
+        ],
+        [
+          9.80260598897316,
+          -55.60236875785742
+        ]
+      ],
+      "viewPosition": [
+        11.01317279836453,
+        8.85,
+        -55.52317279836453
+      ],
+      "cameraPosition": [
+        11.755634918610404,
+        8.85,
+        -56.2656349186104
+      ],
+      "position": [
+        10.2,
+        7.2,
+        -54.71
+      ],
+      "rotationY": 2.356194490192345,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-02-LED-01",
+      "name": "Широкое медийное полотно",
+      "hallId": "02",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "media",
+      "width": 3.6479999999999997,
+      "height": 1.368,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        15.5,
+        7.2,
+        -60.5
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 6,
+      "cabinetRows": 4,
+      "cabinetCount": 24,
+      "pixelWidth": 2304,
+      "pixelHeight": 864,
+      "source": "rgo-data.json#RGO-02-LED-01",
+      "theme": "sailing",
+      "x": 15.5,
+      "z": -60.5,
+      "yaw": 0,
+      "score": 0.8803236282536231,
+      "footprint": [
+        [
+          17.384,
+          -60.74
+        ],
+        [
+          17.384,
+          -60.26
+        ],
+        [
+          13.616,
+          -60.26
+        ],
+        [
+          13.616,
+          -60.74
+        ],
+        [
+          17.384,
+          -60.74
+        ]
+      ],
+      "reserve": [
+        [
+          17.323999999999998,
+          -60.15
+        ],
+        [
+          17.323999999999998,
+          -58.550000000000004
+        ],
+        [
+          13.676,
+          -58.550000000000004
+        ],
+        [
+          13.676,
+          -60.15
+        ],
+        [
+          17.323999999999998,
+          -60.15
+        ]
+      ],
+      "viewPosition": [
+        15.5,
+        8.85,
+        -59.35
+      ],
+      "cameraPosition": [
+        15.5,
+        8.85,
+        -57.2168
+      ],
+      "position": [
+        15.5,
+        7.2,
+        -60.5
+      ],
+      "rotationY": 0,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-02-LED-02",
+      "name": "Широкое медийное полотно",
+      "hallId": "02",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "media",
+      "width": 3.6479999999999997,
+      "height": 1.368,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        10.5,
+        7.2,
+        -60.5
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 6,
+      "cabinetRows": 4,
+      "cabinetCount": 24,
+      "pixelWidth": 2304,
+      "pixelHeight": 864,
+      "source": "rgo-data.json#RGO-02-LED-02",
+      "theme": "sailing",
+      "x": 9.334,
+      "z": -61.21,
+      "yaw": -0.7853981633974483,
+      "score": 2.1536041873802687,
+      "footprint": [
+        [
+          10.835894803240226,
+          -60.047516451729315
+        ],
+        [
+          10.496483548270684,
+          -59.708105196759774
+        ],
+        [
+          7.832105196759772,
+          -62.37248354827069
+        ],
+        [
+          8.171516451729316,
+          -62.71189480324023
+        ],
+        [
+          10.835894803240226,
+          -60.047516451729315
+        ]
+      ],
+      "reserve": [
+        [
+          10.376275395468971,
+          -59.67274985770045
+        ],
+        [
+          9.244904545570494,
+          -58.54137900780197
+        ],
+        [
+          6.6653790078019695,
+          -61.1209045455705
+        ],
+        [
+          7.796749857700445,
+          -62.25227539546898
+        ],
+        [
+          10.376275395468971,
+          -59.67274985770045
+        ]
+      ],
+      "viewPosition": [
+        8.52082720163547,
+        8.85,
+        -60.396827201635475
+      ],
+      "cameraPosition": [
+        7.012427016008328,
+        8.85,
+        -58.88842701600833
+      ],
+      "position": [
+        9.334,
+        7.2,
+        -61.21
+      ],
+      "rotationY": -0.7853981633974483,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-03-PROJ-01",
+      "name": "Кругосветное путешествие",
+      "hallId": "03",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "projection",
+      "width": 2.432,
+      "height": 1.368,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        30.3517,
+        7.2,
+        -56.9777
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 0,
+      "cabinetRows": 0,
+      "cabinetCount": 0,
+      "source": "018: programme projection; working screen assembly",
+      "theme": "sailing",
+      "x": 32.352,
+      "z": -55.978,
+      "yaw": 4.71238898038469,
+      "score": 2.915098352024607,
+      "footprint": [
+        [
+          32.592,
+          -54.702
+        ],
+        [
+          32.111999999999995,
+          -54.702
+        ],
+        [
+          32.111999999999995,
+          -57.254000000000005
+        ],
+        [
+          32.592,
+          -57.254000000000005
+        ],
+        [
+          32.592,
+          -54.702
+        ]
+      ],
+      "reserve": [
+        [
+          32.001999999999995,
+          -54.762
+        ],
+        [
+          30.401999999999997,
+          -54.762
+        ],
+        [
+          30.401999999999997,
+          -57.194
+        ],
+        [
+          32.001999999999995,
+          -57.194
+        ],
+        [
+          32.001999999999995,
+          -54.762
+        ]
+      ],
+      "viewPosition": [
+        31.201999999999998,
+        8.85,
+        -55.978
+      ],
+      "cameraPosition": [
+        30.151999999999997,
+        8.85,
+        -55.978
+      ],
+      "position": [
+        32.352,
+        7.2,
+        -55.978
+      ],
+      "rotationY": 4.71238898038469,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-04-INT-01",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "04",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        28.2,
+        7.2,
+        -47
+      ],
+      "sourceYaw": -1.5707963,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-04-INT-01",
+      "theme": "expedition",
+      "x": 28.2,
+      "z": -47,
+      "yaw": 1.570796353589793,
+      "score": 0.8242997187541181,
+      "footprint": [
+        [
+          27.95999997395536,
+          -47.97199999356923
+        ],
+        [
+          28.43999997395536,
+          -47.972000006430775
+        ],
+        [
+          28.44000002604464,
+          -46.02800000643077
+        ],
+        [
+          27.96000002604464,
+          -46.027999993569225
+        ],
+        [
+          27.95999997395536,
+          -47.97199999356923
+        ]
+      ],
+      "reserve": [
+        [
+          28.549999975563054,
+          -47.91200000937821
+        ],
+        [
+          30.149999975563052,
+          -47.91200005225004
+        ],
+        [
+          30.15000002443694,
+          -46.088000052250045
+        ],
+        [
+          28.550000024436944,
+          -46.08800000937821
+        ],
+        [
+          28.549999975563054,
+          -47.91200000937821
+        ]
+      ],
+      "viewPosition": [
+        29.349999999999998,
+        8.85,
+        -47.00000003081413
+      ],
+      "cameraPosition": [
+        30.4,
+        8.85,
+        -47.00000005894877
+      ],
+      "position": [
+        28.2,
+        7.2,
+        -47
+      ],
+      "rotationY": 1.570796353589793,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-04-INT-02",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "04",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        28.2,
+        7.2,
+        -44.4
+      ],
+      "sourceYaw": -1.5707963,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-04-INT-02",
+      "theme": "expedition",
+      "x": 32.441,
+      "z": -47.013,
+      "yaw": -1.5707963,
+      "score": 5.7496497545767715,
+      "footprint": [
+        [
+          32.68100002604464,
+          -46.04100000643077
+        ],
+        [
+          32.20100002604464,
+          -46.04099999356922
+        ],
+        [
+          32.20099997395536,
+          -47.984999993569225
+        ],
+        [
+          32.680999973955366,
+          -47.985000006430774
+        ],
+        [
+          32.68100002604464,
+          -46.04100000643077
+        ]
+      ],
+      "reserve": [
+        [
+          32.09100002443695,
+          -46.10099999062179
+        ],
+        [
+          30.49100002443695,
+          -46.100999947749955
+        ],
+        [
+          30.49099997556306,
+          -47.92499994774995
+        ],
+        [
+          32.09099997556306,
+          -47.924999990621785
+        ],
+        [
+          32.09100002443695,
+          -46.10099999062179
+        ]
+      ],
+      "viewPosition": [
+        31.291000000000004,
+        8.85,
+        -47.01299996918587
+      ],
+      "cameraPosition": [
+        30.241000000000003,
+        8.85,
+        -47.01299994105123
+      ],
+      "position": [
+        32.441,
+        7.2,
+        -47.013
+      ],
+      "rotationY": -1.5707963,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-04-INT-03",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "04",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        28.2,
+        7.2,
+        -41.8
+      ],
+      "sourceYaw": -1.5707963,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-04-INT-03",
+      "theme": "expedition",
+      "x": 28.941,
+      "z": -41.513,
+      "yaw": 1.570796353589793,
+      "score": 1.5507882405700912,
+      "footprint": [
+        [
+          28.70099997395536,
+          -42.484999993569225
+        ],
+        [
+          29.18099997395536,
+          -42.485000006430774
+        ],
+        [
+          29.18100002604464,
+          -40.54100000643077
+        ],
+        [
+          28.70100002604464,
+          -40.54099999356922
+        ],
+        [
+          28.70099997395536,
+          -42.484999993569225
+        ]
+      ],
+      "reserve": [
+        [
+          29.290999975563054,
+          -42.42500000937821
+        ],
+        [
+          30.89099997556305,
+          -42.42500005225004
+        ],
+        [
+          30.89100002443694,
+          -40.60100005225004
+        ],
+        [
+          29.291000024436944,
+          -40.60100000937821
+        ],
+        [
+          29.290999975563054,
+          -42.42500000937821
+        ]
+      ],
+      "viewPosition": [
+        30.090999999999998,
+        8.85,
+        -41.513000030814126
+      ],
+      "cameraPosition": [
+        31.141,
+        8.85,
+        -41.51300005894877
+      ],
+      "position": [
+        28.941,
+        7.2,
+        -41.513
+      ],
+      "rotationY": 1.570796353589793,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-05-INT-01",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "05",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        26.1,
+        7.2,
+        -32
+      ],
+      "sourceYaw": 1.5707963,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-05-INT-01",
+      "theme": "arctic",
+      "x": 25.548,
+      "z": -33.549,
+      "yaw": 0,
+      "score": 2.474270580866464,
+      "footprint": [
+        [
+          26.52,
+          -33.789
+        ],
+        [
+          26.52,
+          -33.309
+        ],
+        [
+          24.575999999999997,
+          -33.309
+        ],
+        [
+          24.575999999999997,
+          -33.789
+        ],
+        [
+          26.52,
+          -33.789
+        ]
+      ],
+      "reserve": [
+        [
+          26.459999999999997,
+          -33.199
+        ],
+        [
+          26.459999999999997,
+          -31.599
+        ],
+        [
+          24.636,
+          -31.599
+        ],
+        [
+          24.636,
+          -33.199
+        ],
+        [
+          26.459999999999997,
+          -33.199
+        ]
+      ],
+      "viewPosition": [
+        25.548,
+        8.85,
+        -32.399
+      ],
+      "cameraPosition": [
+        25.548,
+        8.85,
+        -31.349
+      ],
+      "position": [
+        25.548,
+        7.2,
+        -33.549
+      ],
+      "rotationY": 0,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-05-INT-02",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "05",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        26.1,
+        7.2,
+        -29.4
+      ],
+      "sourceYaw": 1.5707963,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-05-INT-02",
+      "theme": "arctic",
+      "x": 26.048,
+      "z": -29.549,
+      "yaw": 0.7853981633974483,
+      "score": 0.5266062393681464,
+      "footprint": [
+        [
+          26.56560216382855,
+          -30.406013418798096
+        ],
+        [
+          26.905013418798095,
+          -30.066602163828552
+        ],
+        [
+          25.530397836171446,
+          -28.691986581201903
+        ],
+        [
+          25.1909865812019,
+          -29.031397836171447
+        ],
+        [
+          26.56560216382855,
+          -30.406013418798096
+        ]
+      ],
+      "reserve": [
+        [
+          26.94036875785742,
+          -29.94639401102684
+        ],
+        [
+          28.071739607755898,
+          -28.815023161128362
+        ],
+        [
+          26.781976838871635,
+          -27.5252603922441
+        ],
+        [
+          25.650605988973158,
+          -28.656631242142577
+        ],
+        [
+          26.94036875785742,
+          -29.94639401102684
+        ]
+      ],
+      "viewPosition": [
+        26.861172798364528,
+        8.85,
+        -28.73582720163547
+      ],
+      "cameraPosition": [
+        27.603634918610403,
+        8.85,
+        -27.993365081389594
+      ],
+      "position": [
+        26.048,
+        7.2,
+        -29.549
+      ],
+      "rotationY": 0.7853981633974483,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-05-INT-03",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "05",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        26.1,
+        7.2,
+        -26.8
+      ],
+      "sourceYaw": 1.5707963,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-05-INT-03",
+      "theme": "arctic",
+      "x": 26.048,
+      "z": -27.049,
+      "yaw": 2.356194490192345,
+      "score": 0.7759190118816596,
+      "footprint": [
+        [
+          25.1909865812019,
+          -27.566602163828552
+        ],
+        [
+          25.530397836171446,
+          -27.906013418798096
+        ],
+        [
+          26.905013418798095,
+          -26.531397836171447
+        ],
+        [
+          26.56560216382855,
+          -26.191986581201903
+        ],
+        [
+          25.1909865812019,
+          -27.566602163828552
+        ]
+      ],
+      "reserve": [
+        [
+          25.650605988973158,
+          -27.941368757857422
+        ],
+        [
+          26.781976838871635,
+          -29.0727396077559
+        ],
+        [
+          28.071739607755898,
+          -27.782976838871637
+        ],
+        [
+          26.94036875785742,
+          -26.65160598897316
+        ],
+        [
+          25.650605988973158,
+          -27.941368757857422
+        ]
+      ],
+      "viewPosition": [
+        26.861172798364528,
+        8.85,
+        -27.86217279836453
+      ],
+      "cameraPosition": [
+        27.603634918610403,
+        8.85,
+        -28.604634918610405
+      ],
+      "position": [
+        26.048,
+        7.2,
+        -27.049
+      ],
+      "rotationY": 2.356194490192345,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-05-LED-01",
+      "name": "Широкое медийное полотно",
+      "hallId": "05",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "media",
+      "width": 3.6479999999999997,
+      "height": 1.368,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        34.2,
+        7.2,
+        -29.6
+      ],
+      "sourceYaw": -1.5707963,
+      "cabinetColumns": 6,
+      "cabinetRows": 4,
+      "cabinetCount": 24,
+      "pixelWidth": 2304,
+      "pixelHeight": 864,
+      "source": "rgo-data.json#RGO-05-LED-01",
+      "theme": "arctic",
+      "x": 34.2,
+      "z": -29.549,
+      "yaw": -0.7853981633974483,
+      "score": 0.49383287046921204,
+      "footprint": [
+        [
+          35.70189480324023,
+          -28.386516451729314
+        ],
+        [
+          35.36248354827069,
+          -28.047105196759773
+        ],
+        [
+          32.69810519675978,
+          -30.711483548270685
+        ],
+        [
+          33.03751645172932,
+          -31.050894803240226
+        ],
+        [
+          35.70189480324023,
+          -28.386516451729314
+        ]
+      ],
+      "reserve": [
+        [
+          35.24227539546898,
+          -28.011749857700444
+        ],
+        [
+          34.1109045455705,
+          -26.88037900780197
+        ],
+        [
+          31.531379007801977,
+          -29.459904545570495
+        ],
+        [
+          32.662749857700454,
+          -30.59127539546897
+        ],
+        [
+          35.24227539546898,
+          -28.011749857700444
+        ]
+      ],
+      "viewPosition": [
+        33.38682720163548,
+        8.85,
+        -28.73582720163547
+      ],
+      "cameraPosition": [
+        31.87842701600833,
+        8.85,
+        -27.227427016008328
+      ],
+      "position": [
+        34.2,
+        7.2,
+        -29.549
+      ],
+      "rotationY": -0.7853981633974483,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-06-INT-01",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "06",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        5,
+        7.2,
+        -33.6
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-06-INT-01",
+      "theme": "ocean",
+      "x": 7.048,
+      "z": -29.567,
+      "yaw": 0.7853981633974483,
+      "score": 4.885429409829048,
+      "footprint": [
+        [
+          7.565602163828553,
+          -30.424013418798097
+        ],
+        [
+          7.905013418798095,
+          -30.084602163828553
+        ],
+        [
+          6.530397836171447,
+          -28.709986581201903
+        ],
+        [
+          6.190986581201905,
+          -29.049397836171448
+        ],
+        [
+          7.565602163828553,
+          -30.424013418798097
+        ]
+      ],
+      "reserve": [
+        [
+          7.940368757857423,
+          -29.96439401102684
+        ],
+        [
+          9.0717396077559,
+          -28.833023161128363
+        ],
+        [
+          7.781976838871636,
+          -27.5432603922441
+        ],
+        [
+          6.650605988973161,
+          -28.674631242142578
+        ],
+        [
+          7.940368757857423,
+          -29.96439401102684
+        ]
+      ],
+      "viewPosition": [
+        7.86117279836453,
+        8.85,
+        -28.75382720163547
+      ],
+      "cameraPosition": [
+        8.603634918610405,
+        8.85,
+        -28.011365081389595
+      ],
+      "position": [
+        7.048,
+        7.2,
+        -29.567
+      ],
+      "rotationY": 0.7853981633974483,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-06-INT-02",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "06",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        7.6,
+        7.2,
+        -33.6
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-06-INT-02",
+      "theme": "ocean",
+      "x": 5.548,
+      "z": -27.567,
+      "yaw": 0.7853981633974483,
+      "score": 6.867204857111437,
+      "footprint": [
+        [
+          6.065602163828553,
+          -28.424013418798097
+        ],
+        [
+          6.405013418798095,
+          -28.084602163828553
+        ],
+        [
+          5.030397836171447,
+          -26.709986581201903
+        ],
+        [
+          4.690986581201905,
+          -27.049397836171448
+        ],
+        [
+          6.065602163828553,
+          -28.424013418798097
+        ]
+      ],
+      "reserve": [
+        [
+          6.440368757857423,
+          -27.96439401102684
+        ],
+        [
+          7.571739607755899,
+          -26.833023161128363
+        ],
+        [
+          6.281976838871636,
+          -25.5432603922441
+        ],
+        [
+          5.150605988973161,
+          -26.674631242142578
+        ],
+        [
+          6.440368757857423,
+          -27.96439401102684
+        ]
+      ],
+      "viewPosition": [
+        6.36117279836453,
+        8.85,
+        -26.75382720163547
+      ],
+      "cameraPosition": [
+        7.103634918610405,
+        8.85,
+        -26.011365081389595
+      ],
+      "position": [
+        5.548,
+        7.2,
+        -27.567
+      ],
+      "rotationY": 0.7853981633974483,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-06-INT-03",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "06",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        10.2,
+        7.2,
+        -33.6
+      ],
+      "sourceYaw": 0,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-06-INT-03",
+      "theme": "ocean",
+      "x": 10.2,
+      "z": -31.067,
+      "yaw": -0.7853981633974483,
+      "score": 2.7259538574478377,
+      "footprint": [
+        [
+          11.057013418798094,
+          -30.549397836171448
+        ],
+        [
+          10.717602163828552,
+          -30.209986581201903
+        ],
+        [
+          9.342986581201904,
+          -31.584602163828553
+        ],
+        [
+          9.682397836171447,
+          -31.924013418798097
+        ],
+        [
+          11.057013418798094,
+          -30.549397836171448
+        ]
+      ],
+      "reserve": [
+        [
+          10.59739401102684,
+          -30.174631242142578
+        ],
+        [
+          9.466023161128362,
+          -29.0432603922441
+        ],
+        [
+          8.1762603922441,
+          -30.333023161128363
+        ],
+        [
+          9.307631242142577,
+          -31.46439401102684
+        ],
+        [
+          10.59739401102684,
+          -30.174631242142578
+        ]
+      ],
+      "viewPosition": [
+        9.38682720163547,
+        8.85,
+        -30.25382720163547
+      ],
+      "cameraPosition": [
+        8.644365081389594,
+        8.85,
+        -29.511365081389595
+      ],
+      "position": [
+        10.2,
+        7.2,
+        -31.067
+      ],
+      "rotationY": -0.7853981633974483,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-06-LED-01",
+      "name": "Широкое медийное полотно",
+      "hallId": "06",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "media",
+      "width": 3.6479999999999997,
+      "height": 1.368,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        16,
+        7.2,
+        -30.7
+      ],
+      "sourceYaw": -1.5707963,
+      "cabinetColumns": 6,
+      "cabinetRows": 4,
+      "cabinetCount": 24,
+      "pixelWidth": 2304,
+      "pixelHeight": 864,
+      "source": "rgo-data.json#RGO-06-LED-01",
+      "theme": "ocean",
+      "x": 17.548,
+      "z": -32.567,
+      "yaw": 0,
+      "score": 3.4809728948150873,
+      "footprint": [
+        [
+          19.432,
+          -32.807
+        ],
+        [
+          19.432,
+          -32.327
+        ],
+        [
+          15.663999999999998,
+          -32.327
+        ],
+        [
+          15.663999999999998,
+          -32.807
+        ],
+        [
+          19.432,
+          -32.807
+        ]
+      ],
+      "reserve": [
+        [
+          19.372,
+          -32.217
+        ],
+        [
+          19.372,
+          -30.617
+        ],
+        [
+          15.723999999999998,
+          -30.617
+        ],
+        [
+          15.723999999999998,
+          -32.217
+        ],
+        [
+          19.372,
+          -32.217
+        ]
+      ],
+      "viewPosition": [
+        17.548,
+        8.85,
+        -31.417
+      ],
+      "cameraPosition": [
+        17.548,
+        8.85,
+        -29.2838
+      ],
+      "position": [
+        17.548,
+        7.2,
+        -32.567
+      ],
+      "rotationY": 0,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-07-INT-01",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "07",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        1,
+        7.2,
+        -24.2
+      ],
+      "sourceYaw": 1.5707963,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-07-INT-01",
+      "theme": "space",
+      "x": 2.745,
+      "z": -24.299,
+      "yaw": -0.7853981633974483,
+      "score": 2.036225749395639,
+      "footprint": [
+        [
+          3.6020134187980957,
+          -23.781397836171447
+        ],
+        [
+          3.2626021638285527,
+          -23.441986581201903
+        ],
+        [
+          1.8879865812019045,
+          -24.816602163828552
+        ],
+        [
+          2.2273978361714475,
+          -25.156013418798096
+        ],
+        [
+          3.6020134187980957,
+          -23.781397836171447
+        ]
+      ],
+      "reserve": [
+        [
+          3.1423940110268402,
+          -23.406631242142577
+        ],
+        [
+          2.0110231611283638,
+          -22.2752603922441
+        ],
+        [
+          0.7212603922441014,
+          -23.565023161128362
+        ],
+        [
+          1.8526312421425775,
+          -24.69639401102684
+        ],
+        [
+          3.1423940110268402,
+          -23.406631242142577
+        ]
+      ],
+      "viewPosition": [
+        1.9318272016354707,
+        8.85,
+        -23.48582720163547
+      ],
+      "cameraPosition": [
+        1.1893650813895955,
+        8.85,
+        -22.743365081389594
+      ],
+      "position": [
+        2.745,
+        7.2,
+        -24.299
+      ],
+      "rotationY": -0.7853981633974483,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-07-INT-02",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "07",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        1,
+        7.2,
+        -21.6
+      ],
+      "sourceYaw": 1.5707963,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-07-INT-02",
+      "theme": "space",
+      "x": 1,
+      "z": -22.299,
+      "yaw": 2.356194490192345,
+      "score": 1.0090640364311843,
+      "footprint": [
+        [
+          0.14298658120190444,
+          -22.816602163828552
+        ],
+        [
+          0.4823978361714474,
+          -23.156013418798096
+        ],
+        [
+          1.8570134187980956,
+          -21.781397836171447
+        ],
+        [
+          1.5176021638285526,
+          -21.441986581201903
+        ],
+        [
+          0.14298658120190444,
+          -22.816602163828552
+        ]
+      ],
+      "reserve": [
+        [
+          0.6026059889731601,
+          -23.191368757857422
+        ],
+        [
+          1.7339768388716363,
+          -24.3227396077559
+        ],
+        [
+          3.023739607755899,
+          -23.032976838871637
+        ],
+        [
+          1.8923687578574229,
+          -21.90160598897316
+        ],
+        [
+          0.6026059889731601,
+          -23.191368757857422
+        ]
+      ],
+      "viewPosition": [
+        1.8131727983645296,
+        8.85,
+        -23.11217279836453
+      ],
+      "cameraPosition": [
+        2.555634918610405,
+        8.85,
+        -23.854634918610405
+      ],
+      "position": [
+        1,
+        7.2,
+        -22.299
+      ],
+      "rotationY": 2.356194490192345,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-07-INT-03",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "07",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        1,
+        7.2,
+        -19
+      ],
+      "sourceYaw": 1.5707963,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-07-INT-03",
+      "theme": "space",
+      "x": 0.745,
+      "z": -20.299,
+      "yaw": 0.7853981633974483,
+      "score": 2.1536116259177325,
+      "footprint": [
+        [
+          1.2626021638285527,
+          -21.156013418798096
+        ],
+        [
+          1.6020134187980957,
+          -20.816602163828552
+        ],
+        [
+          0.22739783617144715,
+          -19.441986581201903
+        ],
+        [
+          -0.11201341879809557,
+          -19.781397836171447
+        ],
+        [
+          1.2626021638285527,
+          -21.156013418798096
+        ]
+      ],
+      "reserve": [
+        [
+          1.6373687578574228,
+          -20.69639401102684
+        ],
+        [
+          2.768739607755899,
+          -19.565023161128362
+        ],
+        [
+          1.4789768388716362,
+          -18.2752603922441
+        ],
+        [
+          0.3476059889731602,
+          -19.406631242142577
+        ],
+        [
+          1.6373687578574228,
+          -20.69639401102684
+        ]
+      ],
+      "viewPosition": [
+        1.5581727983645295,
+        8.85,
+        -19.48582720163547
+      ],
+      "cameraPosition": [
+        2.3006349186104047,
+        8.85,
+        -18.743365081389594
+      ],
+      "position": [
+        0.745,
+        7.2,
+        -20.299
+      ],
+      "rotationY": 0.7853981633974483,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-07-LED-01",
+      "name": "Широкое медийное полотно",
+      "hallId": "07",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "media",
+      "width": 3.6479999999999997,
+      "height": 1.368,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        3,
+        7.2,
+        -14.6
+      ],
+      "sourceYaw": 3.1415927,
+      "cabinetColumns": 6,
+      "cabinetRows": 4,
+      "cabinetCount": 24,
+      "pixelWidth": 2304,
+      "pixelHeight": 864,
+      "source": "rgo-data.json#RGO-07-LED-01",
+      "theme": "space",
+      "x": 3.245,
+      "z": -14.6,
+      "yaw": 3.9269908169872414,
+      "score": 0.794191352998206,
+      "footprint": [
+        [
+          2.0825164517293158,
+          -13.098105196759773
+        ],
+        [
+          1.7431051967597728,
+          -13.437516451729316
+        ],
+        [
+          4.407483548270685,
+          -16.101894803240228
+        ],
+        [
+          4.746894803240227,
+          -15.762483548270684
+        ],
+        [
+          2.0825164517293158,
+          -13.098105196759773
+        ]
+      ],
+      "reserve": [
+        [
+          1.707749857700446,
+          -13.557724604531028
+        ],
+        [
+          0.5763790078019699,
+          -14.689095454429506
+        ],
+        [
+          3.1559045455704955,
+          -17.26862099219803
+        ],
+        [
+          4.2872753954689715,
+          -16.137250142299553
+        ],
+        [
+          1.707749857700446,
+          -13.557724604531028
+        ]
+      ],
+      "viewPosition": [
+        2.4318272016354707,
+        8.85,
+        -15.41317279836453
+      ],
+      "cameraPosition": [
+        0.9234270160083278,
+        8.85,
+        -16.921572983991673
+      ],
+      "position": [
+        3.245,
+        7.2,
+        -14.6
+      ],
+      "rotationY": 3.9269908169872414,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-08-INT-01",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "08",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        -11.4,
+        7.2,
+        -12.2
+      ],
+      "sourceYaw": 1.5707963,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-08-INT-01",
+      "theme": "future",
+      "x": -10.255,
+      "z": -12.103,
+      "yaw": 0.7853981633974483,
+      "score": 2.0667274427847344,
+      "footprint": [
+        [
+          -9.737397836171448,
+          -12.960013418798095
+        ],
+        [
+          -9.397986581201906,
+          -12.620602163828552
+        ],
+        [
+          -10.772602163828553,
+          -11.245986581201905
+        ],
+        [
+          -11.112013418798096,
+          -11.585397836171447
+        ],
+        [
+          -9.737397836171448,
+          -12.960013418798095
+        ]
+      ],
+      "reserve": [
+        [
+          -9.362631242142578,
+          -12.50039401102684
+        ],
+        [
+          -8.231260392244101,
+          -11.369023161128363
+        ],
+        [
+          -9.521023161128364,
+          -10.0792603922441
+        ],
+        [
+          -10.652394011026841,
+          -11.210631242142577
+        ],
+        [
+          -9.362631242142578,
+          -12.50039401102684
+        ]
+      ],
+      "viewPosition": [
+        -9.441827201635471,
+        8.85,
+        -11.28982720163547
+      ],
+      "cameraPosition": [
+        -8.699365081389596,
+        8.85,
+        -10.547365081389595
+      ],
+      "position": [
+        -10.255,
+        7.2,
+        -12.103
+      ],
+      "rotationY": 0.7853981633974483,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-08-INT-02",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "08",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        -11.4,
+        7.2,
+        -9.6
+      ],
+      "sourceYaw": 1.5707963,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-08-INT-02",
+      "theme": "future",
+      "x": -11.755,
+      "z": -10.103,
+      "yaw": 0.7853981633974483,
+      "score": 1.4550629726705242,
+      "footprint": [
+        [
+          -11.237397836171448,
+          -10.960013418798095
+        ],
+        [
+          -10.897986581201906,
+          -10.620602163828552
+        ],
+        [
+          -12.272602163828553,
+          -9.245986581201905
+        ],
+        [
+          -12.612013418798096,
+          -9.585397836171447
+        ],
+        [
+          -11.237397836171448,
+          -10.960013418798095
+        ]
+      ],
+      "reserve": [
+        [
+          -10.862631242142578,
+          -10.50039401102684
+        ],
+        [
+          -9.731260392244101,
+          -9.369023161128363
+        ],
+        [
+          -11.021023161128364,
+          -8.0792603922441
+        ],
+        [
+          -12.152394011026841,
+          -9.210631242142577
+        ],
+        [
+          -10.862631242142578,
+          -10.50039401102684
+        ]
+      ],
+      "viewPosition": [
+        -10.941827201635471,
+        8.85,
+        -9.28982720163547
+      ],
+      "cameraPosition": [
+        -10.199365081389596,
+        8.85,
+        -8.547365081389595
+      ],
+      "position": [
+        -11.755,
+        7.2,
+        -10.103
+      ],
+      "rotationY": 0.7853981633974483,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-08-INT-03",
+      "name": "Коллективная интерактивная станция",
+      "hallId": "08",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "interactive",
+      "width": 1.8239999999999998,
+      "height": 1.026,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        -11.4,
+        7.2,
+        -7
+      ],
+      "sourceYaw": 1.5707963,
+      "cabinetColumns": 3,
+      "cabinetRows": 3,
+      "cabinetCount": 9,
+      "pixelWidth": 1152,
+      "pixelHeight": 648,
+      "source": "rgo-data.json#RGO-08-INT-03",
+      "theme": "future",
+      "x": -12.255,
+      "z": -7.603,
+      "yaw": 0.7853981633974483,
+      "score": 1.8290620102600907,
+      "footprint": [
+        [
+          -11.737397836171448,
+          -8.460013418798095
+        ],
+        [
+          -11.397986581201906,
+          -8.120602163828552
+        ],
+        [
+          -12.772602163828553,
+          -6.745986581201905
+        ],
+        [
+          -13.112013418798096,
+          -7.085397836171447
+        ],
+        [
+          -11.737397836171448,
+          -8.460013418798095
+        ]
+      ],
+      "reserve": [
+        [
+          -11.362631242142578,
+          -8.00039401102684
+        ],
+        [
+          -10.231260392244101,
+          -6.869023161128363
+        ],
+        [
+          -11.521023161128364,
+          -5.5792603922441
+        ],
+        [
+          -12.652394011026841,
+          -6.7106312421425764
+        ],
+        [
+          -11.362631242142578,
+          -8.00039401102684
+        ]
+      ],
+      "viewPosition": [
+        -11.441827201635471,
+        8.85,
+        -6.78982720163547
+      ],
+      "cameraPosition": [
+        -10.699365081389596,
+        8.85,
+        -6.047365081389595
+      ],
+      "position": [
+        -12.255,
+        7.2,
+        -7.603
+      ],
+      "rotationY": 0.7853981633974483,
+      "depth": 0.48
+    },
+    {
+      "id": "RGO-08-LED-01",
+      "name": "Широкое медийное полотно",
+      "hallId": "08",
+      "regionId": "rgo",
+      "anchorId": "Z01-1",
+      "category": "media",
+      "width": 3.6479999999999997,
+      "height": 1.368,
+      "bottom": 0.95,
+      "floorY": 7.2,
+      "sourcePosition": [
+        -5.8,
+        7.2,
+        -2.8
+      ],
+      "sourceYaw": 3.1415927,
+      "cabinetColumns": 6,
+      "cabinetRows": 4,
+      "cabinetCount": 24,
+      "pixelWidth": 2304,
+      "pixelHeight": 864,
+      "source": "rgo-data.json#RGO-08-LED-01",
+      "theme": "future",
+      "x": -6.755,
+      "z": -4.603,
+      "yaw": 3.9269908169872414,
+      "score": 2.296428650570803,
+      "footprint": [
+        [
+          -7.917483548270685,
+          -3.101105196759773
+        ],
+        [
+          -8.256894803240227,
+          -3.440516451729316
+        ],
+        [
+          -5.592516451729315,
+          -6.104894803240226
+        ],
+        [
+          -5.253105196759773,
+          -5.765483548270684
+        ],
+        [
+          -7.917483548270685,
+          -3.101105196759773
+        ]
+      ],
+      "reserve": [
+        [
+          -8.292250142299554,
+          -3.560724604531029
+        ],
+        [
+          -9.42362099219803,
+          -4.692095454429505
+        ],
+        [
+          -6.844095454429505,
+          -7.271620992198031
+        ],
+        [
+          -5.712724604531029,
+          -6.140250142299554
+        ],
+        [
+          -8.292250142299554,
+          -3.560724604531029
+        ]
+      ],
+      "viewPosition": [
+        -7.56817279836453,
+        8.85,
+        -5.41617279836453
+      ],
+      "cameraPosition": [
+        -9.076572983991673,
+        8.85,
+        -6.924572983991673
+      ],
+      "position": [
+        -6.755,
+        7.2,
+        -4.603
+      ],
+      "rotationY": 3.9269908169872414,
+      "depth": 0.48
+    }
+  ],
+  "unplaced": [],
+  "validation": {
+    "buildingSha": "0fe60c53a9fc72c9ed0ad15ac8808ca721b3a7af8e96d81329cdc748c78fd792",
+    "checked": 3085,
+    "rejectedCad": 4,
+    "rejectedFloor": 1,
+    "method": "actual CAD triangle BVH oriented box intersections plus five real-floor probes per candidate",
+    "regional": {
+      "buildingSha": "0fe60c53a9fc72c9ed0ad15ac8808ca721b3a7af8e96d81329cdc748c78fd792",
+      "checked": 3611,
+      "rejectedCad": 636,
+      "rejectedFloor": 378,
+      "method": "actual CAD triangle BVH oriented box intersections plus five real-floor probes per candidate"
+    },
+    "transitionCorridors": {
+      "count": 714,
+      "radius": 0.59,
+      "bodyHeight": 2.17,
+      "checks": "actual crowd engine swept-body test against display, stand and audience envelope",
+      "adjusted": [
+        {
+          "id": "MEDIA-far-east-upper",
+          "from": [
+            0,
+            13.2,
+            -69.75,
+            1.5707963267948966
+          ],
+          "to": [
+            1.5,
+            13.2,
+            -67.5,
+            1.5707963267948966
+          ]
+        },
+        {
+          "id": "MEDIA-O02-1",
+          "from": [
+            -13.5,
+            13.2,
+            -28.5,
+            2.356194490192345
+          ],
+          "to": [
+            -15,
+            13.2,
+            -27,
+            4.71238898038469
+          ]
+        },
+        {
+          "id": "MEDIA-Z02-1",
+          "from": [
+            -2.25,
+            13.2,
+            1.5,
+            0.7853981633974483
+          ],
+          "to": [
+            -3,
+            13.2,
+            1.5,
+            0.7853981633974483
+          ]
+        }
+      ]
+    },
+    "monorailSupportClearance": {
+      "updated": "RGO-02-LED-02",
+      "minimumFootMargin": 0.15,
+      "newPosition": [
+        9.334,
+        7.2,
+        -61.21
+      ],
+      "reason": "New smoothed route support3 foot and shaft"
+    }
+  },
+  "workingClearances": {
+    "wallMargin": 0.145,
+    "caseMargin": 0.22,
+    "screenDepth": 0.48,
+    "viewReserveDepth": 1.6,
+    "note": "26 source LED surfaces preserve modular dimensions; working project placement optimised against gallery and CAD."
+  }
+}

@@ -277,8 +277,8 @@
         },
         {
           "id": "O07-2",
-          "x": 10.5,
-          "z": 55.5,
+          "x": 10.75,
+          "z": 55.75,
           "floorY": 7.2,
           "offsetY": 7,
           "rotationY": 1.5707963267948966,
@@ -287,7 +287,9 @@
           "scaleFactor": 1,
           "sourceZoneId": "central-square-main",
           "sourceAssignmentStatus": "unassigned",
-          "primaryEvidence": []
+          "primaryEvidence": [],
+          "placementRevision": "20261125-c2-monorail-clearance",
+          "placementReason": "Shifted 0.25m east and 0.25m south within the existing Central Square working zone; complete 12m wagon +0.10m margin clears the source whale mesh."
         }
       ]
     },
@@ -484,7 +486,7 @@
       "name": "Атомный ледокол «Лидер»",
       "scaleTo": {
         "axis": "max",
-        "meters": 16
+        "meters": 13.65
       },
       "rotation": [
         0,
@@ -505,7 +507,13 @@
           "sourceZoneId": "northwest-main"
         }
       ],
-      "workingNote": "Выставочная адаптация корпуса16м; полноразмерная рубка3×3.2м, высота2.35м. Вся проекция корабля в первичной зоне7; нос к залу. Исходный GLB сохранён."
+      "workingNote": "Целый исходный ледокол 13.65 м: сохранены корпус, надстройка и мачты. Добавленная человеческая рубка и ведущие к ней переходы удалены. Нос обращён в зал, первичная зона СЗФО сохранена. До существующего потолка остаётся 0.212 м.",
+      "wholeShipRestoration": {
+        "sourceGeometryModified": false,
+        "addedWheelhouse": false,
+        "fitReason": "Uncut source mast fits below existing 12.20m ceiling with 0.212m clearance",
+        "evidence": "assets/zones/physical-revisions-qa.json"
+      }
     },
     {
       "id": "O13",
@@ -756,13 +764,15 @@
         {
           "id": "O16-1",
           "x": -10,
-          "z": 55,
+          "z": 54.9,
           "floorY": 13.2,
           "offsetY": 0,
           "rotationY": 0,
           "floating": false,
           "zone": "ЮФО · Херсонес",
-          "sourceZoneId": "south-upper"
+          "sourceZoneId": "south-upper",
+          "placementRevision": "20261125-c2-monorail-clearance",
+          "placementReason": "Moved0.10m north within south-upper primary zone to maintain0.10m full-wagon allowance; size, height, entrance and interior unchanged.9floor probes,283compound parts vs CAD, equipment and transition corridors pass."
         }
       ],
       "floorDatumOffset": 0.31,
@@ -816,5 +826,5 @@
       ]
     }
   ],
-  "layoutRevision": "park-zones-20261124"
+  "layoutRevision": "primary-zones-whole-ship-20261125"
 }

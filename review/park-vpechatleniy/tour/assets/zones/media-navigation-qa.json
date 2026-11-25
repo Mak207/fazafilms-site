@@ -1,0 +1,168 @@
+{
+  "version": "park-media-navigation-20261125",
+  "buildingSha": "0fe60c53a9fc72c9ed0ad15ac8808ca721b3a7af8e96d81329cdc748c78fd792",
+  "pass": true,
+  "sourceTruth": {
+    "primaryData": [
+      "rgo-data.json",
+      "assets/zones/rgo-primary-program.json",
+      "assets/zones/rgo-layout.json",
+      "assets/zones/source-zones.json",
+      "assets/zones/object-regions-primary.json"
+    ],
+    "sourceTitlesPreserved": true,
+    "equipmentPositions": "Working design fitted to source zone contours, actual CAD, gallery furniture, transition paths and monorail supports",
+    "unconfirmedRegions": "Original primary status retained for lunar exhibits O01–O04 and whales O07/O08; their working placement is not a new primary-source confirmation"
+  },
+  "equipment": {
+    "independentInstallations": 52,
+    "rgoLEDsurfaces": 26,
+    "rgoCabinets": 326,
+    "rgoAdditionalProjectionScreens": 2,
+    "regionalInstallations": 24,
+    "totalNewCabinets": 602,
+    "registeredParts": 104,
+    "floorProbes": 468,
+    "cadChecks": 104,
+    "floorPassed": true,
+    "cadConflicts": 0,
+    "transitionCorridors": 714,
+    "transitionRadius": 0.51,
+    "transitionHeight": 2.17,
+    "transitionConflicts": 0,
+    "allCanvasPixelsChanged": true,
+    "visibleCanvasUpdatesAtTestView": 9
+  },
+  "navigation": {
+    "nativeDropdowns": [
+      "Zone",
+      "RGO hall",
+      "Exhibit",
+      "Screen or interactive"
+    ],
+    "mediaEntries": 61,
+    "exhibitsInZoneMenus": 40,
+    "independentRgoExhibits": 13,
+    "rgoAssemblyRoots": 14,
+    "handlerChecksPassed": 143,
+    "uniqueRepeatedMediaLabels": true,
+    "arcticCabinets": [
+      {
+        "columns": 10,
+        "rows": 13,
+        "count": 130
+      },
+      {
+        "columns": 13,
+        "rows": 13,
+        "count": 169
+      }
+    ],
+    "completeSceneRegisteredInstances": 93,
+    "completeSceneProxyCount": 911,
+    "completeSceneVisitorGuard": {
+      "ok": true,
+      "applied": true,
+      "revision": 17,
+      "conflicts": [],
+      "replanned": 0
+    }
+  },
+  "media": {
+    "kind": "Original generated thematic animations plus interactive physical displays, not documentary video",
+    "themes": 18,
+    "animationsAutoplay": true,
+    "remoteVideoDependencies": false,
+    "equipmentUpdateCulling": "Camera frustum, front-face normal and100m range; <=5fps beyond35m",
+    "arcticPhotographOverlay": "Aurora bands multiplied by0.22, ice alpha0.14; fallback animation retained without image"
+  },
+  "viewing": {
+    "rgoPrimaryRouteWorkingWidthMetres": 2.3,
+    "equipmentAudienceReserveDepthMetres": 1.6,
+    "qualification": "Planning clearances; audience reserves can meet the main route. No claim of building-code approval or completed visitor-flow capacity study."
+  },
+  "rgoIndividualObjects": [
+    {
+      "id": "00-case-0",
+      "instanceId": "RG_00-CASE-0-1",
+      "name": "Проложить путь",
+      "hallId": "00"
+    },
+    {
+      "id": "00-case-1",
+      "instanceId": "RG_00-CASE-1-1",
+      "name": "Измерить мир",
+      "hallId": "00"
+    },
+    {
+      "id": "01-case-2",
+      "instanceId": "RG_01-CASE-2-1",
+      "name": "Карты и путевые записи",
+      "hallId": "01"
+    },
+    {
+      "id": "03-case-3",
+      "instanceId": "RG_03-CASE-3-1",
+      "name": "Морская навигация",
+      "hallId": "03"
+    },
+    {
+      "id": "04-case-4",
+      "instanceId": "RG_04-CASE-4-1",
+      "name": "Инструменты экспедиции",
+      "hallId": "04"
+    },
+    {
+      "id": "04-case-5",
+      "instanceId": "RG_04-CASE-5-1",
+      "name": "Измерение России",
+      "hallId": "04"
+    },
+    {
+      "id": "05-case-6",
+      "instanceId": "RG_05-CASE-6-1",
+      "name": "Полярные наблюдения",
+      "hallId": "05"
+    },
+    {
+      "id": "07-case-7",
+      "instanceId": "RG_07-CASE-7-1",
+      "name": "От наблюдения к открытию",
+      "hallId": "07"
+    },
+    {
+      "id": "06-mir-8",
+      "instanceId": "RG_06-MIR-8-1",
+      "name": "Аппарат «Мир»",
+      "hallId": "06"
+    },
+    {
+      "id": "08-future-wall-18",
+      "instanceId": "RG_08-FUTURE-WALL-18-1",
+      "name": "Горизонт открытий",
+      "hallId": "08"
+    },
+    {
+      "id": "suspended-ship-03",
+      "instanceId": "RG_SUSPENDED-SHIP-03-1",
+      "name": "Модель парусного судна",
+      "hallId": "03"
+    },
+    {
+      "id": "suspended-ship-04",
+      "instanceId": "RG_SUSPENDED-SHIP-04-1",
+      "name": "Модель парусного судна",
+      "hallId": "04"
+    },
+    {
+      "id": "entrance-globe",
+      "instanceId": "RG_ENTRANCE-GLOBE-1",
+      "name": "Глобус путешественника",
+      "hallId": "00"
+    }
+  ],
+  "limitations": [
+    "Browser WebGL unavailable in this environment; actual 3D geometry and collisions verified numerically and navigation rendered in a separate DOM/browser fixture.",
+    "Thematic Canvas contents are original illustrative animations; replacing them with curated documentary programmes remains a content task."
+  ]
+}

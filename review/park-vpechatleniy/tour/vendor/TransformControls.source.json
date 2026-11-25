@@ -1,0 +1,9 @@
+{
+  "package": "three",
+  "version": "0.180.0",
+  "file": "examples/jsm/controls/TransformControls.js",
+  "source": "https://raw.githubusercontent.com/mrdoob/three.js/r180/examples/jsm/controls/TransformControls.js",
+  "license": "MIT",
+  "licenseFile": "three-LICENSE.txt",
+  "sha256": "621fb8894c0f748c2be2a6ff8a6bdd72c18a22b24ddfe21d506514544df5c84e"
+}
