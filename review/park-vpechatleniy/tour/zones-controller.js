@@ -1,10 +1,11 @@
+import {createEquipmentPlanScene} from './equipment-plan-scene.js?v=equipment-3d-20261125';
 import {createExhibitionEquipment} from './exhibition-equipment.js?v=park-exhibition-20261125-r2';
 import {elevateAircraftOnColumns} from './aircraft-supports.js?v=park-exhibition-20261125-r2';
 import {applyChersonesusCompactFit} from './chersonesus-fit.js?v=park-exhibition-20261125-r2';
 import * as THREE from 'three';
-import {createIcebreakerEnvironment,loadZoneAssets} from './exhibition-zones.js?v=park-exhibition-20261125-r2';
+import {createIcebreakerEnvironment,loadZoneAssets} from './exhibition-zones.js?v=equipment-3d-20261125';
 import {createMappedRgoGallery} from './rgo-gallery.js?v=park-exhibition-20261125-r2';
-import {createGrainSilos,createFlightCockpits,createChersonesusInterior,getInstallationAction} from './exhibition-interactives.js?v=park-exhibition-20261125-r2';
+import {createGrainSilos,createFlightCockpits,createChersonesusInterior,getInstallationAction} from './exhibition-interactives.js?v=equipment-3d-20261125';
 
 function fitModel(source,dimensions,{rotationY=0}={}){
   if(!source)return null;
@@ -21,7 +22,8 @@ const actionLabels={
   'chersonesus-scene':'Другая панорама','chersonesus-vr-1':'VR-площадка 1','chersonesus-vr-2':'VR-площадка 2',
 };
 export async function createExhibitionZones({exhibits,loader,camera,requestRender=()=>{},onFocus=()=>{},onOverview=()=>{},onStationFocus=()=>false,getIcebreakerAccess=()=>null}){
-  const modules=[],zones=new Map(),assemblies=[],errors=[];
+  const modules=[],zones=new Map(),assemblies=[],errors=[],equipmentBindings=new Map();
+  let equipmentPlan=null;
   const sources=await loadZoneAssets(loader).catch(error=>({models:new Map(),errors:[{error:error.message}]}));
   errors.push(...sources.errors);
   const assets=sources.models;
@@ -81,8 +83,45 @@ export async function createExhibitionZones({exhibits,loader,camera,requestRende
       interiorPose:{position:[.65,1.65,-4.3],target:[.35,1.7,4.05],fov:65},overviewPose:{position:[13,10,-15],target:[0,1.8,0],fov:46}});
   }
 
+  // Media embedded in a pavilion becomes a real independent assembly. Keep
+  // the original geometry and animation; remove its old host collider once.
+  for(const [key,zone]of zones){
+    const parts=zone.module.getEquipmentParts?.()||[];
+    if(!parts.length)continue;
+    const before=zone.module.getCollisionParts?.()||[];
+    for(const part of parts){
+      const root=part.root;root.updateWorldMatrix(true,true);
+      const position=root.getWorldPosition(new THREE.Vector3()),rotation=root.getWorldQuaternion(new THREE.Quaternion()),yaw=new THREE.Euler().setFromQuaternion(rotation,'YXZ').y;
+      const inverse=root.matrixWorld.clone().invert(),collisionParts=part.collisionParts||[];
+      if(!part.collisionParts)root.traverse(node=>{
+        const b=node.userData.collisionBounds;if(!b)return;
+        const box=new THREE.Box3(new THREE.Vector3(...b.min),new THREE.Vector3(...b.max)).applyMatrix4(new THREE.Matrix4().multiplyMatrices(inverse,node.matrixWorld));
+        collisionParts.push({id:node.uuid,min:box.min.toArray(),max:box.max.toArray(),socialTarget:node.userData.kind!=='interactive-safety-zone'});
+      });
+      root.removeFromParent();root.position.set(0,0,0);root.rotation.set(0,0,0);
+      const id=('EP_'+part.sourceId).toUpperCase().replace(/[^A-Z0-9_-]/g,'_').slice(0,35),floorY=exhibits.getInstance(zone.id)?.floorY||7.2;
+      const result=exhibits.addAssembly({id,name:part.sourceId.startsWith('lider')?'Полярная панорама':root.name||zone.name,root,placement:{id:id+'-1',x:position.x,z:position.z,floorY,rotationY:yaw,zone:zone.name},collisionParts:collisionParts.length?collisionParts:undefined});
+      if(!result.ok)throw new Error(result.error);
+      const entries=zone.module.getMediaEntries?.()||zone.module.screens||[];
+      const alias=part.sourceId==='chersonesus-info--1'?'chersonesus-information-1':part.sourceId==='chersonesus-info-1'?'chersonesus-information-2':part.sourceId;
+      const media=entries.find(e=>e.id===alias),control=media?.media||media;
+      equipmentBindings.set(part.sourceId,{sourceId:part.sourceId,root,instanceId:result.instanceId,parts:collisionParts,media:control,face:media?.face,pickTargets:[media?.face].filter(Boolean)});
+    }
+    const after=zone.module.getCollisionParts?.()||[];
+    const previousIds=new Set(before.map(p=>p.id));
+    const hostParts=(zone.root.userData.collisionParts||[]).filter(p=>!previousIds.has(p.id));
+    // The ice module returns only the ship/ice body; its separated LED parts
+    // were never added to the host's collision list.
+    const combined=key==='lider'?after:[...hostParts,...after];
+    exhibits.refreshInstanceGeometry(zone.id,{collisionParts:combined});
+  }
+  for(const item of rgoMovables)equipmentBindings.set(item.sourceId,{sourceId:item.sourceId,root:item.root,instanceId:item.placement.id,parts:item.collisionParts,media:item.media,pickTargets:item.media?[item.root]:[]});
+  for(const key of ['flight','flight2']){const zone=zones.get(key);if(zone){const media=zone.module.getMediaEntries?.()[0];equipmentBindings.set(zone.id,{sourceId:zone.id,root:zone.root,instanceId:zone.id,parts:zone.module.getCollisionParts(),media,face:media?.face,pickTargets:zone.module.pickTargets||[]});}}
+
   const baseInstanceIds=new Set(exhibits.listInstances().map(p=>p.instanceId));
   const equipment=createExhibitionEquipment({exhibits,layout:equipmentLayout,onChange:requestRender});modules.push(equipment);
+  for(const [id,record]of equipment.records)equipmentBindings.set(id,{...record,sourceId:id,pickTargets:[record.screen]});
+  equipmentPlan=createEquipmentPlanScene({exhibits,bindings:equipmentBindings,requestRender});modules.push(equipmentPlan);
   // Existing embedded displays share the same selection and playback controls;
   // their host module remains responsible for animation and collision geometry.
   const mediaRecords=new Map(equipment.records),embeddedPickTargets=[];
@@ -103,10 +142,10 @@ export async function createExhibitionZones({exhibits,loader,camera,requestRende
   const nameKey=r=>[r.regionId,r.hallId||'',r.name].join('|'),nameCounts=new Map(),nameOrdinals=new Map();
   for(const r of mediaRecords.values())nameCounts.set(nameKey(r),(nameCounts.get(nameKey(r))||0)+1);
   for(const r of mediaRecords.values()){const key=nameKey(r),ordinal=(nameOrdinals.get(key)||0)+1;nameOrdinals.set(key,ordinal);r.sourceTitle=r.name;r.displayName=nameCounts.get(key)>1?r.name+' · '+ordinal:r.name;}
-  const media={records:mediaRecords,
-    getItems(filter={}){return [...mediaRecords.values()].filter(r=>(!filter.regionId||r.regionId===filter.regionId)&&(!filter.hallId||r.hallId===filter.hallId)&&(!filter.anchorId||(r.anchorIds||[r.anchorId]).includes(filter.anchorId))).map(r=>({id:r.id,name:r.displayName,sourceTitle:r.sourceTitle,displayName:r.displayName,instanceId:r.instanceId,category:r.category,categoryLabel:r.categoryLabel,regionId:r.regionId,hallId:r.hallId,anchorId:r.anchorId,anchorIds:r.anchorIds||[r.anchorId],theme:r.theme,width:r.width,height:r.height,cabinetCount:r.cabinetCount,cabinetColumns:r.cabinetColumns,cabinetRows:r.cabinetRows,source:r.source,embedded:Boolean(r.embedded)}));},
-    getPose(id){const r=mediaRecords.get(id);if(!r)return null;if(!r.embedded)return {...equipment.getPose(id),label:r.displayName};if(r.rgoItem){const p=rgo.getItemPose(r.rgoItem);return {instanceId:r.instanceId,label:r.displayName,position:new THREE.Vector3(...p.position),target:new THREE.Vector3(...p.target),fov:p.fov};}const pose=r.zone.interiorPose||r.zone.module.interiorPose||r.zone.overviewPose;r.zone.root.updateWorldMatrix(true,true);return {instanceId:r.instanceId,label:r.displayName,position:r.zone.root.localToWorld(new THREE.Vector3(...pose.position)),target:r.zone.root.localToWorld(new THREE.Vector3(...pose.target)),fov:pose.fov||62};},
-    interact(id,action='next'){const r=mediaRecords.get(id);if(!r)return false;const changed=r.media.interact(action);requestRender();return changed;},
+  const media={get records(){return equipmentPlan?.active?equipmentPlan.records:mediaRecords;},
+    getItems(filter={}){if(equipmentPlan?.active)return equipmentPlan.getItems(filter);return [...mediaRecords.values()].filter(r=>(!filter.regionId||r.regionId===filter.regionId)&&(!filter.hallId||r.hallId===filter.hallId)&&(!filter.anchorId||(r.anchorIds||[r.anchorId]).includes(filter.anchorId))).map(r=>({id:r.id,name:r.displayName,sourceTitle:r.sourceTitle,displayName:r.displayName,instanceId:r.instanceId,category:r.category,categoryLabel:r.categoryLabel,regionId:r.regionId,hallId:r.hallId,anchorId:r.anchorId,anchorIds:r.anchorIds||[r.anchorId],theme:r.theme,width:r.width,height:r.height,cabinetCount:r.cabinetCount,cabinetColumns:r.cabinetColumns,cabinetRows:r.cabinetRows,source:r.source,embedded:Boolean(r.embedded)}));},
+    getPose(id){if(equipmentPlan?.active)return equipmentPlan.getPose(id);const r=mediaRecords.get(id);if(!r)return null;if(!r.embedded)return {...equipment.getPose(id),label:r.displayName};if(r.rgoItem){const p=rgo.getItemPose(r.rgoItem);return {instanceId:r.instanceId,label:r.displayName,position:new THREE.Vector3(...p.position),target:new THREE.Vector3(...p.target),fov:p.fov};}const pose=r.zone.interiorPose||r.zone.module.interiorPose||r.zone.overviewPose;r.zone.root.updateWorldMatrix(true,true);return {instanceId:r.instanceId,label:r.displayName,position:r.zone.root.localToWorld(new THREE.Vector3(...pose.position)),target:r.zone.root.localToWorld(new THREE.Vector3(...pose.target)),fov:pose.fov||62};},
+    interact(id,action='next'){if(equipmentPlan?.active)return equipmentPlan.interact(id,action);const r=mediaRecords.get(id);if(!r)return false;const changed=r.media.interact(action);requestRender();return changed;},
   };
   const select=document.getElementById('section-select'),bar=document.getElementById('zone-actions'),buttons=document.getElementById('zone-action-buttons'),info=document.getElementById('zone-description');
   const hallSelect=document.getElementById('rgo-hall-select'),hallControl=document.getElementById('rgo-hall-control');
@@ -130,8 +169,8 @@ export async function createExhibitionZones({exhibits,loader,camera,requestRende
   const quick=document.createElement('optgroup');quick.label='Быстрый переход';for(const [id,z]of zones)if(id!=='rgo')quick.append(option(id,z.name));select.append(quick,option('all','Весь парк'));
   hallSelect.replaceChildren();for(const hall of rgoProgram.halls)hallSelect.append(option(hall.id,hall.id+' · '+hall.title));
   function objects(regionId=selectedRegion){
-    if(regionId==='rgo')return rgo.getNavigationItems().map(item=>({...item,id:'rgo-item:'+item.id,regionId:'rgo',floorY:7.2}));
-    return exhibits.listInstances().filter(p=>baseInstanceIds.has(p.instanceId)&&p.instanceId!=='Z01-1').map(p=>{
+    if(regionId==='rgo')return rgo.getNavigationItems().filter(item=>!item.instanceId||exhibits.getInstance(item.instanceId)?.visible).map(item=>({...item,id:'rgo-item:'+item.id,regionId:'rgo',floorY:7.2}));
+    return exhibits.listInstances().filter(p=>p.visible&&baseInstanceIds.has(p.instanceId)&&p.instanceId!=='Z01-1').map(p=>{
       const primary=originalRegions.get(p.instanceId),regionId=fixedRegions[p.instanceId]||primary?.regionId||fallbackRegions[p.exhibitId]||null;
       return {id:p.instanceId,instanceId:p.instanceId,name:p.name+(p.copies>1?' · '+p.ordinal:''),regionId,floorY:p.floorY,sourceStatus:primary?.status||'confirmed',position:[p.x,p.y,p.z],kind:'model'};
     }).filter(p=>!regionId||p.regionId===regionId);
@@ -151,8 +190,8 @@ export async function createExhibitionZones({exhibits,loader,camera,requestRende
     const availableMedia=matchingMedia();mediaSelect.input.replaceChildren(option('','Выберите экран или интерактив'));
     for(const m of availableMedia)mediaSelect.input.append(option(m.id,m.name));mediaSelect.input.value=selectedMedia||'';mediaSelect.label.hidden=!availableMedia.length;
     const record=selectedMedia?media.records.get(selectedMedia):null;
-    status.hidden=!record;status.textContent=record?(record.categoryLabel||(record.category==='projection'?'Проекционный экран':record.category==='interactive'?'Интерактивная станция':'LED-экран'))+' · '+record.width.toFixed(2)+' × '+record.height.toFixed(2)+' м'+(record.cabinetCount?' · '+record.cabinetColumns+' × '+record.cabinetRows+' кабинетов':'')+' · '+(record.media.getState().playing?'контент воспроизводится':'пауза'):'';
-    const actions=selectedMedia?['media-toggle','media-next','media-reset']:(zone?.actions||[]);buttons.replaceChildren();
+    status.hidden=!record;status.textContent=record?(record.categoryLabel||(record.category==='projection'?'Проекционный экран':record.category==='interactive'?'Интерактивная станция':'LED-экран'))+' · '+record.width.toFixed(2)+' × '+record.height.toFixed(2)+' м'+(record.cabinetCount?' · '+record.cabinetColumns+' × '+record.cabinetRows+' кабинетов':'')+' · '+(record.media?.getState?.().playing?'контент воспроизводится':'пауза'):'';
+    const actions=selectedMedia?(record?.media?['media-toggle','media-next','media-reset']:[]):(zone?.actions||[]);buttons.replaceChildren();
     for(const action of actions){const b=document.createElement('button');b.type='button';b.textContent=actionLabels[action]||action;b.dataset.zoneAction=action;b.onclick=()=>act(action);buttons.append(b);}
     const actionControls=document.getElementById('zone-action-controls');actionControls.hidden=!actions.length;actionControls.dataset.collapsible=String(actions.length>2);actionControls.open=!matchMedia('(max-width:600px)').matches||actions.length<=2;
     document.getElementById('zone-inside').textContent=selectedMedia?'К экрану':selectedObject?'К экспонату':selectedRegion==='rgo'?'В зал':'Ближе';
@@ -204,12 +243,17 @@ export async function createExhibitionZones({exhibits,loader,camera,requestRende
   function onDown(event){if(event.button===0||event.pointerType!=='mouse')pointerStart={id:event.pointerId,x:event.clientX,y:event.clientY,time:performance.now()};}
   function onUp(event){if(!pointerStart||pointerStart.id!==event.pointerId)return;const start=pointerStart;pointerStart=null;if(Math.hypot(event.clientX-start.x,event.clientY-start.y)>4||performance.now()-start.time>500||canvas.classList.contains('editing-exhibit'))return;
     const rect=canvas.getBoundingClientRect();pointer.set((event.clientX-rect.left)/rect.width*2-1,1-(event.clientY-rect.top)/rect.height*2);raycaster.setFromCamera(pointer,camera);
-    const zone=zones.get(selected),targets=[...equipment.pickTargets,...embeddedPickTargets,...(zone?.module.pickTargets||zone?.module.pickables||[])];const hit=raycaster.intersectObjects(targets,true).find(hit=>{for(let n=hit.object;n;n=n.parent)if(!n.visible)return false;return true;});if(!hit)return;
+    const zone=zones.get(selected),targets=[...(equipmentPlan?.active?equipmentPlan.pickTargets:[...equipment.pickTargets,...embeddedPickTargets]),...(zone?.module.pickTargets||zone?.module.pickables||[])];const hit=raycaster.intersectObjects(targets,true).find(hit=>{for(let n=hit.object;n;n=n.parent)if(!n.visible)return false;return true;});if(!hit)return;
     if(hit.object.userData.equipmentId){const id=hit.object.userData.equipmentId;if(selectedMedia===id)act('media-next');else focusEquipment(id,{navigate:false});return;}
     const action=getInstallationAction(hit);if(action)act(action.action);else if(hit.object.userData.zoneAction)act(hit.object.userData.zoneAction);requestRender();
   }
   canvas.addEventListener('pointerdown',onDown);canvas.addEventListener('pointerup',onUp);
   return {focus,focusRegion,focusObject,focusEquipment,act,getNavigation,equipment,media,rgo,zones,assemblies,assets,
+    setEquipmentPlan(snapshot){const result=equipmentPlan.sync(snapshot);if(result.ok){if(selectedMedia&&!equipmentPlan.records.has(selectedMedia))selectedMedia=null;updatePanel();emitNavigation();}return result;},
+    previewEquipment:(id,position)=>equipmentPlan.preview(id,position),
+    cancelEquipmentPreview:id=>equipmentPlan.cancelPreview(id),
+    equipmentPlanState:()=>equipmentPlan.getState(),
+    getEquipmentPlanPose:id=>equipmentPlan.getPose(id),
     hidePanel(){bar.hidden=true;pointerStart=null;},
     refreshNavigation(){updatePanel();},
     update(dt){let changed=false;for(const module of modules)if(module.update?.(dt,camera))changed=true;return changed;},

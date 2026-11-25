@@ -100,7 +100,7 @@ function makeKit(id, title, { parent = null, position = [0, 0, 0], rotationY = 0
     getCollisionParts() {
       root.updateWorldMatrix(true, true);
       const inverse = root.matrixWorld.clone().invert();
-      return colliders.map(part => {
+      return colliders.filter(part => { let node=part; while(node&&node!==root)node=node.parent; return node===root; }).map(part => {
         const b = new THREE.Box3(new THREE.Vector3(...part.userData.collisionBounds.min), new THREE.Vector3(...part.userData.collisionBounds.max));
         b.applyMatrix4(new THREE.Matrix4().multiplyMatrices(inverse, part.matrixWorld));
         return { id: part.userData.instanceId, min: b.min.toArray(), max: b.max.toArray(), kind: part.userData.kind };
@@ -249,6 +249,7 @@ export function createGrainSilos(options = {}) {
   update(0);
   return { ...kit, update, setFlowing(value) { flowing = Boolean(value); controlScreen.redraw(); kit.changed(); },
     setIntensity(value) { if (Number.isFinite(value)) intensity = clamp(value, .2, 2); },
+    getEquipmentParts:()=>[{sourceId:'grain-control',root:controls}],
     getMediaEntries:()=>[{id:'grain-control',name:'Живое зерно · пульт',width:1.15,height:.58,theme:'grain',face:controlScreen.face,
       interact(action){if(action==='toggle')flowing=!flowing;else if(action==='reset'){elapsed=0;flowing=true;}else intensity=intensity<1.5?2:1;controlScreen.redraw();kit.changed();return true;},
       getState:()=>({theme:'grain',playing:flowing,animated:true,kind:'interactive-grain-control',elapsed,intensity})}],
@@ -474,7 +475,11 @@ export function createChersonesusInterior(options = {}) {
   const sand = standard(0xc3ae88, { roughness: .93 }), pale = standard(0xd4c5a8, { roughness: .88 }), bronze = standard(0x705a42, { metalness: .22 }), dark = standard(0x282a29), led = basic(0xffcf87, { toneMapped: false });
   let sceneIndex = 0, elapsed = 0;
   const vrActive = [false, false], vrRings = [];
-  const movingScreens=[];
+  const movingScreens=[],equipmentParts=[];
+  function equipmentPart(sourceId,nodes,x,z,yaw=0){
+    const holder=new THREE.Group();holder.position.set(x,0,z);holder.rotation.y=yaw;root.add(holder);root.updateWorldMatrix(true,true);
+    for(const node of nodes)holder.attach(node);equipmentParts.push({sourceId,root:holder});return holder;
+  }
   function attachMedia(screen,id,name,theme,extra={}){
     const media=createLiveMedia({theme,title:name,width:screen.canvas.width,height:screen.canvas.height,...extra});
     screen.face.material.map=media.texture;screen.face.material.needsUpdate=true;
@@ -497,7 +502,8 @@ export function createChersonesusInterior(options = {}) {
   }, root, { resolution: [2048, 1024], rotationY: facing });
   const panoramaMedia=attachMedia(panorama,'chersonesus-panorama','Херсонес · история и наследие','heritage',{image:options.panoramaImage,showText:false});
   panorama.redraw=()=>{panoramaMedia.interact('reset');for(let i=0;i<sceneIndex;i++)panoramaMedia.interact('next');};
-  collider('panorama-wall', [[-screenWidth / 2 - .1, .04, screenZ - .15], [screenWidth / 2 + .1, compact ? 3.06 : 3.1, screenZ + .15]]);
+  const panoramaCollider=collider('panorama-wall', [[-screenWidth / 2 - .1, .04, screenZ - .15], [screenWidth / 2 + .1, compact ? 3.06 : 3.1, screenZ + .15]]);
+  equipmentPart('chersonesus-panorama',[panorama.group,panoramaCollider],0,screenZ,facing);
   action(panorama.group, 'chersonesus-scene', () => { sceneIndex = (sceneIndex + 1) % 3; panorama.redraw(elapsed); });
   kit.label('ХЕРСОНЕС ТАВРИЧЕСКИЙ', [compact ? 4.9 : 5.9, .2], [0, compact ? 2.9 : 2.95, screenZ - (compact ? -.01 : .01)], root, { background: '#655945', color: '#fff0cc', rotationY: facing });
   // A 2.2-m central viewing/through aisle remains free; cases are along the sides.
@@ -530,6 +536,7 @@ export function createChersonesusInterior(options = {}) {
     }
     const sign = kit.label(caseNames[index], [.76, .17], [0, .7, (l / 2 + .06) * (compact ? -1 : 1)], c, { background: '#252e2b', rotationY: facing });
     action(sign.group, `chersonesus-case-${index + 1}`, () => { sceneIndex = index % 3; panorama.redraw(elapsed); });
+    equipmentParts.push({sourceId:`chersonesus-case-${index+1}`,root:c});
   });
   // Two separate 2.5 × 2.5-m VR bays, 0.7-m separation; controls never cross the central aisle.
   for (let i = 0; i < 2; i++) {
@@ -549,6 +556,7 @@ export function createChersonesusInterior(options = {}) {
     const label = kit.label('VR · ХЕРСОНЕС ' + (i + 1), [1.05, .22], [0, 1.6, -1.13], zone, { rotationY: facing });
     action(label.group, `chersonesus-vr-${i + 1}`, () => { vrActive[i] = !vrActive[i]; sceneIndex = i; panorama.redraw(elapsed);
       ringMaterial.color.setHex(vrActive[i] ? 0x80dcc6 : 0xe0bd78); });
+    equipmentParts.push({sourceId:`chersonesus-vr-${i+1}`,root:zone});
   }
   // Museum information screens flank the viewing area, away from the through aisle.
   for (const [side, title] of [[-1, 'ПОРТ И МОРСКИЕ ПУТИ'], [1, 'ГОРОД И ЕГО ЖИТЕЛИ']]) {
@@ -562,7 +570,8 @@ export function createChersonesusInterior(options = {}) {
     }, root, { rotationY: facing });
     attachMedia(information,`chersonesus-information-${side<0?1:2}`,title,side<0?'sailing':'heritage');
     action(information.group, `chersonesus-info-${side < 0 ? 1 : 2}`, () => { sceneIndex = side < 0 ? 0 : 1; panorama.redraw(elapsed); });
-    collider(`information-${side}`, [[infoX - infoWidth / 2 - .04, .04, infoZ - .14], [infoX + infoWidth / 2 + .04, 2.36, infoZ + .14]]);
+    const infoCollider=collider(`information-${side}`, [[infoX - infoWidth / 2 - .04, .04, infoZ - .14], [infoX + infoWidth / 2 + .04, 2.36, infoZ + .14]]);
+    equipmentPart(`chersonesus-info-${side}`,[information.group,infoCollider],infoX,infoZ,facing);
   }
   const bench = box([1.5, .45, .55], [0, .265, -2.55], standard(0x85755d));
   // The bench is kept to a short width and can be omitted by the integrator
@@ -576,6 +585,7 @@ export function createChersonesusInterior(options = {}) {
     return root.visible;
   }
   return { ...kit, update,
+    getEquipmentParts:()=>equipmentParts.slice(),
     getMediaEntries:()=>movingScreens.map(({media,...entry})=>entry),
     dispose(){for(const screen of movingScreens)screen.media.dispose();kit.dispose();},
     setScene(index) { if (Number.isFinite(index)) sceneIndex = ((Math.trunc(index) % 3) + 3) % 3; panorama.redraw(elapsed); kit.changed(); },

@@ -1,5 +1,6 @@
-import { createDefaultState, normalizeState, setQuantity, getInstances, getSummary, getContentPlan, getUnitMetrics } from './equipment-model.js?v=equipment-20261125';
-import { createEquipmentMap } from './equipment-map.js?v=equipment-20261125';
+import { createDefaultState, normalizeState, setQuantity, getInstances, getSummary, getContentPlan, getUnitMetrics } from './equipment-model.js?v=equipment-3d-20261125';
+import { createEquipmentMap } from './equipment-map.js?v=equipment-3d-20261125';
+import {equipmentVariant, readEquipmentVariant, createEquipmentChannel, encodeEquipmentVariant, consumeEquipmentShare} from './equipment-state.js?v=equipment-3d-20261125';
 
 const STORAGE_KEY = 'faza.park.equipment-plan.v1';
 const NF = new Intl.NumberFormat('ru-RU', {maximumFractionDigits: 1});
@@ -11,14 +12,6 @@ const views = ['plan', 'equipment', 'content', 'basis'];
 const contentType = type => ({linear:'Фильм', video:'Фильм', interactive:'Интерактивная программа', app:'Интерактивная программа', editorial:'Тексты и иллюстрации', navigation:'Навигация', ambient:'Фоновая программа', projection:'Проекция', vr:'VR-программа', audio:'Звук', realtime:'Генеративная сцена'}[type] || 'Медиапрограмма');
 const matches = (g, s) => (!s.regionId || g.regionId === s.regionId) && (!s.hallId || g.hallId === s.hallId) && (!s.floorId || g.floorId === s.floorId);
 
-function encodeState(value) {
-  return btoa(Array.from(new TextEncoder().encode(JSON.stringify(value)), c => String.fromCharCode(c)).join('')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-}
-function decodeState(value) {
-  if (!value || value.length > 150000) throw new Error('Слишком длинная ссылка.');
-  return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(value.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0))));
-}
-
 /** A single state drives quantities, the drawing and all dependent figures. */
 export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmentMap, storage, initialState, locationObject = window.location} = {}) {
   if (!mount || !Array.isArray(data?.groups)) throw new Error('Не удалось загрузить оборудование.');
@@ -28,21 +21,12 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
   let state = normalizeState(data, initialState || baseline);
   let scope = {regionId:'rgo', hallId:null, floorId:null}, mapFloor='main';
   let exhibitId = '', selectedId = '', view = 'plan', report = null, map, destroyed = false, announcementTimer, clearAnnouncementTimer;
-  let history = [], future = [], lastEdit = null;
+  let history = [], future = [], lastEdit = null, channel=null, applyingRemote=false;
   const abort = new AbortController();
   const url = new URL(locationObject.href);
-  let restoreMessage = '';
-  try {
-    const shared = url.searchParams.get('equipmentPlan');
-    const saved = shared ? decodeState(shared) : (!initialState && safeStorage?.getItem(STORAGE_KEY) ? JSON.parse(safeStorage.getItem(STORAGE_KEY)) : null);
-    if (saved?.schema === 'faza.park.equipment-plan.v1') {
-      state = normalizeState(data, saved.state);
-      scope = {...scope, ...saved.scope};
-      mapFloor = saved.mapFloor || saved.scope?.floorId || 'main';
-      exhibitId = typeof saved.exhibitId === 'string' ? saved.exhibitId : '';
-      restoreMessage = shared ? 'Открыт вариант из ссылки.' : '';
-    }
-  } catch { restoreMessage = 'Сохранённый вариант не открылся. Показано начальное оснащение.'; }
+  const restored=readEquipmentVariant(data,{storage:safeStorage,locationObject,initialState});
+  let restoreMessage=restored.error?'Сохранённый вариант не открылся. Показано начальное оснащение.':restored.shared?'Открыт вариант из ссылки.':'';
+  if(restored.restored){state=normalizeState(data,restored.variant.state);scope={...scope,...restored.variant.scope};mapFloor=restored.variant.mapFloor;exhibitId=restored.variant.exhibitId;}
   if (!data.regions.some(r => r.id === scope.regionId)) scope.regionId = null;
   if (!data.halls.some(h => h.id === scope.hallId && h.regionId === scope.regionId)) scope.hallId = null;
   scope.floorId=null;
@@ -53,7 +37,7 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
   const root = document.createElement('div'); root.className = 'equipment-planner';
   mount.replaceChildren(root);
   root.innerHTML = `
-    <div class="ep-heading"><div><h2 id="installations-title">Расчёт инсталляций</h2><p class="ep-intro">Выберите зону и измените количество оборудования. Схема и расчёты обновятся сразу.</p></div></div>
+    <div class="ep-heading"><div><h2 id="installations-title">Расчёт инсталляций</h2><p class="ep-intro">Меняйте количество, передвигайте и поворачивайте оборудование на плане. Общая 3D-схема и расчёты обновляются вместе с ним.</p></div><button type="button" class="ep-open-3d" data-action="3d">Общая 3D-схема</button></div>
     <div class="ep-basis" aria-label="Основа проекта"><span><strong>18 884 м²</strong> площадь парка</span><span><strong>8 округов</strong></span><span><strong>9 залов РГО</strong></span><span><strong>4 часа</strong> полная экскурсия</span></div>
     <div class="ep-toolbar" data-az-zone="controls">
       <label class="ep-field">Зона<select id="ep-region" aria-label="Зона"></select></label>
@@ -79,7 +63,7 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
     <section id="ep-panel-content" class="ep-panel" role="tabpanel" aria-labelledby="ep-tab-content" hidden><div id="ep-content"></div></section>
     <section id="ep-panel-basis" class="ep-panel" role="tabpanel" aria-labelledby="ep-tab-basis" hidden><div id="ep-basis-detail"></div></section>
     <div class="ep-actions" data-az-zone="controls"><button type="button" data-action="undo">Отменить</button><button type="button" data-action="redo">Повторить</button><button type="button" data-action="share">Ссылка на вариант</button><button type="button" data-action="csv">Скачать ведомость</button><button type="button" data-action="reset">Начальное оснащение</button></div>
-    <p class="ep-status" id="ep-save-status">Изменения сохраняются в этом браузере. Ссылкой можно передать выбранный вариант.</p>
+    <p class="ep-status" id="ep-save-status">План и 3D используют одну расстановку. Изменения сохраняются в этом браузере; ссылкой можно передать выбранный вариант.</p>
     <p class="ep-toast" id="ep-announcement" role="status" aria-live="polite" aria-atomic="true"></p>
     <label id="ep-share-fallback" class="ep-field" hidden>Ссылка на вариант<input type="text" readonly aria-label="Ссылка на вариант"></label>`;
   const $ = id => root.querySelector(id);
@@ -94,8 +78,10 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
   const mapScope = () => ({...scope,floorId:mapFloor,exhibitId:exhibitId||null});
   const scopeInstances = () => getInstances(data,state).filter(i=>matches(i,mapScope()) && (!exhibitId || data.groups.find(g=>g.id===i.groupId)?.exhibitId===exhibitId));
   function announce(text) { clearTimeout(announcementTimer);clearTimeout(clearAnnouncementTimer); $('#ep-announcement').textContent=''; announcementTimer=setTimeout(()=>{if(!destroyed){$('#ep-announcement').textContent=text;clearAnnouncementTimer=setTimeout(()=>{if(!destroyed)$('#ep-announcement').textContent='';},5000);}},100); }
-  function savedVariant() {return {schema:'faza.park.equipment-plan.v1',state:{quantities:Object.fromEntries(data.groups.filter(g=>quantity(g)!==baseline.quantities[g.id]).map(g=>[g.id,quantity(g)])),positions:state.positions||{}},scope,mapFloor,exhibitId};}
+  function savedVariant() {return equipmentVariant(data,state,{scope,mapFloor,exhibitId});}
   function persist() {
+    if(applyingRemote)return;
+    if(channel){channel.publish(savedVariant());return;}
     try {safeStorage?.setItem(STORAGE_KEY,JSON.stringify(savedVariant()));}
     catch {$('#ep-save-status').textContent='Браузер не сохранил вариант. Используйте «Ссылка на вариант», чтобы сохранить изменения.';}
   }
@@ -180,7 +166,7 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
   function acceptPlacement(next) {
     report=next;
     const placed=(next.all||next).placed||[],positions={...state.positions};
-    for(const item of placed) if(!item.seedPosition && Number.isFinite(item.position?.x) && Number.isFinite(item.position?.z))positions[item.id]={...item.position};
+    for(const item of placed) if((!item.seedPosition||state.positions[item.id]) && Number.isFinite(item.position?.x) && Number.isFinite(item.position?.z))positions[item.id]={...item.position};
     if(JSON.stringify(positions)!==JSON.stringify(state.positions)){state=normalizeState(data,{...state,positions});persist();}
     renderPlacement();
   }
@@ -211,9 +197,22 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
   }
   async function share() {
     const target=new URL(locationObject.href);for(const k of ['parkInstallations','parkAnswers','equipmentView','rgo','installationsView'])target.searchParams.delete(k);
-    target.searchParams.set('equipmentPlan',encodeState(savedVariant()));target.hash='installations';
+    target.searchParams.set('equipmentPlan',encodeEquipmentVariant(savedVariant()));target.hash='installations';
     try {await navigator.clipboard.writeText(target.href);announce('Ссылка на этот вариант скопирована.');}
     catch {const box=$('#ep-share-fallback');box.hidden=false;const input=box.querySelector('input');input.value=target.href;input.focus();input.select();announce('Скопируйте ссылку из поля.');}
+  }
+  function open3D() {
+    persist();
+    const focus={id:selectedId||null,regionId:scope.regionId,hallId:scope.hallId,floorId:mapFloor};
+    channel?.focus(focus);
+    const frame=root.ownerDocument.getElementById('park-tour');
+    if(frame){locationObject.hash='tour';return;}
+    const target=new URL('../tour/',import.meta.url);
+    target.searchParams.set('equipmentPlan',encodeEquipmentVariant(savedVariant()));
+    if(selectedId)target.searchParams.set('equipmentFocus',selectedId);
+    else if(scope.regionId)target.searchParams.set('section',scope.regionId==='rgo'?'rgo':'zone:'+scope.regionId);
+    if(scope.hallId)target.searchParams.set('rgo',scope.hallId.replace('RGO-',''));
+    root.ownerDocument.defaultView?.open(target.href,'_blank','noopener');
   }
   on($('#ep-region'),'change',e=>selectScope({regionId:e.target.value||null,hallId:null}));
   on($('#ep-hall'),'change',e=>selectScope({hallId:e.target.value||null,floorId:'main'}));
@@ -228,6 +227,7 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
     if(b.dataset.showGroup){const i=getInstances(data,state).find(i=>i.groupId===b.dataset.showGroup);if(i){selectedId=i.id;mapFloor=i.floorId;$('#ep-floor').value=mapFloor;view='plan';render(false);}return;}
     if(b.dataset.region){selectScope({regionId:b.dataset.region,hallId:b.dataset.hall||null});selectView('plan');return;}
     const action=b.dataset.action;
+    if(action==='3d'){open3D();return;}
     if(action==='add'){const g=data.groups.find(g=>g.id===$('#ep-add-type')?.value);if(g){mapFloor=g.floorId;$('#ep-floor').value=mapFloor;commit(setQuantity(data,state,g.id,1),{refreshEditor:true,message:`Добавлено: ${groupName(g)}.`});selectedId=getInstances(data,state).find(i=>i.groupId===g.id)?.id||'';render(true);}return;}
     if(action==='undo'&&history.length){future.push(copy(state));state=history.pop();lastEdit=null;persist();render(true);announce('Последнее изменение отменено.');}
     if(action==='redo'&&future.length){history.push(copy(state));state=future.pop();lastEdit=null;persist();render(true);announce('Изменение восстановлено.');}
@@ -235,16 +235,27 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
     if(action==='share')share();if(action==='csv')exportCSV();
   });
   on(root,'keydown',e=>{const tab=e.target.closest('[role="tab"]');if(!tab)return;let n=views.indexOf(tab.dataset.view);if(e.key==='ArrowRight')n=(n+1)%views.length;else if(e.key==='ArrowLeft')n=(n+views.length-1)%views.length;else if(e.key==='Home')n=0;else if(e.key==='End')n=views.length-1;else return;e.preventDefault();selectView(views[n]);$(`#ep-tab-${views[n]}`).focus();});
+  channel=createEquipmentChannel({data,variant:restored.variant,storage:safeStorage,windowObject:root.ownerDocument.defaultView,
+    onVariant(next){
+      const checked=normalizeState(data,next.state);if(JSON.stringify(checked)===JSON.stringify(state))return;
+      history.push(copy(state));if(history.length>60)history.shift();future=[];lastEdit=null;state=checked;
+      if(selectedId&&!getInstances(data,state).some(i=>i.id===selectedId))selectedId='';
+      applyingRemote=true;renderSelectors();render(true);applyingRemote=false;
+      announce('Расстановка обновлена из 3D или другой открытой вкладки.');
+    },onStatus(message){$('#ep-save-status').textContent=message;announce(message);},onStorageError(){ $('#ep-save-status').textContent='Изменения видны на плане и в 3D, но браузер их не сохранил. Используйте «Ссылка на вариант».'; }
+  });
+  if(restored.shared&&restored.restored){channel.publish(savedVariant(),{force:true});consumeEquipmentShare(root.ownerDocument.defaultView,locationObject);}
   renderSelectors();render(true);
-  map=mapFactory($('#ep-map'),{onSelect:id=>{selectedId=typeof id==='string'?id:id?.id;renderSelection();map.update({data,instances:getInstances(data,state),scope:mapScope(),selectedId,positions:state.positions||{},exhibitId});},onMove:(id,position)=>commit({...state,positions:{...state.positions,[id]:position}},{message:'Расположение оборудования сохранено.'}),onScopeChange:next=>selectScope(next),onReport:acceptPlacement});
+  map=mapFactory($('#ep-map'),{onSelect:id=>{selectedId=typeof id==='string'?id:id?.id;renderSelection();map.update({data,instances:getInstances(data,state),scope:mapScope(),selectedId,positions:state.positions||{},exhibitId});},onMove:(id,position)=>commit({...state,positions:{...state.positions,[id]:position}},{message:'Положение и поворот сохранены на плане и в 3D.'}),onPreview:(id,position,meta)=>{if(meta?.valid!==false)channel.preview(id,position);else channel.endPreview(id);},onPreviewEnd:(id,meta)=>channel.endPreview(id,meta),onScopeChange:next=>selectScope(next),onReport:acceptPlacement});
   map?.update({data,instances:getInstances(data,state),scope:mapScope(),selectedId,positions:state.positions||{},exhibitId});
   if(map?.ready) Promise.resolve(map.ready).then(()=>{if(destroyed)return;report=map.getPlacementReport?.()||report;renderPlacement();}).catch(()=>{if(!destroyed)$('#ep-placement-status').textContent='План здания не загрузился. Количества и ведомость доступны; обновите страницу, чтобы повторить.';});
   if(restoreMessage)announce(restoreMessage);
-  return {getState:()=>copy(state),getScope:()=>({...scope}),getSummary:summary,setQuantity:(id,n)=>changeQuantity(id,n),selectScope,selectView,getPlacementReport:()=>report,destroy(){destroyed=true;abort.abort();clearTimeout(announcementTimer);clearTimeout(clearAnnouncementTimer);map?.destroy();root.remove();}};
+  channel.request();
+  return {getState:()=>copy(state),getScope:()=>({...scope}),getSummary:summary,setQuantity:(id,n)=>changeQuantity(id,n),selectScope,selectView,getPlacementReport:()=>report,destroy(){destroyed=true;abort.abort();channel?.dispose();clearTimeout(announcementTimer);clearTimeout(clearAnnouncementTimer);map?.destroy();root.remove();}};
 }
 
 const mount = typeof document!=='undefined' ? document.getElementById('park-installations') : null;
 if(mount) {
   mount.innerHTML='<div class="equipment-planner"><h2 id="installations-title">Расчёт инсталляций</h2><p class="ep-status" role="status">Загружаем план и оборудование…</p></div>';
-  fetch(new URL('./equipment-data.json?v=equipment-20261125',import.meta.url)).then(r=>{if(!r.ok)throw Error('data');return r.json();}).then(data=>{createEquipmentPlanner(mount,{data});}).catch(()=>{mount.innerHTML='<div class="equipment-planner"><h2 id="installations-title">Расчёт инсталляций</h2><p class="ep-error" role="alert">Не удалось загрузить план оборудования. Обновите страницу.</p></div>';});
+  fetch(new URL('./equipment-data.json?v=equipment-3d-20261125',import.meta.url)).then(r=>{if(!r.ok)throw Error('data');return r.json();}).then(data=>{createEquipmentPlanner(mount,{data});}).catch(()=>{mount.innerHTML='<div class="equipment-planner"><h2 id="installations-title">Расчёт инсталляций</h2><p class="ep-error" role="alert">Не удалось загрузить план оборудования. Обновите страницу.</p></div>';});
 }
