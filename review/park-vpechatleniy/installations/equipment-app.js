@@ -1,7 +1,7 @@
 import { createDefaultState, normalizeState, setQuantity, getInstances, getSummary, getContentPlan, getUnitMetrics } from './equipment-model.js?v=equipment-3d-20261125';
-import { createEquipmentMap } from './equipment-map.js?v=walk-split-20261125';
+import { createEquipmentMap } from './equipment-map.js?v=walk-location-20261125';
 import {equipmentVariant, readEquipmentVariant, createEquipmentChannel, encodeEquipmentVariant, consumeEquipmentShare} from './equipment-state.js?v=equipment-3d-20261125';
-import {createEquipmentWalk} from './equipment-walk.js?v=walk-split-20261125';
+import {createEquipmentWalk} from './equipment-walk.js?v=walk-location-20261125';
 
 const STORAGE_KEY = 'faza.park.equipment-plan.v1';
 const NF = new Intl.NumberFormat('ru-RU', {maximumFractionDigits: 1});
@@ -23,7 +23,7 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
   let scope = {regionId:'rgo', hallId:null, floorId:null}, mapFloor='main';
   let exhibitId = '', selectedId = '', view = 'plan', report = null, map, destroyed = false, announcementTimer, clearAnnouncementTimer;
   let history = [], future = [], lastEdit = null, channel=null, walk=null, applyingRemote=false;
-  let splitMap=null, splitMapPending=null, splitScope=null;
+  let splitMap=null, splitMapPending=null, splitScope=null,walkView=null;
   const abort = new AbortController();
   const url = new URL(locationObject.href);
   const restored=readEquipmentVariant(data,{storage:safeStorage,locationObject,initialState});
@@ -110,7 +110,7 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
         onScopeChange:next=>selectScope(next)});
       // Only the original map accepts automatic placement into the shared
       // state. Both views read those same positions; neither creates a variant.
-      syncSplitMap();splitMap.refreshLayout?.();return splitMap;
+      syncSplitMap();splitMap.setWalkView?.(walkView);splitMap.refreshLayout?.();return splitMap;
     }).catch(()=>{if(!destroyed)host.textContent='Не удалось загрузить схему зоны. Обновите страницу.';return null;})
       .finally(()=>{splitMapPending=null;});
     return splitMapPending;
@@ -291,7 +291,8 @@ export function createEquipmentPlanner(mount, {data, mapFactory = createEquipmen
   splitScope=walkScope();
   walk=walkFactory($('#ep-walk'),{scope:splitScope,label:walkLabel(),
     onSplitChange(visible,{mount,scope:nextScope}){if(visible){splitScope={...nextScope};ensureSplitMap(mount);}},
-    onMapSuspend:suspendSplitMap,onMapResize:()=>splitMap?.refreshLayout?.(),onUndo:undo,onRedo:redo});
+    onMapSuspend:suspendSplitMap,onMapResize:()=>splitMap?.refreshLayout?.(),
+    onWalkView(next){walkView=next;splitMap?.setWalkView?.(next);},onUndo:undo,onRedo:redo});
   render(true);
   map=mapFactory($('#ep-map'),{onSelect:id=>selectEquipment(map,id),onMove:moveEquipment,onPreview:previewEquipment,onPreviewEnd:endEquipmentPreview,onScopeChange:next=>selectScope(next),onReport:acceptPlacement});
   map?.update(mapState());

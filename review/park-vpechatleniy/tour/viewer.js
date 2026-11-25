@@ -1,8 +1,9 @@
 import { createZoneMap } from './zone-map.js?v=park-floor-colors-20261125';
 import { createExhibitionZones } from './zones-controller.js?v=park-walk-20261125';
 import { createWalkMode } from './walk-mode.js?v=installations-walk-20261125';
-import { createInstallationsWalkBridge } from './installations-walk-bridge.js?v=walk-split-20261125';
+import { createInstallationsWalkBridge } from './installations-walk-bridge.js?v=walk-location-20261125';
 import { createEquipmentPreviewHooks } from './equipment-preview-hooks.js?v=walk-split-20261125';
+import { createWalkViewFootprint, createWalkViewTelemetry } from './walk-view-footprint.js?v=walk-location-20261125';
 import { loadEquipmentSceneLink } from '../installations/equipment-link.js?v=equipment-3d-20261125';
 import * as THREE from 'three';
 import { GLTFLoader } from '/golden-ring/interactives/vendor/three-0.180/GLTFLoader.js';
@@ -30,7 +31,7 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const initialNavigation=new URLSearchParams(location.search);
 const installationsWalkEmbedded=initialNavigation.get('embedded')==='installations'&&window.parent!==window;
 if(installationsWalkEmbedded)document.documentElement.dataset.installationsWalk='true';
-window.addEventListener('beforeunload',()=>{equipmentLink?.dispose();installationsWalkBridge.dispose();},{once:true});
+window.addEventListener('beforeunload',()=>{equipmentLink?.dispose();installationsWalkBridge.dispose();walkViewFootprint.dispose();},{once:true});
 const exhibitQuality=initialNavigation.get('quality')==='high'?'high':'fast';
 const exhibitManifestPath=exhibitQuality==='high'?'assets/exhibits/manifest.json':'assets/exhibits/preview/manifest.json';
 const diagnostics = window.__parkViewer = { state:'loading', errors:[], source:'выставка_3D вид.dwg' };
@@ -62,6 +63,11 @@ const passengerPointers=new Map();let pinchDistance=0;
 Object.defineProperty(diagnostics,'onboard',{get:()=>({active:onboardVehicle>=0,vehicle:onboardVehicle>=0?onboardVehicle:null,yaw:passenger.yaw,pitch:passenger.pitch,eyeLocal:passenger.eye.toArray(),fov:camera.fov})});
 let exhibitionZones=null,zoneMap=null;
 let walkMode=null,walkStartPromise=null,walkBackup=null;
+let walkSightObstacles=()=>[];
+const walkCollisionRoots=()=>[
+  ...(exhibits?.roots||[]).filter(item=>item.visible&&item.userData.editorVisible!==false),
+  ...(monorail?.vehicles||[]),...(crowd?.objects?.elevators?.root?[crowd.objects.elevators.root]:[]),
+];
 Object.defineProperty(diagnostics,'walk',{enumerable:true,get:()=>walkMode?.getState()||{ready:false,active:false}});
 Object.defineProperty(diagnostics,'zones',{get:()=>exhibitionZones?.getState()||{ready:false}});
 Object.defineProperty(diagnostics,'zoneMap',{get:()=>zoneMap?.getState()||{ready:false}});
@@ -115,14 +121,18 @@ const camera = new THREE.PerspectiveCamera(43, 1, 0.05, 4000);
 camera.position.set(90,70,100);
 const viewDirections = {overview:new THREE.Vector3(1.9,1.12,.72), top:new THREE.Vector3(0,1,.001), front:new THREE.Vector3(0,.16,1), back:new THREE.Vector3(-1,.55,-1.25)};
 const viewNames = {overview:'Общий вид',top:'Вид сверху',front:'Вид спереди',back:'С другой стороны'};
+const walkViewFootprint=createWalkViewFootprint({getStaticMeshes:()=>sourceMeshes,getDynamicRoots:walkCollisionRoots,getObstacles:()=>walkSightObstacles(),maxDistanceM:24,rayCount:31});
+let walkViewTelemetry=null;
 const equipmentPreviewHooks=createEquipmentPreviewHooks({embedded:installationsWalkEmbedded,
   getWalkState:()=>walkMode?.getState()||{},getEmbeddedState:()=>installationsWalkBridge.getState(),
   getScene:()=>exhibitionZones,requestRender:()=>{needsRender=true;}});
 const installationsWalkBridge=createInstallationsWalkBridge({onVisibility(visible){
   active=visible;
   if(visible){window.dispatchEvent(new Event('resize'));needsRender=true;}
-},onLayout(){window.dispatchEvent(new Event('resize'));needsRender=true;},onPreviewReset:()=>equipmentPreviewHooks.cancel()});
+},onLayout(){window.dispatchEvent(new Event('resize'));needsRender=true;},onPreviewReset:()=>equipmentPreviewHooks.cancel(),onViewRequest:()=>walkViewTelemetry?.request()});
+walkViewTelemetry=createWalkViewTelemetry({getCamera:()=>camera,getWalkState:()=>walkMode?.getState()||{},getBridgeState:()=>installationsWalkBridge.getState(),footprint:walkViewFootprint,sendView:view=>installationsWalkBridge.sendView(view)});
 Object.defineProperty(diagnostics,'installationsWalk',{enumerable:true,get:()=>installationsWalkBridge.getState()});
+Object.defineProperty(diagnostics,'walkView',{enumerable:true,get:()=>({telemetry:walkViewTelemetry.getStats(),footprint:walkViewFootprint.getStats()})});
 
 function fail(error) {
   const message = error?.message || String(error);
@@ -175,9 +185,10 @@ try {
       if(model&&inspectedExhibitId!==null)focusExhibit(inspectedExhibitId,true);
       else if(model&&currentView)setView(currentView,true);
     }
+    walkViewTelemetry.request();
     needsRender=true;
   }
-  new ResizeObserver(resize).observe(stage);resize();
+  new ResizeObserver(resize).observe(stage);window.addEventListener('resize',resize);resize();
   const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
   const textureLoader=new KTX2Loader().setTranscoderPath('vendor/ktx2/libs/basis/').setWorkerLimit(2);
   textureLoader.detectSupport(renderer);loader.setKTX2Loader(textureLoader);
@@ -262,6 +273,7 @@ try {
     if(crowd?.update(delta))needsRender=true;
     if(exhibitionZones?.update(delta))needsRender=true;
     if(walkMode?.update(delta))needsRender=true;
+    walkViewTelemetry.update(time);
     if(onboardVehicle<0&&!walkMode?.active)controls.update();
     if(needsRender){renderer.render(scene,camera);needsRender=false;diagnostics.renderedFrames=(diagnostics.renderedFrames||0)+1;diagnostics.renderTriangles=renderer.info.render.triangles;}
   }
@@ -600,7 +612,7 @@ async function startExhibits(loader,monorailReady){
     equipmentLink=await loadEquipmentSceneLink({
       onSnapshot(snapshot){
         const result=exhibitionZones.setEquipmentPlan(snapshot);
-        if(result.ok){walkMode?.refreshLayout();exhibitEditor?.refresh?.();rgoZones?.refresh?.();syncExhibitControls(exhibits.getState());needsRender=true;}
+        if(result.ok){walkMode?.refreshLayout();walkViewTelemetry.request();exhibitEditor?.refresh?.();rgoZones?.refresh?.();syncExhibitControls(exhibits.getState());needsRender=true;}
         return result;
       },
       onPreview:equipmentPreviewHooks.onPreview,
@@ -904,9 +916,7 @@ function startWalkingMode(){
   walkStartPromise=(async()=>{
     const fixed=[...(monorail?.getCollisionObstacles()||[]),...(icebreakerAccess?.getCollisionObstacles()||[])];
     const wagonBox=new THREE.Box3(),wagonCenter=new THREE.Vector3(),wagonSize=new THREE.Vector3();
-    walkMode=await createWalkMode({
-      camera,canvas,sourceMeshes,sourceZones:zoneMap.data,controller:exhibitionZones,
-      getDynamicObstacles:()=>{
+    walkSightObstacles=()=>{
         if(!dynamicObstacles)throw new Error('Не загружены препятствия экспозиции.');
         const obstacles=[...dynamicObstacles.snapshot({groupVisible:true}).proxies,...fixed];
         for(const [index,vehicle] of (monorail?.vehicles||[]).entries()){
@@ -917,11 +927,11 @@ function startWalkingMode(){
             halfSizeXZ:[wagonSize.x/2,wagonSize.z/2],rotationY:0,minY:wagonBox.min.y,maxY:wagonBox.max.y});
         }
         return obstacles;
-      },
-      getCollisionMeshes:()=>[
-        ...exhibits.roots.filter(item=>item.visible&&item.userData.editorVisible!==false),
-        ...(monorail?.vehicles||[]),...(crowd?.objects?.elevators?.root?[crowd.objects.elevators.root]:[]),
-      ],
+    };
+    walkMode=await createWalkMode({
+      camera,canvas,sourceMeshes,sourceZones:zoneMap.data,controller:exhibitionZones,
+      getDynamicObstacles:walkSightObstacles,
+      getCollisionMeshes:walkCollisionRoots,
       openPanel:id=>viewerUI.openPanel(id),closePanels:()=>viewerUI.closePanels(),requestRender:()=>{needsRender=true;},
       onEnter(){
         const visible=exhibits.group.visible;

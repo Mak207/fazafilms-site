@@ -58,9 +58,9 @@ async function fixture(){
   const section=win.document.querySelector('section'),mount=win.document.getElementById('split-fixture');
   const child=new win.EventTarget();
   Object.assign(child,{location:new URL('https://fazafilms.ru/review/park-vpechatleniy/tour/?embedded=installations'),parent:win,document:{querySelectorAll:()=>[]},CustomEvent:win.CustomEvent,crypto:win.crypto});
-  const messages=[];
+  const messages=[],childMessages=[];
   child.postMessage=(message,origin)=>{messages.push(structuredClone(message));queueMicrotask(()=>child.dispatchEvent(new win.MessageEvent('message',{data:structuredClone(message),origin,source:win})));};
-  win.postMessage=(message,origin)=>queueMicrotask(()=>win.dispatchEvent(new win.MessageEvent('message',{data:structuredClone(message),origin,source:child})));
+  win.postMessage=(message,origin)=>{childMessages.push(structuredClone(message));queueMicrotask(()=>win.dispatchEvent(new win.MessageEvent('message',{data:structuredClone(message),origin,source:child})));};
   const starts=[],walkState={active:false,zoneId:null,paused:true};
   const walk={getState:()=>({...walkState}),getZones:()=>[
     {id:'rgo-main',regionId:'rgo',level:'main',name:'РГО'},
@@ -89,7 +89,7 @@ async function fixture(){
   const peer=createEquipmentChannel({data,variant:readEquipmentVariant(data,{storage:peerStorage}).variant,storage:peerStorage,windowObject:child,
     onVariant:value=>peerEvents.push({kind:'variant',value}),onPreview:(id,position)=>{preview.set(id,position);peerEvents.push({kind:'preview',id,position});},
     onPreviewEnd:(id,meta)=>{if(id)preview.delete(id);else preview.clear();peerEvents.push({kind:'preview-end',id,...meta});}});
-  const f={win,mount,section,planner,maps,peer,peerEvents,preview,backing,bridge,starts,walkState,messages,frame,walkUI,
+  const f={win,mount,section,planner,maps,peer,peerEvents,preview,backing,peerStorage,bridge,starts,walkState,messages,childMessages,frame,walkUI,
     query:selector=>mount.querySelector(selector),
     position:(id=mainId)=>getInstances(data,planner.getState()).find(i=>i.id===id)?.position,
     peerPosition:(id=mainId)=>getInstances(data,peer.getVariant().state).find(i=>i.id===id)?.position,
@@ -201,4 +201,73 @@ test('new equipment has one automatic position and the upper map stays on the wa
   assert.equal(f.starts.length,starts);
   const floor=f.query('#ep-floor');floor.value='upper';floor.dispatchEvent(new f.win.Event('change',{bubbles:true}));await settle();
   assert.equal(f.maps.get('top').api.getPlacementReport().scope.floorId,'upper');assert.equal(f.walkState.zoneId,'central-upper');
+});
+
+function cameraView({x=-4,z=-3,fov=Math.PI/3,directionXZ=[0,1]}={}){
+  const heading=Math.atan2(directionXZ[1],directionXZ[0]),distance=8;
+  return {x,y:8.85,z,floorId:'main',directionXZ,horizontalFovRad:fov,maxDistanceM:24,
+    visiblePolygonXZ:[[x,z],...[heading-fov/2,heading,heading+fov/2].map(angle=>[x+Math.cos(angle)*distance,z+Math.sin(angle)*distance])]};
+}
+function markerPosition(f){
+  const marker=f.maps.get('top').host.querySelector('.epm-walk-marker');assert.ok(marker,'The camera update reaches the real SVG marker.');
+  const match=/translate\(([-\d.e]+) ([-\d.e]+)\)/.exec(marker.getAttribute('transform'));assert.ok(match);
+  return {x:-Number(match[2]),z:Number(match[1])};
+}
+const viewPacket=f=>f.childMessages.filter(message=>message.kind==='view'&&message.view).at(-1);
+
+test('actual child camera messages update the marker during an active equipment drag without cancelling it',async()=>{
+  const f=await fixture();await f.split();
+  assert.equal(f.bridge.sendView(cameraView()),true);await settle();
+  assert.deepEqual(markerPosition(f),{x:-4,z:-3});
+  beginDrag(f,'top',2,1);await settle();
+  const grabbed=f.node('top'),handle=f.handle('top'),saved=f.planner.getState(),writes=f.backing.writes.length,peerWrites=f.peerStorage.writes.length;
+  assert.equal(f.bridge.sendView(cameraView({x:-1,z:4,directionXZ:[1,0]})),true);await settle();
+  assert.deepEqual(markerPosition(f),{x:-1,z:4});
+  assert.equal(f.node('top'),grabbed,'A view message must not rebuild the grabbed equipment node.');
+  assert.equal(f.handle('top'),handle,'Rotation controls retain the current pointer gesture.');
+  assert.ok(f.maps.get('top').host.querySelector('.equipment-map').classList.contains('is-dragging'));
+  assert.equal(f.preview.get(mainId)?.x,2);assert.equal(f.preview.get(mainId)?.z,1);
+  assert.deepEqual(f.planner.getState(),saved);assert.equal(f.backing.writes.length,writes);assert.equal(f.peerStorage.writes.length,peerWrites);
+  assert.equal(f.query('[data-action="undo"]').disabled,true);
+  assert.equal(f.maps.get('top').host.querySelector('.epm-walk-view').getAttribute('pointer-events'),'none');
+  finishDrag(f,'top',2,1);await settle();
+  assert.equal(f.position().x,2);assert.equal(f.mapPosition('bottom').z,1);assert.equal(f.peerPosition().x,2);
+  f.query('[data-walk-undo]').click();await settle();assert.equal(f.position().x,0);assert.equal(f.query('[data-action="undo"]').disabled,true);
+});
+
+test('a resized camera field of view changes only the live sector and preserves the iframe and equipment history',async()=>{
+  const f=await fixture();await f.split();f.bridge.sendView(cameraView());await settle();
+  const top=f.maps.get('top'),saved=f.planner.getState(),writes=f.backing.writes.length,peerWrites=f.peerStorage.writes.length,frame=f.frame,src=frame.src,starts=f.starts.length;
+  const sector=top.host.querySelector('.epm-walk-sector'),path=sector.getAttribute('d'),marker=markerPosition(f),zoneMessages=f.messages.filter(m=>m.kind==='zone').length;
+  // This models the new camera snapshot after an aspect change; it does not render WebGL.
+  top.width=760;top.height=420;f.win.dispatchEvent(new f.win.Event('resize'));await settle();
+  assert.equal(f.bridge.sendView(cameraView({fov:Math.PI*.64})),true);await settle();
+  assert.equal(top.host.querySelector('.epm-walk-sector'),sector);assert.notEqual(sector.getAttribute('d'),path);
+  assert.deepEqual(markerPosition(f),marker);assert.deepEqual(f.planner.getState(),saved);
+  assert.equal(f.backing.writes.length,writes);assert.equal(f.peerStorage.writes.length,peerWrites);
+  assert.equal(f.query('[data-action="undo"]').disabled,true);assert.equal(f.query('[data-action="redo"]').disabled,true);
+  assert.equal(f.query('#ep-walk iframe'),frame);assert.equal(frame.src,src);assert.equal(f.starts.length,starts);
+  assert.equal(f.messages.filter(m=>m.kind==='zone').length,zoneMessages);
+});
+
+test('old-scope camera packets cannot erase or block the new marker and hiding clears queued camera updates',async()=>{
+  const f=await fixture();await f.split();f.bridge.sendView(cameraView());await settle();const old=viewPacket(f);
+  f.planner.selectScope({regionId:'rgo',hallId:'RGO-05'});await settle();
+  f.bridge.sendView(cameraView({x:5,z:2}));await settle();const current=viewPacket(f);
+  assert.notEqual(old.scopeSequence,current.scopeSequence);assert.deepEqual(markerPosition(f),{x:5,z:2});
+  // A delayed producer still carrying the former scope must not consume the new scope's sequence.
+  f.win.postMessage({...old,sequence:current.sequence+1,view:cameraView({x:18,z:18})},f.win.location.origin);await settle();
+  assert.deepEqual(markerPosition(f),{x:5,z:2});
+  f.bridge.sendView(cameraView({x:6,z:3}));await settle();assert.deepEqual(markerPosition(f),{x:6,z:3});
+  const latest=viewPacket(f);
+  f.win.postMessage({...old,sequence:latest.sequence+1,view:null},f.win.location.origin);await settle();
+  assert.equal(f.maps.get('top').host.querySelector('.epm-walk-view').getAttribute('display'),'inline');
+  assert.deepEqual(markerPosition(f),{x:6,z:3});
+  const before=f.planner.getState(),writes=f.backing.writes.length,frame=f.frame,starts=f.starts.length;
+  f.bridge.sendView(cameraView({x:7,z:4}));f.show(false);await settle();
+  assert.equal(f.maps.get('top').host.querySelector('.epm-walk-view').getAttribute('display'),'none');
+  assert.equal(f.bridge.sendView(cameraView()),false,'The child does not publish camera frames while hidden.');
+  f.show(true);await settle();f.bridge.sendView(cameraView({x:8,z:5}));await settle();
+  assert.deepEqual(markerPosition(f),{x:8,z:5});assert.equal(f.maps.get('top').host.querySelector('.epm-walk-view').getAttribute('display'),'inline');
+  assert.deepEqual(f.planner.getState(),before);assert.equal(f.backing.writes.length,writes);assert.equal(f.frame,frame);assert.equal(f.starts.length,starts);
 });
