@@ -28,12 +28,12 @@ export function resolveInstallationsWalkZone(scope, zones = []) {
 }
 
 /** Isolated same-origin channel for the single embedded walk; equipment uses its existing channel. */
-export function createInstallationsWalkBridge({ windowObject = globalThis.window, onVisibility = () => {} } = {}) {
+export function createInstallationsWalkBridge({ windowObject = globalThis.window, onVisibility = () => {}, onLayout = () => {}, onPreviewReset = () => {} } = {}) {
   const win = windowObject, parent = win?.parent, origin = win?.location?.origin;
   let enabled = false;
   try { enabled = Boolean(parent && parent !== win && origin && origin !== 'null' && new URL(win.location.href).searchParams.get('embedded') === 'installations'); } catch {}
-  let walk = null, visible = false, disposed = false, pending = null, appliedKey = null, appliedScope = null;
-  let zoneSequence = -1, visibilitySequence = -1;
+  let walk = null, visible = false, split = false, disposed = false, pending = null, appliedKey = null, appliedScope = null;
+  let zoneSequence = -1, visibilitySequence = -1, layoutSequence = -1;
   const post = payload => { if (enabled && !disposed) { try { parent.postMessage({ protocol: INSTALLATIONS_WALK_PROTOCOL, ...payload }, origin); } catch {} } };
   const state = () => walk?.getState?.() || { ready: false, active: false };
   function status({ ok = true, error = false, text = '', scope = appliedScope } = {}) {
@@ -49,6 +49,7 @@ export function createInstallationsWalkBridge({ windowObject = globalThis.window
       pending = null; walk.setPaused?.(false); return true;
     }
     pending = null;
+    onPreviewReset('zone');
     const result = walk.start(resolved.zone.id, { focus: false });
     if (!result?.ok) {
       status({ ok: false, scope: resolved.scope, text: result?.message || 'В выбранной зоне нет свободного места для начала прогулки. Измените расстановку или выберите другую зону.' });
@@ -66,8 +67,14 @@ export function createInstallationsWalkBridge({ windowObject = globalThis.window
       const next = typeof message.visible === 'boolean' ? message.visible : message.active;
       if (typeof next !== 'boolean' || message.sequence <= visibilitySequence) return;
       visibilitySequence = message.sequence; visible = next;
+      if (!visible) onPreviewReset('hidden');
       walk?.setPaused?.(!visible); onVisibility(visible);
       if (visible) applyPending();
+    } else if (message.kind === 'layout') {
+      if (typeof message.split !== 'boolean' || message.sequence <= layoutSequence) return;
+      layoutSequence = message.sequence; split = message.split;
+      if (!split) onPreviewReset('layout');
+      onLayout(split);
     } else if (message.kind === 'zone') {
       if (message.sequence <= zoneSequence || !message.scope || typeof message.scope !== 'object' || Array.isArray(message.scope)) return;
       zoneSequence = message.sequence;
@@ -77,6 +84,7 @@ export function createInstallationsWalkBridge({ windowObject = globalThis.window
   }
   function walkChanged(event) {
     if (!enabled || disposed || !walk || event.detail?.active !== false) return;
+    onPreviewReset('exit');
     status({ text: 'Прогулка остановлена. Нажмите «К началу зоны», чтобы продолжить.' });
   }
   if (enabled) { win.addEventListener('message', receive); win.document?.addEventListener?.('park-walk-change', walkChanged); onVisibility(false); }
@@ -87,7 +95,7 @@ export function createInstallationsWalkBridge({ windowObject = globalThis.window
       walk = mode; walk?.setPaused?.(!visible); post({ kind: 'ready' }); applyPending();
     },
     error(text) { status({ ok: false, error: true, text: String(text || 'Не удалось подготовить прогулку.') }); },
-    getState: () => ({ enabled, ready: Boolean(walk), visible, pending: pending ? clone(pending.scope) : null, appliedKey }),
-    dispose() { if (disposed) return; disposed = true; win?.removeEventListener?.('message', receive); win?.document?.removeEventListener?.('park-walk-change', walkChanged); walk?.setPaused?.(true); walk = null; pending = null; },
+    getState: () => ({ enabled, ready: Boolean(walk), visible, split, pending: pending ? clone(pending.scope) : null, appliedKey }),
+    dispose() { if (disposed) return; disposed = true; onPreviewReset('dispose'); win?.removeEventListener?.('message', receive); win?.document?.removeEventListener?.('park-walk-change', walkChanged); walk?.setPaused?.(true); walk = null; pending = null; },
   };
 }

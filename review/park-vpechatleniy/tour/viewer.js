@@ -1,7 +1,8 @@
 import { createZoneMap } from './zone-map.js?v=park-floor-colors-20261125';
 import { createExhibitionZones } from './zones-controller.js?v=park-walk-20261125';
 import { createWalkMode } from './walk-mode.js?v=installations-walk-20261125';
-import { createInstallationsWalkBridge } from './installations-walk-bridge.js?v=installations-walk-20261125';
+import { createInstallationsWalkBridge } from './installations-walk-bridge.js?v=walk-split-20261125';
+import { createEquipmentPreviewHooks } from './equipment-preview-hooks.js?v=walk-split-20261125';
 import { loadEquipmentSceneLink } from '../installations/equipment-link.js?v=equipment-3d-20261125';
 import * as THREE from 'three';
 import { GLTFLoader } from '/golden-ring/interactives/vendor/three-0.180/GLTFLoader.js';
@@ -114,10 +115,13 @@ const camera = new THREE.PerspectiveCamera(43, 1, 0.05, 4000);
 camera.position.set(90,70,100);
 const viewDirections = {overview:new THREE.Vector3(1.9,1.12,.72), top:new THREE.Vector3(0,1,.001), front:new THREE.Vector3(0,.16,1), back:new THREE.Vector3(-1,.55,-1.25)};
 const viewNames = {overview:'Общий вид',top:'Вид сверху',front:'Вид спереди',back:'С другой стороны'};
+const equipmentPreviewHooks=createEquipmentPreviewHooks({embedded:installationsWalkEmbedded,
+  getWalkState:()=>walkMode?.getState()||{},getEmbeddedState:()=>installationsWalkBridge.getState(),
+  getScene:()=>exhibitionZones,requestRender:()=>{needsRender=true;}});
 const installationsWalkBridge=createInstallationsWalkBridge({onVisibility(visible){
   active=visible;
   if(visible){window.dispatchEvent(new Event('resize'));needsRender=true;}
-}});
+},onLayout(){window.dispatchEvent(new Event('resize'));needsRender=true;},onPreviewReset:()=>equipmentPreviewHooks.cancel()});
 Object.defineProperty(diagnostics,'installationsWalk',{enumerable:true,get:()=>installationsWalkBridge.getState()});
 
 function fail(error) {
@@ -166,8 +170,11 @@ try {
   function resize(){
     const width=stage.clientWidth,height=stage.clientHeight;if(!width||!height)return;
     renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();
-    if(model&&inspectedExhibitId!==null)focusExhibit(inspectedExhibitId,true);
-    else if(model&&currentView)setView(currentView,true);
+    // Splitting the embedded pane changes only its aspect, never the visitor's viewpoint.
+    if(!installationsWalkEmbedded){
+      if(model&&inspectedExhibitId!==null)focusExhibit(inspectedExhibitId,true);
+      else if(model&&currentView)setView(currentView,true);
+    }
     needsRender=true;
   }
   new ResizeObserver(resize).observe(stage);resize();
@@ -596,8 +603,8 @@ async function startExhibits(loader,monorailReady){
         if(result.ok){walkMode?.refreshLayout();exhibitEditor?.refresh?.();rgoZones?.refresh?.();syncExhibitControls(exhibits.getState());needsRender=true;}
         return result;
       },
-      onPreview:(id,position)=>{if(walkMode?.active)return {ok:true,preview:false};const result=exhibitionZones.previewEquipment(id,position);if(result?.ok)needsRender=true;return result;},
-      onPreviewEnd:id=>{exhibitionZones.cancelEquipmentPreview(id);needsRender=true;},
+      onPreview:equipmentPreviewHooks.onPreview,
+      onPreviewEnd:equipmentPreviewHooks.onPreviewEnd,
       onFocus:focusEquipmentFromPlan,
       onError(message){$('scene-notice').textContent=message;$('scene-notice').hidden=false;needsRender=true;}
     });

@@ -333,7 +333,7 @@ export function createEquipmentMap(mount,{onSelect,onMove,onPreview,onPreviewEnd
       on(group,'pointerenter',e=>{if(!drag)showTip(e,record);});on(group,'pointerleave',hideTip);
       on(group,'click',e=>{e.stopPropagation();if(drag?.moved||Date.now()<suppressClickUntil)return;state.selectedId=record.id;onSelect?.(record.id);render();});
       on(group,'keydown',e=>{
-        if(e.key==='Enter'||e.key===' '){e.preventDefault();onSelect?.(record.id);}
+        if(e.key==='Enter'||e.key===' '){e.preventDefault();state.selectedId=record.id;onSelect?.(record.id);render();}
         if(e.altKey&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)&&onMove){e.preventDefault();const step=e.shiftKey?1:.25,delta={ArrowLeft:[0,-step],ArrowRight:[0,step],ArrowUp:[step,0],ArrowDown:[-step,0]}[e.key],proposed={...record.position,x:record.position.x+delta[0],z:record.position.z+delta[1]};tryMove(record,proposed);}
       });
       on(group,'pointerdown',e=>beginTransform(e,record,'object'));
@@ -393,7 +393,7 @@ export function createEquipmentMap(mount,{onSelect,onMove,onPreview,onPreviewEnd
   on(svg,'pointerup',e=>finishDrag(e));on(svg,'pointercancel',e=>finishDrag(e,true));on(svg,'lostpointercapture',e=>finishDrag(e,true));
   on(mount.ownerDocument.defaultView,'blur',()=>finishDrag(null,true));
   on(mount.ownerDocument.defaultView,'resize',()=>refreshControlSize(drag?.proposed));
-  on(svg,'keydown',e=>{if(e.key==='Escape'){e.preventDefault();hideTip();if(drag)finishDrag(null,true);else onSelect?.(null);}if(!drag&&(e.key==='+'||e.key==='=')){e.preventDefault();zoom(.8);}if(!drag&&e.key==='-'){e.preventDefault();zoom(1.25);}if(!drag&&e.key==='Home'){e.preventDefault();fitView();render();}});
+  on(svg,'keydown',e=>{if(e.key==='Escape'){e.preventDefault();hideTip();if(drag)finishDrag(null,true);else{state.selectedId=null;onSelect?.(null);render();}}if(!drag&&(e.key==='+'||e.key==='=')){e.preventDefault();zoom(.8);}if(!drag&&e.key==='-'){e.preventDefault();zoom(1.25);}if(!drag&&e.key==='Home'){e.preventDefault();fitView();render();}});
   function update(next={}) {
     if(drag)finishDrag(null,true);
     const oldSelected=state.selectedId;
@@ -409,5 +409,8 @@ export function createEquipmentMap(mount,{onSelect,onMove,onPreview,onPreviewEnd
   const ready=(geometry?Promise.resolve(geometry):loadEquipmentGeometry({signal:abort.signal})).then(g=>{if(destroyed)return;geometry=g;update(state);return geometry;}).catch(error=>{if(destroyed||error.name==='AbortError')return;status.textContent='Не удалось загрузить план. Обновите страницу.';root.classList.add('has-error');throw error;});
   // Prevent an unhandled rejection when the host uses the visible load state only.
   ready.catch(()=>{});
-  return {ready,update,getPlacementReport:()=>scopedReport(report,state.scope),fit:fitView,focus:focusItem,destroy(){finishDrag(null,true);destroyed=true;abort.abort();root.remove();}};
+  return {ready,update,getPlacementReport:()=>scopedReport(report,state.scope),fit:fitView,focus:focusItem,
+    cancelInteraction(){finishDrag(null,true);hideTip();},
+    refreshLayout(){refreshControlSize(drag?.proposed);},
+    destroy(){finishDrag(null,true);destroyed=true;abort.abort();root.remove();}};
 }

@@ -280,8 +280,24 @@ body[data-folder="installations"] .intro h1 {font-size:clamp(34px,4.2vw,58px);le
 .equipment-planner .ep-walk-heading h2{font-size:1.25rem;letter-spacing:-.02em}
 .equipment-planner .ep-walk-zone{margin:.3rem 0 0;color:var(--ep-muted);font-size:1rem}
 .equipment-planner .ep-walk-actions{display:flex;flex-wrap:wrap;gap:.55rem;flex-shrink:0}
-.equipment-planner .ep-walk-viewport{position:relative;min-height:20rem;height:clamp(20rem,56vh,40rem);background:#0e1612;border-top:1px solid var(--ep-line)}
+.equipment-planner .ep-walk-stage{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);min-height:20rem;height:clamp(20rem,56vh,40rem);border-top:1px solid var(--ep-line)}
+.equipment-planner .ep-walk-stage.is-split{grid-template-columns:repeat(2,minmax(0,1fr))}
+.equipment-planner .ep-walk-viewport{position:relative;min-width:0;min-height:0;height:100%;background:#0e1612}
 .equipment-planner .ep-walk-viewport iframe{display:block;width:100%;height:100%;border:0}
+.equipment-planner [data-walk-split][aria-pressed=true]{border-color:var(--ep-lime);background:#304936}
+.equipment-planner .ep-walk-map-panel{display:flex;flex-direction:column;min-width:0;min-height:0;border-left:1px solid var(--ep-line);background:var(--ep-panel);overflow:hidden}
+.equipment-planner .ep-walk-map-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;padding:.5rem .75rem}
+.equipment-planner .ep-walk-map-heading h3{font-size:1rem}
+.equipment-planner .ep-walk-map-actions{display:flex;gap:.4rem}
+.equipment-planner .ep-walk-map-actions button{padding:.45rem .65rem;font-size:.875rem}
+.equipment-planner .ep-walk-map{flex:1;min-width:0;min-height:0;overflow:hidden}
+.equipment-planner .ep-walk-map .equipment-map{display:flex;flex-direction:column;height:100%;min-height:0;border:0;border-radius:0}
+.equipment-planner .ep-walk-map .epm-stage{flex:1;min-height:0}
+.equipment-planner .ep-walk-map .epm-svg{height:100%;min-height:0}
+.equipment-planner .ep-walk-map .epm-toolbar{flex:0 0 auto;padding:.5rem;gap:.4rem}
+.equipment-planner .ep-walk-map .epm-legend,.equipment-planner .ep-walk-map .epm-hint{display:none}
+.equipment-planner .ep-walk-map .epm-footer{flex:0 0 auto;padding:.4rem .65rem}
+.equipment-planner .ep-walk-map .epm-issues{flex:0 1 auto;max-height:30%;min-height:0;overflow:auto;padding:.5rem .65rem}
 .equipment-planner .ep-walk-loading{position:absolute;inset:0;display:grid;place-items:center;margin:0;padding:1.5rem;color:var(--ep-muted);background:#0e1612;pointer-events:none}
 .equipment-planner .ep-walk-status{margin:0;padding:.65rem 1.2rem;border-top:1px solid var(--ep-line);color:var(--ep-muted);font-size:.875rem}
 .equipment-planner .ep-walk-status:empty{display:none}
@@ -289,6 +305,7 @@ body[data-folder="installations"] .intro h1 {font-size:clamp(34px,4.2vw,58px);le
 .equipment-planner .ep-walk-help-touch{display:none}
 @media(pointer:coarse){.equipment-planner .ep-walk-help-desktop{display:none}.equipment-planner .ep-walk-help-touch{display:inline}}
 .equipment-planner .ep-walk:fullscreen{display:flex;flex-direction:column;width:100%;height:100%;margin:0;border:0;border-radius:0;background:var(--ep-panel)}
-.equipment-planner .ep-walk:fullscreen .ep-walk-viewport{flex:1;min-height:0;height:auto}
-@media(max-width:700px){.equipment-planner .ep-walk-heading{flex-wrap:wrap;padding:.85rem}.equipment-planner .ep-walk-actions{gap:.45rem}.equipment-planner .ep-walk-actions button{font-size:.875rem}.equipment-planner .ep-walk-viewport{height:58svh;min-height:22rem;max-height:40rem}.equipment-planner .ep-walk-status{padding:.65rem .85rem}}
+.equipment-planner .ep-walk:fullscreen .ep-walk-stage{flex:1;min-height:0;height:auto;max-height:none}
+@media(max-width:900px){.equipment-planner .ep-walk-heading{flex-wrap:wrap}}
+@media(max-width:700px){.equipment-planner .ep-walk-heading{padding:.85rem}.equipment-planner .ep-walk-actions{gap:.45rem;flex-shrink:1}.equipment-planner .ep-walk-actions button{font-size:.875rem}.equipment-planner .ep-walk-stage{height:58svh;min-height:22rem;max-height:40rem}.equipment-planner .ep-walk-stage.is-split{grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(2,minmax(0,1fr));height:clamp(38rem,85svh,54rem);min-height:38rem;max-height:54rem}.equipment-planner .ep-walk-map-panel{border-left:0;border-top:1px solid var(--ep-line)}.equipment-planner .ep-walk-status{padding:.65rem .85rem}.equipment-planner .ep-walk:fullscreen .ep-walk-stage{min-height:0;height:auto;max-height:none}}
 @media print{.equipment-planner .ep-walk{display:none!important}}
