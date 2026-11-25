@@ -1,0 +1,1300 @@
+{
+  "schemaVersion": 1,
+  "revision": "park-physical-revisions-20261125",
+  "sourceCadSha256": "0fe60c53a9fc72c9ed0ad15ac8808ca721b3a7af8e96d81329cdc748c78fd792",
+  "sourceCadTriangles": 2927007,
+  "method": "Exact triangle-OBB SAT for complete conservative source hull, 23 airframe occupancy parts, columns, LED frames and full-height silo/return envelopes; moving vehicle 15-axis OBB SAT at 5cm route spacing.",
+  "wholeShip": {
+    "lengthMetres": 13.65,
+    "dimensions": [
+      3.4646156,
+      4.788289690532869,
+      13.65
+    ],
+    "sourceTriangles": 295970,
+    "retainedSourceTriangles": 295970,
+    "runtimeCutTriangles": 0,
+    "addedWheelhouse": false,
+    "ceilingY": 12.199999809265137,
+    "topY": 11.98828969053287,
+    "clearanceMetres": 0.21171011873226764,
+    "testedAlternative16mPoses": 503,
+    "alternativeClearPoses": 0,
+    "alternativeSearchReason": "Only greater-headroom patch inside northwest primary polygon overlaps stairs/lifts; current full 16m mast crosses 12.20m ceiling."
+  },
+  "arcticLed": {
+    "activeAreaSquareMetres": 62.172864,
+    "constructionAreaSquareMetres": 68.62,
+    "cabinetCount": 299,
+    "cabinetSizeMetres": [
+      0.608,
+      0.342
+    ],
+    "continuousImageUV": true,
+    "panels": [
+      {
+        "id": "lider-led-east",
+        "center": [
+          -4,
+          9.7,
+          46.3
+        ],
+        "rotationY": 3.141592653589793,
+        "width": 6.08,
+        "height": 4.446,
+        "frameWidth": 6.4,
+        "frameHeight": 4.7,
+        "thickness": 0.16,
+        "cabinetSizeMetres": [
+          0.608,
+          0.342
+        ],
+        "cabinets": {
+          "columns": 10,
+          "rows": 13,
+          "count": 130
+        },
+        "panoramaOrder": 0
+      },
+      {
+        "id": "lider-led-west",
+        "center": [
+          -12.5,
+          9.7,
+          45.5
+        ],
+        "rotationY": 2.8797932657906435,
+        "width": 7.904,
+        "height": 4.446,
+        "frameWidth": 8.2,
+        "frameHeight": 4.7,
+        "thickness": 0.16,
+        "cabinetSizeMetres": [
+          0.608,
+          0.342
+        ],
+        "cabinets": {
+          "columns": 13,
+          "rows": 13,
+          "count": 169
+        },
+        "panoramaOrder": 1
+      }
+    ],
+    "cadClearanceChecks": [
+      {
+        "id": "O12-1:Арктическая LED-панорама 1",
+        "clearanceMetres": 0.05,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Арктическая LED-панорама 2",
+        "clearanceMetres": 0.05,
+        "hits": []
+      }
+    ]
+  },
+  "silos": {
+    "floorY": 13.2,
+    "heightMetres": 16.89,
+    "topWorldY": 30.09,
+    "limitingEnvelopeObstructionY": 30.345833587646485,
+    "roofClearanceMetres": 0.2558335876464852,
+    "commonHeightRoundedDownAfter025mAllowance": true,
+    "individualKernelSizesRetained": true,
+    "headroomBySilo": [
+      {
+        "silo": 1,
+        "worldXZ": [
+          -0.8480613254815976,
+          -2.725340546095176
+        ],
+        "firstObstructionHeightAboveFloor": 17.593682861328126,
+        "firstObstructionY": 30.793682861328126,
+        "obstruction": [
+          {
+            "mesh": "A-ROOF__c0c0c0ff",
+            "triangles": 1,
+            "bounds": {
+              "min": [
+                0.26285213232040405,
+                30.723541259765625,
+                -3.16152024269104
+              ],
+              "max": [
+                0.8911985158920288,
+                30.809919357299805,
+                -1.9159847497940063
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "silo": 2,
+        "worldXZ": [
+          0.8136396103067893,
+          -1.0636396103067893
+        ],
+        "firstObstructionHeightAboveFloor": 17.37095413208008,
+        "firstObstructionY": 30.57095413208008,
+        "obstruction": [
+          {
+            "mesh": "A-ROOF__c0c0c0ff",
+            "triangles": 2,
+            "bounds": {
+              "min": [
+                1.9345645904541016,
+                30.52385902404785,
+                -1.6950334310531616
+              ],
+              "max": [
+                2.448288917541504,
+                30.617406845092773,
+                -0.4892829358577728
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "silo": 3,
+        "worldXZ": [
+          2.4753405460951763,
+          0.5980613254815972
+        ],
+        "firstObstructionHeightAboveFloor": 17.145833587646486,
+        "firstObstructionY": 30.345833587646485,
+        "obstruction": [
+          {
+            "mesh": "A-ROOF__c0c0c0ff",
+            "triangles": 1,
+            "bounds": {
+              "min": [
+                3.4295148849487305,
+                30.336538314819336,
+                -0.16638518869876862
+              ],
+              "max": [
+                3.9637491703033447,
+                30.392515182495117,
+                0.8058716058731079
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "aircraft": {
+    "liftMetres": 0.6,
+    "columnCount": 4,
+    "columnContactHeightsMetres": [
+      1.0533138107916715,
+      0.8333178579802059,
+      0.8402445060343462,
+      0.7931849949453305
+    ],
+    "sourceAirframeNotCut": true,
+    "cockpitsRemainOnMainFloor": true,
+    "tailTopWorldY": 11.953085515473356,
+    "ceilingY": 12.199999809265137,
+    "tailClearanceMetres": 0.24691429379178054
+  },
+  "architecture": {
+    "obstaclesChecked": 107,
+    "intersections": 0,
+    "results": [
+      {
+        "id": "O12-1:Лидер · целый корпус и надстройка",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 0",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 1",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 2",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 3",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 4",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 5",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 6",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 7",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 8",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 9",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 10",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 11",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 12",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 13",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 14",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 15",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 16",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 17",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 18",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 19",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 20",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 21",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 22",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 23",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 24",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 25",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 26",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 27",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 28",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 29",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 30",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 31",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 32",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 33",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 34",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 35",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 36",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 37",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 38",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 39",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 40",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 41",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 42",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 43",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 44",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 45",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 46",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 47",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 48",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 49",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 50",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 51",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 52",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 53",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 54",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 55",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 56",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 57",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 58",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 59",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 60",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 61",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 62",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 63",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 64",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Кромка ледового острова 65",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Арктическая LED-панорама 1",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:LED 1 · опора 1",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:LED 1 · опора 2",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:Арктическая LED-панорама 2",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:LED 2 · опора 1",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O12-1:LED 2 · опора 2",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "Z02-1:Z02:silo-1",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "Z02-1:Z02:silo-1-return",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "Z02-1:Z02:silo-2",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "Z02-1:Z02:silo-2-return",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "Z02-1:Z02:silo-3",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "Z02-1:Z02:silo-3-return",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "Z02-1:Z02:control",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-00",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-01",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-02",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-03",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-04",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-05",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-06",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-07",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-08",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-09",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-10",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-11",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-12",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-13",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-14",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-15",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-16",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-17",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-18",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-19",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-20",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-21",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:projected-airframe-22",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:aircraft-column-1",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:aircraft-column-2",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:aircraft-column-3",
+        "cadIntersections": 0,
+        "hits": []
+      },
+      {
+        "id": "O05-1:aircraft-column-4",
+        "cadIntersections": 0,
+        "hits": []
+      }
+    ]
+  },
+  "primaryZoneContainment": [
+    {
+      "id": "O12-1:Лидер · целый корпус и надстройка",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 0",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 1",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 2",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 3",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 4",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 5",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 6",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 7",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 8",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 9",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 10",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 11",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 12",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 13",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 14",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 15",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 16",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 17",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 18",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 19",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 20",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 21",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 22",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 23",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 24",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 25",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 26",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 27",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 28",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 29",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 30",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 31",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 32",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 33",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 34",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 35",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 36",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 37",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 38",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 39",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 40",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 41",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 42",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 43",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 44",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 45",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 46",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 47",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 48",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 49",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 50",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 51",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 52",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 53",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 54",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 55",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 56",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 57",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 58",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 59",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 60",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 61",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 62",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 63",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 64",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Кромка ледового острова 65",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Арктическая LED-панорама 1",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:LED 1 · опора 1",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:LED 1 · опора 2",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:Арктическая LED-панорама 2",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:LED 2 · опора 1",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O12-1:LED 2 · опора 2",
+      "zone": "northwest-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "Z02-1:Z02:silo-1",
+      "zone": "volga-upper",
+      "allCornersInside": true
+    },
+    {
+      "id": "Z02-1:Z02:silo-1-return",
+      "zone": "volga-upper",
+      "allCornersInside": true
+    },
+    {
+      "id": "Z02-1:Z02:silo-2",
+      "zone": "volga-upper",
+      "allCornersInside": true
+    },
+    {
+      "id": "Z02-1:Z02:silo-2-return",
+      "zone": "volga-upper",
+      "allCornersInside": true
+    },
+    {
+      "id": "Z02-1:Z02:silo-3",
+      "zone": "volga-upper",
+      "allCornersInside": true
+    },
+    {
+      "id": "Z02-1:Z02:silo-3-return",
+      "zone": "volga-upper",
+      "allCornersInside": true
+    },
+    {
+      "id": "Z02-1:Z02:control",
+      "zone": "volga-upper",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-00",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-01",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-02",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-03",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-04",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-05",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-06",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-07",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-08",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-09",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-10",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-11",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-12",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-13",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-14",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-15",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-16",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-17",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-18",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-19",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-20",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-21",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:projected-airframe-22",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:aircraft-column-1",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:aircraft-column-2",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:aircraft-column-3",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    },
+    {
+      "id": "O05-1:aircraft-column-4",
+      "zone": "siberia-main",
+      "allCornersInside": true
+    }
+  ],
+  "monorail": {
+    "routeLength": 354.3045892735288,
+    "samples": 7087,
+    "sampleStepMetres": 0.05,
+    "fullWagonSizeIncluding010mMargin": [
+      2.489036393,
+      3.303501946,
+      12.2
+    ],
+    "intersections": 0,
+    "hits": []
+  },
+  "limitations": [
+    "Working geometric fit to converted CAD; source CAD itself records omitted roof/wall spline faces.",
+    "0.25m silo roof allowance is a design reserve, not an approved fire-engineering or installation requirement.",
+    "Column structural loads, attachments and vibration not calculated."
+  ],
+  "passed": true
+}

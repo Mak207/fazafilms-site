@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { createPerimeterRoute, PERIMETER_ROUTE_CONFIG } from './perimeter-route.js?v=park-three-stations-20261124';
+import { createPerimeterRoute, PERIMETER_ROUTE_CONFIG } from './perimeter-route.js?v=park-exhibition-20261125-r2';
 
 /**
  * Monorail for the Park Impressions viewer. Three.js r180, metres, Y up.
@@ -23,7 +23,11 @@ export const TRAM_CONSTANTS = Object.freeze({
   runningSurfaceWidth: 0.30,
   runningSurfaceDepth: 0.06,
   supportSpacing: 12,
-  geometryStep: 0.9,
+  geometryStep: 0.3,
+  maxLateralAcceleration: 0.35,
+  maxTurnRate: 0.20,
+  comfortAcceleration: 0.45,
+  comfortJerk: 0.35,
 });
 
 const UP = new THREE.Vector3(0, 1, 0);
@@ -230,7 +234,7 @@ export function createMonorailRoute(input = MONORAIL_ROUTE_CONFIG) {
 
 function routeStations(route) {
   const result = [];
-  // Every exact line/arc boundary is represented; no smoothing spline cuts corners.
+  // Sample the final checked centreline densely, including its continuous bends.
   for (const segment of route.segments) {
     const count = Math.max(1, Math.ceil(segment.length / TRAM_CONSTANTS.geometryStep));
     for (let i = 0; i < count; i++) result.push(route.sampleDistance(segment.start + segment.length * i / count));
@@ -367,7 +371,7 @@ function buildBoardingStation(route, definition = route.station) {
   if (!definition) return null;
   if (!definition.fixedGeometry) return buildLegacyBoardingStation(route);
   const group=new THREE.Group();group.name=definition.label;
-  const floorY=definition.platformY,width=definition.bridgeWidth,extension=definition.bridgeExtension;
+  const floorY=definition.platformY,width=definition.bridgeWidth,extension=definition.bridgeExtension,travel=definition.retractionTravel??extension;
   const steel=new THREE.MeshStandardMaterial({color:0xb3c8d0,roughness:.42,metalness:.55});
   const deckMaterial=new THREE.MeshStandardMaterial({color:0xbcb7a7,roughness:.82});
   const gold=new THREE.MeshStandardMaterial({color:0xe1bc73,roughness:.65});
@@ -409,7 +413,7 @@ function buildBoardingStation(route, definition = route.station) {
   group.userData={...definition,kind:'boarding-on-existing-terrace',provisional:true,sourceCadFileModified:false,passengerPurposeConfirmed:false,
     boardingVehicle:null,boardingOpen:false,gatePhase:'closed',retractableLength:extension,bridgeExtension:0,collisionObstacles};
   group.setBoardingState=(open,amount=0,phase='closed',vehicleIndex=null)=>{
-    const a=Math.max(0,Math.min(1,amount));sliding.position.set(-dx*extension*(1-a),0,-dz*extension*(1-a));sliding.visible=extension>0&&a>1e-5;
+    const a=Math.max(0,Math.min(1,amount));sliding.position.set(-dx*travel*(1-a),0,-dz*travel*(1-a));sliding.visible=extension>0&&a>1e-5;
     if(gate)gate.visible=!open;group.userData.boardingOpen=Boolean(open);group.userData.bridgeExtension=a;
     group.userData.gatePhase=phase;group.userData.boardingVehicle=vehicleIndex;
   };
@@ -501,10 +505,10 @@ export async function createTramSystem({ scene, modelUrl, loader, routeConfig, o
   const stationGroups=[];
   let loaded = false, disposed = false, playing = true, speedMultiplier = 1;
   const shuttle=route.routeMode==='shuttle',definitions=route.stations||(route.station?[route.station]:[]),loopWithStation=route.closed&&definitions.length>0;
-  const dwellSeconds=18,bridgeSeconds=.8,closeSeconds=1,acceleration=.6;
+  const dwellSeconds=18,bridgeSeconds=.8,closeSeconds=1,acceleration=TRAM_CONSTANTS.comfortAcceleration;
   const stops=loopWithStation?definitions.flatMap(st=>Array.from({length:TRAM_CONSTANTS.vehicleCount},(_,vehicleIndex)=>({phase:modulo((st.distance||0)-vehicleIndex*route.length/TRAM_CONSTANTS.vehicleCount,route.length),stationId:st.id,vehicleIndex}))).sort((a,b)=>a.phase-b.phase):[];
   let distance=shuttle?route.maxLeadingDistance:0,travelDirection=shuttle?-1:1,dwellRemaining=loopWithStation?dwellSeconds:shuttle?8:0;
-  let activeStop=loopWithStation?stops.find(stop=>Math.abs(stop.phase)<1e-6):null,currentSpeed=0,stopSerial=0,pendingDisembark=null;
+  let activeStop=loopWithStation?stops.find(stop=>Math.abs(stop.phase)<1e-6):null,currentSpeed=0,currentAcceleration=0,stopSerial=0,pendingDisembark=null;
   const activeStation=()=>activeStop?stationGroups.find(item=>item.userData.id===activeStop.stationId):null;
   function dwellPhase(){if(!activeStop||dwellRemaining<=0)return 'closed';const elapsed=dwellSeconds-dwellRemaining;return elapsed<bridgeSeconds?'opening':dwellRemaining<=closeSeconds?'closing':elapsed<5?'alighting':'boarding';}
   function nextStopForVehicle(index){
@@ -518,6 +522,28 @@ export async function createTramSystem({ scene, modelUrl, loader, routeConfig, o
     const target=new THREE.Vector3(...st.originalEdgePoint).add(new THREE.Vector3(0,1.45,0));
     return {vehicleIndex:index,stationId:st.id,stationNumber:st.number,position,target,up:UP.clone(),feet,walkToPlatformPath:st.bridgePath.slice().reverse().map(([x,z])=>[x,st.platformY,z]),station:st};
   }
+  // Every station-to-station leg uses a seventh-order easing law: velocity,
+  // acceleration and jerk are all zero at each platform. Its duration is bounded
+  // by the tightest bend encountered by either vehicle on that leg.
+  function instantaneousCurveLimit(phase) {
+    let limit=TRAM_CONSTANTS.baseSpeed;
+    for(let i=0;i<TRAM_CONSTANTS.vehicleCount;i++) {
+      const curvature=Math.abs(route.sampleDistance(phase+i*route.length/TRAM_CONSTANTS.vehicleCount).curvature||0);
+      if(curvature>1e-7)limit=Math.min(limit,Math.sqrt(TRAM_CONSTANTS.maxLateralAcceleration/curvature),TRAM_CONSTANTS.maxTurnRate/curvature);
+    }
+    return limit;
+  }
+  const comfortLegs=loopWithStation?stops.map((stop,index)=>{
+    const next=stops[(index+1)%stops.length],length=modulo(next.phase-stop.phase,route.length);
+    let maxSpeed=TRAM_CONSTANTS.baseSpeed;
+    const count=Math.max(1,Math.ceil(length/.25));
+    for(let i=0;i<=count;i++)maxSpeed=Math.min(maxSpeed,instantaneousCurveLimit(stop.phase+length*i/count));
+    maxSpeed*=.99;
+    const duration=Math.max(2.1875*length/maxSpeed,Math.sqrt(7.514*length/acceleration),Math.cbrt(52.5*length/TRAM_CONSTANTS.comfortJerk));
+    return {start:stop.phase,next,length,maxSpeed,duration};
+  }):[];
+  let activeLeg=null,legElapsed=0;
+  const curveSpeedLimitAt=phase=>activeLeg?.maxSpeed??instantaneousCurveLimit(phase);
   let simulatedSeconds = 0, lastDelta = 0, sinceState = 0, errorMessage = null;
   let callbackError = null;
   const samples = Array.from({ length: TRAM_CONSTANTS.vehicleCount }, () => ({ position: new THREE.Vector3(), tangent: new THREE.Vector3() }));
@@ -529,6 +555,8 @@ export async function createTramSystem({ scene, modelUrl, loader, routeConfig, o
       vehicleCount: vehicles.length, expectedVehicleCount: TRAM_CONSTANTS.vehicleCount,
       trackLength: route.length, distance, phase: distance / route.length,
       baseSpeed: TRAM_CONSTANTS.baseSpeed, speedMultiplier,
+      curveSpeedLimit:curveSpeedLimitAt(distance),acceleration:currentAcceleration,
+      routeSmoothing:route.smoothing||null,
       speedMetersPerSecond: playing&&!disposed&&dwellRemaining<=0?(loopWithStation?currentSpeed:TRAM_CONSTANTS.baseSpeed)*speedMultiplier:0,
       routeMode: shuttle ? 'shuttle' : 'loop', travelDirection, dwellRemaining,
       shuttle: shuttle ? { enabled: true, direction: travelDirection, dwellRemaining, spacing: route.config.vehicleSpacing, nominalBodyGap: route.config.vehicleSpacing - TRAM_CONSTANTS.vehicleLength, leadingRange: [route.minLeadingDistance, route.maxLeadingDistance] } : null,
@@ -656,14 +684,23 @@ export async function createTramSystem({ scene, modelUrl, loader, routeConfig, o
         }
       } else if(loopWithStation){
         let dt=lastDelta*speedMultiplier;
-        if(dwellRemaining>0){const used=Math.min(dt,dwellRemaining);dwellRemaining=Math.max(0,dwellRemaining-used);dt-=used;if(dwellRemaining===0){activeStop=null;currentSpeed=0;}}
+        if(dwellRemaining>0){const used=Math.min(dt,dwellRemaining);dwellRemaining=Math.max(0,dwellRemaining-used);dt-=used;if(dwellRemaining===0){activeStop=null;currentSpeed=0;currentAcceleration=0;}}
         if(dt>0&&dwellRemaining===0){
-          const next=stops.find(stop=>stop.phase>distance+1e-7)||stops[0];
-          const remaining=modulo(next.phase-distance,route.length),target=Math.min(TRAM_CONSTANTS.baseSpeed,Math.sqrt(2*acceleration*remaining));
-          currentSpeed=Math.max(0,currentSpeed+Math.max(-acceleration*dt,Math.min(acceleration*dt,target-currentSpeed)));
-          const step=currentSpeed*dt;
-          if(step>=remaining-.002||remaining<.008){distance=next.phase;activeStop=next;dwellRemaining=dwellSeconds;currentSpeed=0;stopSerial++;}
-          else distance=modulo(distance+step,route.length);
+          if(!activeLeg){
+            activeLeg=comfortLegs.find(leg=>Math.abs(leg.start-distance)<1e-5)||comfortLegs[0];legElapsed=0;
+          }
+          const used=Math.min(dt,activeLeg.duration-legElapsed);legElapsed+=used;
+          const u=Math.max(0,Math.min(1,legElapsed/activeLeg.duration)),v=1-u;
+          const progress=u*u*u*u*(35+u*(-84+u*(70-20*u)));
+          const derivative=140*u*u*u*v*v*v;
+          const second=420*u*u*v*v*(1-2*u);
+          distance=modulo(activeLeg.start+activeLeg.length*progress,route.length);
+          currentSpeed=activeLeg.length/activeLeg.duration*derivative;
+          currentAcceleration=activeLeg.length/(activeLeg.duration**2)*second;
+          if(legElapsed>=activeLeg.duration-1e-9){
+            distance=activeLeg.next.phase;activeStop=activeLeg.next;dwellRemaining=Math.max(0,dwellSeconds-(dt-used));
+            currentSpeed=0;currentAcceleration=0;stopSerial++;activeLeg=null;legElapsed=0;
+          }
         }
       } else distance = modulo(distance + TRAM_CONSTANTS.baseSpeed * speedMultiplier * lastDelta, route.length);
       placeVehicles();
@@ -723,4 +760,3 @@ export async function createTramSystem({ scene, modelUrl, loader, routeConfig, o
     },
   };
 }
-

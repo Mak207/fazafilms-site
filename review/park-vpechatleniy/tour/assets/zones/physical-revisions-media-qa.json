@@ -1,0 +1,98 @@
+{
+  "entries": [
+    {
+      "module": "museum",
+      "id": "chersonesus-panorama",
+      "dimensions": [
+        5.2,
+        2.2
+      ],
+      "changed": true,
+      "pauseStable": true,
+      "state": {
+        "theme": "heritage",
+        "playing": true,
+        "chapter": 0,
+        "frames": 29,
+        "animated": true,
+        "kind": "original-generated-animation"
+      }
+    },
+    {
+      "module": "museum",
+      "id": "chersonesus-information-1",
+      "dimensions": [
+        1.1,
+        0.92
+      ],
+      "changed": true,
+      "pauseStable": true,
+      "state": {
+        "theme": "sailing",
+        "playing": true,
+        "chapter": 0,
+        "frames": 54,
+        "animated": true,
+        "kind": "original-generated-animation"
+      }
+    },
+    {
+      "module": "museum",
+      "id": "chersonesus-information-2",
+      "dimensions": [
+        1.1,
+        0.92
+      ],
+      "changed": true,
+      "pauseStable": true,
+      "state": {
+        "theme": "heritage",
+        "playing": true,
+        "chapter": 0,
+        "frames": 79,
+        "animated": true,
+        "kind": "original-generated-animation"
+      }
+    },
+    {
+      "module": "cockpit",
+      "id": "flight-panorama-1",
+      "dimensions": [
+        2.68,
+        1.08
+      ],
+      "changed": true,
+      "pauseStable": true,
+      "state": {
+        "theme": "flight",
+        "playing": true,
+        "animated": true,
+        "kind": "interactive-flight-panorama",
+        "elapsed": 0,
+        "bank": 0,
+        "pitch": 0,
+        "heading": 0
+      }
+    },
+    {
+      "module": "grain",
+      "id": "grain-control",
+      "dimensions": [
+        1.15,
+        0.58
+      ],
+      "changed": true,
+      "pauseStable": true,
+      "state": {
+        "theme": "grain",
+        "playing": true,
+        "animated": true,
+        "kind": "interactive-grain-control",
+        "elapsed": 0,
+        "intensity": 2
+      }
+    }
+  ],
+  "allAnimationFramesChanged": true,
+  "allPauseStatesStable": true
+}

@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "buildId": "park-exhibition-20261125-r2",
+  "sourceBaseCommit": "e3885053655400151081b6a9402efcda56f6b9a2",
+  "validationStatus": "geometry-and-runtime-passed; browser-3d-unverified",
+  "runtime": {
+    "editorChecks": {
+      "passed": 30,
+      "total": 30,
+      "report": "editor-qa.json"
+    },
+    "navigationChecks": {
+      "passed": 143,
+      "total": 143,
+      "report": "media-navigation-qa.json"
+    },
+    "actualGeometryLoaded": true,
+    "fullSceneVisitorGuardPassed": true,
+    "registeredAssemblies": 93,
+    "collisionParts": 911
+  },
+  "geometry": {
+    "equipment": "equipment-placement-qa.json",
+    "physicalExhibits": "physical-revisions-qa.json",
+    "physicalRuntime": "physical-revisions-runtime-qa.json",
+    "monorail": "monorail-smoothing-qa.json",
+    "jointScene": "monorail-exhibition-joint-qa.json",
+    "fullWagonSamples": 7087,
+    "allFaceAllowanceMetres": 0.1,
+    "reportedIntersections": 0
+  },
+  "browser": {
+    "menuUi": "passed",
+    "method": "Actual rgo-zones.js navigation component rendered using the final real runtime navigation snapshot; geometry-free UI fixture. Actual focus/edit/media handlers were checked separately in the runtime harness.",
+    "desktopViewport": [
+      1365,
+      936
+    ],
+    "mobileIframeViewport": [
+      390,
+      844
+    ],
+    "mobileControlsAndContentScalePercent": 200,
+    "checked": [
+      "native dropdown hierarchy",
+      "zone-specific object filtering",
+      "RGO hall filtering",
+      "unique station and panorama labels",
+      "13×13 cabinet information",
+      "menu remains visible",
+      "mobile scroll and bounded layout"
+    ],
+    "full3DRender": "unavailable",
+    "reason": "Cloud browser GL_VENDOR and GL_RENDERER Disabled; Error creating WebGL context. No successful GPU scene verification claimed."
+  },
+  "offlineViews": {
+    "method": "CPU Blender renders of actual model/runtime geometry and local CAD",
+    "reviewed": [
+      "whole icebreaker and polar LED panorama",
+      "transparent full-height silos",
+      "MC21 and support columns"
+    ],
+    "renderingIsBrowserScreenshot": false
+  },
+  "limitations": [
+    "Working exhibition geometry and illustrative media, not a structural, ride or evacuation certification.",
+    "Full museum programme and documentary content remain partial; see exhibition-status.json."
+  ]
+}

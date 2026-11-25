@@ -1,9 +1,11 @@
 {
-  "schemaVersion": 4,
-  "title": "Парк впечатлений — монорельс для 3D-экскурсии",
-  "purpose": "Кольцевая 3D-экскурсия с проверкой четырёх существующих угловых площадок: три остановки и одна неподключённая площадка",
-  "updatedAtUtc": "2026-11-24T11:57:14.631484+00:00",
-  "status": "provisional",
+  "schemaVersion": 5,
+  "title": "Парк впечатлений — сглаженный кольцевой монорельс для 3D-экскурсии",
+  "purpose": "Замкнутая C2-трасса с тремя рабочими остановками, двумя вагонами и совместной проверкой итоговой выставочной сцены",
+  "revision": "park-exhibition-20261125-r2",
+  "cacheStamp": "park-exhibition-20261125-r2",
+  "documentationRevisionDate": "2026-11-25",
+  "status": "provisional_geometry_and_cpu_runtime_verified",
   "evidence": {
     "figma": {
       "fileKey": "vnoVHaMbnhqrGthhT0YT7j",
@@ -36,80 +38,176 @@
       "existingCadPlatformsConfirmed": 4,
       "activeStations": 3,
       "passengerPurposeConfirmed": false,
-      "source": "Actual CAD floors, source user screenshots; new bridges and transport use are working scene decisions"
-    }
+      "source": "Actual CAD floors, source user screenshots; new bridges and transport use are working scene decisions",
+      "note": "Четыре CAD-площадки — ранее зафиксированное происхождение выбора; финальные отчёты r2 проверяют три действующие станции NW, NE и SE."
+    },
+    "provenanceStatus": "retained_source_observations; current metric validation is limited to the two final reports below"
   },
   "reconstruction": {
     "classification": "provisional_visualization_parameters",
     "approvedTransportDesign": false,
     "metricAlignmentDerivedFromDwg": false,
-    "routeType": "Замкнутая петля по свободному коридору CAD с тремя рабочими остановками",
+    "routeType": "Замкнутая периодическая C2 B-сплайн-кривая с гауссовым сглаживанием и сохранёнными остановочными позициями",
     "coordinateSystem": {
       "units": "metres",
       "upAxis": "+Y",
       "routePlane": "XZ"
     },
     "module": "perimeter-route.js",
-    "routeLengthMeters": 361.1195661481933,
+    "smoothingModule": "perimeter-smoothing.js",
+    "runtimeModule": "tram-system.js",
+    "routeLengthMeters": 354.3045892735288,
     "closed": true,
-    "centerlineBoundsXZ": {
-      "xMin": -30,
-      "xMax": 31.7,
-      "zMin": -76.5,
-      "zMax": 70
-    },
-    "railHeightRangeMeters": [
-      15.25,
-      17.7
+    "minimumSampledPlanRadiusMeters": 7.517259705116672,
+    "maximumSampledProfileGrade": 0.08167482041932408,
+    "maximumHeadingChangeOver5cmDegrees": 0.3810814233560272,
+    "maximumCurvatureGradientPerSquareMetre": 0.1343195461656064,
+    "maximumAxisOffsetFromPreviousMeters": 0.5755494810947944,
+    "smoothingSigmaMeters": 2.8,
+    "protectedStationApproaches": [
+      {
+        "id": "nw-existing-terrace-loop",
+        "metres": 1.5
+      },
+      {
+        "id": "ne-existing-terrace-loop",
+        "metres": 1.5
+      },
+      {
+        "id": "se-existing-terrace-loop",
+        "metres": 1.5
+      }
     ],
-    "maximumProfileGrade": 0.07916666666666661,
-    "minimumSampledPlanRadiusMeters": 4.5328640999211425,
-    "profileNote": "Уклон до 7.92% и минимальный радиус около 4.53 м — параметры геометрической концепции. Реальная тяга, торможение, тележки, нагрузки и динамика не подтверждены.",
     "supportCount": 33,
-    "maximumSupportSpanMeters": 11.943017156005851,
+    "maximumSupportSpanMeters": 11.904562661371159,
     "vehicles": {
       "count": 2,
       "lengthMeters": 12,
-      "widthMeters": 2.2890363928,
-      "heightMeters": 3.1035019455,
-      "baseSpeedMetersPerSecond": 3,
-      "phaseSeparation": 0.5,
-      "minimumTestedCenterDistanceMeters": 58.019928245252274,
-      "minimumTestedSeparatingAxisGapMeters": 42.83461535547474,
-      "stationDwellSeconds": 18
+      "widthMeters": 2.289036393,
+      "heightMeters": 3.103501946,
+      "bothWagonsUseSameFullRing": true,
+      "motionMethod": "Seventh-order C3 motion at stops; reported maxima are measured in the cited CPU scenario, not a constant cruising speed.",
+      "observedMaximumSpeedMetersPerSecond": 1.7779252147246885,
+      "observedMaximumAccelerationMetersPerSecondSquared": 0.27652653605698085,
+      "observedMaximumJerkMetersPerSecondCubed": 0.08750183390252331,
+      "observedMaximumAngularSpeedDegreesPerSecond": 11.288481592589287,
+      "observedMaximumLateralAccelerationMetersPerSecondSquared": 0.3303256256806616
     },
     "boarding": {
       "activeStationCount": 3,
-      "candidateCount": 4,
-      "passengerFloorOffset": 0.8,
-      "floorOffsetStatus": "working visual calibration; passenger floor not separated in source vehicle mesh",
-      "sideGapMeters": 0.15,
-      "sequence": "Stop; extend bridge; open gate; alight; board; close gate; fully retract; move",
-      "localRuntimeOpening": {
-        "min": [
-          -16.22,
-          16.5,
-          -63.75
-        ],
-        "max": [
-          -16.12,
-          17.8,
-          -61.25
-        ],
-        "mesh": "Ограждение__7f7f7fff",
-        "affectedConflictingTriangleIds": [
-          1725973,
-          1725997,
-          1725998,
-          1726003,
-          1726004,
-          1726005,
-          1726006
-        ],
-        "sourceGLBModified": false
+      "stationIds": [
+        "nw-existing-terrace-loop",
+        "ne-existing-terrace-loop",
+        "se-existing-terrace-loop"
+      ],
+      "stationPoses": [
+        {
+          "id": "nw-existing-terrace-loop",
+          "distance": 0,
+          "position": [
+            -12.3,
+            15.849999999999998,
+            -62.499999999999986
+          ],
+          "heading": 3.141592653589793,
+          "grade": 0,
+          "errorM": 1.432144669219779e-14
+        },
+        {
+          "id": "ne-existing-terrace-loop",
+          "distance": 47.82767960571335,
+          "position": [
+            17.699999999999964,
+            16.15,
+            -60.50000000000001
+          ],
+          "heading": 1.570796326794874,
+          "grade": -1.0410659154356732e-14,
+          "errorM": 3.6230712748823524e-14
+        },
+        {
+          "id": "se-existing-terrace-loop",
+          "distance": 159.20420892388228,
+          "position": [
+            14,
+            16.2,
+            34.50000000000003
+          ],
+          "heading": -1.4158496449917292e-14,
+          "grade": 1.054946794307563e-14,
+          "errorM": 2.842170943040401e-14
+        }
+      ],
+      "stationRevisions": {
+        "southeast": "Last 1.3 m changed to a retractable edge; boarding point and platform unchanged; exit pose moved onto the fixed deck.",
+        "northwest": "Retraction travel 1.25 m for a 1.3 m deck to keep its back edge clear of the existing terrace floor."
       },
-      "sourceCadFileModified": false
-    }
+      "stationVehiclePairsTested": [
+        "nw-existing-terrace-loop:0",
+        "ne-existing-terrace-loop:0",
+        "se-existing-terrace-loop:0",
+        "nw-existing-terrace-loop:1",
+        "ne-existing-terrace-loop:1",
+        "se-existing-terrace-loop:1"
+      ],
+      "boardingWhileMoving": 0,
+      "pendingExitCompleted": true,
+      "sourceCadFileModified": false,
+      "northwestRailingOpeningRequired": true,
+      "expectedSourceRailingContacts": [
+        {
+          "station": "nw-existing-terrace-loop",
+          "name": "Выдвижной настил",
+          "envelope": {
+            "min": [
+              -16.144518172558143,
+              16.54999999925494,
+              -63.700000047683716
+            ],
+            "max": [
+              -13.59451822024186,
+              16.650000000745056,
+              -61.299999952316284
+            ]
+          },
+          "hits": 1,
+          "nodes": {
+            "Ограждение__7f7f7fff": 1
+          },
+          "examples": [
+            {
+              "name": "Ограждение__7f7f7fff",
+              "index": 248,
+              "vertices": [
+                [
+                  -16.134340286254883,
+                  16.649999618530273,
+                  -76.23176574707031
+                ],
+                [
+                  -16.134340286254883,
+                  16.649999618530273,
+                  -61.117366790771484
+                ],
+                [
+                  -16.134340286254883,
+                  16.450000762939453,
+                  -61.117366790771484
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "notReassertedFromPreviousPassport": [
+      "centreline XZ extrema",
+      "rail height extrema",
+      "constant base speed of 3 m/s",
+      "minimum pair distance and separating-axis gap from the superseded route",
+      "station dwell duration and phase separation not enumerated by the final cited reports"
+    ],
+    "profileNote": "Максимальный измеренный уклон около 8.17%, радиус около 7.52 м. Это геометрия и анимация рабочей сцены; расчёты реальной тяги, тормозов, тележек, нагрузок и допусков не утверждены."
   },
   "vehicleAsset": {
     "lineage": "Два экземпляра одной исходной модели Hitem3D; для веба используется её оптимизированная копия.",
@@ -137,16 +235,194 @@
       "metadataSource": "Финальная оптимизированная копия, проверенная основным процессом"
     }
   },
+  "vehicleAssetEvidenceStatus": "Сохранённый реестр происхождения исходной модели. Новые численные проверки используют измеренные габариты; CPU motion fixture не выдаётся за браузерную загрузку GLB.",
   "verification": {
-    "geometry": "four-route-dense-qa.json",
-    "stations": "station-final-qa.json",
-    "runtime": "multistation-runtime-qa.json",
-    "supports": "four-supports-qa.json",
-    "passed": true
+    "geometrySupportsStationsAndCpuMotion": "monorail-smoothing-qa.json",
+    "finalExhibitionCoordination": "monorail-exhibition-joint-qa.json",
+    "sourceReportBuildId": "park-spatial-edit-20261125-r1",
+    "sourceJointReportRevision": "park-monorail-exhibition-joint-20261125",
+    "usedByBuild": "park-exhibition-20261125-r2",
+    "passed": true,
+    "browser": {
+      "status": "not_claimed_by_these_final_reports",
+      "note": "Финальные отчёты документируют CPU/геометрию. Исторические браузерные 183/183, 40/40 и 33 проверки не перенесены на r2."
+    },
+    "documentationOnlyUpdate": true,
+    "testsRerunForThisDocumentationUpdate": false,
+    "hashMaintenance": "Контрольные суммы исходников ведутся в двух итоговых отчётах; обновление query strings/cache stamp документируется интегратором отдельно."
+  },
+  "validation": {
+    "buildingSha256": "0fe60c53a9fc72c9ed0ad15ac8808ca721b3a7af8e96d81329cdc748c78fd792",
+    "sourceCadModified": false,
+    "routeSamples": 7087,
+    "maximumChainageStepMeters": 0.05,
+    "cadSweepStepMeters": 0.04999359239079001,
+    "extraVehicleBoxClearanceMeters": 0.1,
+    "testedWagonBoxIncludingMarginMeters": [
+      2.489036393,
+      3.303501946,
+      12.2
+    ],
+    "testedBeamBoxIncludingMarginMeters": [
+      1.15,
+      0.98,
+      0.25
+    ],
+    "wagonPitchIncluded": true,
+    "cadWagonAndBeamIntersections": 0,
+    "supportSolidsChecked": 99,
+    "supportFloorProbes": 297,
+    "supportCadIntersections": 0,
+    "supportFloorFailures": 0,
+    "fixedStationParts": 68,
+    "stationDeploymentEnvelopes": 25,
+    "unplannedStationDeploymentCadIntersections": 0,
+    "expectedNorthwestSourceRailingContacts": 1,
+    "runtimeSeconds": 1500,
+    "runtimeStepSeconds": 0.03333333333333333,
+    "runtimeFixture": "real runtime; substitute render geometry with identical verified 12 × 2.289036393 × 3.103501946 m bounds; no browser/WebGL test",
+    "maximumStationPositionErrorMeters": 3.6230712748823524e-14,
+    "jointScene": {
+      "staticExhibitionObstacles": 911,
+      "registeredExhibitAssemblies": 93,
+      "equipmentAssemblies": 52,
+      "obstaclesByGroup": {
+        "equipment": 104,
+        "base-exhibits": 37,
+        "revised-exhibits": 390,
+        "rgo": 380
+      },
+      "wagonAndBeamIntersections": 0,
+      "supportAndStationIntersections": 0,
+      "broadphaseCandidates": 702,
+      "sourceAndPreviewTriangleQueries": 1404,
+      "registration": {
+        "zonesAwaitedBeforeDynamicObstacles": true,
+        "equipmentConstructedBeforeZonesReturn": true,
+        "editorAfterDynamicObstacles": true,
+        "equipmentCallsAddAssembly": true,
+        "dynamicAdapterEnumeratesRegisteredRoots": true,
+        "note": "Inspection of the executed registration order. createExhibitionZones awaits construction and all addAssembly calls; the adapter is created afterwards and snapshots registered roots."
+      },
+      "sceneConsistency": {
+        "whale": true,
+        "chersonesus": true,
+        "rgoShip": true,
+        "equipment": true
+      }
+    },
+    "coordinationAdjustments": {
+      "rgoCanopy": {
+        "route": "periodic-c2-spline",
+        "sourceSha256": "fb58c3f26e41a21ce9ae9d5b05ecaff5b498ba498f0d7ccc38f8282594b35e94",
+        "originalStripCount": 295,
+        "stripCount": 296,
+        "changedSegments": 12,
+        "method": "Subtract new shaft footprint +0.10m XZ clearance from existing CAD-clipped canopy strips; retain all earlier architectural and column cutouts."
+      },
+      "O07-2": {
+        "dx": 0.25,
+        "dz": 0.25,
+        "displacement": 0.3535533905932738,
+        "x": 10.75,
+        "z": 55.75,
+        "baseY": 14.2,
+        "rotationY": 1.5707963267948966,
+        "size": [
+          2.869315754135384,
+          2.1759140572544715,
+          8
+        ],
+        "sourceId": "O07-2",
+        "floorY": 7.199999809265137,
+        "worldBounds": {
+          "min": [
+            6.75,
+            14.2,
+            54.31534212293231
+          ],
+          "max": [
+            14.75,
+            16.37591405725447,
+            57.18465787706769
+          ]
+        }
+      },
+      "O16-1": {
+        "dx": 0,
+        "dz": -0.1,
+        "displacement": 0.1,
+        "x": -10,
+        "z": 54.9,
+        "baseY": 13.2,
+        "rotationY": 0,
+        "sourceId": "O16-1",
+        "floorProbeCount": 9,
+        "compoundParts": 283
+      },
+      "rgoShip04": {
+        "x": 29.9819,
+        "z": -44.08905,
+        "reason": "Working exhibition ship and its cables moved 1 metre away from the actual smoothed monorail support 6; source hall stays 04",
+        "deltaX": -1
+      },
+      "RGO-02-LED-02": {
+        "id": "RGO-02-LED-02",
+        "position": [
+          9.334,
+          7.2,
+          -61.21
+        ],
+        "rotationY": -0.7853981633974483
+      }
+    },
+    "sampleMotion": {
+      "maxCenterStepMetres": 0.05016647815885958,
+      "maxFrameAngleStepDegrees": 0.38305915481237246,
+      "maxTangentAngleStepDegrees": 0.3829258333512024,
+      "nearestPoseSurfaceTravelEstimateMetres": 0.04798623923743582,
+      "note": "Dense numerical sweep with0.10m margin. The estimate is derived from measured adjacent pose motion and the complete wagon radius; it is not a certified analytic continuous collision proof."
+    },
+    "scope": "15-axis full 3D OBB SAT using pitched complete wagon and beam; conservative compound exhibit/display envelopes. Full-source and runtime-preview Hitem3D triangle/OBB narrowphase resolves sparse bounding-box contacts for O07/O09/O10 and the conservative upper O16 enclosure. Source CAD was independently verified by monorail-smoothing-qa.json and physical-revisions-qa.json.",
+    "limitations": [
+      "This is geometric exhibition design QA, not a certified ride safety, structural load or evacuation calculation.",
+      "CAD and source meshes are converted geometry; missing source CAD surfaces remain a limitation.",
+      "CPU constructors and numerical geometry were exercised; browser image/GPU rendering verification is separate.",
+      "The O16 upper enclosure is refined with the full original297610-triangle source after the exact8.9×14m compact fit and0.31m floor datum; its portal cut is intentionally retained as extra solid for this conservative clearance check.",
+      "Dense0.05m full-body sampling is reported as numerical coverage, with0.10m face allowance; no claim of formal continuous-collision certification."
+    ]
+  },
+  "comparison": {
+    "baseline": {
+      "lengthM": 361.1195661481933,
+      "samples": 7223,
+      "stepM": 0.04999578653581522,
+      "minimumRadiusM": 4.532518477718401,
+      "maxHeadingChangeOver5cmDeg": 0.6319964485453097,
+      "maxCurvatureGradientPerM2": 5.000422607621506,
+      "maxAxisOffsetFromPreviousM": 0,
+      "seamPositionGapM": 1.9999999949504854e-06,
+      "seamTangentAngleRad": 0
+    },
+    "current": {
+      "lengthM": 354.3045892735288,
+      "samples": 7087,
+      "stepM": 0.04999359239079001,
+      "minimumRadiusM": 7.517259705116672,
+      "maxHeadingChangeOver5cmDeg": 0.3810814233560272,
+      "maxCurvatureGradientPerM2": 0.1343195461656064,
+      "maxAxisOffsetFromPreviousM": 0.5755494810947944,
+      "seamPositionGapM": 1.9999999523179213e-06,
+      "seamTangentAngleRad": 0
+    },
+    "improvement": {
+      "minimumRadiusIncreasePercent": 65.8517167016767,
+      "headingChangeReductionPercent": 39.701967592827955
+    }
   },
   "archive": {
-    "status": "superseded_route_not_current_runtime_validation",
-    "note": "Историческая замкнутая петля длиной 252.371669 м, Y19.2, 22 опоры. Её 33 браузерные проверки и численный отчёт относятся только к прежней конфигурации.",
+    "status": "historical_only_not_current_r2_runtime_validation",
+    "note": "Исторические параметры петли 252.371669 м и предыдущего периметра 361.119566 м сохранены для происхождения решения. Их численные и браузерные QA не являются проверкой сборки park-exhibition-20261125-r2.",
     "previousReconstruction": {
       "classification": "visualization_parameters",
       "approvedTransportDesign": false,
@@ -304,81 +580,182 @@
         "intersectionCount": 0,
         "limits": "Ноль пересечений относится к проверенной контрольной полосе и выбранным сечениям поверхностей. Это визуальная проверка размещения, не инженерная сертификация транспортного проекта."
       }
+    },
+    "supersededPerimeterRoute": {
+      "status": "superseded_by_C2_route_not_current_r2_validation",
+      "originalUpdatedAtUtc": "2026-11-24T11:57:14.631484+00:00",
+      "reconstruction": {
+        "classification": "provisional_visualization_parameters",
+        "approvedTransportDesign": false,
+        "metricAlignmentDerivedFromDwg": false,
+        "routeType": "Замкнутая петля по свободному коридору CAD с тремя рабочими остановками",
+        "coordinateSystem": {
+          "units": "metres",
+          "upAxis": "+Y",
+          "routePlane": "XZ"
+        },
+        "module": "perimeter-route.js",
+        "routeLengthMeters": 361.1195661481933,
+        "closed": true,
+        "centerlineBoundsXZ": {
+          "xMin": -30,
+          "xMax": 31.7,
+          "zMin": -76.5,
+          "zMax": 70
+        },
+        "railHeightRangeMeters": [
+          15.25,
+          17.7
+        ],
+        "maximumProfileGrade": 0.07916666666666661,
+        "minimumSampledPlanRadiusMeters": 4.5328640999211425,
+        "profileNote": "Уклон до 7.92% и минимальный радиус около 4.53 м — параметры геометрической концепции. Реальная тяга, торможение, тележки, нагрузки и динамика не подтверждены.",
+        "supportCount": 33,
+        "maximumSupportSpanMeters": 11.943017156005851,
+        "vehicles": {
+          "count": 2,
+          "lengthMeters": 12,
+          "widthMeters": 2.2890363928,
+          "heightMeters": 3.1035019455,
+          "baseSpeedMetersPerSecond": 3,
+          "phaseSeparation": 0.5,
+          "minimumTestedCenterDistanceMeters": 58.019928245252274,
+          "minimumTestedSeparatingAxisGapMeters": 42.83461535547474,
+          "stationDwellSeconds": 18
+        },
+        "boarding": {
+          "activeStationCount": 3,
+          "candidateCount": 4,
+          "passengerFloorOffset": 0.8,
+          "floorOffsetStatus": "working visual calibration; passenger floor not separated in source vehicle mesh",
+          "sideGapMeters": 0.15,
+          "sequence": "Stop; extend bridge; open gate; alight; board; close gate; fully retract; move",
+          "localRuntimeOpening": {
+            "min": [
+              -16.22,
+              16.5,
+              -63.75
+            ],
+            "max": [
+              -16.12,
+              17.8,
+              -61.25
+            ],
+            "mesh": "Ограждение__7f7f7fff",
+            "affectedConflictingTriangleIds": [
+              1725973,
+              1725997,
+              1725998,
+              1726003,
+              1726004,
+              1726005,
+              1726006
+            ],
+            "sourceGLBModified": false
+          },
+          "sourceCadFileModified": false
+        }
+      },
+      "verification": {
+        "geometry": "four-route-dense-qa.json",
+        "stations": "station-final-qa.json",
+        "runtime": "multistation-runtime-qa.json",
+        "supports": "four-supports-qa.json",
+        "passed": true
+      },
+      "validation": {
+        "buildingSha256": "0fe60c53a9fc72c9ed0ad15ac8808ca721b3a7af8e96d81329cdc748c78fd792",
+        "cadTriangleCount": 2927007,
+        "routeSamples": 7223,
+        "stepMeters": 0.05,
+        "extraVehicleBoxClearanceMeters": 0.1,
+        "cadCarIntersections": 0,
+        "cadBeamIntersections": 0,
+        "supportCadOrRgoWallIntersections": 0,
+        "supportDecorativeCeilingClearancesRequired": [
+          {
+            "x": 11.772967869653368,
+            "z": -60.5,
+            "radius": 0.44,
+            "slatIndices": [
+              168,
+              170
+            ]
+          },
+          {
+            "x": 22.715985025659226,
+            "z": -60.5,
+            "radius": 0.44,
+            "slatIndices": [
+              220,
+              222
+            ]
+          },
+          {
+            "x": 31.278850103268898,
+            "z": -55.06145097789925,
+            "radius": 0.44,
+            "slatIndices": [
+              254,
+              255
+            ]
+          },
+          {
+            "x": 31.7,
+            "z": -44.164350044609535,
+            "radius": 0.44,
+            "slatIndices": [
+              255,
+              256
+            ]
+          },
+          {
+            "x": 31.7,
+            "z": -34.22133288860367,
+            "radius": 0.44,
+            "slatIndices": [
+              255,
+              256
+            ]
+          }
+        ],
+        "bridgeIntersectionsDuringMovement": 0,
+        "pairIntersections": 0,
+        "bridgeAndPassengerResidualCadConflicts": 0,
+        "movingBridgeComponentStatesTested": 1000,
+        "movingBridgeConflicts": 0,
+        "runtimeSeconds": 1200,
+        "stationVehiclePairsTested": [
+          "nw-existing-terrace-loop:0",
+          "ne-existing-terrace-loop:0",
+          "se-existing-terrace-loop:0",
+          "nw-existing-terrace-loop:1",
+          "ne-existing-terrace-loop:1",
+          "se-existing-terrace-loop:1"
+        ],
+        "bridgeOpenWhileMoving": false,
+        "scope": "Presentation geometry, discrete swept-envelope and runtime checks; not construction or vehicle certification.",
+        "exhibitCoordination": "Full primary zoning and moved Leader are being resolved. Recheck those objects and supports after final placement."
+      },
+      "comparisonBaselineFromFinalSmoothingReport": {
+        "lengthM": 361.1195661481933,
+        "samples": 7223,
+        "stepM": 0.04999578653581522,
+        "minimumRadiusM": 4.532518477718401,
+        "maxHeadingChangeOver5cmDeg": 0.6319964485453097,
+        "maxCurvatureGradientPerM2": 5.000422607621506,
+        "maxAxisOffsetFromPreviousM": 0,
+        "seamPositionGapM": 1.9999999949504854e-06,
+        "seamTangentAngleRad": 0
+      },
+      "note": "Снимок прежнего паспорта сохранён без изменения исторических чисел. Для сравнения до/после действующий отчёт использует свою серию измерений before."
+    },
+    "historicalReportStatus": {
+      "four-route-dense-qa.json": "superseded_perimeter_361m_not_current_r2_validation",
+      "station-final-qa.json": "superseded_perimeter_361m_not_current_r2_validation",
+      "multistation-runtime-qa.json": "superseded_perimeter_361m_not_current_r2_validation",
+      "four-supports-qa.json": "superseded_perimeter_361m_not_current_r2_validation"
     }
   },
-  "documentationStatus": "frozen_after_local_qa",
-  "validation": {
-    "buildingSha256": "0fe60c53a9fc72c9ed0ad15ac8808ca721b3a7af8e96d81329cdc748c78fd792",
-    "cadTriangleCount": 2927007,
-    "routeSamples": 7223,
-    "stepMeters": 0.05,
-    "extraVehicleBoxClearanceMeters": 0.1,
-    "cadCarIntersections": 0,
-    "cadBeamIntersections": 0,
-    "supportCadOrRgoWallIntersections": 0,
-    "supportDecorativeCeilingClearancesRequired": [
-      {
-        "x": 11.772967869653368,
-        "z": -60.5,
-        "radius": 0.44,
-        "slatIndices": [
-          168,
-          170
-        ]
-      },
-      {
-        "x": 22.715985025659226,
-        "z": -60.5,
-        "radius": 0.44,
-        "slatIndices": [
-          220,
-          222
-        ]
-      },
-      {
-        "x": 31.278850103268898,
-        "z": -55.06145097789925,
-        "radius": 0.44,
-        "slatIndices": [
-          254,
-          255
-        ]
-      },
-      {
-        "x": 31.7,
-        "z": -44.164350044609535,
-        "radius": 0.44,
-        "slatIndices": [
-          255,
-          256
-        ]
-      },
-      {
-        "x": 31.7,
-        "z": -34.22133288860367,
-        "radius": 0.44,
-        "slatIndices": [
-          255,
-          256
-        ]
-      }
-    ],
-    "bridgeIntersectionsDuringMovement": 0,
-    "pairIntersections": 0,
-    "bridgeAndPassengerResidualCadConflicts": 0,
-    "movingBridgeComponentStatesTested": 1000,
-    "movingBridgeConflicts": 0,
-    "runtimeSeconds": 1200,
-    "stationVehiclePairsTested": [
-      "nw-existing-terrace-loop:0",
-      "ne-existing-terrace-loop:0",
-      "se-existing-terrace-loop:0",
-      "nw-existing-terrace-loop:1",
-      "ne-existing-terrace-loop:1",
-      "se-existing-terrace-loop:1"
-    ],
-    "bridgeOpenWhileMoving": false,
-    "scope": "Presentation geometry, discrete swept-envelope and runtime checks; not construction or vehicle certification.",
-    "exhibitCoordination": "Full primary zoning and moved Leader are being resolved. Recheck those objects and supports after final placement."
-  }
+  "documentationStatus": "r2_parameters_from_final_reports; historical_qa_explicitly_archived"
 }

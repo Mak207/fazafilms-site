@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import {canvasTexture,textTexture,woodMaterial,tubeBetween,normalise} from './exhibition-zones.js?v=park-zones-20261124';
+import {createLiveMedia} from './live-media.js?v=park-exhibition-20261125-r2';
+import {canvasTexture,textTexture,woodMaterial,tubeBetween,normalise} from './exhibition-zones.js?v=park-exhibition-20261125-r2';
 
 /** Source plan controls the footprint. Furnishing and finish are explicit design choices. */
 export function createMappedRgoGallery({assets,layout,program}){
@@ -9,10 +10,15 @@ export function createMappedRgoGallery({assets,layout,program}){
   const brass=new THREE.MeshStandardMaterial({color:0xb99a60,roughness:.3,metalness:.6});
   const glow=new THREE.MeshBasicMaterial({color:0xffe5b0,toneMapped:false});
   const glass=new THREE.MeshPhysicalMaterial({color:0xc5e4e6,transparent:true,opacity:.16,roughness:.12,depthWrite:false,side:THREE.DoubleSide});
-  const parts=[],pickables=[],caseRecords=[],screenRecords=[],hallViews=new Map(),movingGlobes=[];
+  const parts=[],pickables=[],caseRecords=[],screenRecords=[],hallViews=new Map(),movingGlobes=[],navigationItems=[],liveMedia=[],movableExhibits=[];
   let activeHall='00',elapsed=0,cutaway=false;
   const halls=new Map(program.halls.map(h=>[h.id,h]));
   function collider(id,size,position,yaw=0,bottom=0){parts.push({id,min:[-size[0]/2,bottom,-size[2]/2],max:[size[0]/2,bottom+size[1],size[2]/2],position:[position[0],position[1]||0,position[2]],rotationY:yaw,socialTarget:!/^wall-|^slat-|^column-finish-/.test(id)});}
+  function movable(id,name,root,{floating=false,media=null}={}){
+    const part=parts.pop(),exhibitId=('RG_'+id).toUpperCase().replace(/[^A-Z0-9_-]/g,'_');
+    const item=navigationItems.find(i=>i.id===id);item.instanceId=exhibitId+'-1';
+    movableExhibits.push({id:exhibitId,sourceId:id,name,root,media,placement:{id:item.instanceId,x:root.position.x,z:root.position.z,floorY:7.2,rotationY:root.rotation.y,zone:'РГО · '+item.hallId,floating},collisionParts:[{...part,position:[0,0,0],rotationY:0}]});
+  }
   function box(name,size,position,material,parent=group,yaw=0){const m=new THREE.Mesh(new THREE.BoxGeometry(...size),material);m.name=name;m.position.fromArray(position);m.rotation.y=yaw;parent.add(m);return m;}
   function panel(title,subtitle,width,height,x,y,z,yaw,options={}){
     const plane=new THREE.Mesh(new THREE.PlaneGeometry(width,height),new THREE.MeshBasicMaterial({map:textTexture(title,subtitle,{width:1200,height:640,...options}),side:THREE.FrontSide,toneMapped:false}));
@@ -72,22 +78,26 @@ export function createMappedRgoGallery({assets,layout,program}){
       if(assets.get('X03_NAVIGATION'))holder.add(normalise(assets.get('X03_NAVIGATION'),2.1,{y:.72,maxDimensions:[w-.28,.41,depth-.2]}));
       const i=caseCounts[f.hall]||0;caseCounts[f.hall]=i+1;const title=caseTitles[f.hall]?.[i%caseTitles[f.hall].length]||'Экспедиционные приборы';
       const sign=new THREE.Mesh(new THREE.PlaneGeometry(Math.min(1.8,w-.2),.22),new THREE.MeshBasicMaterial({map:textTexture(title,'',{width:1000,height:140,background:'#533b2a'}),side:THREE.DoubleSide}));sign.position.set(0,.48,depth/2+.015);holder.add(sign);
-      collider(f.id,[w,1.22,depth],[x,0,z],yaw);caseRecords.push({id:f.id,hall:f.hall,title});
+      collider(f.id,[w,1.22,depth],[x,0,z],yaw);caseRecords.push({id:f.id,hall:f.hall,title});navigationItems.push({id:f.id,name:title,hallId:f.hall,kind:'case',position:[x,.95,z]});
+      movable(f.id,title,holder);
     }else if(f.kind==='mir'){
       const holder=new THREE.Group();holder.position.set(x,0,z);holder.rotation.y=yaw;group.add(holder);
       box('Подиум «МИР»',[w,.20,depth],[0,.1,0],dark,holder);
       const model=assets.get('X01_MIR');if(model)holder.add(normalise(model,4.15,{y:.21,rotationY:Math.PI/2,maxDimensions:[depth-.2,2.55,w-.2]}));
-      collider(f.id,[w,2.9,depth],[x,0,z],yaw);
+      collider(f.id,[w,2.9,depth],[x,0,z],yaw);navigationItems.push({id:f.id,name:'Аппарат «Мир»',hallId:f.hall,kind:'model',position:[x,1.35,z]});
       const label=new THREE.Mesh(new THREE.PlaneGeometry(2.8,.5),new THREE.MeshBasicMaterial({map:textTexture('«МИР»','Глубоководные исследования',{width:1000,height:230}),side:THREE.DoubleSide}));label.position.set(0,.51,depth/2+.02);holder.add(label);
-    }else if(f.kind==='screen'||f.kind==='future-wall'){
+      movable(f.id,'Аппарат «Мир»',holder);
+    }else if(f.kind==='future-wall'){
       const anchor=layout.hallAnchors.find(h=>h.id===f.hall).position;
       const facing=yaw+(Math.sin(yaw)*(anchor[0]-x)+Math.cos(yaw)*(anchor[1]-z)<0?Math.PI:0),width=f.kind==='future-wall'?7:2.7,height=f.kind==='future-wall'?2.6:1.55,bottom=f.kind==='future-wall'?.65:.85;
       const subtitle=(f.kind==='future-wall'?'Куда отправится следующая экспедиция?\nМечта становится маршрутом':f.hall==='06'?'«МИР» · модель глубоководного аппарата\n«Консул» · в исходной программе зала':'По исходной программе\n'+hall.primaryExhibits.slice(0,2).map(t=>t.length>65?t.slice(0,62)+'…':t).join('\n'));
-      box('Экран РГО '+f.hall,[width+.1,height+.1,.12],[x,bottom+height/2,z],dark,group,facing);
+      const frame=box('Экран РГО '+f.hall,[width+.1,height+.1,.12],[x,bottom+height/2,z],dark,group,facing);
       const front=new THREE.Vector3(0,0,.072).applyAxisAngle(new THREE.Vector3(0,1,0),facing);
       const screen=panel(f.hall+'  '+hall.title,subtitle,width,height,x+front.x,bottom+height/2,z+front.z,facing,{background:f.hall==='06'?'#0b3655':'#102c3e',accent:'#d6b273'});
-      screen.userData.zoneAction='rgo-hall-'+f.hall;pickables.push(screen);
+      const media=createLiveMedia({theme:'future',title:'Горизонт открытий',width:1024,height:576});screen.material.map=media.texture;screen.children[0].material.map=media.texture;liveMedia.push(media);
+      screen.userData.zoneAction='rgo-hall-'+f.hall;pickables.push(screen);navigationItems.push({id:f.id,name:'Горизонт открытий',hallId:f.hall,kind:'media',position:[x,bottom+height/2,z]});
       collider(f.id,[width+.1,height+.1,.16],[x,0,z],facing,bottom-.05);
+      const holder=new THREE.Group();holder.position.set(x,0,z);holder.rotation.y=facing;group.add(holder);group.updateWorldMatrix(true,true);holder.attach(frame);holder.attach(screen);movable(f.id,'Горизонт открытий',holder,{media});
       screenRecords.push({id:f.id,hall:f.hall,width,height,bottom,position:[x,bottom+height/2,z],rotationY:facing});
       if(!hallViews.has(f.hall))hallViews.set(f.hall,{position:[...anchor.slice(0,1),1.65,anchor[1]],target:[x,1.62,z]});
     }
@@ -95,10 +105,11 @@ export function createMappedRgoGallery({assets,layout,program}){
   // Suspended display models stay above the visitor envelope, and are explicitly
   // expedition sailships rather than mislabeled full-size historical vessels.
   if(assets.get('X02_SAILSHIP'))for(const id of ['03','04']){
-    const a=layout.hallAnchors.find(h=>h.id===id).position;
-    const holder=normalise(assets.get('X02_SAILSHIP'),2.1,{x:a[0],y:2.68,z:a[1],rotationY:Math.PI/2,maxDimensions:[2.1,1.25,2.1]});group.add(holder);
-    group.add(tubeBetween([a[0]-.45,4.05,a[1]],[a[0]-.45,3.83,a[1]],.009,dark),tubeBetween([a[0]+.45,4.05,a[1]],[a[0]+.45,3.83,a[1]],.009,dark));
-    collider('suspended-ship-'+id,[2.1,1.25,2.1],[a[0],0,a[1]],0,2.68);
+    const anchor=layout.hallAnchors.find(h=>h.id===id).position,adjusted=layout.suspendedShipPlacements?.[id],a=adjusted?[adjusted.x,adjusted.z]:anchor;
+    const holder=new THREE.Group();holder.position.set(a[0],0,a[1]);group.add(holder);holder.add(normalise(assets.get('X02_SAILSHIP'),2.1,{y:2.68,rotationY:Math.PI/2,maxDimensions:[2.1,1.25,2.1]}));
+    holder.add(tubeBetween([-.45,4.05,0],[-.45,3.83,0],.009,dark),tubeBetween([.45,4.05,0],[.45,3.83,0],.009,dark));
+    collider('suspended-ship-'+id,[2.1,1.25,2.1],[a[0],0,a[1]],0,2.68);navigationItems.push({id:'suspended-ship-'+id,name:'Модель парусного судна',hallId:id,kind:'model',position:[a[0],3.2,a[1]]});
+    movable('suspended-ship-'+id,'Модель парусного судна · '+id,holder,{floating:true});
   }
   // The entrance globe is an exact spherical construction with the source's
   // 23.5-degree axis. The final cartographic relief remains a content work item.
@@ -108,7 +119,8 @@ export function createMappedRgoGallery({assets,layout,program}){
   const globe=new THREE.Mesh(new THREE.SphereGeometry(.79,40,28),new THREE.MeshStandardMaterial({color:0x215778,metalness:.25,roughness:.4}));earth.add(globe);
   for(let i=0;i<12;i++){const ring=new THREE.Mesh(new THREE.TorusGeometry(.795,.008,4,72),brass);ring.rotation.y=i*Math.PI/12;earth.add(ring);}
   for(const lat of [-60,-30,0,30,60]){const r=.798*Math.cos(lat*Math.PI/180);const ring=new THREE.Mesh(new THREE.TorusGeometry(r,.008,4,72),brass);ring.rotation.x=Math.PI/2;ring.position.y=.798*Math.sin(lat*Math.PI/180);earth.add(ring);}
-  movingGlobes.push(earth);collider('entrance-globe',[1.75,2.35,1.75],globeRoot.position.toArray());
+  navigationItems.push({id:'entrance-globe',name:'Глобус путешественника',hallId:'00',kind:'model',position:[globeRoot.position.x,1.48,globeRoot.position.z]});movingGlobes.push(earth);collider('entrance-globe',[1.75,2.35,1.75],globeRoot.position.toArray());
+  movable('entrance-globe','Глобус путешественника',globeRoot);
   panel('МУЗЕЙ И АЛЛЕЯ РГО','Девять залов · путь открытий России',4.2,.8,-14.7,3.1,-59.7,Math.PI/2,{background:'#61432e'});
   for(const [index,h] of layout.hallAnchors.entries()){
     const sign=panel(h.id+'  '+h.name,'',4.2,.48,h.position[0],3.55,h.position[1],index<3?-Math.PI/2:0,{width:1400,height:160,background:'#634630'});
@@ -119,13 +131,18 @@ export function createMappedRgoGallery({assets,layout,program}){
   const defaultPose={position:[center[0]+.7,1.65,center[1]+.45],target:[center[0]+.15,1.48,center[1]-2.1]};hallViews.set('00',defaultPose);for(const [id,pose] of Object.entries(layout.hallViews||{}))hallViews.set(id,pose);
   return {group,pickables,supportSamples:layout.supportSamples,
     getCollisionParts:()=>parts,
+    detachMovableExhibits(){for(const item of movableExhibits){item.root.removeFromParent();item.root.position.set(0,0,0);item.root.rotation.y=0;}return movableExhibits;},
+    getMovableExhibits:()=>movableExhibits,
+    getNavigationItems:()=>navigationItems.map(i=>({...i})),
+    getItemPose(id){const item=navigationItems.find(i=>i.id===id);if(!item)return null;const hall=hallViews.get(item.hallId)||defaultPose,movable=movableExhibits.find(i=>i.sourceId===id);if(!movable)return {position:[...hall.position],target:[...item.position],fov:62};const p=movable.placement,c=Math.cos(p.rotationY),s=Math.sin(p.rotationY),dx=hall.position[0]-p.x,dz=hall.position[2]-p.z;movable.root.updateWorldMatrix(true,true);return {world:true,position:movable.root.localToWorld(new THREE.Vector3(c*dx-s*dz,hall.position[1],s*dx+c*dz)).toArray(),target:movable.root.localToWorld(new THREE.Vector3(0,item.position[1],0)).toArray(),fov:62};},
     setHall(id){if(!halls.has(id))return false;activeHall=id;return true;},
     get activeHall(){return activeHall;},
     get interiorPose(){return hallViews.get(activeHall)||defaultPose;},
     overviewPose:{position:[-41,47,-8],target:[7,1,-31]},
     setCutaway(value){cutaway=Boolean(value);canopy.visible=!cutaway;},
     action(action){if(action==='rgo-next'){activeHall=String((Number(activeHall)+1)%9).padStart(2,'0');return true;}if(action==='rgo-previous'){activeHall=String((Number(activeHall)+8)%9).padStart(2,'0');return true;}if(action.startsWith('rgo-hall-'))return this.setHall(action.slice(9));return false;},
-    update(dt,camera){elapsed+=Math.max(0,dt);for(const globe of movingGlobes)globe.rotation.y=elapsed*.045;let change=false;if(camera){const local=group.worldToLocal(camera.position.clone());const show=!cutaway&&local.y<4.5;if(canopy.visible!==show){canopy.visible=show;change=true;}}return dt>0||change;},
+    update(dt,camera){elapsed+=Math.max(0,dt);for(const globe of movingGlobes)globe.rotation.y=elapsed*.045;let change=false;for(const media of liveMedia)change=media.update(dt)||change;if(camera){const local=group.worldToLocal(camera.position.clone());const show=!cutaway&&local.y<4.5;if(canopy.visible!==show){canopy.visible=show;change=true;}}return dt>0||change;},
+    dispose(){liveMedia.forEach(m=>m.dispose());},
     getState:()=>({scope:'primary-nine-hall-route',hallCount:9,activeHall,programmeHallAreaM2:1120,programmeOverallM2:1400,displayCases:caseRecords.length,ships:assets.has('X02_SAILSHIP')?2:0,mir:assets.has('X01_MIR'),screens:screenRecords.length,screenRecords,caseRecords,referenceStyle:'warm-timber-lamellae-sand-floor-amber-light-blue-media',plannedHeroes:['Полноразмерный коч','Трёхпалубная «Надежда» в разрезе','«Таймыр»','АНТ-25','«Консул»','«Орёл»'],sourceLayout:'rgo-primary-layout.json',workingRouteReserveMetres:layout.routeWorkingWidth}),
   };
 }

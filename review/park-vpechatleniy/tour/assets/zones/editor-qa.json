@@ -1,0 +1,228 @@
+{
+  "suite": "mouse-editor-contract",
+  "environment": "Node + jsdom + actual Three r180; no WebGL rendering",
+  "passed": true,
+  "passedChecks": 30,
+  "totalChecks": 30,
+  "checks": [
+    {
+      "name": "Object picker is a dropdown",
+      "passed": true
+    },
+    {
+      "name": "Object dropdown includes every instance",
+      "passed": true
+    },
+    {
+      "name": "Canvas hit selects the exact object",
+      "passed": true
+    },
+    {
+      "name": "Camera is disabled during direct object drag",
+      "passed": true
+    },
+    {
+      "name": "Direct mouse drag changes floor placement",
+      "passed": true,
+      "detail": {
+        "instanceId": "O12-1",
+        "exhibitId": "O12",
+        "name": "Ледокол «Лидер»",
+        "zone": "СЗФО",
+        "ordinal": 1,
+        "copies": 1,
+        "floating": false,
+        "x": 1.7570334375824173,
+        "y": 0,
+        "z": -0.2953013725276019,
+        "rotationY": 0,
+        "scaleFactor": 1,
+        "visible": true,
+        "floorY": 0,
+        "originalDimensions": [
+          2,
+          2,
+          2
+        ],
+        "dimensions": [
+          2,
+          2,
+          2
+        ],
+        "modified": true
+      }
+    },
+    {
+      "name": "Direct mouse drag retains floor height",
+      "passed": true
+    },
+    {
+      "name": "Camera is restored after direct mouse drag",
+      "passed": true
+    },
+    {
+      "name": "One drag creates one undo step",
+      "passed": true,
+      "detail": 1
+    },
+    {
+      "name": "Undo restores original placement",
+      "passed": true
+    },
+    {
+      "name": "Redo restores dragged placement",
+      "passed": true
+    },
+    {
+      "name": "Dropdown selects another instance",
+      "passed": true
+    },
+    {
+      "name": "Mouse wheel enlarges selected object in Size mode",
+      "passed": true
+    },
+    {
+      "name": "Size mode consumes the wheel gesture",
+      "passed": true
+    },
+    {
+      "name": "Scaling remains uniform",
+      "passed": true
+    },
+    {
+      "name": "Wheel creates one undo step",
+      "passed": true,
+      "detail": 2
+    },
+    {
+      "name": "Undo restores wheel scale",
+      "passed": true
+    },
+    {
+      "name": "Collision guard rejects oversize while keeping last valid size",
+      "passed": true
+    },
+    {
+      "name": "Wheel passes every requested size through placement guard",
+      "passed": true
+    },
+    {
+      "name": "A rejected size leaves a visible error",
+      "passed": true
+    },
+    {
+      "name": "Wheel remains camera zoom outside Size mode",
+      "passed": true
+    },
+    {
+      "name": "Rotation gizmo is visible",
+      "passed": true
+    },
+    {
+      "name": "Rotation ring responds to a real pointer gesture",
+      "passed": true,
+      "detail": {
+        "old": 0,
+        "next": 1.4991022117721946
+      }
+    },
+    {
+      "name": "Escape cancels an active gesture",
+      "passed": true
+    },
+    {
+      "name": "Escape restores camera controls",
+      "passed": true
+    },
+    {
+      "name": "Snapping is available without keyboard modifiers",
+      "passed": true
+    },
+    {
+      "name": "Zone navigator can open the same mouse editor",
+      "passed": true
+    },
+    {
+      "name": "Accepted edits are autosaved",
+      "passed": true
+    },
+    {
+      "name": "Closing editor removes gizmo and selection",
+      "passed": true
+    },
+    {
+      "name": "All edit starts are paired with ends",
+      "passed": true,
+      "detail": [
+        {
+          "type": "start",
+          "id": "O12-1"
+        },
+        {
+          "type": "end",
+          "id": "O12-1"
+        },
+        {
+          "type": "start",
+          "id": "O12-1"
+        },
+        {
+          "type": "end",
+          "id": "O12-1"
+        },
+        {
+          "type": "start",
+          "id": "O12-1"
+        },
+        {
+          "type": "end",
+          "id": "O12-1"
+        },
+        {
+          "type": "start",
+          "id": "O05-1"
+        },
+        {
+          "type": "end",
+          "id": "O05-1"
+        },
+        {
+          "type": "start",
+          "id": "O05-1"
+        },
+        {
+          "type": "end",
+          "id": "O05-1"
+        },
+        {
+          "type": "start",
+          "id": "O05-1"
+        },
+        {
+          "type": "end",
+          "id": "O05-1"
+        },
+        {
+          "type": "start",
+          "id": "O12-1"
+        },
+        {
+          "type": "end",
+          "id": "O12-1"
+        },
+        {
+          "type": "start",
+          "id": "O12-1"
+        },
+        {
+          "type": "end",
+          "id": "O12-1"
+        }
+      ]
+    },
+    {
+      "name": "Disposal releases editor geometry",
+      "passed": true
+    }
+  ]
+}

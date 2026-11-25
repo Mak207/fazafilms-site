@@ -1,0 +1,7 @@
+{
+  "checked": 107,
+  "failures": [],
+  "intersectionCount": 0,
+  "method": "Exact SAT over actual runtime collider export and complete CAD; intentional floor contacts below 5mm excluded.",
+  "evidence": "physical-revisions-qa.json"
+}
