@@ -10,9 +10,10 @@
   <link rel="icon" href="/favicon.svg">
   <link rel="stylesheet" href="crowd/crowd.css?v=park-exhibition-20261125-r2">
   <link rel="stylesheet" href="viewer.css?v=park-floor-colors-20261125">
+  <link rel="stylesheet" href="walk-mode.css?v=park-walk-20261125">
   <link rel="stylesheet" href="../adaptive-zoom.css?v=20261124-pinch-zones-1">
   <script type="importmap">{"imports":{"three":"/golden-ring/interactives/vendor/three-0.180/three.module.min.js"}}</script>
-  <script type="module" src="viewer.js?v=equipment-3d-20261125"></script>
+  <script type="module" src="viewer.js?v=park-walk-20261125"></script>
   <link rel="stylesheet" href="rgo-zones.css?v=park-exhibition-20261125-r2">
 </head>
 <body data-az-page="tour">
@@ -27,6 +28,36 @@
       <div class="loading-card"><span class="eyebrow">Парк впечатлений</span><h1 id="loading-title">Загружаем 3D-модель</h1><div class="progress-track"><div id="progress"></div></div><p id="loading-detail">Подготавливаем пространство для просмотра…</p><button id="retry" type="button" hidden>Повторить загрузку</button></div>
     </div>
     <div data-az-zone="content" id="view-caption" class="view-caption" aria-live="polite"><span class="eyebrow">Ракурс</span><strong id="view-name">Общий вид</strong><span id="onboard-hint" hidden>Потяните вид мышью или пальцем, чтобы оглядеться</span></div>
+
+    <aside data-az-zone="controls" data-az-scroll id="walk-panel" class="context-panel walk-panel" hidden aria-labelledby="walk-title">
+      <div class="panel-heading"><strong id="walk-title">Прогулка по парку</strong><button class="panel-close" data-close-panel="walk-panel" type="button" aria-label="Закрыть выбор зоны прогулки">×</button></div>
+      <label for="walk-zone">Где начнём?</label><select id="walk-zone" aria-label="Зона для прогулки"><option>Подготавливаем зоны…</option></select>
+      <button id="walk-start" type="button" class="walk-primary" disabled>Начать прогулку</button>
+      <button id="walk-stop" type="button" class="panel-wide" hidden>Закончить прогулку</button>
+      <p id="walk-status" class="walk-status" role="status" aria-live="polite">Подготавливаем проходы и экспонаты…</p>
+      <div class="walk-instructions"><p><b>Идите:</b> клавиши W, A, S, D. Стрелки — идти и поворачивать.</p><p><b>Смотрите:</b> тяните вид мышью или пальцем.</p><p><b>Включайте:</b> подойдите к экрану или интерактиву и нажмите E либо кнопку рядом с названием.</p><p>На телефоне удерживайте кнопки движения. Esc завершает прогулку.</p></div>
+    </aside>
+    <div id="walk-hud" class="walk-hud" data-az-native hidden>
+      <div class="walk-location"><span>Прогулка</span><strong id="walk-zone-name"></strong></div>
+      <button id="walk-change-zone" type="button">Сменить зону</button><button id="walk-exit" type="button">Выйти</button>
+    </div>
+    <span id="walk-crosshair" class="walk-crosshair" aria-hidden="true" hidden></span>
+    <div id="walk-target" class="walk-target" data-az-native hidden><strong id="walk-target-name"></strong><span class="walk-key-hint">E · взаимодействовать</span><div id="walk-target-actions"></div></div>
+    <p id="walk-feedback" class="walk-feedback" role="status" aria-live="polite" hidden></p>
+    <div id="walk-movement" class="walk-movement" data-az-native role="group" aria-label="Кнопки движения" hidden>
+      <button type="button" data-walk-move="forward" aria-pressed="false">Вперёд</button>
+      <button type="button" data-walk-move="left" aria-pressed="false">Влево</button>
+      <button type="button" data-walk-move="back" aria-pressed="false">Назад</button>
+      <button type="button" data-walk-move="right" aria-pressed="false">Вправо</button>
+    </div>
+    <div id="walk-media-dialog" class="walk-media-dialog" role="dialog" aria-modal="true" aria-labelledby="walk-media-title" data-az-native hidden>
+      <section class="walk-media-card"><header><div><h2 id="walk-media-title">Экран</h2><p id="walk-media-note"></p></div><button id="walk-media-close" type="button" aria-label="Закрыть просмотр экрана">×</button></header>
+        <canvas id="walk-media-canvas" width="1280" height="720" aria-label="Содержимое выбранного экрана"></canvas>
+        <div class="walk-media-controls"><button id="walk-media-play" type="button">Воспроизвести</button><button id="walk-media-next" type="button">Следующая сцена</button><button id="walk-media-restart" type="button">Сначала</button><button id="walk-media-mute" type="button" hidden>Включить звук</button><output id="walk-media-time" hidden></output><input id="walk-media-seek" type="range" min="0" max="0" value="0" step=".1" aria-label="Положение в ролике" hidden></div>
+        <div class="walk-video-choose"><button id="walk-video-choose" type="button">Выбрать ролик</button><span>Видео с компьютера появится на этом экране до закрытия страницы.</span><input id="walk-video-file" type="file" accept="video/*,.mp4,.webm" hidden></div>
+        <p id="walk-video-status" role="status" aria-live="polite"></p>
+      </section>
+    </div>
 
     <aside data-az-zone="controls" data-az-scroll id="exhibit-editor" class="context-panel exhibit-editor" hidden aria-labelledby="editor-title">
       <div class="panel-heading editor-heading"><div><strong id="editor-title">Объекты</strong><span id="editor-summary" class="sr-only">24 экземпляра</span></div><button id="editor-close" class="panel-close" type="button" aria-label="Закрыть объекты">×</button></div>
@@ -95,6 +126,7 @@
     <aside data-az-zone="content" data-az-scroll id="help" class="help-card" hidden aria-label="Как управлять моделью">
       <div class="help-title"><strong>Управление парком</strong><button id="close-help" aria-label="Закрыть подсказку" type="button">×</button></div>
       <p><b>Обзор:</b> левая кнопка — вращение, правая — сдвиг, колесо или два пальца — приближение. Двойной щелчок приближает выбранное место.</p>
+      <p><b>Прогулка:</b> выберите зону в панели «Прогулка». W, A, S, D — движение, стрелки — движение и поворот, мышь или палец — взгляд. E включает ближайший объект перед вами. «Смотреть экран» открывает его содержимое крупно; «Выбрать ролик» выводит ваше видео на этот экран. Esc закрывает просмотр или завершает прогулку.</p>
       <p><b>Объекты:</b> выберите экземпляр из выпадающего меню или прямо в сцене. Тяните объект или стрелки для переноса, кольцо для поворота, ручки для изменения размера. В режиме «Размер» работает колесо мыши. Правая кнопка сдвигает вид; Esc отменяет движение, Ctrl+Z отменяет последнее изменение.</p>
       <p><b>Размеры и этаж:</b> точные координаты, масштаб и выбор этажа находятся в раскрываемом блоке. Наземные модели стоят на настоящем полу; киты и дроны сохраняют высоту. На телефоне используйте числовые поля, оставляя пальцам управление обзором.</p>
       <p><b>Сохранение:</b> изменения автоматически остаются в этом браузере для 2K и 4K. JSON переносит расстановку на другое устройство. Ctrl+Z отменяет изменение.</p>
@@ -111,6 +143,7 @@
 
   <footer class="viewer-toolbar" data-az-zone="controls" data-az-scroll aria-label="Панель управления 3D">
     <nav class="workspace-tabs" aria-label="Разделы управления">
+      <button id="walk-toggle" class="workspace-tab" data-panel="walk-panel" type="button" aria-controls="walk-panel" aria-expanded="false" aria-pressed="false" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="14" cy="4" r="2"/><path d="m7 22 4-7 2-7m-6 5 4-5 5 4 4 1m-9 2 5 4v3"/></svg><span>Прогулка</span></button>
       <button id="zones-toggle" class="workspace-tab" data-panel="zone-map-panel" type="button" aria-controls="zone-map-panel" aria-expanded="false" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3Zm6-3v15m6-12v15"/></svg><span>Зоны</span></button>
       <button id="rgo-toggle" class="workspace-tab" data-panel="rgo-panel" type="button" aria-controls="rgo-panel" aria-expanded="false" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h6v6H3Zm12 0h6v6h-6ZM3 16h6v5H3Zm12 0h6v5h-6ZM6 10v3h12v3M6 13v3m12-6v3"/></svg><span>Навигация</span></button>
       <button id="editor-toggle" class="workspace-tab" data-panel="exhibit-editor" type="button" aria-controls="exhibit-editor" aria-expanded="false" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 9 5v10l-9 5-9-5V7Zm-9 5 9 5 9-5M12 12v10"/></svg><span>Объекты</span></button>
